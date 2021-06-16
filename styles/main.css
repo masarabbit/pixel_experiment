@@ -1,0 +1,119 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #2f0244;
+  font-family: sans-serif;
+  color: white;
+}
+
+p, h1, h2, h3, h4 {
+  display: inline-block;
+  margin-block-start: 0em;
+  margin-block-end: 0em;
+  margin-inline-start: 0px;
+  margin-inline-end: 0px;
+  padding-inline-start: 0px;
+}
+
+canvas {
+  margin: 0 auto;
+  background-color: #ffffff;
+}
+
+.display_none {
+  display: none;
+}
+
+h1 {
+  margin: 30px;
+}
+
+input,
+button {
+  border-style: none;
+  border-radius: 20px;
+  margin: 5px;
+  padding: 9.5px 15px;
+  text-align: center;
+}
+
+::placeholder {
+  color: #00e8d1;
+}
+input:focus {
+  outline: #00e8d1;
+}
+
+button {
+  background-color: #00e8d1;
+  border: none;
+  transition: 0.4s;
+}
+
+button:hover {
+  background-color: white;
+}
+
+.pagewrap {
+  margin: 40px auto 0 auto;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* justify-content: center; */
+  max-width: 1200px;
+}
+
+.mini_wrap {
+  margin: 30px 0 0 0;
+  /* height: 200px; */
+  display: flex;
+  flex-direction: column;
+}
+
+.head, .body {
+  background-color:white;
+  /* margin: 0 0 0 10px; */
+  /* position: fixed;
+  left: 0; */
+  /* top: -100vh;  */
+  /* hiding from the screen */
+}
+
+.img_wrap {
+  display: flex;
+  width: 660px;
+  justify-content: space-evenly;
+}
+
+.head {
+  /* height: 320px;
+  width: 320px; */
+  width: 0;
+  display: none;
+  overflow: hidden;
+}
+
+.dots {
+  width: 640px;
+  margin: 30px 0 0 0;
+  background-color: white;
+  font-size: 12px;
+  color: #2f0244;
+  overflow-wrap: break-word;
+}
+
+.body {
+  height: 60px;
+  width: 160px;
+}
+
+img {
+  height: 100%;
+  width: 100%;
+}
