@@ -5,7 +5,7 @@
   <link rel="stylesheet" type="text/css" href="./styles/main.css" />
   <script src ="./scripts/app.js" charset="utf-8"></script>
 
-  <title>convert</title>
+  <title>pixelExperiment</title>
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
@@ -14,28 +14,35 @@
 
   <div class="pagewrap">
 
-    <h1>pixel converter</h1>
+    <h1>pixelExperiment</h1>
     
     <div class="img_wrap">
-      <div class="head">
-      </div>
-      <canvas id="combineCanvas"> 
-      </canvas>
+      <canvas class="canvas_one"></canvas>
+      <canvas class="canvas_two"></canvas>
     </div> 
+
+    <div class="grid"></div>
   
     <div class="mini_wrap">
-      <input id="file" placeholder="upload" type="file"/>
-      <input id="file_name_input" class="display_none" placeholder="enter file name" />
-      <button id="draw">pixelise</button>
-      <button id="download_icon_button" class="display_none">download random icon</button>
+      <label for="color" class="color_label"></label>
+      <input id="color" type="color">
+      
+      <input class="cell_size input" placeholder="cell size">
+      <input class="max_width input" placeholder="max width">
+
+      <input id="upload" placeholder="upload" type="file" single/>
+      <label for="upload">select img file</label>
+      <button class="draw">pixelise</button>
+      <button class="download">download</button>
     </div>
 
-    <div class="dots">
-    </div>  
+    <textarea class="dots"></textarea>
+
+    <div class="mini_wrap">
+      <button class="copy">copy</button>
+    </div>
 
   </div>
-
-
 </body>
 
 </html>

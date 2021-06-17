@@ -5,7 +5,7 @@
 body {
   margin: 0;
   padding: 0;
-  background-color: #2f0244;
+  background-color: #5f5e5e;
   font-family: sans-serif;
   color: white;
 }
@@ -20,7 +20,7 @@ p, h1, h2, h3, h4 {
 }
 
 canvas {
-  margin: 0 auto;
+  margin: 0 5px;
   background-color: #ffffff;
 }
 
@@ -32,13 +32,30 @@ h1 {
   margin: 30px;
 }
 
+
+[type="file"] {
+  /* border: 0;
+  clip: rect(0, 0, 0, 0);
+  height: 1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute !important;
+  white-space: nowrap;
+  width: 1px; */
+  display: none;
+}
+
+label,
 input,
 button {
-  border-style: none;
-  border-radius: 20px;
+  border: 1px solid white;
+  background-color: transparent;
   margin: 5px;
   padding: 9.5px 15px;
   text-align: center;
+  color: white;
+  cursor: pointer;
+  font-size: 15px;
 }
 
 ::placeholder {
@@ -48,20 +65,17 @@ input:focus {
   outline: #00e8d1;
 }
 
-button {
-  background-color: #00e8d1;
-  border: none;
-  transition: 0.4s;
-}
-
+label:hover,
 button:hover {
   background-color: white;
+  color: black;
 }
 
 .pagewrap {
+  padding: 0 0 30px 0;
   margin: 40px auto 0 auto;
   width: 100%;
-  height: 100vh;
+  /* height: 100vh; */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -70,50 +84,70 @@ button:hover {
 }
 
 .mini_wrap {
-  margin: 30px 0 0 0;
-  /* height: 200px; */
+  width: 100%;
+  max-width: 800px;
+  margin: 20px;
+  padding: 0 20px;
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
 }
 
-.head, .body {
-  background-color:white;
-  /* margin: 0 0 0 10px; */
-  /* position: fixed;
-  left: 0; */
-  /* top: -100vh;  */
-  /* hiding from the screen */
+.grid {
+  background-color: #ffffff;
+  margin: 10px;
 }
 
 .img_wrap {
   display: flex;
-  width: 660px;
   justify-content: space-evenly;
+  align-items: flex-start;
 }
 
-.head {
-  /* height: 320px;
-  width: 320px; */
-  width: 0;
-  display: none;
-  overflow: hidden;
-}
 
-.dots {
+textarea.dots {
+  font-family: sans-serif;
   width: 640px;
   margin: 30px 0 0 0;
   background-color: white;
   font-size: 12px;
   color: #2f0244;
   overflow-wrap: break-word;
+  /* padding: 10px; */
+  height: 100px;
+  /* max-height: 100px; */
+  overflow-y: scroll;
 }
 
-.body {
-  height: 60px;
-  width: 160px;
-}
+/* textarea.dots:empty {
+  padding: 0px;
+} */
+
 
 img {
   height: 100%;
   width: 100%;
+}
+
+.input {
+  text-align: left;
+  width: 100px;
+}
+
+
+.grid {
+  display: flex;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+}
+
+.color_label {
+  height: 40px;
+  width: 40px;
+  border: 0;
+  background-color: black;
+}
+
+#color {
+  display: none;
 }

@@ -1,52 +1,29 @@
 function init() {
+  
 
-  const combineCanvas = document.getElementById('combineCanvas')
-  const context = combineCanvas.getContext('2d')
-  const head = document.querySelector('.head')
-  // const body = document.querySelector('.body')
-  const randomHead = document.createElement('img')
-  // const randomBody = document.createElement('img')
-  const fileNameInput = document.getElementById('file_name_input')
-  const downloadIconButton = document.getElementById('download_icon_button')
-  let filenum = 0
+  //! mouseDown to keep drawState true, to make it possible to draw while dragging.
+  //! create map creator
+  //! create sprite creator
 
-  const file = document.getElementById('file')
-  const draw = document.getElementById('draw')
 
+  let cellSize
+  let maxWidth
+  
+  const canvas = document.querySelector('.canvas_one')
+  const ctx = canvas.getContext('2d')
+  const canvasTwo = document.querySelector('.canvas_two')
+  const ctxTwo = canvasTwo.getContext('2d')
+  const draw = document.querySelector('.draw')
+  const download = document.querySelector('.download')
   const dotsBox = document.querySelector('.dots')
 
+  const cellSizeInput = document.querySelector('.cell_size')
+  const maxWidthInput = document.querySelector('.max_width')
+  const colorInput = document.querySelector('#color')
+  const colorLabel = document.querySelector('.color_label')
 
-  // drawImage()
-
-  setup()
-
-  function setup(){
-    combineCanvas.setAttribute('height','320px') 
-    combineCanvas.setAttribute('width','320px')
-    
-  }
-
-  function shuffle(){
-    head.innerHTML = ''
-    const uploadedFiles = file.files[0]
-    // console.log(uploadedFiles)
-    // const blobURL = window.URL.createObjectURL(uploadedFiles).toDataURL()
-    // randomHead.src = blobURL
-
-    const reader = new FileReader()
-    reader.readAsDataURL(uploadedFiles)
-    reader.addEventListener('load', function () {
-      // convert image file to base64 string
-      randomHead.src = reader.result
-    }, false)
-
-    // console.log(blobURL)
-    head.appendChild(randomHead)
-    
-    // body.innerHTML = ''
-    // randomBody.src = `./assets/body/body${Math.ceil(Math.random() * 48)}.png`
-    // body.appendChild(randomBody)
-  }
+  const grid = document.querySelector('.grid')
+  const dots = []
 
   function rgbToHex(r, g, b) {
     if (r > 255 || g > 255 || b > 255)
@@ -54,106 +31,123 @@ function init() {
     return ((r << 16) | (g << 8) | b).toString(16)
   }
 
+  const colorCell = e =>{
+    console.log(e.target)
+    e.target.style.backgroundColor = colorInput.value
+  }
 
-  function drawImage(){
-    shuffle()
+  const output = ()=>{
+    const upload = document.querySelector('#upload')
+    const uploadedFiles = upload.files[0]
+    const blobURL = window.URL.createObjectURL(uploadedFiles)
+    const imageTarget = new Image()
 
+    cellSize = cellSizeInput.value ? cellSizeInput.value : 10
+    maxWidth = maxWidthInput.value ? maxWidthInput.value : 400
 
+    let iHeight
+    let iWidth
 
-    //!test
-    // const uploadedFiles = file.files[0]
+    imageTarget.onload = () => {
+      iWidth = imageTarget.naturalWidth 
+      iHeight = imageTarget.naturalHeight 
+      calcHeight = maxWidth * (iHeight / iWidth)
+      calcWidth = calcHeight * (iWidth / iHeight)
+      canvas.setAttribute('width', calcWidth)
+      canvas.setAttribute('height', calcHeight - (calcHeight % cellSize))
 
-    // let img
-
-    // const reader = new FileReader()
-    // reader.readAsDataURL(uploadedFiles)
-    // reader.addEventListener('load', function () {
-    //   img = reader.result
-    // }, false)
-
-    // console.log(uploadedFiles)
-
-
-    //!test
-
-
-
-
-    setTimeout(()=>{
-      combineCanvas.setAttribute('height','320px') 
-      combineCanvas.setAttribute('width','320px')
+      grid.style.height = `${calcHeight - (calcHeight % cellSize)}px`
+      grid.style.width = `${calcWidth}px`
       
-      context.fillStyle = 'white'
-      context.fillRect(0, 0, 320, 320)
+      dots.length = 0
 
-      // context.filter = `hue-rotate(${Math.floor(Math.random() * 360)}deg) contrast(${Math.floor(Math.random() * 100) + 100}%) saturate(${Math.floor(Math.random() * 100) + 60}%)`    
-      // context.drawImage(randomHead, 0, 0, 20, 20)
-      const arr = []
-      const dots = []
+      //* cellX x cellY
+      const column = maxWidth / cellSize
+      const row = (calcHeight - (calcHeight % cellSize)) / cellSize
+      
 
-      for (let i = 0; i < 256; i++){
-        arr.push(i)
+      ctx.drawImage(imageTarget, 0, 0, calcWidth, calcHeight)
+
+      for (let i = 0; i < row * column; i++) {
+        const y = Math.floor(i / column) * cellSize
+        const x = i % column * cellSize
+        const c = ctx.getImageData(x, y , 1, 1).data
+
+        var hex = '#' + ('000000' + rgbToHex(c[0], c[1], c[2])).slice(-6)
+        
+        dots.push(hex)
+        // console.log(dots)
       }
 
-      arr.forEach(ele=>{
-        const x = ele % 16 * 20
-        const y = Math.floor(ele / 16) * 20
-        // const x2 = x === 0 ? 1 : x
-        // const y2 = y === 0 ? 1 : y  //! this bit not required
-        
-        // context.drawImage(blobURL, x2, y2, 20, 20, x, y, 20, 20)
-        context.drawImage(randomHead, x, y, 20, 20, x, y, 1, 1)
-        const c = context.getImageData(x, y, 1, 1).data
-        var hex = '#' + ('000000' + rgbToHex(c[0], c[1], c[2])).slice(-6)
-        console.log(`${ele} - ${hex}`)
-        dots.push(hex)
-      })
-
-      // dotsBox.innerHTML = JSON.stringify(dots)
-      dotsBox.innerHTML = dots.map(dot=>{
-        if (dot[1] === '0') return '1'
-        return '0'
+      dotsBox.value = dots.map(dot=>{
+        return dot
       }).join('')
 
-      // dotsBox.innerHTML = JSON.stringify(dots.map(dot=>{
-      //   if (dot === '#000000') return '1'
-      //   return '0'
-      // }))
-      
-      dotsBox.style.padding = '10px'
 
-      // context.fillStyle = 'white'
-      // context.fillRect(0, 0, 320, 320)
-
+      const arr = new Array(row * column).fill('').map((ele,i)=>ele = i)
       arr.forEach(ele=>{
-        const x = ele % 16 * 20
-        const y = Math.floor(ele / 16) * 20
-        context.fillStyle = dots[ele]
-        context.fillRect(x, y, 20, 20)
+        const x = ele % column * cellSize
+        const y = Math.floor(ele / column) * cellSize
+        ctx.fillStyle = dots[ele]
+        ctx.fillRect(x, y, cellSize, cellSize)
       })
 
-      // context.drawImage(randomHead, 1,1,1,1, 0, 0, 20, 20)
+      canvasTwo.setAttribute('width', (calcWidth / cellSize))
+      canvasTwo.setAttribute('height', (calcHeight - (calcHeight % cellSize)) / cellSize)
       
-      // context.filter = `hue-rotate(${Math.floor(Math.random() * 360)}deg) contrast(${Math.floor(Math.random() * 100) + 100}%) saturate(${Math.floor(Math.random() * 100) + 60}%)`
-      // context.drawImage(randomBody, 20, 120, 160, 60)
-    },200)
+      arr.forEach(ele=>{
+        const x = ele % column
+        const y = Math.floor(ele / column)
+        ctxTwo.fillStyle = dots[ele]
+        ctxTwo.fillRect(x, y, 1, 1)
+      })
+
+      grid.innerHTML=dots.map(dot=>{
+        return `
+          <div class="cell" style="background-color:${dot};">
+          </div>
+        `
+      }).join('')
+
+      const cells = document.querySelectorAll('.cell')
+      cells.forEach(c=>{
+        c.style.height = `${cellSize}px`
+        c.style.width = `${cellSize}px`
+        c.addEventListener('click',(e)=>colorCell(e))
+      })
+    }
+
+    imageTarget.src = blobURL
   }
 
-
-  function downloadSprite() {
-    drawImage()
-    filenum++
-
-    const fileName = fileNameInput.value === '' ? 'icon' : fileNameInput.value
-    const link = document.createElement('a')
-    
-    link.href = combineCanvas.toDataURL('image/png')
-    link.download = `${fileName}${filenum}.png`
+  const downloadImage = () =>{
+    var link = document.createElement('a')
+    link.download = 'filename.png';
+    link.href = canvas.toDataURL()
     link.click()
   }
+
+  download.addEventListener('click',downloadImage)
+  draw.addEventListener('click',output)
+
+
+
+  const copy = document.querySelector('.copy')
   
-  draw.onclick = drawImage
-  downloadIconButton.onclick = downloadSprite
+  const copyText = () =>{
+    dotsBox.select()
+    dotsBox.setSelectionRange(0, 99999) // For mobile devices 
+    document.execCommand('copy')
+  }
+
+  copy.addEventListener('click',copyText)
+  
+
+
+  colorInput.addEventListener('change',()=>{
+    colorLabel.style.backgroundColor = colorInput.value
+  })
+
 }
 
 window.addEventListener('DOMContentLoaded', init)
