@@ -5,7 +5,7 @@ function init() {
   //! create map creator
   //! create sprite creator
 
-
+  let canDraw = false
   let cellSize
   let maxWidth
   
@@ -36,6 +36,13 @@ function init() {
     e.target.style.backgroundColor = colorInput.value
   }
 
+  const continuousColorCell = e =>{
+    if (!canDraw) return
+    colorCell(e)
+    e.target.classList.add('enlarge')
+    setTimeout(()=>e.target.classList.remove('enlarge'),200)
+  }
+
   const output = ()=>{
     const upload = document.querySelector('#upload')
     const uploadedFiles = upload.files[0]
@@ -62,8 +69,8 @@ function init() {
       dots.length = 0
 
       //* cellX x cellY
-      const column = maxWidth / cellSize
-      const row = (calcHeight - (calcHeight % cellSize)) / cellSize
+      const column = maxWidth / cellSize //! this could be refactored to allow user to specify column rather than maxWidth
+      const row = (calcHeight - (calcHeight % cellSize)) / cellSize //! give option to user to specify?
       
 
       ctx.drawImage(imageTarget, 0, 0, calcWidth, calcHeight)
@@ -78,7 +85,9 @@ function init() {
         dots.push(hex)
         // console.log(dots)
       }
+      
 
+      //! this could be updated when user draws?
       dotsBox.value = dots.map(dot=>{
         return dot
       }).join('')
@@ -101,7 +110,9 @@ function init() {
         ctxTwo.fillStyle = dots[ele]
         ctxTwo.fillRect(x, y, 1, 1)
       })
+      
 
+      //* populate grid and make it reactive
       grid.innerHTML=dots.map(dot=>{
         return `
           <div class="cell" style="background-color:${dot};">
@@ -114,6 +125,7 @@ function init() {
         c.style.height = `${cellSize}px`
         c.style.width = `${cellSize}px`
         c.addEventListener('click',(e)=>colorCell(e))
+        c.addEventListener('mousemove',(e)=>continuousColorCell(e))
       })
     }
 
@@ -127,23 +139,22 @@ function init() {
     link.click()
   }
 
-  download.addEventListener('click',downloadImage)
-  draw.addEventListener('click',output)
 
 
-
-  const copy = document.querySelector('.copy')
-  
+  const copy = document.querySelector('.copy') 
   const copyText = () =>{
     dotsBox.select()
     dotsBox.setSelectionRange(0, 99999) // For mobile devices 
     document.execCommand('copy')
   }
-
-  copy.addEventListener('click',copyText)
   
 
-
+  //* eventlistener
+  download.addEventListener('click',downloadImage)
+  draw.addEventListener('click',output)
+  copy.addEventListener('click',copyText)
+  grid.addEventListener('mousedown',()=>canDraw = true)
+  grid.addEventListener('mouseup',()=>canDraw = false)
   colorInput.addEventListener('change',()=>{
     colorLabel.style.backgroundColor = colorInput.value
   })
