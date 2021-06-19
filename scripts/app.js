@@ -1,13 +1,14 @@
 function init() {
   
 
-  //! mouseDown to keep drawState true, to make it possible to draw while dragging.
   //! create map creator
   //! create sprite creator
 
   let canDraw = false
   let cellSize
-  let maxWidth
+  let row
+  let column
+  let uploadedFiles
   
   const canvas = document.querySelector('.canvas_one')
   const ctx = canvas.getContext('2d')
@@ -16,14 +17,18 @@ function init() {
   const draw = document.querySelector('.draw')
   const download = document.querySelector('.download')
   const dotsBox = document.querySelector('.dots')
+  const codesBox = document.querySelector('.codes')
 
-  const cellSizeInput = document.querySelector('.cell_size')
-  const maxWidthInput = document.querySelector('.max_width')
+  const cellSizeInputs = document.querySelectorAll('.cell_size')
+  const rowInputs = document.querySelectorAll('.row')
+  const columnInputs = document.querySelectorAll('.column')
   const colorInput = document.querySelector('#color')
+  const letterInput = document.querySelector('.letter')
   const colorLabel = document.querySelector('.color_label')
 
-  const grid = document.querySelector('.grid')
+  const grids = document.querySelectorAll('.grid')
   const dots = []
+  let codes = []
 
   function rgbToHex(r, g, b) {
     if (r > 255 || g > 255 || b > 255)
@@ -31,9 +36,25 @@ function init() {
     return ((r << 16) | (g << 8) | b).toString(16)
   }
 
+  const updateGrid = () =>{
+    grids[0].innerHTML=dots.map(dot=>{
+      return `
+        <div class="cell" style="background-color:${dot};">
+        </div>
+      `
+    }).join('')
+  }
+
+  const updateCodesDisplay = (box,arr) =>{
+    box.value = `[${arr.map(ele=>ele).join(',')}]`
+  }
+
+
   const colorCell = e =>{
-    console.log(e.target)
+    const index = e.target.dataset.cell
+    dots[index] = colorInput.value
     e.target.style.backgroundColor = colorInput.value
+    updateCodesDisplay(dotsBox,dots)
   }
 
   const continuousColorCell = e =>{
@@ -42,20 +63,44 @@ function init() {
     e.target.classList.add('enlarge')
     setTimeout(()=>e.target.classList.remove('enlarge'),200)
   }
+  
+
+  const paintCanvas = () =>{
+    const arr = new Array(row * column).fill('')
+    arr.forEach((_ele,i)=>{
+      const x = i % column * cellSize
+      const y = Math.floor(i / column) * cellSize
+      ctx.fillStyle = dots[i]
+      ctx.fillRect(x, y, cellSize, cellSize)
+    })
+
+    canvasTwo.setAttribute('width', (calcWidth / cellSize))
+    canvasTwo.setAttribute('height', (calcHeight - (calcHeight % cellSize)) / cellSize)
+    
+    arr.forEach(ele=>{
+      const x = ele % column
+      const y = Math.floor(ele / column)
+      ctxTwo.fillStyle = dots[ele]
+      ctxTwo.fillRect(x, y, 1, 1)
+    })
+  }
+
 
   const output = ()=>{
-    const upload = document.querySelector('#upload')
-    const uploadedFiles = upload.files[0]
+    if (!uploadedFiles) return
     const blobURL = window.URL.createObjectURL(uploadedFiles)
     const imageTarget = new Image()
 
-    cellSize = cellSizeInput.value ? cellSizeInput.value : 10
-    maxWidth = maxWidthInput.value ? maxWidthInput.value : 400
+    cellSize = cellSizeInputs[0].value ? cellSizeInputs[0].value : 10
+    column = columnInputs[0].value ? columnInputs[0].value : 40
 
     let iHeight
     let iWidth
 
     imageTarget.onload = () => {
+      //* cellX x cellY
+      const maxWidth = column * cellSize 
+
       iWidth = imageTarget.naturalWidth 
       iHeight = imageTarget.naturalHeight 
       calcHeight = maxWidth * (iHeight / iWidth)
@@ -63,15 +108,11 @@ function init() {
       canvas.setAttribute('width', calcWidth)
       canvas.setAttribute('height', calcHeight - (calcHeight % cellSize))
 
-      grid.style.height = `${calcHeight - (calcHeight % cellSize)}px`
-      grid.style.width = `${calcWidth}px`
-      
-      dots.length = 0
+      row = rowInputs[0].value ? rowInputs[0].value : (calcHeight - (calcHeight % cellSize)) / cellSize
 
-      //* cellX x cellY
-      const column = maxWidth / cellSize //! this could be refactored to allow user to specify column rather than maxWidth
-      const row = (calcHeight - (calcHeight % cellSize)) / cellSize //! give option to user to specify?
-      
+      grids[0].style.height = `${calcHeight - (calcHeight % cellSize)}px`
+      grids[0].style.width = `${calcWidth}px` 
+      dots.length = 0
 
       ctx.drawImage(imageTarget, 0, 0, calcWidth, calcHeight)
 
@@ -79,51 +120,22 @@ function init() {
         const y = Math.floor(i / column) * cellSize
         const x = i % column * cellSize
         const c = ctx.getImageData(x, y , 1, 1).data
-
         var hex = '#' + ('000000' + rgbToHex(c[0], c[1], c[2])).slice(-6)
-        
         dots.push(hex)
         // console.log(dots)
       }
-      
-
-      //! this could be updated when user draws?
-      dotsBox.value = dots.map(dot=>{
-        return dot
-      }).join('')
-
-
-      const arr = new Array(row * column).fill('').map((ele,i)=>ele = i)
-      arr.forEach(ele=>{
-        const x = ele % column * cellSize
-        const y = Math.floor(ele / column) * cellSize
-        ctx.fillStyle = dots[ele]
-        ctx.fillRect(x, y, cellSize, cellSize)
-      })
-
-      canvasTwo.setAttribute('width', (calcWidth / cellSize))
-      canvasTwo.setAttribute('height', (calcHeight - (calcHeight % cellSize)) / cellSize)
-      
-      arr.forEach(ele=>{
-        const x = ele % column
-        const y = Math.floor(ele / column)
-        ctxTwo.fillStyle = dots[ele]
-        ctxTwo.fillRect(x, y, 1, 1)
-      })
-      
 
       //* populate grid and make it reactive
-      grid.innerHTML=dots.map(dot=>{
-        return `
-          <div class="cell" style="background-color:${dot};">
-          </div>
-        `
-      }).join('')
+      updateGrid()
+      updateCodesDisplay(dotsBox,dots)
 
+      paintCanvas()
+      
       const cells = document.querySelectorAll('.cell')
-      cells.forEach(c=>{
+      cells.forEach((c,i)=>{
         c.style.height = `${cellSize}px`
         c.style.width = `${cellSize}px`
+        c.dataset.cell = i
         c.addEventListener('click',(e)=>colorCell(e))
         c.addEventListener('mousemove',(e)=>continuousColorCell(e))
       })
@@ -132,19 +144,22 @@ function init() {
     imageTarget.src = blobURL
   }
 
+
+
   const downloadImage = () =>{
-    var link = document.createElement('a')
+    paintCanvas()
+    const link = document.createElement('a')
     link.download = 'filename.png';
-    link.href = canvas.toDataURL()
+    link.href = canvasTwo.toDataURL()
     link.click()
   }
 
 
 
-  const copy = document.querySelector('.copy') 
-  const copyText = () =>{
-    dotsBox.select()
-    dotsBox.setSelectionRange(0, 99999) // For mobile devices 
+  const copyButtons = document.querySelectorAll('.copy') 
+  const copyText = box =>{
+    box.select()
+    box.setSelectionRange(0, 99999) // For mobile devices 
     document.execCommand('copy')
   }
   
@@ -152,12 +167,113 @@ function init() {
   //* eventlistener
   download.addEventListener('click',downloadImage)
   draw.addEventListener('click',output)
-  copy.addEventListener('click',copyText)
-  grid.addEventListener('mousedown',()=>canDraw = true)
-  grid.addEventListener('mouseup',()=>canDraw = false)
+  copyButtons[0].addEventListener('click',()=>copyText(dotsBox))
+  copyButtons[1].addEventListener('click',()=>copyText(codesBox))
+  grids.forEach(grid=>{
+    grid.addEventListener('mousedown',()=>canDraw = true)
+    grid.addEventListener('mouseup',()=>canDraw = false)
+  })
   colorInput.addEventListener('change',()=>{
     colorLabel.style.backgroundColor = colorInput.value
   })
+
+  //* display filename and pixelise button
+  upload.addEventListener('change',()=>{
+    const upload = document.querySelector('#upload')
+    uploadedFiles = upload.files[0]
+    document.querySelector('.file_name').innerHTML = uploadedFiles.name
+    draw.classList.remove('display_none')
+  })
+
+
+  const drawMap = e =>{
+    const index = e.target.dataset.cell
+    codes[index] = letterInput.value
+    e.target.innerHTML = letterInput.value
+    updateCodesDisplay(codesBox,codes)
+  }
+
+  const continuousDrawMap = e =>{
+    if (!canDraw) return
+    drawMap(e)
+    e.target.classList.add('enlarge')
+    setTimeout(()=>e.target.classList.remove('enlarge'),200)
+  }
+
+  
+  const createMapGrid = () =>{
+    const row = rowInputs[1].value ? rowInputs[1].value : 50
+    const column = columnInputs[1].value ? columnInputs[1].value : 50
+    const mapCellSize = cellSizeInputs[1].value ? cellSizeInputs[1].value : 10
+    const arr = new Array(row * column).fill('')
+    grids[1].style.width = `${column * mapCellSize}px`
+    grids[1].style.height = `${row * mapCellSize}px`
+    grids[1].innerHTML = arr.map((_ele,i)=>{
+      return `
+        <div 
+          class="map_cell"
+          style="
+            width:${mapCellSize}px;
+            height:${mapCellSize}px;
+            font-size:${mapCellSize}px;
+            line-height:${mapCellSize}px;
+          "
+          data-cell=${i}
+        >
+        </div>
+        `
+    }).join('') //! this can be refactored to create grid for grid 1
+
+
+    const mapCells = document.querySelectorAll('.map_cell')
+    mapCells.forEach(mapCell=>{
+      mapCell.addEventListener('click',(e)=>drawMap(e))
+      mapCell.addEventListener('mousemove',(e)=>continuousDrawMap(e))
+    })
+    codes = [...arr]
+    updateCodesDisplay(codesBox,codes)
+  }
+
+  const createGrid = document.querySelector('.create_grid')
+  createGrid.addEventListener('click',createMapGrid)
+
+
+  const inputAssignWrapper = document.querySelector('.input_assign_wrapper')
+  const add = document.querySelector('.add')
+  add.addEventListener('click',()=>{
+    const input = document.createElement('div')
+    input.innerHTML = '<input class="key"><textarea class="assign"></textarea>'
+    input.classList.add('input_assign')
+    inputAssignWrapper.appendChild(input)
+
+
+    //* assign button
+    const assign = document.createElement('button')
+    assign.innerHTML = '>'
+    input.appendChild(assign)
+    assign.addEventListener('click',()=>{
+      console.log('test')
+    })
+    
+
+    //* remove button
+    const remove = document.createElement('button')
+    remove.innerHTML = '-'
+    input.appendChild(remove)
+    remove.addEventListener('click',()=>{
+      inputAssignWrapper.removeChild(input)
+    })
+
+  })
+
+  // const remove = document.querySelector('.remove')
+  // remove.addEventListener('click',()=>{
+  //   const input = document.createElement('div')
+  //   input.innerHTML = '<input class="key"><textarea class="assign"></textarea>'
+  //   input.classList.add('input_assign')
+  //   inputAssignWrapper.appendChild(input)
+  // })
+
 
 }
 

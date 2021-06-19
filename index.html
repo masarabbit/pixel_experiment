@@ -5,7 +5,7 @@
   <link rel="stylesheet" type="text/css" href="./styles/main.css" />
   <script src ="./scripts/app.js" charset="utf-8"></script>
 
-  <title>pixelExperiment</title>
+  <title>pixel_experiment</title>
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
@@ -27,12 +27,14 @@
       <label for="color" class="color_label"></label>
       <input id="color" type="color">
       
+      <input class="row input" placeholder="row">
+      <input class="column input" placeholder="column">
       <input class="cell_size input" placeholder="cell size">
-      <input class="max_width input" placeholder="max width">
 
-      <input id="upload" placeholder="upload" type="file" single/>
+      <input id="upload" type="file" single/>
       <label for="upload">select img file</label>
-      <button class="draw">pixelise</button>
+      <div class="file_name"></div>
+      <button class="draw display_none">pixelise</button>
       <button class="download">download</button>
     </div>
 
@@ -42,7 +44,46 @@
       <button class="copy">copy</button>
     </div>
 
+    <div class="mini_wrap">
+      <input id="upload_two" type="file" single/>
+      <label for="upload_two">select img files</label>
+      <button class="combine">combine</button>
+    </div>
+
+    <div class="img_wrap">
+      <!-- <canvas class="canvas_three"></canvas> -->
+      <div class="grid"></div>
+    </div> 
+
+
+    <div class="mini_wrap">
+      <input class="input row" placeholder="row">
+      <input class="column input" placeholder="column">
+      <input class="cell_size input" placeholder="cell size">
+      <input class="letter input" value="a">
+      <button class="create_grid">create grid</button>
+    </div>
+
+    <textarea class="codes"></textarea>
+
+    <div class="mini_wrap">
+      <button class="copy">copy</button>
+    </div>
+
+    
+    <div class="input_assign_wrapper">
+      <div class="input_assign">
+        <input class="key"><textarea class="assign"></textarea>
+        <button class="assign" data-index="1" >></button>
+        <button class="add">+</button>
+      </div>
+    </div>
+  
+
   </div>
+
+
+
 </body>
 
 </html>
