@@ -1,13 +1,11 @@
 function init() {
   
-  // cell_1624118130397.png
-  // cell_1624118654510.png
   //! create sprite creator
 
   let canDraw = false
   let cellSize = 10
-  let row = 10
-  let column = 10
+  let row = 20
+  let column = 20
   let uploadedFiles
   let calcWidth
   let calcHeight
@@ -49,8 +47,7 @@ function init() {
   }
 
   const updateCodesDisplay = (box,arr) =>{
-    // box.value = `[${arr.map(ele=>ele).join(',')}]`
-    box.value = `${arr.map(ele=>ele).join(',')}`
+    box.value = `[${arr.map(ele=>ele).join(',')}]`
   }
 
 
@@ -71,19 +68,40 @@ function init() {
 
   const paintCanvas = () =>{
     const arr = new Array(row * column).fill('')
+    // arr.forEach((_ele,i)=>{
+    //   const x = i % column * cellSize
+    //   const y = Math.floor(i / column) * cellSize
+    //   ctx.fillStyle = dots[i]
+    //   ctx.fillRect(x, y, cellSize, cellSize)
+    // })
     
     if (calcWidth && calcHeight) {
       canvasTwo.setAttribute('width', (calcWidth / cellSize))
       canvasTwo.setAttribute('height', (calcHeight - (calcHeight % cellSize)) / cellSize)
+      //* check what these would return...
+      console.log(
+        'widthX',(calcWidth / cellSize),
+        'heightX',(calcHeight - (calcHeight % cellSize)) / cellSize
+      )
+      // console.log(row,column)
     } else {
       canvasTwo.setAttribute('width', column)
       canvasTwo.setAttribute('height', row)
+      console.log(
+        'width',column,
+        'height',row,
+        dots
+      )
     }
+    
     
     arr.forEach((_ele,i)=>{
       const x = i % column
       const y = Math.floor(i / column)
-      ctxTwo.fillStyle = dots[i] === '' ? 'transparent' : dots[i]
+      // console.log(
+      //   'check',x,y
+      // )
+      ctxTwo.fillStyle = dots[i]
       ctxTwo.fillRect(x, y, 1, 1)
     })
   }
@@ -105,24 +123,14 @@ function init() {
       mapCell.addEventListener('click',(e)=>drawMap(e))
       mapCell.addEventListener('mousemove',(e)=>continuousDrawMap(e))
     })
+    // codes = [...arr]
     updateCodesDisplay(codesBox,codes)
-  }
-
-  const generateMap = () =>{
-    const mapGenCells = document.querySelectorAll('.map_gen_cell')
-    mapGenCells.forEach((mapGenCell,i)=>{
-      const background = codes[i] === '' ? '' : assignedCodes[codes[i]]
-      if (background) mapGenCell.style.backgroundImage = `url(./assets/${background})`
-      // mapCell.addEventListener('click',(e)=>drawMap(e))
-      // mapCell.addEventListener('mousemove',(e)=>continuousDrawMap(e))
-    })
-    // updateCodesDisplay(codesBox,codes)  //! make the map editable with codes ?
   }
 
   const drawFunctions = [
     addDraw,
     addCodeDraw,
-    generateMap
+    ()=>null
   ]
 
   const dataBase = [
@@ -138,6 +146,9 @@ function init() {
     const imageTarget = new Image()
     let iHeight
     let iWidth
+
+    cellSize = cellSizeInputs[0].value ? cellSizeInputs[0].value : 10
+    column = columnInputs[0].value ? columnInputs[0].value : 20
 
     imageTarget.onload = () => {
       const maxWidth = column * cellSize 
@@ -204,7 +215,6 @@ function init() {
   grids.forEach(grid=>{
     grid.addEventListener('mousedown',()=>canDraw = true)
     grid.addEventListener('mouseup',()=>canDraw = false)
-    grid.addEventListener('mouseleave',()=>canDraw = false)
   })
   colorInput.addEventListener('change',()=>{
     colorLabel.style.backgroundColor = colorInput.value
@@ -257,7 +267,7 @@ function init() {
     }).join('')
     drawFunctions[index]()
     dataBase[index].length = 0
-    arr.forEach(()=>dataBase[index].push(''))
+    arr.forEach(()=>dataBase[index].push('#ffffff'))
     paintCanvas()
   }
   
@@ -311,11 +321,6 @@ function init() {
 
   })
   
-  
-  cellSizeInputs[0].addEventListener('change',()=>cellSize = cellSizeInputs[0].value)
-  rowInputs[0].addEventListener('change',()=>row = rowInputs[0].value)
-  columnInputs[0].addEventListener('change',()=>column = columnInputs[0].value)
-
 
   rowInputs[1].addEventListener('change',()=>rowInputs[2].value = rowInputs[1].value)
   columnInputs[1].addEventListener('change',()=>columnInputs[2].value = columnInputs[1].value)

@@ -29,13 +29,14 @@
       
       <input class="row input" placeholder="row">
       <input class="column input" placeholder="column">
-      <input class="cell_size input" placeholder="cell size">
+      <input class="cell_size input" placeholder="cell size" value="10">
 
       <input id="upload" type="file" single/>
       <label for="upload">select img file</label>
       <div class="file_name"></div>
       <button class="draw display_none">pixelise</button>
       <button class="download">download</button>
+      <button class="create_grid" data-index="0" data-grid_class="cell">create grid</button>
     </div>
 
     <textarea class="dots"></textarea>
@@ -61,22 +62,29 @@
       <input class="column input" placeholder="column">
       <input class="cell_size input" placeholder="cell size">
       <input class="letter input" value="a">
-      <button class="create_grid">create grid</button>
+      <button class="create_grid" data-index="1" data-grid_class="map_cell">create grid</button>
     </div>
 
     <textarea class="codes"></textarea>
 
     <div class="mini_wrap">
       <button class="copy">copy</button>
+      <button class="add">+</button>
     </div>
 
     
-    <div class="input_assign_wrapper">
-      <div class="input_assign">
-        <input class="key"><textarea class="assign"></textarea>
-        <button class="assign" data-index="1" >></button>
-        <button class="add">+</button>
-      </div>
+    <div class="input_assign_wrapper"></div>
+
+    
+    <!--generate -->
+    <div class="img_wrap">
+      <div class="grid"></div>
+    </div> 
+    <div class="mini_wrap">
+      <input class="input row" placeholder="row">
+      <input class="column input" placeholder="column">
+      <input class="cell_size input" value="10">
+      <button class="create_grid" data-index="2" data-grid_class="map_gen_cell">create grid</button>
     </div>
   
 

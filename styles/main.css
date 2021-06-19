@@ -162,19 +162,26 @@ img {
 
 
 .cell,
-.map_cell {
+.map_cell,
+.map_gen_cell {
   transition: 0.2s;
 }
 
+.map_gen_cell,
 .map_cell {
   height: 5px;
   width: 5px;
-  border: rgb(131, 131, 131) solid;
+  border: rgb(219, 219, 219) solid;
   border-width: 0 0 1px 1px;
   display: flex;
   justify-content: center;
   align-items: center;
   color: black;
+}
+
+.map_gen_cell {
+  background-repeat: no-repeat, repeat;
+  background-size: cover; 
 }
 
 .enlarge {
@@ -185,6 +192,7 @@ img {
   max-width: 800px;
   width: 100%;
   padding: 0 20px;
+  margin: 0 0 40px 0;
 }
 
 .input_assign {
@@ -204,6 +212,6 @@ img {
   width: 40px;
 }
 
-.remove {
+/* .remove {
   margin-right: -42px;
-}
+} */
