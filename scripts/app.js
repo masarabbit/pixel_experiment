@@ -6,6 +6,8 @@ function init() {
   
   // cell_1624118130397.png
   // cell_1624118654510.png
+
+  //! some way of enlarging created image?
   //! create sprite creator
 
   let canDraw = false
@@ -148,6 +150,8 @@ function init() {
   const paintCanvas = () =>{
     const arr = new Array(row * column).fill('')
     
+
+    //! could something be added here to scale canvasTwo?
     if (calcWidth && calcHeight) {
       canvasTwo.setAttribute('width', (calcWidth / cellSize))
       canvasTwo.setAttribute('height', (calcHeight - (calcHeight % cellSize)) / cellSize)
@@ -228,7 +232,7 @@ function init() {
       for (let i = 0; i < row * column; i++) {
         const y = Math.floor(i / column) * cellSize
         const x = i % column * cellSize
-        const c = ctx.getImageData(x, y , 1, 1).data
+        const c = ctx.getImageData(x, y, 1, 1).data
         // var hex = '#' + ('000000' + rgbToHex(c[0], c[1], c[2])).slice(-6)
         dots.push(hex(rgbToHex(c[0], c[1], c[2])))
       }
