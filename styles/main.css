@@ -50,12 +50,16 @@ input,
 button {
   border: 1px solid white;
   background-color: transparent;
-  margin: 5px;
   padding: 9.5px 15px;
   text-align: center;
   color: white;
   cursor: pointer;
   font-size: 15px;
+}
+
+label,
+button{
+  margin: 5px;
 }
 
 ::placeholder {
@@ -95,6 +99,10 @@ button:hover {
   /* border: red 1px solid; */
 }
 
+.mini_wrap.no_margin {
+  margin: -20px 0 20px 0;
+}
+
 .grid {
   background-color: #ffffff;
   margin: 10px;
@@ -109,8 +117,9 @@ button:hover {
 
 textarea {
   font-family: sans-serif;
-  width: 640px;
-  margin: 30px 0 0 0;
+  width: 100%;
+  max-width: 700px;
+  margin: 10px 0 0 0;
   background-color: white;
   font-size: 12px;
   color: #2f0244;
@@ -141,6 +150,7 @@ img {
 .letter {
   width: 38px;
   padding: 9.5px 5px;
+  margin: 5px;
 }
 
 
@@ -155,12 +165,18 @@ img {
   width: 40px;
   border: 0;
   background-color: black;
+  transition: 0.3s;
 }
 
 #color {
   display: none;
 }
 
+
+.cell {
+  border: rgb(219, 219, 219) solid;
+  border-width: 0 0 1px 1px;
+}
 
 .cell,
 .map_cell,
@@ -213,6 +229,51 @@ img {
   width: 40px;
 }
 
-/* .remove {
-  margin-right: -42px;
-} */
+
+.grid.grid_hide div{
+  border: 0 !important;
+}
+
+.palette {
+  position: relative;
+  margin: 20px auto 0;
+  width: 100%;
+  max-width: 700px;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.palette_cell {
+  position: relative;
+  /* border: 1px solid white; */
+  height: 20px;
+  width: 20px;
+  margin: 0 5px 0 0;
+}
+
+.palette_cell:hover {
+  /* animation: bop forwards 0.5s; */
+  transform: scale(1.2);
+  transition: 0.2s;
+  cursor: pointer;
+}
+
+@keyframes bop {
+  0% {bottom: 0;}
+  100% {bottom: 5px;}
+}
+
+.input_wrap {
+  display: flex;
+  flex-direction: column;
+  margin: -15px 5px 0 5px;
+}
+
+.input_wrap label {
+  border: 0;
+  font-size: 13px;
+  height: 15px;
+  padding: 0;
+  margin: 0;
+  text-align: left;
+}

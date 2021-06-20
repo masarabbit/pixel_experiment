@@ -28,18 +28,33 @@
       <label for="color" class="color_label"></label>
       <input id="color" type="color">
       
-      <input class="row input" placeholder="row" />
-      <input class="column input" placeholder="column" />
-      <input class="cell_size input" placeholder="cell size" value="10" />
+      <div class="input_wrap">
+        <label>column</label>
+        <input class="column input" placeholder="column" value="10" />
+      </div>
+      <div class="input_wrap">
+        <label>row</label>
+        <input class="row input" placeholder="row" value="10" />
+      </div>
+      <div class="input_wrap">
+        <label>cell size</label>
+        <input class="cell_size input" placeholder="cell size" value="10" />
+      </div>
 
       <input id="upload" type="file" single/>
       <label for="upload">select img file</label>
       <div class="file_name"></div>
       <button class="draw display_none">pixelise</button>
       <button class="download">download</button>
-      <button class="create_grid" data-index="0" data-grid_class="cell">create grid</button>
+      <button class="create_grid" data-index="0" data-grid_class="cell">create grid</button> 
     </div>
 
+    <div class="mini_wrap no_margin">
+      <button class="generate">generate</button>
+      <button class="grid_display">hide grid</button>
+    </div>
+
+    <div class="palette"></div>
     <textarea class="dots"></textarea>
 
     <div class="mini_wrap">
@@ -56,13 +71,24 @@
     <div class="grid"></div>
 
     <div class="mini_wrap">
-      <input class="input row" placeholder="row" />
-      <input class="column input" placeholder="column" />
-      <input class="cell_size input" placeholder="cell size" />
+      <div class="input_wrap">
+        <label>column</label>
+        <input class="column input" placeholder="column" value="10" />
+      </div>
+      <div class="input_wrap">
+        <label>row</label>
+        <input class="row input" placeholder="row" value="10" />
+      </div>
+      <div class="input_wrap">
+        <label>cell size</label>
+        <input class="cell_size input" placeholder="cell size" value="10" />
+      </div>
       <input class="letter input" value="a" />
       <button class="create_grid" data-index="1" data-grid_class="map_cell">create grid</button>
+      <button class="grid_display">hide grid</button>
     </div>
-
+    
+    <div class="palette"></div>
     <textarea class="codes"></textarea>
 
     <div class="mini_wrap">
@@ -79,10 +105,20 @@
     <div class="grid"></div>
 
     <div class="mini_wrap">
-      <input class="input row" placeholder="row" />
-      <input class="column input" placeholder="column" />
-      <input class="cell_size input" value="10" />
+      <div class="input_wrap">
+        <label>column</label>
+        <input class="column input" placeholder="column" value="10" />
+      </div>
+      <div class="input_wrap">
+        <label>row</label>
+        <input class="row input" placeholder="row" value="10" />
+      </div>
+      <div class="input_wrap">
+        <label>cell size</label>
+        <input class="cell_size input" placeholder="cell size" value="10" />
+      </div>
       <button class="create_grid" data-index="2" data-grid_class="map_gen_cell">create grid</button>
+      <button class="grid_display">hide grid</button>
     </div>
   
 

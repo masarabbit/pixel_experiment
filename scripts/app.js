@@ -1,9 +1,12 @@
 function init() {
   
+  // convert rgb(xxx,xxx,xxx) to hex
+  // const c = cell.style.backgroundColor.replace('rgb(','').replace(')','').split(', ')
+  // console.log(hex(rgbToHex(c[0], c[1], c[2])))
+  
   // cell_1624118130397.png
   // cell_1624118654510.png
   //! create sprite creator
-  //! edit grid with the codes.
 
   let canDraw = false
   let cellSize = 10
@@ -18,6 +21,7 @@ function init() {
   const canvasTwo = document.querySelector('.canvas_two')
   const ctxTwo = canvasTwo.getContext('2d')
   const grids = document.querySelectorAll('.grid')
+  const palettes = document.querySelectorAll('.palette')
   
   // button
   const draw = document.querySelector('.draw')
@@ -25,7 +29,8 @@ function init() {
   const copyButtons = document.querySelectorAll('.copy') 
   const createGridButtons = document.querySelectorAll('.create_grid')
   const add = document.querySelector('.add')
-  const generate = document.querySelector('.generate')
+  const generate = document.querySelectorAll('.generate')
+  const gridToggleButtons = document.querySelectorAll('.grid_display')
 
   // input
   const cellSizeInputs = document.querySelectorAll('.cell_size')
@@ -42,10 +47,23 @@ function init() {
   let dots = []
   let codes = []
 
-  function rgbToHex(r, g, b) {
+  const rgbToHex = (r, g, b) => {
     if (r > 255 || g > 255 || b > 255)
       throw 'Invalid color component'
     return ((r << 16) | (g << 8) | b).toString(16)
+  }
+
+  const hex = rgb =>{
+    return '#' + ('000000' + rgb).slice(-6)
+  }
+
+  const sortedByFrequencyDuplicatesAndBlankRemoved = array =>{  
+    const countOccurrences = (arr, val) => arr.reduce((a, v) => (v === val ? a + 1 : a), 0)
+    const blankRemoved = array.filter(dot=> dot !== '' && dot)
+    const orderedByFrequency = blankRemoved.map(ele=>{  
+      return `${ele}_${countOccurrences(blankRemoved,ele)}`
+    }).sort((a, b) => b.split('_')[1] - a.split('_')[1])  
+    return [ ...new Set(orderedByFrequency.map(ele=>ele.split('_')[0]))]
   }
 
   const updateGrid = () =>{
@@ -57,9 +75,40 @@ function init() {
     }).join('')
   }
 
+  const populatePalette = (index,arr) =>{
+    const filteredData = sortedByFrequencyDuplicatesAndBlankRemoved(arr)
+    palettes[index].innerHTML = filteredData.map(d=>{
+      if (filteredData[0][0] !== '#' && !assignedCodes[d]) return
+      const background = d[0] === '#' ? `background-color:${d}` : `background-image:url(./assets/${assignedCodes[d]})`
+      return `
+        <div 
+          class="palette_cell"
+          style="${background};"
+        >
+        </div>
+      `
+    }).join('')
+
+    const paletteCells = document.querySelectorAll('.palette_cell')
+    paletteCells.forEach((cell,i)=>{
+      cell.addEventListener('click',()=>{
+        if (filteredData[0][0] === '#'){
+          colorInput.value = filteredData[i]
+          colorLabel.style.backgroundColor = filteredData[i]
+        } else {
+          letterInput.value = Object.keys(assignedCodes).find(k => {
+            return assignedCodes[k] === assignedCodes[filteredData[i]]
+          })
+        }
+      })
+    })
+  }
+
   const updateCodesDisplay = (box,arr) =>{
     // box.value = `[${arr.map(ele=>ele).join(',')}]`
     box.value = `${arr.map(ele=>ele).join(',')}`
+    const index = box === dotsBox? 0 : 1 
+    populatePalette(index,arr)
   }
 
   
@@ -127,7 +176,6 @@ function init() {
   }
 
   const addCodeDraw = clear =>{
-    console.log('clear',clear)
     const mapCells = document.querySelectorAll('.map_cell')
     mapCells.forEach(mapCell=>{
       mapCell.addEventListener('click',(e)=>drawMap(e))
@@ -169,6 +217,7 @@ function init() {
       canvas.setAttribute('width', calcWidth)
       canvas.setAttribute('height', calcHeight - (calcHeight % cellSize))
       row = rowInputs[0].value ? rowInputs[0].value : (calcHeight - (calcHeight % cellSize)) / cellSize
+      rowInputs[0].value = row
 
       grids[0].style.height = `${calcHeight - (calcHeight % cellSize)}px`
       grids[0].style.width = `${calcWidth}px` 
@@ -180,8 +229,8 @@ function init() {
         const y = Math.floor(i / column) * cellSize
         const x = i % column * cellSize
         const c = ctx.getImageData(x, y , 1, 1).data
-        var hex = '#' + ('000000' + rgbToHex(c[0], c[1], c[2])).slice(-6)
-        dots.push(hex)
+        // var hex = '#' + ('000000' + rgbToHex(c[0], c[1], c[2])).slice(-6)
+        dots.push(hex(rgbToHex(c[0], c[1], c[2])))
       }
       // populate grid and make it reactive
       updateGrid()
@@ -192,8 +241,26 @@ function init() {
     imageTarget.src = blobURL
   }
 
-  const generateFromCode = () =>{
+  const generateFromColorCode = () =>{
+    createGridCells(
+      rowInputs[0].value,
+      columnInputs[0].value,
+      cellSizeInputs[0].value,
+      0,
+      'cell',
+      false
+    )
+    dots = dotsBox.value.split(',')
+    const cells = document.querySelectorAll('.cell')
+    dotsBox.value.split(',').forEach((ele,i)=>{
+      if(!cells[i]) return
+      cells[i].style.backgroundColor = ele
+    })
+    addDraw()
+    populatePalette(0,dots)
+  }
 
+  const generateFromCode = () =>{
     createGridCells(
       rowInputs[1].value,
       columnInputs[1].value,
@@ -202,7 +269,6 @@ function init() {
       'map_cell',
       false
     )
-
     createGridCells(
       rowInputs[2].value,
       columnInputs[2].value,
@@ -210,14 +276,15 @@ function init() {
       2,
       'map_gen_cell',
       false
-    )
-    
+    ) 
     codes = codesBox.value.split(',')
     const mapCells = document.querySelectorAll('.map_cell')
     codesBox.value.split(',').forEach((ele,i)=>{
+      if(!mapCells[i]) return
       mapCells[i].innerHTML = ele
     })
     generateMap(false)
+    populatePalette(1,codes)
   }
 
 
@@ -267,13 +334,22 @@ function init() {
   
   // eventlistener
   add.addEventListener('click',()=>{
+
     const input = document.createElement('input')
     input.classList.add('key')
-
     const assign = document.createElement('textarea')
     assign.classList.add('assign') 
+    
+    //* option to add thumbnail... doesn't work because the image would not be defined yet.
+    // const thumb = document.createElement('div')
+    // thumb.classList.add('image_thumb')
+    // thumb.style.backgroundImage = `url(./assets/${assign.value})`
+    // thumb.addEventListener('click',()=>{
+    //   letterInput.value = input.value
+    // })
 
     const inputAssign = document.createElement('div')
+    // inputAssign.appendChild(thumb)
     inputAssign.appendChild(input)
     inputAssign.appendChild(assign)
     inputAssign.classList.add('input_assign')
@@ -298,6 +374,11 @@ function init() {
       console.log(assignedCodes)
     })
   })
+
+  const toggleGrid = () =>{
+    grids.forEach(grid=>grid.classList.toggle('grid_hide'))
+    gridToggleButtons.forEach(button=>button.innerHTML = button.innerHTML === 'hide grid'?'show grid':'hide grid')
+  }
   
   
   cellSizeInputs[0].addEventListener('change',()=>cellSize = cellSizeInputs[0].value)
@@ -309,9 +390,11 @@ function init() {
 
   download.addEventListener('click',downloadImage)
   draw.addEventListener('click',output)
-  generate.addEventListener('click',generateFromCode)
+  generate[0].addEventListener('click',generateFromColorCode)
+  generate[1].addEventListener('click',generateFromCode)
   copyButtons[0].addEventListener('click',()=>copyText(dotsBox))
   copyButtons[1].addEventListener('click',()=>copyText(codesBox))
+  gridToggleButtons.forEach(button=>button.addEventListener('click',toggleGrid))
 
   grids.forEach(grid=>{
     grid.addEventListener('mousedown',()=>canDraw = true)
