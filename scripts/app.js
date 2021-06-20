@@ -3,7 +3,6 @@ function init() {
   // cell_1624118130397.png
   // cell_1624118654510.png
   //! create sprite creator
-
   //! edit grid with the codes.
 
   let canDraw = false
@@ -41,7 +40,7 @@ function init() {
   const assignedCodes = {}
 
   let dots = []
-  let codes = [1,2]
+  let codes = []
 
   function rgbToHex(r, g, b) {
     if (r > 255 || g > 255 || b > 255)
@@ -72,27 +71,21 @@ function init() {
     updateCodesDisplay(dotsBox,dots)
   }
 
-  // const continuousColorCell = e =>{
-  //   if (!canDraw) return
-  //   colorCell(e)
-  //   e.target.classList.add('enlarge')
-  //   setTimeout(()=>e.target.classList.remove('enlarge'),200)
-  // }
-
   const drawMap = e =>{
     const index = e.target.dataset.cell
-    console.log('arr',codes)
     codes[index] = letterInput.value
     e.target.innerHTML = letterInput.value
     updateCodesDisplay(codesBox,codes)
   }
 
-  // const continuousDrawMap = e =>{
-  //   if (!canDraw) return
-  //   drawMap(e)
-  //   e.target.classList.add('enlarge')
-  //   setTimeout(()=>e.target.classList.remove('enlarge'),200)
-  // }
+  const drawWithImage = e =>{
+    const index = e.target.dataset.cell
+    codes[index] = letterInput.value
+    const background = codes[index] === '' ? '' : assignedCodes[codes[index]]
+    if (background )e.target.style.backgroundImage = `url(./assets/${background})`
+    updateCodesDisplay(codesBox,codes)
+    // drawMap(e) //* draws letters
+  }
 
   const continuousDraw = (e,action) =>{
     if (!canDraw) return
@@ -143,15 +136,15 @@ function init() {
     if (clear) updateCodesDisplay(codesBox,codes)
   }
 
-  const generateMap = () =>{
+  const generateMap = clear =>{
     const mapGenCells = document.querySelectorAll('.map_gen_cell')
     mapGenCells.forEach((mapGenCell,i)=>{
       const background = codes[i] === '' ? '' : assignedCodes[codes[i]]
       if (background) mapGenCell.style.backgroundImage = `url(./assets/${background})`
-      // mapCell.addEventListener('click',(e)=>drawMap(e))
-      // mapCell.addEventListener('mousemove',(e)=>continuousDrawMap(e))
+      mapGenCell.addEventListener('click',(e)=>drawWithImage(e))
+      mapGenCell.addEventListener('mousemove',(e)=>continuousDraw(e,drawWithImage))
     })
-    // updateCodesDisplay(codesBox,codes)  //! make the map editable with codes ?
+    if (clear) updateCodesDisplay(codesBox,codes)  
   }
 
   const drawFunctions = [
@@ -224,7 +217,7 @@ function init() {
     codesBox.value.split(',').forEach((ele,i)=>{
       mapCells[i].innerHTML = ele
     })
-    generateMap()
+    generateMap(false)
   }
 
 
