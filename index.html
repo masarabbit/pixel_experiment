@@ -17,9 +17,8 @@
     <h1>pixel_experiment</h1>
     
     <div class="img_wrap">
-      <!-- <canvas class="canvas_one display_none"></canvas> -->
-      <canvas class="canvas_one"></canvas>
-      <canvas class="canvas_two"></canvas>
+      <canvas class="canvas display_none"></canvas>
+      <canvas class="canvas"></canvas>
     </div> 
     
     <!--generate grid1 -->
@@ -51,6 +50,7 @@
     </div>
 
     <div class="mini_wrap no_margin">
+      <button class="flip">flip</button>
       <button class="generate">generate</button>
       <button class="grid_display">hide grid</button>
       <button class="download">download small</button>
@@ -62,11 +62,15 @@
     <div class="mini_wrap">
       <button class="copy">copy</button>
     </div>
+    
+    <div class="img_wrap">
+      <canvas class="canvas"></canvas>
+    </div>
 
     <div class="mini_wrap">
       <input id="upload_two" type="file" multiple />
       <label for="upload_two">select img files</label>
-      <button class="combine">combine</button>
+      <button class="download">download</button>
     </div>
 
     <!-- grid 2 -->

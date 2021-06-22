@@ -18,16 +18,16 @@ function init() {
   let calcWidth
   let calcHeight
   
-  const canvas = document.querySelector('.canvas_one')
-  const ctx = canvas.getContext('2d')
-  const canvasTwo = document.querySelector('.canvas_two')
-  const ctxTwo = canvasTwo.getContext('2d')
+  const canvas = document.querySelectorAll('.canvas')
+  const ctx = canvas[0].getContext('2d')
+  const ctxTwo = canvas[1].getContext('2d')
+  const ctxThree = canvas[2].getContext('2d')
   const grids = document.querySelectorAll('.grid')
   const palettes = document.querySelectorAll('.palette')
   
   // button
+  const flip = document.querySelector('.flip')
   const draw = document.querySelector('.draw')
-  const combine = document.querySelector('.combine')
   const downloadButtons = document.querySelectorAll('.download')
   const copyButtons = document.querySelectorAll('.copy') 
   const createGridButtons = document.querySelectorAll('.create_grid')
@@ -153,13 +153,12 @@ function init() {
   const paintCanvasTwo = () =>{
     const arr = new Array(row * column).fill('')
     
-    //! could something be added here to scale canvasTwo?
     if (calcWidth && calcHeight) {
-      canvasTwo.setAttribute('width', (calcWidth / cellSize))
-      canvasTwo.setAttribute('height', (calcHeight - (calcHeight % cellSize)) / cellSize)
+      canvas[1].setAttribute('width', (calcWidth / cellSize))
+      canvas[1].setAttribute('height', (calcHeight - (calcHeight % cellSize)) / cellSize)
     } else {
-      canvasTwo.setAttribute('width', column)
-      canvasTwo.setAttribute('height', row)
+      canvas[1].setAttribute('width', column)
+      canvas[1].setAttribute('height', row)
     }
     
     arr.forEach((_ele,i)=>{
@@ -173,8 +172,8 @@ function init() {
   const paintCanvas = () =>{
     const arr = new Array(row * column).fill('')
     
-    canvas.setAttribute('width', column * cellSize)
-    canvas.setAttribute('height', row * cellSize)
+    canvas[0].setAttribute('width', column * cellSize)
+    canvas[0].setAttribute('height', row * cellSize)
   
     arr.forEach((_ele,i)=>{
       const x = i % column * cellSize
@@ -234,8 +233,8 @@ function init() {
       iHeight = imageTarget.naturalHeight 
       calcHeight = maxWidth * (iHeight / iWidth)
       calcWidth = calcHeight * (iWidth / iHeight)
-      canvas.setAttribute('width', calcWidth)
-      canvas.setAttribute('height', calcHeight - (calcHeight % cellSize))
+      canvas[0].setAttribute('width', calcWidth)
+      canvas[0].setAttribute('height', calcHeight - (calcHeight % cellSize))
       row = rowInputs[0].value ? rowInputs[0].value : (calcHeight - (calcHeight % cellSize)) / cellSize
       rowInputs[0].value = row
 
@@ -308,13 +307,9 @@ function init() {
   }
 
 
-  const downloadImage = canvas =>{
-    canvas === canvasTwo
-    ? paintCanvasTwo()
-    : paintCanvas()
-
+  const downloadImage = (canvas,name) =>{
     const link = document.createElement('a')
-    link.download = `cell_${new Date().getTime()}.png`;
+    link.download = `${name}_${new Date().getTime()}.png`;
     link.href = canvas.toDataURL()
     link.click()
   }
@@ -411,8 +406,14 @@ function init() {
   rowInputs[1].addEventListener('change',()=>rowInputs[2].value = rowInputs[1].value)
   columnInputs[1].addEventListener('change',()=>columnInputs[2].value = columnInputs[1].value)
   
-  downloadButtons[0].addEventListener('click',()=>downloadImage(canvas))
-  downloadButtons[1].addEventListener('click',()=>downloadImage(canvasTwo))
+  downloadButtons[0].addEventListener('click',()=>{
+    paintCanvas()
+    downloadImage(canvas[0],'cell')
+  })
+  downloadButtons[1].addEventListener('click',()=>{
+    paintCanvasTwo()
+    downloadImage(canvas[1],'small_cell')
+  })
   draw.addEventListener('click',output)
   generate[0].addEventListener('click',generateFromColorCode)
   generate[1].addEventListener('click',generateFromCode)
@@ -442,16 +443,21 @@ function init() {
     firstImage.onload = () => {
       const w = firstImage.naturalWidth
       const h = firstImage.naturalHeight
-      canvas.setAttribute('width', w * uploadTwo.files.length)
-      canvas.setAttribute('height', h)
-      console.log(uploadTwo.files)
+      canvas[0].setAttribute('width', w * uploadTwo.files.length)
+      canvas[0].setAttribute('height', h)
+
+      const w2 = 50
+      const h2 = w2 * (w / h)
+      canvas[2].setAttribute('width', w2 * uploadTwo.files.length)
+      canvas[2].setAttribute('height', h2)
       
       Array.from(uploadTwo.files).forEach((upload,i)=>{
-        const blobURL = window.URL.createObjectURL(uploadTwo.files[i])
+        const blobURL = window.URL.createObjectURL(upload)
         const eachImage = new Image()   
         eachImage.onload = () => {
           // console.log(w,h,eachImage)  
           ctx.drawImage(eachImage,i*w,0,w,h)
+          ctxThree.drawImage(eachImage,i*w2,0,w2,h2)
         }
         eachImage.src = blobURL
       })
@@ -460,8 +466,36 @@ function init() {
     // console.log('u',uploadedFiles)
   })
 
-  combine.addEventListener('click',()=>{
-    console.log('click')
+  downloadButtons[2].addEventListener('click',()=>{
+    downloadImage(canvas[0],'sprite')
+  })
+
+  flip.addEventListener('click',()=>{
+    const arr = new Array(+columnInputs[0].value).fill('')
+    const mappedArr = arr.map(()=>[])
+
+    dotsBox.value.split(',').forEach((d,i)=>{
+      mappedArr[Math.floor(i / columnInputs[0].value)].push(d)
+    })
+  
+    const flippedArr = mappedArr.map(a=>a.reverse())
+    dotsBox.value = flippedArr.join(',')
+    paintCanvas()
+    generateFromColorCode()
+
+
+    // console.log('test')
+    // const copyImg = new Image()
+    // copyImg.onload = () =>{
+    //   const w = copyImg.naturalWidth
+    //   const h = copyImg.naturalHeight
+    //   canvas[2].setAttribute('width', w)
+    //   canvas[2].setAttribute('height', h)
+
+    //   ctxThree.scale(-1,1)
+    //   ctxThree.drawImage(copyImg,0,0,w,h)
+    // }
+    // copyImg.src=canvas[0].toDataURL()
   })
 
   // enable grid creation with buttons
