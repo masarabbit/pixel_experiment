@@ -1,0 +1,354 @@
+<!doctype html>
+<html>
+
+<head>
+
+
+  <!-- <script src="http://www.masahito.co.uk/js/jquery1_8_3.js"></script> -->
+
+
+  <link rel="stylesheet" type="text/css" href="normalize.css" />
+  <!-- <link rel="stylesheet" type="text/css" href="https://www.ma5a.com/css/a.css" /> -->
+
+  <title>sprite maker</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style type="text/css">
+
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #303030;
+      font-family: sans-serif;
+      color: white;
+    }
+
+    canvas {
+      margin: 0 auto;
+      background-color: #ffffff;
+    }
+
+    input,
+    select,
+    button, 
+    label {
+      border-style: none;
+      border-radius: 20px;
+      margin: 5px;
+      padding: 9.5px 14px;
+      font-size: 13px;
+    }
+
+    button {
+      background-color: pink;
+      border: none;
+      transition: 0.2s;
+    }
+
+    button:hover {
+      background-color: white;
+      /* margin: 2px; */
+      /* padding: 11px; */
+    }
+
+    .pagewrap {
+      margin: 0 auto;
+      width: 100%;
+      max-width: 800px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      max-width: 1100px;
+    }
+
+    .mini_wrap {
+      margin: 20px auto 60px;
+      /* width: 1000px; */
+      /* height: 40px; */
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      /* border: red 1px solid; */
+    }
+
+    p {
+      padding: 0 30px 30px 30px;
+      width: 100%;
+    }
+
+    h1 {
+      padding: 0 30px;
+      width: 100%;
+      font-size: 30px;
+      font-weight: bold;
+    }
+
+    .new_frame {
+      /* width:500px; height:500px; */
+      margin: 0;
+      padding: 0;
+      /* display: inline-block; */
+    }
+
+    .new_frame img {
+      height: 100%;
+      width: 100%;
+    }
+
+    .spriteOriginal,
+    .testWrap {
+      width: 200px;
+      height: 200px;
+      margin: 0 auto;
+      background-color: #ccc;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-start;
+      align-content: flex-start;
+    }
+
+    .testWrap {
+      overflow: hidden;
+
+    }
+
+    [type="file"] {
+      border: 0;
+      clip: rect(0, 0, 0, 0);
+      height: 1px;
+      overflow: hidden;
+      padding: 0;
+      position: absolute !important;
+      white-space: nowrap;
+      width: 1px;
+    }
+
+    [type="file"]+label {
+      background-color: pink;
+      border: none;
+      transition: 0.2s;
+      color: #000;
+    }
+
+    [type="file"]:focus+label,
+    [type="file"]+label:hover {
+      background-color: white;
+      /* margin: 2px; */
+      /* padding: 11px; */
+    }
+
+    [type="file"]:focus+label {
+      background-color: white;
+      /* margin: 2px; */
+      /* padding: 11px; */
+    }
+    
+  </style>
+
+</head>
+
+
+<body>
+
+  <div class="pagewrap">
+    <h1>sprite maker</h1>
+
+    <p>sprite frames</p>
+    <!-- something get's copied into here? -->
+    <div id="spriteOriginal" class="spriteOriginal"> </div>
+
+    <div class="mini_wrap">
+
+      <input id="imageHeight" type="number" placeholder="image height">
+      <input id="imageWidth" type="number" placeholder="image width">
+      <input id="uploadFile" type="file" placeholder="upload file" multiple>
+      <label for="uploadFile">select files</label>
+      <button id="loadImageButton">upload images</button>
+
+
+
+      <!-- <input id="numberOfImages" type="number" placeholder="number of images"> 
+      <select id="imageType" placeholder="image type">
+        <option value="jpg">jpg</option>
+        <option value="png">png</option>
+        <option value="svg">svg</option>
+      </select>  -->
+    </div>
+
+
+    <p>combined sprite</p>
+    <!-- gets combined here -->
+    <canvas id="combineCanvas"></canvas>
+
+    <div class="mini_wrap">
+      <!-- <button id="combineButton">create animation sprite</button> -->
+      <input type="text" id="fileName" value="file_name">
+      <button id="downloadSpriteButton">download sprite</button>
+    </div>
+
+
+
+
+    <p>animation preview</p>
+
+    <div id="testWrap" class="testWrap">
+      <div id="sprite">
+
+      </div>
+    </div>
+
+
+    <div class="mini_wrap">
+      <label for="animationSpeed">animation speed:</label>
+      <input id="animationSpeed" type="number" value="140">
+      <button id="animateButton">animate</button>
+    </div>
+
+
+  </div>
+  <!--end of page-->
+
+
+
+  <script>
+
+    const spriteOriginal = document.getElementById('spriteOriginal'),
+      loadImageButton = document.getElementById('loadImageButton'),
+      combineCanvas = document.getElementById('combineCanvas'),
+      testWrap = document.getElementById('testWrap'),
+      sprite = document.getElementById('sprite'),
+      animateButton = document.getElementById('animateButton');
+
+    // const combineButton = document.getElementById('combineButton');
+    // combineButton.onclick = createSprite; 
+
+    loadImageButton.onclick = loadImage;
+
+    function loadImage() {
+
+      const uploadFile = document.getElementById('uploadFile'),
+        numberOfImages = uploadFile.files.length,
+        imageHeight = document.getElementById('imageHeight').value;
+
+      let imageWidth = document.getElementById('imageWidth').value;
+      if (imageWidth == "") { imageWidth = imageHeight; }   //when imageWidth is blank, it takes value from imageHeight
+
+      spriteOriginal.innerHTML = ""; // clear the spriteOriginal
+      spriteOriginal.style.height = imageHeight + "px";
+      spriteOriginal.style.width = (numberOfImages * imageWidth) + "px"; // make spriteOriginal's box size big enough for the images
+
+      for (let i = 0; i < numberOfImages; i++) {
+        const newFrame = document.createElement('div'),
+          uploadedFiles = uploadFile.files[i],
+          blobURL = window.URL.createObjectURL(uploadedFiles); // create blobURL
+
+        newFrame.classList.add('new_frame'); // add class to make image fit div size
+        newFrame.style.height = imageHeight + "px"; // set div height
+        newFrame.style.width = imageWidth + "px"; // set div width
+
+        newFrame.innerHTML = '<img class = "frameImage" src =' + blobURL + '>';
+
+        spriteOriginal.appendChild(newFrame);
+      }
+
+      setInterval(createSprite, 200); // timing delayed, other wise the sprite will be blank
+
+    }
+
+
+
+
+    const context = combineCanvas.getContext("2d");
+
+    function createSprite() {
+      const numberOfImages = spriteOriginal.childElementCount,
+        createdFrame = document.querySelectorAll('.frameImage'),
+        imageHeight = document.querySelector('.new_frame').offsetHeight,
+        imageWidth = document.querySelector('.new_frame').offsetWidth; //take size from frames
+
+      combineCanvas.setAttribute('height', imageHeight + 'px'); //reset canvas size
+      combineCanvas.setAttribute('width', (numberOfImages * imageWidth) + 'px');
+      //instead of styling via css, need to set attribute to prevent distortion
+
+      for (let i = 0; i < numberOfImages; i++) {
+        context.drawImage(createdFrame[i], (i * imageWidth), 0, imageWidth, imageHeight);
+      }
+
+    }
+
+
+
+    // function reset(){
+    //   // testWrap.innerHTML = ""; // clear the spriteOriginal
+    //   testWrap.innerHTML = '<div id="sprite"></div>'; // clear the spriteOriginal
+    //   sprite = document.getElementById('sprite');
+    //   animateSprite();
+    // }
+
+
+    const animationSpeed = document.getElementById('animationSpeed');
+    animateButton.onclick = animateSprite;
+
+    let repeatAnimation
+
+    function animateSprite() {
+      const dataURL = combineCanvas.toDataURL(),
+        spriteHeight = combineCanvas.offsetHeight,
+        spriteWidth = combineCanvas.offsetWidth, //take size from combined sprite
+        frameHeight = document.querySelector('.new_frame').offsetHeight,
+        frameWidth = document.querySelector('.new_frame').offsetWidth; //take size from frames
+        
+      sprite.style.height = spriteHeight + 'px';
+      sprite.style.width = spriteWidth + 'px';  //resize div size to match sprite size
+
+      testWrap.style.height = frameHeight + 'px';
+      testWrap.style.width = frameWidth + 'px';  //resize testWrap to match frame size
+  
+      sprite.innerHTML = '<img src="' + dataURL + ' "  alt = "sprite" >'; //enter sprite into div
+      
+      clearInterval(repeatAnimation) // stopping animation before calling setInterval
+      const LIMIT = (document.querySelectorAll('.frameImage').length) - 1;
+      let i = 0;
+      const aniSpeed = animationSpeed.value;
+
+        repeatAnimation = setInterval(function () {
+        const move = '0px ' + -(i * frameWidth) + 'px';
+
+        sprite.style.margin = move;
+        if (i === LIMIT) {
+          i = 0;
+        } else {
+          i++;
+        }
+      }, aniSpeed);
+
+    }
+
+    const downloadSpriteButton = document.getElementById('downloadSpriteButton'),
+      fileName = document.getElementById('fileName');
+
+    downloadSpriteButton.onclick = downloadSprite;
+    function downloadSprite() {
+      const fileName = fileName.value === 'enter file name' ? 
+        'untitled' 
+        : 
+        fileName.value
+      let link = document.createElement("a");
+      link.href = combineCanvas.toDataURL("image/png");
+      link.download = fileName + ".png";
+      link.click();
+
+    }
+
+  </script>
+
+</body>
+
+</html>

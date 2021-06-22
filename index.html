@@ -17,7 +17,8 @@
     <h1>pixel_experiment</h1>
     
     <div class="img_wrap">
-      <canvas class="canvas_one display_none"></canvas>
+      <!-- <canvas class="canvas_one display_none"></canvas> -->
+      <canvas class="canvas_one"></canvas>
       <canvas class="canvas_two"></canvas>
     </div> 
     
@@ -52,6 +53,7 @@
     <div class="mini_wrap no_margin">
       <button class="generate">generate</button>
       <button class="grid_display">hide grid</button>
+      <button class="download">download small</button>
     </div>
 
     <div class="palette"></div>
@@ -62,7 +64,7 @@
     </div>
 
     <div class="mini_wrap">
-      <input id="upload_two" type="file" single />
+      <input id="upload_two" type="file" multiple />
       <label for="upload_two">select img files</label>
       <button class="combine">combine</button>
     </div>

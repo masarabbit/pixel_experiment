@@ -14,7 +14,7 @@ function init() {
   let cellSize = 10
   let row = 10
   let column = 10
-  let uploadedFiles
+  let uploadedFile
   let calcWidth
   let calcHeight
   
@@ -27,7 +27,8 @@ function init() {
   
   // button
   const draw = document.querySelector('.draw')
-  const download = document.querySelector('.download')
+  const combine = document.querySelector('.combine')
+  const downloadButtons = document.querySelectorAll('.download')
   const copyButtons = document.querySelectorAll('.copy') 
   const createGridButtons = document.querySelectorAll('.create_grid')
   const add = document.querySelector('.add')
@@ -35,6 +36,8 @@ function init() {
   const gridToggleButtons = document.querySelectorAll('.grid_display')
 
   // input
+  const upload = document.querySelector('#upload')
+  const uploadTwo = document.querySelector('#upload_two')
   const cellSizeInputs = document.querySelectorAll('.cell_size')
   const rowInputs = document.querySelectorAll('.row')
   const columnInputs = document.querySelectorAll('.column')
@@ -147,10 +150,9 @@ function init() {
   
   
 
-  const paintCanvas = () =>{
+  const paintCanvasTwo = () =>{
     const arr = new Array(row * column).fill('')
     
-
     //! could something be added here to scale canvasTwo?
     if (calcWidth && calcHeight) {
       canvasTwo.setAttribute('width', (calcWidth / cellSize))
@@ -165,6 +167,20 @@ function init() {
       const y = Math.floor(i / column)
       ctxTwo.fillStyle = dots[i] === '' ? 'transparent' : dots[i]
       ctxTwo.fillRect(x, y, 1, 1)
+    })
+  }
+
+  const paintCanvas = () =>{
+    const arr = new Array(row * column).fill('')
+    
+    canvas.setAttribute('width', column * cellSize)
+    canvas.setAttribute('height', row * cellSize)
+  
+    arr.forEach((_ele,i)=>{
+      const x = i % column * cellSize
+      const y = Math.floor(i / column) * cellSize
+      ctx.fillStyle = dots[i] === '' ? 'transparent' : dots[i]
+      ctx.fillRect(x, y, cellSize, cellSize)
     })
   }
 
@@ -206,8 +222,8 @@ function init() {
   ]
 
   const output = ()=>{
-    if (!uploadedFiles) return
-    const blobURL = window.URL.createObjectURL(uploadedFiles)
+    if (!uploadedFile) return
+    const blobURL = window.URL.createObjectURL(uploadedFile)
     const imageTarget = new Image()
     let iHeight
     let iWidth
@@ -230,8 +246,8 @@ function init() {
       ctx.drawImage(imageTarget, 0, 0, calcWidth, calcHeight)
 
       for (let i = 0; i < row * column; i++) {
-        const y = Math.floor(i / column) * cellSize
         const x = i % column * cellSize
+        const y = Math.floor(i / column) * cellSize
         const c = ctx.getImageData(x, y, 1, 1).data
         // var hex = '#' + ('000000' + rgbToHex(c[0], c[1], c[2])).slice(-6)
         dots.push(hex(rgbToHex(c[0], c[1], c[2])))
@@ -239,7 +255,7 @@ function init() {
       // populate grid and make it reactive
       updateGrid()
       updateCodesDisplay(dotsBox,dots)
-      paintCanvas()
+      paintCanvasTwo()
       addDraw()
     }
     imageTarget.src = blobURL
@@ -292,11 +308,14 @@ function init() {
   }
 
 
-  const downloadImage = () =>{
-    paintCanvas()
+  const downloadImage = canvas =>{
+    canvas === canvasTwo
+    ? paintCanvasTwo()
+    : paintCanvas()
+
     const link = document.createElement('a')
     link.download = `cell_${new Date().getTime()}.png`;
-    link.href = canvasTwo.toDataURL()
+    link.href = canvas.toDataURL()
     link.click()
   }
 
@@ -391,8 +410,9 @@ function init() {
 
   rowInputs[1].addEventListener('change',()=>rowInputs[2].value = rowInputs[1].value)
   columnInputs[1].addEventListener('change',()=>columnInputs[2].value = columnInputs[1].value)
-
-  download.addEventListener('click',downloadImage)
+  
+  downloadButtons[0].addEventListener('click',()=>downloadImage(canvas))
+  downloadButtons[1].addEventListener('click',()=>downloadImage(canvasTwo))
   draw.addEventListener('click',output)
   generate[0].addEventListener('click',generateFromColorCode)
   generate[1].addEventListener('click',generateFromCode)
@@ -412,10 +432,36 @@ function init() {
 
   // display filename and pixelise button
   upload.addEventListener('change',()=>{
-    const upload = document.querySelector('#upload')
-    uploadedFiles = upload.files[0]
-    document.querySelector('.file_name').innerHTML = uploadedFiles.name
+    uploadedFile = upload.files[0]
+    document.querySelector('.file_name').innerHTML = uploadedFile.name
     draw.classList.remove('display_none')
+  })
+
+  uploadTwo.addEventListener('change',()=>{
+    const firstImage = new Image()
+    firstImage.onload = () => {
+      const w = firstImage.naturalWidth
+      const h = firstImage.naturalHeight
+      canvas.setAttribute('width', w * uploadTwo.files.length)
+      canvas.setAttribute('height', h)
+      console.log(uploadTwo.files)
+      
+      Array.from(uploadTwo.files).forEach((upload,i)=>{
+        const blobURL = window.URL.createObjectURL(uploadTwo.files[i])
+        const eachImage = new Image()   
+        eachImage.onload = () => {
+          // console.log(w,h,eachImage)  
+          ctx.drawImage(eachImage,i*w,0,w,h)
+        }
+        eachImage.src = blobURL
+      })
+    }
+    firstImage.src=window.URL.createObjectURL(uploadTwo.files[0])    
+    // console.log('u',uploadedFiles)
+  })
+
+  combine.addEventListener('click',()=>{
+    console.log('click')
   })
 
   // enable grid creation with buttons
