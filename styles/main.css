@@ -5,7 +5,7 @@
 body {
   margin: 0;
   padding: 0;
-  background-color: #5f5e5e;
+  background-color: #5e5f5f;
   font-family: sans-serif;
   color: white;
 }
@@ -22,6 +22,7 @@ p, h1, h2, h3, h4 {
 canvas {
   margin: 0 5px;
   background-color: #ffffff;
+  /* background-color: transparent; */
 }
 
 .display_none {
@@ -104,7 +105,8 @@ button:hover {
 }
 
 .grid {
-  background-color: #ffffff;
+  /* background-color: #ffffff; */
+  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAALElEQVQYV2M89fH3fwYGBgYzflZGEM0IE2D9xyIIFgAR59//F/jN9Oc9VgEAp9YUPNgR6OoAAAAASUVORK5CYII=) repeat 0 0;
   margin: 10px;
 }
 
@@ -158,6 +160,7 @@ img {
   display: flex;
   justify-content: flex-start;
   flex-wrap: wrap;
+  background-color: white;
 }
 
 .color_label {
@@ -278,4 +281,14 @@ img {
   padding: 0;
   margin: 0;
   text-align: left;
+}
+
+button.clear {
+  opacity: 0.5;
+}
+
+button.clear.active {
+  opacity: 1;
+  border-color: rgb(112, 255, 255);
+  color: rgb(112, 255, 255);
 }

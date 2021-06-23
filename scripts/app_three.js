@@ -1,5 +1,6 @@
 function init() {
   
+  //* enable use of transparency
   //* make transparency visible
   //* add erase capability
 
@@ -11,6 +12,8 @@ function init() {
   // cell_1624118654510.png
 
 
+  //! create sprite creator
+
   let canDraw = false
   let cellSize = 10
   let row = 10
@@ -18,7 +21,6 @@ function init() {
   let uploadedFile
   let calcWidth
   let calcHeight
-  let erase = false
   
   const canvas = document.querySelectorAll('.canvas')
   const ctx = canvas[0].getContext('2d')
@@ -36,7 +38,6 @@ function init() {
   const add = document.querySelector('.add')
   const generate = document.querySelectorAll('.generate')
   const gridToggleButtons = document.querySelectorAll('.grid_display')
-  const clearButtons = document.querySelectorAll('.clear')
 
   // input
   const upload = document.querySelector('#upload')
@@ -47,13 +48,13 @@ function init() {
   const colorInput = document.querySelector('#color')
   const letterInput = document.querySelector('.letter')
   const colorLabel = document.querySelector('.color_label')
-  // const codesBox[0] = document.querySelector('.dots')
-  const codesBox = document.querySelectorAll('.codes')
+  const dotsBox = document.querySelector('.dots')
+  const codesBox = document.querySelector('.codes')
   const inputAssignWrapper = document.querySelector('.input_assign_wrapper')
-  const assignedCodes = {
-    't':'tree.svg'
-  }
+  const assignedCodes = {}
 
+  // let dots = []
+  // let codes = []
   const codes = {
     0: [],
     1: []
@@ -79,7 +80,7 @@ function init() {
   }
 
   const updateGrid = () =>{
-    grids[0].innerHTML=codes[0].map(dot=>{
+    grids[0].innerHTML=dots.map(dot=>{
       return `
         <div class="cell" style="background-color:${dot};">
         </div>
@@ -90,9 +91,8 @@ function init() {
   const populatePalette = (index,arr) =>{
     const filteredData = sortedByFrequencyDuplicatesAndBlankRemoved(arr)
     palettes[index].innerHTML = filteredData.map(d=>{
-      if (index === 0 && filteredData[0][0] !== '#' && filteredData[0][0] !== 't') return
-      if (index === 1 && !assignedCodes[d]) return
-      const background = index === 0 ? `background-color:${d}` : `background-image:url(./assets/${assignedCodes[d]})`
+      if (filteredData[0][0] !== '#' && !assignedCodes[d]) return
+      const background = d[0] === '#' ? `background-color:${d}` : `background-image:url(./assets/${assignedCodes[d]})`
       return `
         <div 
           class="palette_cell"
@@ -120,7 +120,7 @@ function init() {
   const updateCodesDisplay = (box,arr) =>{
     // box.value = `[${arr.map(ele=>ele).join(',')}]`
     box.value = `${arr.map(ele=>ele).join(',')}`
-    const index = box === codesBox[0]? 0 : 1 
+    const index = box === dotsBox? 0 : 1 
     populatePalette(index,arr)
   }
 
@@ -128,26 +128,24 @@ function init() {
   //draw
   const colorCell = e =>{
     const index = e.target.dataset.cell
-    const value = erase ? 'transparent' : colorInput.value
-    codes[0][index] = value
-    e.target.style.backgroundColor = value
-    updateCodesDisplay(codesBox[0],codes[0])
+    dots[index] = colorInput.value
+    e.target.style.backgroundColor = colorInput.value
+    updateCodesDisplay(dotsBox,dots)
   }
 
   const drawMap = e =>{
     const index = e.target.dataset.cell
-    const value = erase ? '' : letterInput.value
-    codes[1][index] = value
-    e.target.innerHTML = value
-    updateCodesDisplay(codesBox[1],codes[1])
+    codes[index] = letterInput.value
+    e.target.innerHTML = letterInput.value
+    updateCodesDisplay(codesBox,codes)
   }
 
   const drawWithImage = e =>{
     const index = e.target.dataset.cell
-    codes[1][index] = letterInput.value
-    const background = codes[1][index] === '' ? '' : assignedCodes[codes[1][index]]
+    codes[index] = letterInput.value
+    const background = codes[index] === '' ? '' : assignedCodes[codes[index]]
     if (background )e.target.style.backgroundImage = `url(./assets/${background})`
-    updateCodesDisplay(codesBox[1],codes[1])
+    updateCodesDisplay(codesBox,codes)
     // drawMap(e) //* draws letters
   }
 
@@ -174,7 +172,7 @@ function init() {
     arr.forEach((_ele,i)=>{
       const x = i % column
       const y = Math.floor(i / column)
-      ctxTwo.fillStyle = codes[0][i] === '' ? 'transparent' : codes[0][i]
+      ctxTwo.fillStyle = dots[i] === '' ? 'transparent' : dots[i]
       ctxTwo.fillRect(x, y, 1, 1)
     })
   }
@@ -188,7 +186,7 @@ function init() {
     arr.forEach((_ele,i)=>{
       const x = i % column * cellSize
       const y = Math.floor(i / column) * cellSize
-      ctx.fillStyle = codes[0][i] === '' ? 'transparent' : codes[0][i]
+      ctx.fillStyle = dots[i] === '' ? 'transparent' : dots[i]
       ctx.fillRect(x, y, cellSize, cellSize)
     })
   }
@@ -210,19 +208,18 @@ function init() {
       mapCell.addEventListener('click',(e)=>drawMap(e))
       mapCell.addEventListener('mousemove',(e)=>continuousDraw(e,drawMap))
     })
-    if (clear) updateCodesDisplay(codesBox[1],codes[1])
+    if (clear) updateCodesDisplay(codesBox,codes)
   }
 
   const generateMap = clear =>{
     const mapGenCells = document.querySelectorAll('.map_gen_cell')
     mapGenCells.forEach((mapGenCell,i)=>{
-      const background = codes[1][i] === '' ? '' : assignedCodes[codes[1][i]]
-
+      const background = codes[i] === '' ? '' : assignedCodes[codes[i]]
       if (background) mapGenCell.style.backgroundImage = `url(./assets/${background})`
       mapGenCell.addEventListener('click',(e)=>drawWithImage(e))
       mapGenCell.addEventListener('mousemove',(e)=>continuousDraw(e,drawWithImage))
     })
-    if (clear) updateCodesDisplay(codesBox[1],codes[1])  
+    if (clear) updateCodesDisplay(codesBox,codes)  
   }
 
   const drawFunctions = [
@@ -251,7 +248,7 @@ function init() {
 
       grids[0].style.height = `${calcHeight - (calcHeight % cellSize)}px`
       grids[0].style.width = `${calcWidth}px` 
-      codes[0].length = 0
+      dots.length = 0
 
       ctx.drawImage(imageTarget, 0, 0, calcWidth, calcHeight)
 
@@ -260,11 +257,11 @@ function init() {
         const y = Math.floor(i / column) * cellSize
         const c = ctx.getImageData(x, y, 1, 1).data
         // var hex = '#' + ('000000' + rgbToHex(c[0], c[1], c[2])).slice(-6)
-        codes[0].push(hex(rgbToHex(c[0], c[1], c[2])))
+        dots.push(hex(rgbToHex(c[0], c[1], c[2])))
       }
       // populate grid and make it reactive
       updateGrid()
-      updateCodesDisplay(codesBox[0],codes[0])
+      updateCodesDisplay(dotsBox,dots)
       paintCanvasTwo()
       addDraw()
     }
@@ -280,14 +277,14 @@ function init() {
       'cell',
       false
     )
-    codes[0] = codesBox[0].value.split(',')
+    dots = dotsBox.value.split(',')
     const cells = document.querySelectorAll('.cell')
-    codesBox[0].value.split(',').forEach((ele,i)=>{
+    dotsBox.value.split(',').forEach((ele,i)=>{
       if(!cells[i]) return
       cells[i].style.backgroundColor = ele
     })
     addDraw()
-    populatePalette(0,codes[0])
+    populatePalette(0,dots)
   }
 
   const generateFromCode = () =>{
@@ -307,14 +304,14 @@ function init() {
       'map_gen_cell',
       false
     ) 
-    codes[1] = codesBox[1].value.split(',')
+    codes = codesBox.value.split(',')
     const mapCells = document.querySelectorAll('.map_cell')
-    codesBox[1].value.split(',').forEach((ele,i)=>{
+    codesBox.value.split(',').forEach((ele,i)=>{
       if(!mapCells[i]) return
       mapCells[i].innerHTML = ele
     })
     generateMap(false)
-    populatePalette(1,codes[1])
+    populatePalette(1,codes)
   }
 
 
@@ -360,11 +357,11 @@ function init() {
     const cellSize = cellSizeInputs[index].value ? cellSizeInputs[index].value : 10
     createGridCells(row,column,cellSize,index,cellStyle,true)
     if (index === 0) {
-      codes[0] = new Array(row * column).fill('transparent')
-      codesBox[0].value = new Array(row * column).fill('transparent')
+      dots = new Array(row * column).fill('transparent')
+      dotsBox.value = arr
     } else {
-      codes[1] = new Array(row * column).fill('')
-      codesBox[1].value = new Array(row * column).fill('')
+      codes = new Array(row * column).fill('')
+      codesBox.value = arr
     }
   }
   
@@ -435,8 +432,8 @@ function init() {
   draw.addEventListener('click',output)
   generate[0].addEventListener('click',generateFromColorCode)
   generate[1].addEventListener('click',generateFromCode)
-  copyButtons[0].addEventListener('click',()=>copyText(codesBox[0]))
-  copyButtons[1].addEventListener('click',()=>copyText(codesBox[1]))
+  copyButtons[0].addEventListener('click',()=>copyText(dotsBox))
+  copyButtons[1].addEventListener('click',()=>copyText(codesBox))
   gridToggleButtons.forEach(button=>button.addEventListener('click',toggleGrid))
 
   grids.forEach(grid=>{
@@ -492,12 +489,12 @@ function init() {
     const arr = new Array(+columnInputs[0].value).fill('')
     const mappedArr = arr.map(()=>[])
 
-    codesBox[0].value.split(',').forEach((d,i)=>{
+    dotsBox.value.split(',').forEach((d,i)=>{
       mappedArr[Math.floor(i / columnInputs[0].value)].push(d)
     })
   
     const flippedArr = mappedArr.map(a=>a.reverse())
-    codesBox[0].value = flippedArr.join(',')
+    dotsBox.value = flippedArr.join(',')
     paintCanvas()
     generateFromColorCode()
 
@@ -524,13 +521,7 @@ function init() {
       createGrid(index,gridClass)
     })
   })
-  
-  clearButtons.forEach(button=>{
-    button.addEventListener('click',()=>{
-      erase = !erase
-      clearButtons.forEach(button=>button.classList.toggle('active'))
-    })
-  })
+
 
 }
 
