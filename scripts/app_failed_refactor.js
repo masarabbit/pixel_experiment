@@ -1,5 +1,7 @@
 function init() {
   
+  //* make transparency visible
+  //* add erase capability
 
   // convert rgb(xxx,xxx,xxx) to hex
   // const c = cell.style.backgroundColor.replace('rgb(','').replace(')','').split(', ')
@@ -7,6 +9,8 @@ function init() {
   
   // cell_1624118130397.png
   // cell_1624118654510.png
+
+  //*bucket fill - map and replace.
 
 
   let canDraw = false
@@ -17,7 +21,6 @@ function init() {
   let calcWidth
   let calcHeight
   let erase = false
-  let fill = false
   
   const canvas = document.querySelectorAll('.canvas')
   const ctx = canvas[0].getContext('2d')
@@ -27,7 +30,7 @@ function init() {
   const palettes = document.querySelectorAll('.palette')
   
   // button
-  const flip = document.querySelectorAll('.flip')
+  const flip = document.querySelector('.flip')
   const draw = document.querySelector('.draw')
   const downloadButtons = document.querySelectorAll('.download')
   const copyButtons = document.querySelectorAll('.copy') 
@@ -36,7 +39,6 @@ function init() {
   const generate = document.querySelectorAll('.generate')
   const gridToggleButtons = document.querySelectorAll('.grid_display')
   const clearButtons = document.querySelectorAll('.clear')
-  const fillButtons = document.querySelector('.fill')
 
   // input
   const upload = document.querySelector('#upload')
@@ -78,7 +80,6 @@ function init() {
     return [ ...new Set(orderedByFrequency.map(ele=>ele.split('_')[0]))]
   }
 
-
   const updateGrid = () =>{
     grids[0].innerHTML=codes[0].map(dot=>{
       return `
@@ -95,14 +96,16 @@ function init() {
       if (index === 1 && !assignedCodes[d]) return
       const background = index === 0 ? `background-color:${d}` : `background-image:url(./assets/${assignedCodes[d]})`
       return `
-        <div class="palette_cell">
-          <div class="palette_color" style="${background};">
-          </div>
-        </div>`
+        <div 
+          class="palette_cell"
+          style="${background};"
+        >
+        </div>
+      `
     }).join('')
 
-    const paletteColors = document.querySelectorAll('.palette_color')
-    paletteColors.forEach((cell,i)=>{
+    const paletteCells = document.querySelectorAll('.palette_cell')
+    paletteCells.forEach((cell,i)=>{
       cell.addEventListener('click',()=>{
         if (filteredData[0][0] === '#'){
           colorInput.value = filteredData[i]
@@ -127,10 +130,6 @@ function init() {
   //draw
   const colorCell = e =>{
     const index = e.target.dataset.cell
-    if (fill) {
-      fillBucket(index)
-      return
-    }
     const value = erase ? 'transparent' : colorInput.value
     codes[0][index] = value
     e.target.style.backgroundColor = value
@@ -283,11 +282,7 @@ function init() {
       'cell',
       false
     )
-
-    // remove \n
-    codes[0] = codesBox[0].value.replace(/(\r\n|\n|\r)/gm,'').split(',')
-    codesBox[0].value = codes[0]
-
+    codes[0] = codesBox[0].value.split(',')
     const cells = document.querySelectorAll('.cell')
     codesBox[0].value.split(',').forEach((ele,i)=>{
       if(!cells[i]) return
@@ -495,28 +490,32 @@ function init() {
     downloadImage(canvas[0],'sprite')
   })
 
-  const arrayGroupedForFlipping = () =>{
+  flip.addEventListener('click',()=>{
     const arr = new Array(+columnInputs[0].value).fill('')
     const mappedArr = arr.map(()=>[])
+
     codesBox[0].value.split(',').forEach((d,i)=>{
       mappedArr[Math.floor(i / columnInputs[0].value)].push(d)
     })
-    return mappedArr
-  }
   
-  // flip horizontal
-  flip[0].addEventListener('click',()=>{
-    const flippedArr = arrayGroupedForFlipping().map(a=>a.reverse())
+    const flippedArr = mappedArr.map(a=>a.reverse())
     codesBox[0].value = flippedArr.join(',')
     paintCanvas()
     generateFromColorCode()
-  })
-  
-  // flip vertical
-  flip[1].addEventListener('click',()=>{
-    codesBox[0].value = arrayGroupedForFlipping().reverse().join(',')
-    paintCanvas()
-    generateFromColorCode()
+
+
+    // console.log('test')
+    // const copyImg = new Image()
+    // copyImg.onload = () =>{
+    //   const w = copyImg.naturalWidth
+    //   const h = copyImg.naturalHeight
+    //   canvas[2].setAttribute('width', w)
+    //   canvas[2].setAttribute('height', h)
+
+    //   ctxThree.scale(-1,1)
+    //   ctxThree.drawImage(copyImg,0,0,w,h)
+    // }
+    // copyImg.src=canvas[0].toDataURL()
   })
 
   // enable grid creation with buttons
@@ -540,96 +539,69 @@ function init() {
   const periButton = document.querySelector('.perimeter')
 
   periButton.addEventListener('click',()=>{
-    // const row = rowInputs[0].value
+    const row = rowInputs[0].value
     const column = columnInputs[0].value
     const w = 100 / column
     const arr = codesBox[0].value.split(',')
-    const first = arr.indexOf('#000000') //first index  
+    const first = arr.indexOf('#000000') //first index
+    let letter = 'h'
+
     const direction = [ 1, +column, -1, -column ]
     const checkDirection = [ -column, +1, +column, -1 ]
     const directionFactor = [ 1, 1, -1, -1 ]
+    let dirIndex = 0
+
     const x = first % column
     const y = Math.floor(first / column)
+    console.log('x',x,'y',y)
     const d = [`M ${x * w} ${y * w}`]
-    let letter = 'h'
-    let dirIndex = 0
+
     let count = 0
-    let checkedIndex = []
 
-
-    const recordTraceData = (dirIndexToCheck, index) =>{
-      if (dirIndex === dirIndexToCheck && arr[index + checkDirection[dirIndex]] === 'transparent'){
-        if (checkedIndex.filter(d=>d === dirIndexToCheck).length) return
-        checkedIndex.push(dirIndexToCheck)
-        // const distance = letter === 'h' ? 100 / row : 100 / column
-        const distance = 100 / column
-        d.push(`${letter} ${distance * directionFactor[dirIndex]}`)
-        dirIndex = dirIndex === 3 ? 0 : dirIndex + 1
-        letter = letter === 'h' ? 'v' : 'h'
-      }
+    const isOkayToGo = (dirIndexToCheck,index) =>{
+      return dirIndex === dirIndexToCheck && arr[index + checkDirection[dirIndex]] === 'transparent'
     }
-    
+
+    const pushInstruction = () =>{
+      // || !(index + checkDirection[dirIndex])
+      const distance = letter === 'h' ? 100 / column : 100 / row
+      d.push(`${letter} ${distance * directionFactor[dirIndex]}`)
+      dirIndex = dirIndex === 3 ? 0 : dirIndex + 1
+      letter = letter === 'h' ? 'v' : 'h'
+    }
 
     const trace = (index) =>{
       count++
-      const indexPattern = [0,1,2,3,0,1,2,3]
-      indexPattern.forEach(i=>recordTraceData(i,index))
+      console.log('trigger',count,'dirIndex',dirIndex)
+      let checkedIndexZero = false
 
-      checkedIndex.length = 0
+      if (isOkayToGo(0,index)){
+        pushInstruction()
+        checkedIndexZero = true
+      }
+      if (isOkayToGo(1,index)) pushInstruction()
+      if (isOkayToGo(2,index)) pushInstruction()
+      if (isOkayToGo(3,index)) pushInstruction()
+      if (isOkayToGo(0,index)){
+        if (checkedIndexZero) return
+        pushInstruction()
+      }
+
       dirIndex = dirIndex === 0 ? 3 : dirIndex - 1
       letter = letter === 'h' ? 'v' : 'h'
 
-      if (index === first && count > 2) return
+      if (index === first) return
       trace(index + direction[dirIndex])
     }
     trace(first)
-    console.log('<path d="' + d.join(' ') + '"/>')
-    // console.log('<path d="' + d.join(' ') + ' Z"/>')
-  })
-
-  const hexToRgb = hex => {
-    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-    return result ? `rgb(${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)})`: null
-  }
 
 
-
-  const fillBucket = index =>{
-    const fillValue = erase ? 'transparent' : colorInput.value
-    const areaToFill = [+index]
-    // const valueToSwap = hexToRgb(codes[0][index])
-    const valueToSwap = codes[0][index]
-    const column = +columnInputs[0].value
-
-    const checkIfAreaIsFilled = (i,valueToCheck) =>{
-      if(codes[0][i] === valueToCheck){
-        if (areaToFill.filter(d=>d === i).length > 3) return
-        areaToFill.push(i)
-        checkAreaToFill(i)
-        }
-    }
     
-    const checkAreaToFill = codeIndex =>{
-      if (codeIndex % column !== 0) checkIfAreaIsFilled(codeIndex - 1,valueToSwap)
-      if (codeIndex % column !== column - 1) checkIfAreaIsFilled(codeIndex + 1,valueToSwap)
-        checkIfAreaIsFilled(codeIndex + column,valueToSwap)
-        checkIfAreaIsFilled(codeIndex - column,valueToSwap)
-    }
-
-    checkAreaToFill(+index)
-
-    codesBox[0].value = codesBox[0].value.split(',').map((c,i)=>{
-      if (areaToFill.indexOf(i) === -1) return c
-      return c === valueToSwap ? fillValue : c
-    }).join(',')
-    // //* to fill only connected squares, need different logic similar to dog navigation 
-    generateFromColorCode()
-  }
-
-  fillButtons.addEventListener('click',()=>{
-    fillButtons.classList.toggle('active')
-    fill = !fill
+    console.log('first',arr.indexOf('#000000'))
+    console.log('peri','<path d="' + d.join(' ') + ' Z"/>')
   })
 }
 
 window.addEventListener('DOMContentLoaded', init)
+
+//? answer <path d="M 0 0 h 16.666666666666668 h 16.666666666666668 h 16.666666666666668 v 16.666666666666668 v 16.666666666666668 v 16.666666666666668 h -16.666666666666668 v -16.666666666666668 v -16.666666666666668 h -16.666666666666668 h -16.666666666666668 Z"/>
