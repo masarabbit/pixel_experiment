@@ -284,6 +284,11 @@ function init() {
       false
     )
 
+    if (!codesBox[0].value) {
+      codes[0] = new Array(row * column).fill('transparent')
+      codesBox[0].value = new Array(row * column).fill('transparent')
+    }
+
     // remove \n
     codes[0] = codesBox[0].value.replace(/(\r\n|\n|\r)/gm,'').split(',')
     codesBox[0].value = codes[0]
