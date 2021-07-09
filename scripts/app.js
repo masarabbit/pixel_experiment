@@ -9,6 +9,7 @@ function init() {
   // cell_1624118654510.png
 
 
+  let cursorType = 'pen_cursor'
   let canDraw = false
   let cellSize = 10
   let row = 10
@@ -25,6 +26,7 @@ function init() {
   const ctxThree = canvas[2].getContext('2d')
   const grids = document.querySelectorAll('.grid')
   const palettes = document.querySelectorAll('.palette')
+  const cursor = document.querySelector('.cursor')
   
   // button
   const flip = document.querySelectorAll('.flip')
@@ -191,6 +193,7 @@ function init() {
     arr.forEach((_ele,i)=>{
       const x = i % column * cellSize
       const y = Math.floor(i / column) * cellSize
+      // const y = i / column * cellSize
       ctx.fillStyle = codes[0][i] === '' ? 'transparent' : codes[0][i]
       ctx.fillRect(x, y, cellSize, cellSize)
     })
@@ -249,19 +252,25 @@ function init() {
       calcWidth = calcHeight * (iWidth / iHeight)
       canvas[0].setAttribute('width', calcWidth)
       canvas[0].setAttribute('height', calcHeight - (calcHeight % cellSize))
-      row = rowInputs[0].value ? rowInputs[0].value : (calcHeight - (calcHeight % cellSize)) / cellSize
-      rowInputs[0].value = row
+      // row = rowInputs[0].value ? rowInputs[0].value : (calcHeight - (calcHeight % cellSize)) / cellSize
+      // rowInputs[0].value = row
+      row = rowInputs[0].value
+      column = columnInputs[0].value
+      grids[0].style.height = `${row * cellSize}px`
+      grids[0].style.width = `${column * cellSize}px` 
 
-      grids[0].style.height = `${calcHeight - (calcHeight % cellSize)}px`
-      grids[0].style.width = `${calcWidth}px` 
+      // grids[0].style.height = `${calcHeight - (calcHeight % cellSize)}px`
+      // grids[0].style.width = `${calcWidth}px` 
       codes[0].length = 0
 
       ctx.drawImage(imageTarget, 0, 0, calcWidth, calcHeight)
 
+      const offset = Math.floor(cellSize / 2)
+
       for (let i = 0; i < row * column; i++) {
         const x = i % column * cellSize
         const y = Math.floor(i / column) * cellSize
-        const c = ctx.getImageData(x, y, 1, 1).data
+        const c = ctx.getImageData(x + offset, y + offset, 1, 1).data //!offset
         // var hex = '#' + ('000000' + rgbToHex(c[0], c[1], c[2])).slice(-6)
         codes[0].push(hex(rgbToHex(c[0], c[1], c[2])))
       }
@@ -425,7 +434,7 @@ function init() {
 
   const toggleGrid = () =>{
     grids.forEach(grid=>grid.classList.toggle('grid_hide'))
-    gridToggleButtons.forEach(button=>button.innerHTML = button.innerHTML === 'hide grid'?'show grid':'hide grid')
+    // gridToggleButtons.forEach(button=>button.innerHTML = button.innerHTML === 'hide grid'?'show grid':'hide grid')
   }
   
   
@@ -455,6 +464,9 @@ function init() {
     grid.addEventListener('mousedown',()=>canDraw = true)
     grid.addEventListener('mouseup',()=>canDraw = false)
     grid.addEventListener('mouseleave',()=>canDraw = false)
+
+    grid.addEventListener('mouseenter',()=>cursor.classList.add(cursorType))
+    grid.addEventListener('mouseleave',()=>cursor.classList.remove(cursorType))
   })
 
   colorInput.addEventListener('change',()=>{
@@ -537,11 +549,12 @@ function init() {
     button.addEventListener('click',()=>{
       erase = !erase
       clearButtons.forEach(button=>button.classList.toggle('active'))
+      cursorType = erase ? 'eraser_cursor' : 'pen_cursor'
     })
   })
 
   
-  //TODO trying to make it trace the perimeter
+  // trace perimeter
   const periButton = document.querySelector('.perimeter')
 
   periButton.addEventListener('click',()=>{
@@ -634,7 +647,26 @@ function init() {
   fillButtons.addEventListener('click',()=>{
     fillButtons.classList.toggle('active')
     fill = !fill
+    cursorType = fill ? 'bucket_cursor' : 'pen_cursor'
   })
+
+
+
+  // const convertToDataUrl = () =>{
+  //   console.log(canvas[0].toDataURL())
+  // }
+  const dataUrlButton = document.querySelector('.url')
+  dataUrlButton.addEventListener('click',()=>{
+    paintCanvas()
+    console.log(canvas[0].toDataURL())
+  })
+
+  const handleCursor = e =>{
+    cursor.style.top = `${e.pageY}px`
+    cursor.style.left = `${e.pageX}px`
+  }
+  window.addEventListener('mousemove', handleCursor)
+
 }
 
 window.addEventListener('DOMContentLoaded', init)

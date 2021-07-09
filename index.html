@@ -42,29 +42,30 @@
       </div>
 
       <input id="upload" type="file" single/>
-      <label for="upload">select img file</label>
+      <label for="upload" class="upload icon"></label>
       <div class="file_name"></div>
       <button class="draw display_none">pixelise</button>
-      <button class="download">download</button>
-      <button class="create_grid" data-index="0" data-grid_class="cell">create grid</button> 
+      <button class="download icon download_file"></button>
+      <button class="create_grid create icon" data-index="0" data-grid_class="cell"></button> 
     </div>
 
     <div class="mini_wrap no_margin">
-      <button class="fill">fill</button>
+      <button class="fill icon bucket"></button>
+      <button class="clear icon eraser"></button>
+      <button class="flip icon flip_h"></button>
+      <button class="flip icon flip_v"></button>
+      <button class="grid_display icon hide"></button>
+      <button class="download display_none">download small</button> <!-- remove??? -->
+      <button class="url">dataURL</button>
       <button class="perimeter">trace</button>
-      <button class="clear">erase</button>
-      <button class="flip">flip H</button>
-      <button class="flip">flip V</button>
-      <button class="generate">generate</button>
-      <button class="grid_display">hide grid</button>
-      <button class="download">download small</button>
     </div>
 
     <div class="palette"></div>
-    <textarea class="codes"></textarea>
+    <textarea class="codes" spellcheck="false"></textarea>
 
     <div class="mini_wrap">
-      <button class="copy">copy</button>
+      <button class="generate icon"></button>
+      <button class="copy icon"></button>
     </div>
     
     <div class="img_wrap">
@@ -73,8 +74,8 @@
 
     <div class="mini_wrap">
       <input id="upload_two" type="file" multiple />
-      <label for="upload_two">select img files</label>
-      <button class="download">download</button>
+      <label for="upload_two" class="icon upload"></label>
+      <button class="download_file download icon"></button>
     </div>
 
     <!-- grid 2 -->
@@ -94,17 +95,17 @@
         <input class="cell_size input" placeholder="cell size" value="10" />
       </div>
       <input class="letter input" value="a" />
-      <button class="create_grid" data-index="1" data-grid_class="map_cell">create grid</button>
-      <button class="clear">erase</button>
-      <button class="grid_display">hide grid</button>
+      <button class="create icon" data-index="1" data-grid_class="map_cell create"></button>
+      <button class="clear icon eraser"></button>
+      <button class="grid_display icon hide"></button>
     </div>
     
     <div class="palette"></div>
-    <textarea class="codes"></textarea>
+    <textarea class="codes" spellcheck="false"></textarea>
 
     <div class="mini_wrap">
-      <button class="copy">copy</button>
-      <button class="generate">generate</button>
+      <button class="generate icon"></button>
+      <button class="copy icon"></button>
       <button class="add">+</button>
     </div>
 
@@ -128,15 +129,15 @@
         <label>cell size</label>
         <input class="cell_size input" placeholder="cell size" value="10" />
       </div>
-      <button class="create_grid" data-index="2" data-grid_class="map_gen_cell">create grid</button>
-      <button class="grid_display">hide grid</button>
+      <button class="create_grid create icon" data-index="2" data-grid_class="map_gen_cell"></button>
+      <button class="grid_display hide icon"></button>
     </div>
   
 
   </div>
 
 
-
+  <div class="cursor"></div>
 </body>
 
 </html>
