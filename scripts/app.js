@@ -19,6 +19,7 @@ function init() {
   let calcHeight
   let erase = false
   let fill = false
+  let selectCopy = false
   
   const canvas = document.querySelectorAll('.canvas')
   const ctx = canvas[0].getContext('2d')
@@ -29,6 +30,7 @@ function init() {
   const cursor = document.querySelector('.cursor')
   
   // button
+  const alts = document.querySelectorAll('.alt')
   const flip = document.querySelectorAll('.flip')
   const draw = document.querySelector('.draw')
   const downloadButtons = document.querySelectorAll('.download')
@@ -128,6 +130,7 @@ function init() {
   
   //draw
   const colorCell = e =>{
+    if (selectCopy) return
     const index = e.target.dataset.cell
     if (fill) {
       fillBucket(index)
@@ -159,8 +162,8 @@ function init() {
   const continuousDraw = (e,action) =>{
     if (!canDraw) return
     action(e)
-    e.target.classList.add('enlarge')
-    setTimeout(()=>e.target.classList.remove('enlarge'),200)
+    // e.target.classList.add('enlarge')
+    // setTimeout(()=>e.target.classList.remove('enlarge'),200)
   }
   
   
@@ -199,6 +202,8 @@ function init() {
     })
   }
 
+
+  //! maybe add selectCopy here?
   const addDraw = () =>{
     const cells = document.querySelectorAll('.cell')
       cells.forEach((c,i)=>{
@@ -383,6 +388,8 @@ function init() {
     if (index === 0) {
       codes[0] = new Array(row * column).fill('transparent')
       codesBox[0].value = new Array(row * column).fill('transparent')
+      console.log('selectCopy',selectCopy)
+
     } else {
       codes[1] = new Array(row * column).fill('')
       codesBox[1].value = new Array(row * column).fill('')
@@ -666,6 +673,22 @@ function init() {
     cursor.style.left = `${e.pageX}px`
   }
   window.addEventListener('mousemove', handleCursor)
+
+
+  alts.forEach(button=>{
+    button.addEventListener('mouseover',(e)=>{
+      cursor.childNodes[0].innerHTML = e.target.dataset.alt
+    })
+    button.addEventListener('mouseleave',(e)=>{
+      cursor.childNodes[0].innerHTML = ''
+    })
+  })
+
+  const selectCopyButton = document.querySelector('.select_copy')
+
+  selectCopyButton.addEventListener('click',()=>{
+    selectCopy = !selectCopy
+  })
 
 }
 
