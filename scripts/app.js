@@ -55,7 +55,8 @@ function init() {
   const codesBox = document.querySelectorAll('.codes')
   const inputAssignWrapper = document.querySelector('.input_assign_wrapper')
   const assignedCodes = {
-    't':'tree.svg'
+    't':'tree.svg',
+    '2':'tree_one.png'
   }
 
   const codes = {
@@ -136,7 +137,7 @@ function init() {
       fillBucket(index)
       return
     }
-    const value = erase ? 'transparent' : colorInput.value
+    const value = erase ? '' : colorInput.value  //! transparent replaced with ''
     codes[0][index] = value
     e.target.style.backgroundColor = value
     updateCodesDisplay(codesBox[0],codes[0])
@@ -276,14 +277,20 @@ function init() {
         const x = i % column * cellSize
         const y = Math.floor(i / column) * cellSize
         const c = ctx.getImageData(x + offset, y + offset, 1, 1).data //!offset
+
+        // this thing included here to prevent rendering black instead of transparent
+        c[3] === 0
+        ? codes[0].push('transparent')
+        : codes[0].push(hex(rgbToHex(c[0], c[1], c[2])))
         // var hex = '#' + ('000000' + rgbToHex(c[0], c[1], c[2])).slice(-6)
-        codes[0].push(hex(rgbToHex(c[0], c[1], c[2])))
+        
       }
       // populate grid and make it reactive
       updateGrid()
       updateCodesDisplay(codesBox[0],codes[0])
       paintCanvasTwo()
       addDraw()
+      downloadButtons[0].classList.remove('display_none')
     }
     imageTarget.src = blobURL
   }
@@ -620,7 +627,7 @@ function init() {
 
 
   const fillBucket = index =>{
-    const fillValue = erase ? 'transparent' : colorInput.value
+    const fillValue = erase ? '' : colorInput.value  //! '' instead of transparent
     const areaToFill = [+index]
     // const valueToSwap = hexToRgb(codes[0][index])
     const valueToSwap = codes[0][index]
