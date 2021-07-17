@@ -11,19 +11,20 @@
 </head>
 
 <body>
+  <div class="trace_output"></div>
   <nav>
     pixel art studio
     <div class="input_wrap">
       <label>column</label>
-      <input class="column input" placeholder="column" value="6" />
+      <input class="column input" placeholder="column" value="5" />
     </div>
     <div class="input_wrap">
       <label>row</label>
-      <input class="row input" placeholder="row" value="6" />
+      <input class="row input" placeholder="row" value="5" />
     </div>
     <div class="input_wrap">
       <label>cell size</label>
-      <input class="cell_size input" placeholder="cell size" value="10" />
+      <input class="cell_size input" placeholder="cell size" value="20" />
     </div>
 
     <label for="color" class="color_label"></label>
@@ -63,6 +64,7 @@
 
     <div class="palette"></div>
     <textarea class="codes" spellcheck="false"></textarea>
+    <textarea class="test_codes" spellcheck="false"></textarea>
 
     <div class="mini_wrap">
       <button class="generate icon alt" data-alt="generate from code"></button>

@@ -7,7 +7,7 @@ function init() {
   
   // cell_1624118130397.png
   // cell_1624118654510.png
-  // const traceOutput = document.querySelector('.trace_output')
+  const traceOutput = document.querySelector('.trace_output')
 
   let cursorType = 'pen_cursor'
   let canDraw = false
@@ -21,7 +21,6 @@ function init() {
   let fill = false
   let selectCopy = false
   
-  const testCode =  document.querySelector('.test_codes')
   const canvas = document.querySelectorAll('.canvas')
   const ctx = canvas[0].getContext('2d')
   const ctxTwo = canvas[1].getContext('2d')
@@ -81,7 +80,7 @@ function init() {
     const orderedByFrequency = blankRemoved.map(ele=>{  
       return `${ele}_${countOccurrences(blankRemoved,ele)}`
     }).sort((a, b) => b.split('_')[1] - a.split('_')[1])  
-    return [...new Set(orderedByFrequency.map(ele=>ele.split('_')[0]))]
+    return [ ...new Set(orderedByFrequency.map(ele=>ele.split('_')[0]))]
   }
 
 
@@ -568,84 +567,29 @@ function init() {
     })
   })
 
-
-  const hexToRgb = hex => {
-    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-    return result ? `rgb(${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)})`: null
-  }
   
-  const checkIfAreaIsFilled = (codeRef, i, valueToCheck, arr) =>{
-    if(codeRef[i] === valueToCheck){
-      if (arr.filter(d=>d === i).length > 3) return
-      arr.push(i)
-      checkAreaToFill(codeRef, i, valueToCheck, arr)
-      }
-  }
-  
-  //! could this be improved? does not work on grid that is bigger than 40
-  //! also won't work if image is too complicated.
-  const checkAreaToFill = (codeRef, codeIndex, valueToCheck, areaToFill) =>{
-    // checks 4 direction
-    const column = +columnInputs[0].value
-    if (codeIndex % column !== 0) checkIfAreaIsFilled(codeRef,codeIndex - 1,valueToCheck, areaToFill)
-    if (codeIndex % column !== column - 1) checkIfAreaIsFilled(codeRef, codeIndex + 1, valueToCheck, areaToFill)
-      checkIfAreaIsFilled(codeRef, codeIndex + column, valueToCheck, areaToFill)
-      checkIfAreaIsFilled(codeRef, codeIndex - column, valueToCheck, areaToFill)
-  }
-
-
-  const fillBucket = index =>{
-    const fillValue = erase ? '' : colorInput.value  //! '' instead of transparent
-    const areaToFillBucket = [+index]
-    const valueToSwap = codes[0][index]
-
-    checkAreaToFill(codes[0], +index, valueToSwap, areaToFillBucket)
-
-    codesBox[0].value = codesBox[0].value.split(',').map((c,i)=>{
-      if (areaToFillBucket.indexOf(i) === -1) return c
-      return c === valueToSwap ? fillValue : c
-    }).join(',')
-
-    generateFromColorCode()
-  }
-
-  fillButtons.addEventListener('click',()=>{
-    fillButtons.classList.toggle('active')
-    fill = !fill
-    cursorType = fill ? 'bucket_cursor' : 'pen_cursor'
-  })
-
-
   // trace perimeter
   const periButton = document.querySelector('.perimeter')
 
   periButton.addEventListener('click',()=>{
-    console.log('trigger')
-    const pathData = []
-    const areaToTrace = []
+    // const row = rowInputs[0].value
     const column = columnInputs[0].value
     const w = 100 / column
+    const arr = codesBox[0].value.split(',')
+    const first = arr.indexOf('#000000') //first index  
     const direction = [ 1, +column, -1, -column ]
     const checkDirection = [ -column, +1, +column, -1 ]
     const directionFactor = [ 1, 1, -1, -1 ]
+    const x = first % column
+    const y = Math.floor(first / column)
+    const d = [`M ${x * w} ${y * w}`]
+    let letter = 'h'
+    let dirIndex = 0
+    let count = 0
+    let checkedIndex = []
 
-    //? values which needs reset for each trace
-    // let currentColor
-    let arr
-    let first
-    let x
-    let y
-    let d
-    let letter
-    let dirIndex
-    const checkedIndex = []
-    let initialX
-    let initialY
-    let stop
 
     const recordTraceData = (dirIndexToCheck, index) =>{
-      //TODO since transparent is converted to '', perhaps no longer need to check for it.
-      if (stop) return 
       if (dirIndex === dirIndexToCheck && 
         (arr[index + checkDirection[dirIndex]] === 'transparent' || 
         !arr[index + checkDirection[dirIndex]] ||
@@ -659,11 +603,7 @@ function init() {
         checkedIndex.push(dirIndexToCheck)
 
         const distance = 100 / column
-        const distanceToMove = distance * directionFactor[dirIndex]
-        d.push(`${letter} ${distanceToMove}`)
-        if (letter === 'h') initialX += distanceToMove
-        if (letter === 'v') initialY += distanceToMove
-        if (initialX === x * w && initialY === y * w) stop = true
+        d.push(`${letter} ${distance * directionFactor[dirIndex]}`)
         dirIndex = dirIndex === 3 ? 0 : dirIndex + 1
         letter = letter === 'h' ? 'v' : 'h'
       }
@@ -671,58 +611,78 @@ function init() {
     
 
     const trace = (index) =>{
+      count++
       const indexPattern = [0,1,2,3,0,1,2,3]
       indexPattern.forEach(i=>recordTraceData(i,index))
 
       checkedIndex.length = 0
       dirIndex = dirIndex === 0 ? 3 : dirIndex - 1
       letter = letter === 'h' ? 'v' : 'h'
-      
-      if (stop) return
+
+      if (index === first && count > 2) return
       trace(index + direction[dirIndex])
     }
+    console.log('first',first)
+    trace(first)
+    traceOutput.innerText = '<path d="' + d.join(' ') + '"/>'
+    console.log('<path d="' + d.join(' ') + '"/>')
+    // console.log('<path d="' + d.join(' ') + ' Z"/>')
 
-    const convertToSvg = (processedCodes) =>{  
-      //* changed this to while loop to avoid exceeding maximum call limit
-      while (processedCodes.filter(code => code !== '').length) {
-        //first index
-        const currentColor = processedCodes.find(cell=>cell !== '')
-        first = processedCodes.indexOf(currentColor) 
-
-        //* isolating area to trace (area with same color, but connected)
-        checkAreaToFill(processedCodes, first, currentColor, areaToTrace)
-        arr = processedCodes.map((code,i)=>{
-          return areaToTrace.indexOf(i) !== -1 ? code : ''
-        })
-
-        x = first % column
-        y = Math.floor(first / column)
-        d = [`M ${x * w} ${y * w}`]   
-        initialX = x * w
-        initialY = y * w
-        letter = 'h'
-        dirIndex = 0
-        checkedIndex.length = 0
-        stop = false
-        trace(first)
-        //* recording traced area
-        //TODO probably could minimise svg code by adding values (eg if h 10 h 10, then could be h20)
-        pathData.push(`<path fill="${currentColor}" d="${d.join(' ')}"/>`)
-
-        //* removing traced area
-        processedCodes = processedCodes.map((code,i)=>{
-          return areaToTrace.indexOf(i) === -1 ? code : ''
-        })
-      }
-    }
-
-    const processedCodes = codesBox[0].value.split(',').map(code =>{
-      return code === 'transparent' ? '' : code
-    })
-    convertToSvg(processedCodes)
-    testCode.value = pathData.join(' ')
   })
 
+
+
+
+  const hexToRgb = hex => {
+    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? `rgb(${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)})`: null
+  }
+
+
+
+  const fillBucket = index =>{
+    const fillValue = erase ? '' : colorInput.value  //! '' instead of transparent
+    const areaToFill = [+index]
+    // const valueToSwap = hexToRgb(codes[0][index])
+    const valueToSwap = codes[0][index]
+    const column = +columnInputs[0].value
+
+    const checkIfAreaIsFilled = (i,valueToCheck) =>{
+      if(codes[0][i] === valueToCheck){
+        if (areaToFill.filter(d=>d === i).length > 3) return
+        areaToFill.push(i)
+        checkAreaToFill(i)
+        }
+    }
+    
+    const checkAreaToFill = codeIndex =>{
+      if (codeIndex % column !== 0) checkIfAreaIsFilled(codeIndex - 1,valueToSwap)
+      if (codeIndex % column !== column - 1) checkIfAreaIsFilled(codeIndex + 1,valueToSwap)
+        checkIfAreaIsFilled(codeIndex + column,valueToSwap)
+        checkIfAreaIsFilled(codeIndex - column,valueToSwap)
+    }
+
+    checkAreaToFill(+index)
+
+    codesBox[0].value = codesBox[0].value.split(',').map((c,i)=>{
+      if (areaToFill.indexOf(i) === -1) return c
+      return c === valueToSwap ? fillValue : c
+    }).join(',')
+    // //* to fill only connected squares, need different logic similar to dog navigation 
+    generateFromColorCode()
+  }
+
+  fillButtons.addEventListener('click',()=>{
+    fillButtons.classList.toggle('active')
+    fill = !fill
+    cursorType = fill ? 'bucket_cursor' : 'pen_cursor'
+  })
+
+
+
+  // const convertToDataUrl = () =>{
+  //   console.log(canvas[0].toDataURL())
+  // }
   const dataUrlButton = document.querySelector('.url')
   dataUrlButton.addEventListener('click',()=>{
     paintCanvas()
@@ -740,7 +700,7 @@ function init() {
     button.addEventListener('mouseover',(e)=>{
       cursor.childNodes[0].innerHTML = e.target.dataset.alt
     })
-    button.addEventListener('mouseleave',()=>{
+    button.addEventListener('mouseleave',(e)=>{
       cursor.childNodes[0].innerHTML = ''
     })
   })

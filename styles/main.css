@@ -19,6 +19,18 @@ body {
   
 }
 
+.trace_output {
+  color: white;
+  position: fixed;
+  z-index: 300;
+  /* border: 1px solid white;
+  height: 100px;
+  width: 100%; */
+  top: 50px;
+  left: 10px;
+  font-size: 10px;
+}
+
 nav {
   position: fixed;
   top: 0;
@@ -359,8 +371,8 @@ button.clear {
 button.fill.active,
 button.clear.active {
   opacity: 0.5;
-  border-color: rgb(112, 255, 255);
-  color: rgb(112, 255, 255);
+  /* border-color: rgb(112, 255, 255);
+  color: rgb(112, 255, 255); */
 }
 
 label.icon,
