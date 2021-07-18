@@ -574,60 +574,38 @@ function init() {
     return result ? `rgb(${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)})`: null
   }
   
-  //TODO old version
-  // const checkIfAreaIsFilled = (codeRef, i, valueToCheck, arr) =>{
-  //   if(codeRef[i] === valueToCheck){
-  //     if (arr.filter(d=>d === i).length > 3) return
-  //     arr.push(i)
-  //     checkAreaToFill(codeRef, i, valueToCheck, arr)
-  //     }
-  // }
-  
-  // need to fill areaToFill with first Index first
-  // //! could this be improved? does not work on grid that is bigger than 40
-  // //! also won't work if image is too complicated.
-  // const checkAreaToFill = (codeRef, codeIndex, valueToCheck, areaToFill) =>{
-  //   // checks 4 direction
-  //   const column = +columnInputs[0].value
-  //   if (codeIndex % column !== 0) checkIfAreaIsFilled(codeRef,codeIndex - 1,valueToCheck, areaToFill)
-  //   if (codeIndex % column !== column - 1) checkIfAreaIsFilled(codeRef, codeIndex + 1, valueToCheck, areaToFill)
-  //   checkIfAreaIsFilled(codeRef, codeIndex + column, valueToCheck, areaToFill)
-  //   checkIfAreaIsFilled(codeRef, codeIndex - column, valueToCheck, areaToFill)
-  // }
-
-  const checkAreaToFill = (codeRef, i, valueToCheck, areaToFill) =>{
-    const fillStack = []
-    const column = +columnInputs[0].value
-    fillStack.push(i)
-    
-    while(fillStack.length > 0){
-      const cellToCheck = fillStack.pop()
-      
-      if (codeRef[cellToCheck] !== valueToCheck) continue
-      if (areaToFill.filter(d=>d === cellToCheck).length) continue
-      areaToFill.push(cellToCheck)
-    
-      if (cellToCheck % column !== 0) fillStack.push(cellToCheck - 1)
-      if (cellToCheck % column !== column - 1) fillStack.push(cellToCheck + 1)
-      fillStack.push(cellToCheck + column)
-      fillStack.push(cellToCheck - column)
-    }
-    // console.log('fillStack last',fillStack)
-    console.log('areaToFill',areaToFill)
+  const checkIfAreaIsFilled = (codeRef, i, valueToCheck, arr) =>{
+    if(codeRef[i] === valueToCheck){
+      if (arr.filter(d=>d === i).length > 3) return
+      arr.push(i)
+      checkAreaToFill(codeRef, i, valueToCheck, arr)
+      }
   }
+  
+  //! could this be improved? does not work on grid that is bigger than 40
+  //! also won't work if image is too complicated.
+  const checkAreaToFill = (codeRef, codeIndex, valueToCheck, areaToFill) =>{
+    // checks 4 direction
+    const column = +columnInputs[0].value
+    if (codeIndex % column !== 0) checkIfAreaIsFilled(codeRef,codeIndex - 1,valueToCheck, areaToFill)
+    if (codeIndex % column !== column - 1) checkIfAreaIsFilled(codeRef, codeIndex + 1, valueToCheck, areaToFill)
+    checkIfAreaIsFilled(codeRef, codeIndex + column, valueToCheck, areaToFill)
+    checkIfAreaIsFilled(codeRef, codeIndex - column, valueToCheck, areaToFill)
+  }
+
 
   const fillBucket = index =>{
     const fillValue = erase ? '' : colorInput.value  //! '' instead of transparent
-    const areaToFillBucket = []
+    const areaToFillBucket = [+index]
     const valueToSwap = codes[0][index]
     
     checkAreaToFill(codes[0], +index, valueToSwap, areaToFillBucket)
-
+    
     codesBox[0].value = codesBox[0].value.split(',').map((c,i)=>{
       if (areaToFillBucket.indexOf(i) === -1) return c
       return c === valueToSwap ? fillValue : c
     }).join(',')
-
+    
     generateFromColorCode()
   }
 
@@ -650,7 +628,6 @@ function init() {
     const direction = [ 1, +column, -1, -column ]
     const checkDirection = [ -column, +1, +column, -1 ]
     const directionFactor = [ 1, 1, -1, -1 ]
-    const indexPattern = [0,1,2,3,0,1,2,3]
 
     //? values which needs reset for each trace
     let arr
@@ -693,16 +670,15 @@ function init() {
     
 
     const trace = (index) =>{
-      let traceIndex = index
-      
-      while(!stop){
-        indexPattern.forEach(i=>recordTraceData(i,traceIndex))
+      const indexPattern = [0,1,2,3,0,1,2,3]
+      indexPattern.forEach(i=>recordTraceData(i,index))
 
-        checkedIndex.length = 0
-        dirIndex = dirIndex === 0 ? 3 : dirIndex - 1
-        letter = letter === 'h' ? 'v' : 'h'
-        traceIndex = traceIndex += direction[dirIndex]
-      }
+      checkedIndex.length = 0
+      dirIndex = dirIndex === 0 ? 3 : dirIndex - 1
+      letter = letter === 'h' ? 'v' : 'h'
+      
+      if (stop) return
+      trace(index + direction[dirIndex])
     }
 
     const convertToSvg = (processedCodes) =>{  
@@ -740,7 +716,7 @@ function init() {
         //TODO may not need this workaround whne the areaToTrace/fill bucket logic is changed
         processedCodes = areaToTrace.length 
           ? processedCodes.map((code,i)=> areaToTrace.indexOf(i) === -1 ? code : '')
-          : processedCodes.map((code,i)=> i === first ? '' : code )
+          : processedCodes.map((code,i)=> i === first ? '' : code ) //! not fool proof?
         //// console.log('processedCodes last',processedCodes)
         //// console.log('areaToTrace',areaToTrace)
         
@@ -750,7 +726,7 @@ function init() {
     const processedCodes = codesBox[0].value.split(',').map(code =>{
       return code === 'transparent' ? '' : code
     })
-    // console.log('processedCodes',processedCodes)
+    console.log('processedCodes',processedCodes)
     convertToSvg(processedCodes)
     testCode.value = pathData.join(' ')
   })
