@@ -56,8 +56,17 @@ function init() {
   const codesBox = document.querySelectorAll('.codes')
   const inputAssignWrapper = document.querySelector('.input_assign_wrapper')
   const assignedCodes = {
-    't':'tree.svg',
-    '2':'tree_one.png'
+    't':'tree_two.png',
+    '2':'tree_one.png',
+    'w':'tree_two2.png',
+    'k':'panel.png',
+    '1':'1.png',
+    '2':'2.png',
+    '3':'3.png',
+    '4':'4.png',
+    '5':'5.png',
+    '6':'6.png',
+    'b':'',
   }
 
   const codes = {
@@ -102,7 +111,7 @@ function init() {
       const background = index === 0 ? `background-color:${d}` : `background-image:url(./assets/${assignedCodes[d]})`
       return `
         <div class="palette_cell">
-          <div class="palette_color" style="${background};">
+          <div class="palette_color" ${index === 0 ? '' : `data-b="${assignedCodes[d]}"`} style="${background};">
           </div>
         </div>`
     }).join('')
@@ -110,12 +119,19 @@ function init() {
     const paletteColors = document.querySelectorAll('.palette_color')
     paletteColors.forEach((cell,i)=>{
       cell.addEventListener('click',()=>{
-        if (filteredData[0][0] === '#'){
+        if (filteredData.map(color => color === 'transparent' ? '#' : color)[0][0] === '#'){
+          console.log('color3', filteredData[i] === 'transparent')
+          //! some logic required for transparency
           colorInput.value = filteredData[i]
           colorLabel.style.backgroundColor = filteredData[i]
         } else {
+          console.log('else')
           letterInput.value = Object.keys(assignedCodes).find(k => {
-            return assignedCodes[k] === assignedCodes[filteredData[i]]
+            console.log('test',assignedCodes[k])
+            console.log('test2',assignedCodes[cell.dataset.b])
+            console.log('test3',cell.dataset.b)
+            console.log('test4',filteredData[i])
+            return assignedCodes[k] === cell.dataset.b
           })
         }
       })
@@ -138,7 +154,7 @@ function init() {
       fillBucket(index)
       return
     }
-    const value = erase ? '' : colorInput.value  //! transparent replaced with ''
+    const value = erase ? 'transparent' : colorInput.value  //! transparent replaced with ''
     codes[0][index] = value
     e.target.style.backgroundColor = value
     updateCodesDisplay(codesBox[0],codes[0])
@@ -154,9 +170,10 @@ function init() {
 
   const drawWithImage = e =>{
     const index = e.target.dataset.cell
-    codes[1][index] = letterInput.value
-    const background = codes[1][index] === '' ? '' : assignedCodes[codes[1][index]]
-    if (background )e.target.style.backgroundImage = `url(./assets/${background})`
+    const value = erase ? '' : letterInput.value
+    codes[1][index] = value
+    const background = (codes[1][index] === '' || erase) ? '' : assignedCodes[codes[1][index]]
+    if (background || erase) e.target.style.backgroundImage = `url(./assets/${background})`
     updateCodesDisplay(codesBox[1],codes[1])
     // drawMap(e) //* draws letters
   }
@@ -291,7 +308,6 @@ function init() {
       updateCodesDisplay(codesBox[0],codes[0])
       paintCanvasTwo()
       addDraw()
-      downloadButtons[0].classList.remove('display_none')
     }
     imageTarget.src = blobURL
   }
@@ -617,7 +633,7 @@ function init() {
   }
 
   const fillBucket = index =>{
-    const fillValue = erase ? '' : colorInput.value  //! '' instead of transparent
+    const fillValue = erase ? 'transparent' : colorInput.value  //! '' instead of transparent
     const areaToFillBucket = []
     const valueToSwap = codes[0][index]
     
@@ -646,7 +662,8 @@ function init() {
     const pathData = []
     const areaToTrace = []
     const column = columnInputs[0].value
-    const w = 100 / column
+    // const w = 100 / column
+    const w = 1
     const direction = [ 1, +column, -1, -column ]
     const checkDirection = [ -column, +1, +column, -1 ]
     const directionFactor = [ 1, 1, -1, -1 ]
@@ -680,9 +697,16 @@ function init() {
         if (checkedIndex.filter(d=>d === dirIndexToCheck).length) return
         checkedIndex.push(dirIndexToCheck)
 
-        const distance = 100 / column
+        // const distance = 100 / column
+        const distance = 1
         const distanceToMove = distance * directionFactor[dirIndex]
-        d.push(`${letter} ${distanceToMove}`)
+        if (d[d.length - 1].split(' ')[0] === letter){
+          console.log('trigger')
+          d[d.length - 1] = `${letter} ${+d[d.length - 1].split(' ')[1] + distanceToMove}`
+        } else {
+          d.push(`${letter} ${distanceToMove}`)
+        }
+        
         if (letter === 'h') initialX += distanceToMove
         if (letter === 'v') initialY += distanceToMove
         if (initialX === x * w && initialY === y * w) stop = true
