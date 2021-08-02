@@ -200,7 +200,7 @@ img {
   justify-content: flex-start;
   flex-wrap: wrap;
   background-color: white;
-  cursor: none;
+  cursor: none !important;
 }
 
 .color_label {
@@ -447,6 +447,7 @@ button.icon:hover {
   background-size: cover !important; 
   z-index: 400;
 }
+
 .cursor div {
   position: absolute;
   /* top: -40px; */

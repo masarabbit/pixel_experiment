@@ -1,5 +1,6 @@
 function init() {
   
+  //TODO make windows bigger so that it could be used as door as well. make it so that houses can be stacked on top of each other
 
   // convert rgb(xxx,xxx,xxx) to hex
   // const c = cell.style.backgroundColor.replace('rgb(','').replace(')','').split(', ')
@@ -59,14 +60,29 @@ function init() {
     't':'tree_two.png',
     '2':'tree_one.png',
     'w':'tree_two2.png',
-    'k':'panel.png',
-    '1':'1.png',
-    '2':'2.png',
-    '3':'3.png',
-    '4':'4.png',
-    '5':'5.png',
-    '6':'6.png',
-    'b':'',
+
+    'q':'q.png',
+    'f':'f.png',
+    'e':'e.png',
+    'r':'r.png',
+    'g':'g.png',
+    'y':'y.png',
+    'u':'u.png',
+    'i':'i.png',
+    'm':'m.png',
+    'p':'p.png',
+    'a':'a.png',
+    's':'s.png',
+    'd':'d.png',
+
+    'h':'h.png',
+    'j':'j.png',
+    'k':'k.png',
+    'l':'l.png',
+
+    'z':'z.png',
+    'x':'x.png',
+    'c':'c.png',
   }
 
   const codes = {
@@ -127,10 +143,6 @@ function init() {
         } else {
           console.log('else')
           letterInput.value = Object.keys(assignedCodes).find(k => {
-            console.log('test',assignedCodes[k])
-            console.log('test2',assignedCodes[cell.dataset.b])
-            console.log('test3',cell.dataset.b)
-            console.log('test4',filteredData[i])
             return assignedCodes[k] === cell.dataset.b
           })
         }
