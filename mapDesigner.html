@@ -1,0 +1,57 @@
+<!doctype html>
+<html>
+
+<head>
+  <link rel="stylesheet" type="text/css" href="./styles/main.css" />
+  <script src ="./scripts/mapDesigner.js" charset="utf-8"></script>
+
+  <title>map designer</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+
+<body>
+  <nav>
+    map designer
+    <div class="input_wrap">
+      <label>column</label>
+      <input class="column input" placeholder="column" value="5" />
+    </div>
+    <div class="input_wrap">
+      <label>row</label>
+      <input class="row input" placeholder="row" value="5" />
+    </div>
+    <div class="input_wrap">
+      <label>cell size</label>
+      <input class="cell_size input" placeholder="cell size" value="20" />
+    </div>
+    <input class="letter input" value="a" />
+
+      <button class="create_grid create icon alt" data-index="0" data-grid_class="cell" data-alt="create grid"></button> 
+      <button class="clear icon eraser alt" data-alt="eraser"></button>
+      <button class="grid_display icon hide alt" data-alt="hide grid"></button>
+      <button class="generate icon alt" data-alt="generate from code"></button>   
+  </nav>
+
+  <div class="pagewrap">
+
+    <!-- grid 2 -->
+    <div class="grid"></div>
+    
+    <div class="palette"></div>
+    <textarea class="codes" spellcheck="false"></textarea>
+    <div class="mini_wrap">
+      <button class="copy icon alt" data-alt="copy code"></button>
+    </div>
+
+
+    <!-- grid 3 -->
+    <div class="grid"></div>
+
+  </div>
+
+
+  <div class="cursor" data-text="test"><div></div></div>
+</body>
+
+</html>

@@ -486,3 +486,9 @@ button.icon:hover {
 .cursor_none {
   cursor: none !important;
 }
+
+.svg_wrap {
+  transform-origin: center;
+  height: 100%;
+  width: 100%;
+}
