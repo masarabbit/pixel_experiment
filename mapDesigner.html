@@ -2,7 +2,7 @@
 <html>
 
 <head>
-  <link rel="stylesheet" type="text/css" href="./styles/main.css" />
+  <link rel="stylesheet" type="text/css" href="./styles/map.css" />
   <script src ="./scripts/mapDesigner.js" charset="utf-8"></script>
 
   <title>map designer</title>
@@ -25,7 +25,10 @@
       <label>cell size</label>
       <input class="cell_size input" placeholder="cell size" value="20" />
     </div>
-    <input class="letter input" value="a" />
+    <div class="input_wrap">
+      <label>key</label>
+      <input class="letter input" value="a" />
+    </div>
 
       <button class="create_grid create icon alt" data-index="0" data-grid_class="cell" data-alt="create grid"></button> 
       <button class="clear icon eraser alt" data-alt="eraser"></button>
@@ -47,6 +50,17 @@
 
     <!-- grid 3 -->
     <div class="grid"></div>
+
+    <textarea class="codes" spellcheck="false" placeholder="compressed"></textarea>
+    <div class="mini_wrap">
+      <button class="copy icon alt" data-alt="copy code"></button>
+    </div>
+
+    <!-- <textarea class="codes" spellcheck="false" placeholder="decompressed"></textarea>
+    <div class="mini_wrap">
+      <button class="copy icon alt" data-alt="copy code"></button>
+    </div> -->
+
 
   </div>
 

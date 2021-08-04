@@ -3,6 +3,7 @@ function init() {
   //TODO add the output code here so that decoder doesn't have to be used.
   //TODO change logic to enter SVG's rather than change background
   //TODO change logic for clearing grid / erase
+  //TODO debug reason for SVG sometimes not showing up
 
   const decode = arr =>{
     return arr.split('').map(c=>{
@@ -58,23 +59,37 @@ function init() {
     return `D 0 0h16v1hN6vN"/ <path fill="${subColor ? subColor : 'white'}" d="M 0 1h16v15hN6vN5"/`
   }
 
+  const door = () =>{
+    return `F 0 0h16v15hNvN0hNvThTvNhTvNh-4v1hTv1hTv2hNv10hNvN5"/ D 6 1h4v1h2v1h2v2h1v10h1v1hN6vNh1vN0h1vTh2vNh2vN"/`
+  }
+
+  const roundWindow = () =>{
+    return `F 0 0h16v16hN6vN6"/ D 6 2h4v1h2v1h1v2h1v4hNv2hNv1hTv1h-4vNhTvNhNvThNv-4h1vTh1vNh2vN"/`
+  }
+
   const svgData = {
     't': {svg: tree, color: randomGreen},
     'w': {svg: tree, color: randomGreen},
     'o': {svg: flowers, color: randomColor},
     'd': {svg: buildingCorner, subColor: '#94ffd6'},
     's': {svg: buildingCorner, subColor: '#94ffd6', rotate: 90},
-    'e': {svg: buildingCorner, rotate: 180},
-    'q': {svg: buildingCorner, rotate: 270},
+    'bt': {svg: buildingCorner },
+    'br': {svg: buildingCorner, rotate: 90},
+    'bb': {svg: buildingCorner, rotate: 180},
+    'bl': {svg: buildingCorner, rotate: 270},
     'g': {svg: roofCorner, subColor: '#94ffd6'},
     'y': {svg: roofCorner, subColor: '#94ffd6', flip: 'h'},
     'u': {svg: plain },
     'm': {svg: plainEdge, subColor: '#94ffd6' },
     'a': {svg: plainEdge, subColor: '#94ffd6', rotate: 90 },
     'i': {svg: plainEdge, subColor: '#94ffd6', rotate: 180 },
+    'do': {svg: door },
+    'wi': {svg: roundWindow },
+    'at': {svg: plainEdge },
+    'ar': {svg: plainEdge, rotate: 90 },
+    'ab': {svg: plainEdge, rotate: 180 },
+    'al': {svg: plainEdge, rotate: 270 },
   }
-
-
 
 
 
@@ -103,72 +118,42 @@ function init() {
   const columnInputs = document.querySelectorAll('.column')
   const letterInput = document.querySelector('.letter')
   const codesBox = document.querySelectorAll('.codes')
-
-  const assignedCodes = {
-    't':'tree_two.png',
-    '2':'tree_one.png',
-    'w':'tree_two2.png',
-
-    'q':'q.png',
-    'f':'f.png',
-    'e':'e.png',
-    'r':'r.png',
-    'g':'g.png',
-    'y':'y.png',
-    'u':'u.png',
-    'i':'i.png',
-    'm':'m.png',
-    'p':'p.png',
-    'a':'a.png',
-    's':'s.png',
-    'd':'d.png',
-
-    'h':'h.png',
-    'j':'j.png',
-    'k':'k.png',
-    'l':'l.png',
-
-    'z':'z.png',
-    'x':'x.png',
-    'c':'c.png',
-  }
-
-
   const codes = {
     0: [],
     // 1: []
   }
+  
+  const populateWithSvg = (key,target) =>{
+    const { svg, color, subColor, rotate, flip } = svgData[key]
+    target.innerHTML = svgWrapper(
+      decode(subColor ? svg(subColor) : svg()),
+      color ? color() : '',
+      rotate ? rotate : 0,
+      flip ? flip : null
+    )
+  }
 
 
-  // const sortedByFrequencyDuplicatesAndBlankRemoved = array =>{  
-  //   const countOccurrences = (arr, val) => arr.reduce((a, v) => (v === val ? a + 1 : a), 0)
-  //   const blankRemoved = array.filter(dot=> dot !== '' && dot)
-  //   const orderedByFrequency = blankRemoved.map(ele=>{  
-  //     return `${ele}_${countOccurrences(blankRemoved,ele)}`
-  //   }).sort((a, b) => b.split('_')[1] - a.split('_')[1])  
-  //   return [...new Set(orderedByFrequency.map(ele=>ele.split('_')[0]))]
-  // }
+  const populatePalette = () =>{
+    const keys = Object.keys(svgData)
 
-  // const populatePalette = (index,arr) =>{
-  //   const filteredData = sortedByFrequencyDuplicatesAndBlankRemoved(arr)
-  //   palettes[index].innerHTML = filteredData.map(d=>{
-  //     const background = `background-image:url(./assets/${assignedCodes[d]})`
-  //     return `
-  //       <div class="palette_cell">
-  //         <div class="palette_color" data-b="${assignedCodes[d]}" style="${background};">
-  //         </div>
-  //       </div>`
-  //   }).join('')
+    palettes[0].innerHTML = keys.map(d=>`<div class="palette_cell" data-key="${d}"></div>`).join('')
 
-  //   const paletteColors = document.querySelectorAll('.palette_color')
-  //   paletteColors.forEach(cell=>{
-  //     cell.addEventListener('click',()=>{
-  //       letterInput.value = Object.keys(assignedCodes).find(k => {
-  //         return assignedCodes[k] === cell.dataset.b
-  //       })
-  //     })
-  //   })
-  // }
+    const paletteCells = document.querySelectorAll('.palette_cell')
+    
+    keys.forEach((key,i)=>{
+      populateWithSvg(key,paletteCells[i]) 
+    })
+
+    paletteCells.forEach(palette=>{
+      palette.addEventListener('click',(e)=>{
+        letterInput.value = e.target.dataset.key
+      })
+    })
+  }
+
+  populatePalette()
+
 
   const updateCodesDisplay = (box,arr) =>{
     box.value = `${arr.map(ele=>ele).join(',')}`
@@ -178,7 +163,6 @@ function init() {
 
   
   //draw
-
   const drawMap = e =>{
     const index = e.target.dataset.cell
     const value = erase ? '' : letterInput.value
@@ -192,20 +176,17 @@ function init() {
     const index = e.target.dataset.cell
     const value = erase ? '' : letterInput.value
     codes[0][index] = value
-    // const background = (codes[0][index] === '' || erase) ? '' : assignedCodes[codes[1][index]]
-    // if (background || erase) e.target.style.backgroundImage = `url(./assets/${background})`
+
     updateCodesDisplay(codesBox[0],codes[0])
     //* draws letters
 
-    if (svgData[value])  {
-      const { svg, color, subColor, rotate, flip } = svgData[value]
-      e.target.innerHTML = svgWrapper(
-        decode(subColor ? svg(subColor) : svg()),
-        color ? color() : '',
-        rotate ? rotate : 0,
-        flip ? flip : null
-      )
+    if (svgData[value] && !erase)  {
+      populateWithSvg(value,e.target) 
+    } else {
+      e.target.innerHTML = ''
     }
+
+    console.log('error',e.target)
   }
 
   const continuousDraw = (e,action) =>{
@@ -228,10 +209,9 @@ function init() {
   const generateMap = clear =>{
     const mapGenCells = document.querySelectorAll('.map_gen_cell')
     mapGenCells.forEach((mapGenCell,i)=>{
-      //TODO change this to enter the details
-      const background = codes[0][i] === '' ? '' : assignedCodes[codes[0][i]]
 
-      if (background) mapGenCell.style.backgroundImage = `url(./assets/${background})`
+      if (svgData[codes[0][i]]) populateWithSvg(codes[0][i],mapGenCell) 
+      
       mapGenCell.addEventListener('click',(e)=>drawWithImage(e))
       mapGenCell.addEventListener('mousemove',(e)=>continuousDraw(e,drawWithImage))
     })
@@ -244,7 +224,7 @@ function init() {
       columnInputs[0].value,
       cellSizeInputs[0].value,
       0,
-      'map_cell',
+      'map_gen_cell',
       false
     )
     createGridCells(
@@ -252,7 +232,7 @@ function init() {
       columnInputs[0].value,
       cellSizeInputs[0].value,
       1,
-      'map_gen_cell',
+      'map_cell',
       false
     ) 
     codes[0] = codesBox[0].value.split(',')
@@ -262,7 +242,6 @@ function init() {
       mapCells[i].innerHTML = ele
     })
     generateMap(false)
-    // populatePalette(0,codes[0])
   }
 
   const copyText = box =>{
@@ -313,7 +292,44 @@ function init() {
   columnInputs[0].addEventListener('change',()=>column = columnInputs[0].value)
 
   generate[0].addEventListener('click',generateFromCode)
-  copyButtons[0].addEventListener('click',()=>copyText(codesBox[0]))
+
+  copyButtons.forEach((copyButton,i)=>{
+    copyButton.addEventListener('click',()=>copyText(codesBox[i]))
+  })
+
+  codesBox[0].addEventListener('change',()=>{
+    const originalArray = codesBox[0].value.split(',')
+    let current = ''
+    const record = []
+
+    originalArray.forEach((letter,i)=>{
+      const next = i > originalArray.length ? '' : originalArray[i + 1]
+      if (letter === next){
+        current += letter
+      } else {
+        current += letter
+        record.push(current)
+        current = ''        
+      }
+    })
+
+    codesBox[1].value = record.map(arr=>arr[0] + arr.length)
+  })
+
+  codesBox[1].addEventListener('change',()=>{   
+    const output = []
+    codesBox[1].value.split(',').forEach(v=>{
+      const letter = v[0]
+      const repeat = v.slice(1)
+      for (let i = 0; i < repeat; i++){
+        output.push(letter)
+      }
+    })
+    codesBox[0].value = output
+  })
+
+
+
   gridToggleButtons.forEach(button=>button.addEventListener('click',toggleGrid))
 
   grids.forEach(grid=>{
