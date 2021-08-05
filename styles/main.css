@@ -147,7 +147,7 @@ button:hover {
   margin: 20px 0 10px 0;
 }
 
-.grid:first-of-type{
+.grid.extra_margin{
   margin: 100px 0 10px 0;
 }
 

@@ -1,4 +1,5 @@
 function init() {
+  
 
   //TODO add the output code here so that decoder doesn't have to be used.
   //TODO change logic to enter SVG's rather than change background
@@ -67,28 +68,70 @@ function init() {
     return `F 0 0h16v16hN6vN6"/ D 6 2h4v1h2v1h1v2h1v4hNv2hNv1hTv1h-4vNhTvNhNvThNv-4h1vTh1vNh2vN"/`
   }
 
+  const squareWindow = () =>{
+    return `F 0 0h16v16hN6vN6"/ D 5 2h6v1h1v10hNv1h-6vNhNvN0h1vN"/`
+  }
+
+  const sideSquareWindow = () =>{
+    // return `D 0 0h1v16hNvN6"/ F 1 0h15v16hN5vN6"/ D 7 2h6v1h1v10hNv1h-6vNhNvN0h1vN"/`
+    // return `D 0 0h1v16hNvN6"/ F 1 0h15v16hN5vN6"/ D 9 3h5v1h1v10hNv1h-5vNhNvN0h1vN"/`
+    // return `D 0 0h1v16hNvN6"/ F 1 0h15v16hN5vN6"/ D 10 4h4v1h1v9hNv1h-4vNhNv-9h1vN"/`
+    return `D 0 0h1v16hNvN6"/ F 1 0h15v16h-3vNh1v-9hNvNh-4v1hNv9h1v1h-8vN6"/ D 9 5h4v1h1v9hNv1h-4vNhNv-9h1vN"/`
+  }
+
+  const noSideWindow = () =>{
+    return `F 0 0h16v16h-3vNh1v-9hNvNh-4v1hNv9h1v1h-9vN6"/ D 9 5h4v1h1v9hNv1h-4vNhNv-9h1vN"/`
+  }
+
+  const sideSquareWindowAlt = () =>{
+    return `D 0 0h1v16hNvN6"/ F 1 0h15v5hNvNh-4v1hNv10h1v1hN0vN6"/ D 11 4h4v1h1v10hNv1h-4vNhNvN0h1vN"/ F 15 15h1v1hNvN"/`
+  }
+
+  const roofCurve = subColor =>{
+    return `<path fill="${subColor ? subColor : 'white'}" d="M 0 0h16v15hTvNhNvNhNvNhTvNh-4v1hTv1hNv1hNv1hTvN5"/ D 6 11h4v1h-4vN"/ D 4 12h2v1hTvN"/ F 6 12h4v1h2v1h1v1h1v1hN2vNh1vNh1vNh2vN"/ D 10 12h2v1hTvN"/ D 3 13h1v1hNvN"/ D 12 13h1v1hNvN"/ D 2 14h1v1hNvN"/ D 13 14h1v1hNvN"/ D 0 15h2v1hTvN"/ D 14 15h2v1hTvN"/`
+  }
+
+  const roofTopBottomCorner = subColor =>{
+    return `D 0 0h1v11hNvN1"/ F 1 0h15v15hN1vNhTvNhNvThNvN1"/ <path fill="${subColor ? subColor : 'white'}" d="M 0 11h1v2h1v1h1v1h2v1h-5v-5"/ D 1 11h1v2hNvT"/ D 2 13h1v1hNvN"/ D 3 14h2v1hTvN"/ D 5 15h11v1hN1vN"/`
+  }
+
+  const sub = '#e2cc9c'
+  const main = '#7d551c'
+
   const svgData = {
     't': {svg: tree, color: randomGreen},
     'w': {svg: tree, color: randomGreen},
     'o': {svg: flowers, color: randomColor},
-    'd': {svg: buildingCorner, subColor: '#94ffd6'},
-    's': {svg: buildingCorner, subColor: '#94ffd6', rotate: 90},
-    'bt': {svg: buildingCorner },
-    'br': {svg: buildingCorner, rotate: 90},
-    'bb': {svg: buildingCorner, rotate: 180},
-    'bl': {svg: buildingCorner, rotate: 270},
-    'g': {svg: roofCorner, subColor: '#94ffd6'},
-    'y': {svg: roofCorner, subColor: '#94ffd6', flip: 'h'},
-    'u': {svg: plain },
-    'm': {svg: plainEdge, subColor: '#94ffd6' },
-    'a': {svg: plainEdge, subColor: '#94ffd6', rotate: 90 },
-    'i': {svg: plainEdge, subColor: '#94ffd6', rotate: 180 },
-    'do': {svg: door },
-    'wi': {svg: roundWindow },
-    'at': {svg: plainEdge },
-    'ar': {svg: plainEdge, rotate: 90 },
-    'ab': {svg: plainEdge, rotate: 180 },
-    'al': {svg: plainEdge, rotate: 270 },
+    'd': {svg: buildingCorner, color: main, subColor: sub },
+    's': {svg: buildingCorner, color: main, subColor: sub, rotate: 90},
+    'bt': {svg: buildingCorner, color: main },
+    'br': {svg: buildingCorner, color: main, rotate: 90},
+    'bb': {svg: buildingCorner, color: main, rotate: 180},
+    'bl': {svg: buildingCorner, color: main, rotate: 270},
+    'rbr': {svg: roofTopBottomCorner, color: main, subColor: sub },
+    'rbl': {svg: roofTopBottomCorner, color: main, subColor: sub, flip: 'h'},
+    'g': {svg: roofCorner, color: main, subColor: sub},
+    'y': {svg: roofCorner, color: main, subColor: sub, flip: 'h'},
+    'p': {svg: plain },
+    'rp': {svg: plain, subColor: sub },
+    'do': {svg: door, color: main },
+    'wi': {svg: roundWindow, color: main},
+    'sw': {svg: squareWindow, color: main },
+    'swl': {svg: sideSquareWindow, color: main },
+    'swr': {svg: sideSquareWindow, color: main, flip: 'h'},
+    'nwl': {svg: noSideWindow, color: main },
+    'nwr': {svg: noSideWindow, color: main, flip: 'h'},
+    'swal': {svg: sideSquareWindowAlt, color: main },
+    'swar': {svg: sideSquareWindowAlt, color: main, flip: 'h'},
+    'at': {svg: plainEdge, color: main  },
+    'ar': {svg: plainEdge, color: main, rotate: 90 },
+    'ab': {svg: plainEdge, color: main, rotate: 180 },
+    'al': {svg: plainEdge, color: main, rotate: 270 },
+    'rc': {svg: roofCurve, color: main, subColor: sub},
+    'pt': {svg: plainEdge, color: main, subColor: sub },
+    'pr': {svg: plainEdge, color: main, subColor: sub, rotate: 90 },
+    'pb': {svg: plainEdge, color: main, subColor: sub, rotate: 180 },
+    'pu': {svg: plainEdge, color: main, subColor: sub, rotate: 270 },
   }
 
 
@@ -122,15 +165,52 @@ function init() {
     0: [],
     // 1: []
   }
+
+  const compress = value =>{
+    const originalArray = value.split(',')
+    let current = ''
+    const record = []
+
+    originalArray.forEach((letter,i)=>{
+      const next = i > originalArray.length ? '' : originalArray[i + 1]
+      if (letter === next){
+        current += (letter + '.')
+      } else {
+        current += (letter + '.')
+        record.push(current)
+        current = ''        
+      }
+    })
+
+    return record.map(arr=>{
+      if (arr === '.') return
+      return arr.split('.')[0] + arr.split('').filter(a=>a === '.').length
+    })
+  }
+
+  const decompress = value =>{
+    const output = []
+    value.split(',').forEach(x=>{
+      const letter = x.split('').filter(y=>y * 0 !== 0).join('')
+      const repeat = x.split('').filter(y=>y * 0 === 0).join('')
+      for (let i = 0; i < repeat; i++){
+        output.push(letter)
+      }
+    })
+    return output
+  }
   
   const populateWithSvg = (key,target) =>{
     const { svg, color, subColor, rotate, flip } = svgData[key]
-    target.innerHTML = svgWrapper(
-      decode(subColor ? svg(subColor) : svg()),
-      color ? color() : '',
-      rotate ? rotate : 0,
-      flip ? flip : null
-    )
+    let colorAction = ''
+    colorAction = typeof(color) === 'function' ? color() : color
+    target.innerHTML = 
+      svgWrapper(
+        decode(subColor ? svg(subColor) : svg()),
+        color ? colorAction : '',
+        rotate ? rotate : 0,
+        flip ? flip : null 
+      )
   }
 
 
@@ -150,6 +230,7 @@ function init() {
         letterInput.value = e.target.dataset.key
       })
     })
+    
   }
 
   populatePalette()
@@ -157,15 +238,20 @@ function init() {
 
   const updateCodesDisplay = (box,arr) =>{
     box.value = `${arr.map(ele=>ele).join(',')}`
-    const index = box === codesBox[0]? 0 : 1 
+    // const index = box === codesBox[0]? 0 : 1 
     // populatePalette(index,arr)
+    // console.log(window.location)
+    //TODO create a href and link go to it (maybe not good to keep refreshing so some way to just change the address?)
+    // console.log(`${columnInputs[0].value}#${rowInputs[0].value}#${compress(codesBox[0].value)}`)
+    window.location.hash=`${columnInputs[0].value}#${rowInputs[0].value}#${compress(codesBox[0].value).join('-')}`
+    // .replaceAll(',','-')
   }
 
   
   //draw
   const drawMap = e =>{
     const index = e.target.dataset.cell
-    const value = erase ? '' : letterInput.value
+    const value = erase ? 'b' : letterInput.value
     codes[0][index] = value
     e.target.innerHTML = value
     updateCodesDisplay(codesBox[0],codes[0])
@@ -174,20 +260,19 @@ function init() {
 
   const drawWithImage = e =>{
     const index = e.target.dataset.cell
-    const value = erase ? '' : letterInput.value
+    const value = erase ? 'b' : letterInput.value
     codes[0][index] = value
 
     updateCodesDisplay(codesBox[0],codes[0])
-    //* draws letters
 
     if (svgData[value] && !erase)  {
       populateWithSvg(value,e.target) 
     } else {
       e.target.innerHTML = ''
     }
-
-    console.log('error',e.target)
+    // console.log('error',e.target)
   }
+
 
   const continuousDraw = (e,action) =>{
     if (!canDraw) return
@@ -211,6 +296,8 @@ function init() {
     mapGenCells.forEach((mapGenCell,i)=>{
 
       if (svgData[codes[0][i]]) populateWithSvg(codes[0][i],mapGenCell) 
+      if (codes[0][i] === 'v') mapGenCell.innerHTML = 'x'
+      if (codes[0][i] === 'b') mapGenCell.innerHTML = '-'
       
       mapGenCell.addEventListener('click',(e)=>drawWithImage(e))
       mapGenCell.addEventListener('mousemove',(e)=>continuousDraw(e,drawWithImage))
@@ -298,34 +385,11 @@ function init() {
   })
 
   codesBox[0].addEventListener('change',()=>{
-    const originalArray = codesBox[0].value.split(',')
-    let current = ''
-    const record = []
-
-    originalArray.forEach((letter,i)=>{
-      const next = i > originalArray.length ? '' : originalArray[i + 1]
-      if (letter === next){
-        current += letter
-      } else {
-        current += letter
-        record.push(current)
-        current = ''        
-      }
-    })
-
-    codesBox[1].value = record.map(arr=>arr[0] + arr.length)
+    codesBox[1].value = compress(codesBox[0].value)
   })
 
   codesBox[1].addEventListener('change',()=>{   
-    const output = []
-    codesBox[1].value.split(',').forEach(v=>{
-      const letter = v[0]
-      const repeat = v.slice(1)
-      for (let i = 0; i < repeat; i++){
-        output.push(letter)
-      }
-    })
-    codesBox[0].value = output
+    codesBox[0].value = decompress(codesBox[1].value)
   })
 
 
@@ -377,7 +441,22 @@ function init() {
   })
 
 
+  // reads from url
+  const query = window.location.hash
+  console.log(query)
+  if (query){
+    const queryArray = query.split('#')
+    columnInputs[0].value = queryArray[1]
+    rowInputs[0].value = queryArray[2]
 
+    codesBox[0].value = decompress(queryArray[3].replaceAll('-',','))
+    generateFromCode()
+
+    // const keys = Object.keys(svgData)
+    // codesBox[0].value.split(',').forEach(letter=>{
+    //   if (keys.indexOf(letter) === -1) console.log(letter)
+    // })
+  }
 
 }
 

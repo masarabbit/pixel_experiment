@@ -253,8 +253,12 @@ img {
 .map_gen_cell:hover {
   transform: scale(1.3);
   border: transparent;
-  background-color: rgba(2, 255, 234, 0.479);
+  background-color: rgba(6, 255, 234, 0.788);
   /* filter: sepia(100%) hue-rotate(180deg); */
+}
+
+.map_gen_cell {
+  color:rgba(7, 255, 110, 0.733);
 }
 
 .map_gen_cell,
@@ -307,6 +311,7 @@ img {
 
 .input_assign button {
   width: 40px;
+  color: rgb(117, 110, 86);
 }
 
 

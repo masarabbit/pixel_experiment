@@ -281,6 +281,8 @@ function init() {
     let iWidth
 
     imageTarget.onload = () => {
+      row = rowInputs[0].value
+      column = columnInputs[0].value
       const maxWidth = column * cellSize 
       iWidth = imageTarget.naturalWidth 
       iHeight = imageTarget.naturalHeight 
@@ -290,8 +292,7 @@ function init() {
       canvas[0].setAttribute('height', calcHeight - (calcHeight % cellSize))
       // row = rowInputs[0].value ? rowInputs[0].value : (calcHeight - (calcHeight % cellSize)) / cellSize
       // rowInputs[0].value = row
-      row = rowInputs[0].value
-      column = columnInputs[0].value
+      
       grids[0].style.height = `${row * cellSize}px`
       grids[0].style.width = `${column * cellSize}px` 
 
@@ -788,7 +789,11 @@ function init() {
     })
     // console.log('processedCodes',processedCodes)
     convertToSvg(processedCodes)
-    testCode.value = pathData.join(' ')
+
+    // put in to compress
+    testCode.value = pathData.join(' ').replaceAll('<path d="M','D').replaceAll('<path fill="#ffffff" d="M','F').replaceAll('/>','/').replaceAll('-1','N').replaceAll('-2','T').replaceAll(' v ','v').replaceAll(' h ','h').replaceAll('<path fill="#000000" d="M','D')
+
+
   })
 
   const dataUrlButton = document.querySelector('.url')
@@ -818,6 +823,16 @@ function init() {
   selectCopyButton.addEventListener('click',()=>{
     selectCopy = !selectCopy
   })
+
+  // reads from url
+  const query = window.location.hash
+  if (query){
+    const queryArray = query.split('#')
+    columnInputs[0].value = queryArray[1]
+    rowInputs[0].value = queryArray[2]
+
+    createGrid(0,'cell')
+  }
 
 }
 
