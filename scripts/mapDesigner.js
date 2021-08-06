@@ -166,27 +166,23 @@ function init() {
     // 1: []
   }
 
+
   const compress = value =>{
     const originalArray = value.split(',')
-    let current = ''
+    let count = 0
     const record = []
 
     originalArray.forEach((letter,i)=>{
       const next = i > originalArray.length ? '' : originalArray[i + 1]
-      if (letter === next){
-        current += (letter + '.')
-      } else {
-        current += (letter + '.')
-        record.push(current)
-        current = ''        
-      }
+      count++
+      if (letter === next) return
+      record.push([letter,count])
+      count = 0 
     })
 
-    return record.map(arr=>{
-      if (arr === '.') return
-      return arr.split('.')[0] + arr.split('').filter(a=>a === '.').length
-    })
+    return record.map(x=> x[0] + x[1])
   }
+
 
   const decompress = value =>{
     const output = []
