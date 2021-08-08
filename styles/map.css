@@ -330,7 +330,7 @@ img {
 }
 
 .palette_cell {
-  position: relative;
+  /* position: relative; */
   /* border: 1px solid white; */
   height: 30px;
   width: 30px;
@@ -502,8 +502,37 @@ button.icon:hover {
   height: 100%;
   width: 100%;
   pointer-events: none;
+  /* border: green 1px solid; */
 }
 
 /* .palette_cell .svg_wrap {
   pointer-events: none;
 } */
+
+.svg_output {
+  margin: 100px 0 0 0;
+}
+
+.svg_anim_wrap {
+  transform-origin: center;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  /* border: blue 1px solid; */
+  animation: blink infinite 1.5s;
+  margin-right: -100%;
+  z-index: 50;
+}
+
+.palette_cell .svg_anim_wrap {
+  margin-right: 0;
+  margin-bottom: -100%;
+  position: relative;
+}
+
+@keyframes blink {
+  0% {opacity: 0;}
+  49% {opacity: 0;}
+  50% {opacity: 1;}
+  100% {opaccity: 1;}
+}

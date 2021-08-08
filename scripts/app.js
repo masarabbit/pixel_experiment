@@ -57,32 +57,32 @@ function init() {
   const codesBox = document.querySelectorAll('.codes')
   const inputAssignWrapper = document.querySelector('.input_assign_wrapper')
   const assignedCodes = {
-    't':'tree_two.png',
-    '2':'tree_one.png',
-    'w':'tree_two2.png',
+    't': 'tree_two.png',
+    '2': 'tree_one.png',
+    'w': 'tree_two2.png',
 
-    'q':'q.png',
-    'f':'f.png',
-    'e':'e.png',
-    'r':'r.png',
-    'g':'g.png',
-    'y':'y.png',
-    'u':'u.png',
-    'i':'i.png',
-    'm':'m.png',
-    'p':'p.png',
-    'a':'a.png',
-    's':'s.png',
-    'd':'d.png',
+    'q': 'q.png',
+    'f': 'f.png',
+    'e': 'e.png',
+    'r': 'r.png',
+    'g': 'g.png',
+    'y': 'y.png',
+    'u': 'u.png',
+    'i': 'i.png',
+    'm': 'm.png',
+    'p': 'p.png',
+    'a': 'a.png',
+    's': 's.png',
+    'd': 'd.png',
 
-    'h':'h.png',
-    'j':'j.png',
-    'k':'k.png',
-    'l':'l.png',
+    'h': 'h.png',
+    'j': 'j.png',
+    'k': 'k.png',
+    'l': 'l.png',
 
-    'z':'z.png',
-    'x':'x.png',
-    'c':'c.png',
+    'z': 'z.png',
+    'x': 'x.png',
+    'c': 'c.png',
   }
 
   const codes = {
@@ -111,7 +111,7 @@ function init() {
 
 
   const updateGrid = () =>{
-    grids[0].innerHTML=codes[0].map(dot=>{
+    grids[0].innerHTML = codes[0].map(dot=>{
       return `
         <div class="cell" style="background-color:${dot};">
         </div>
@@ -153,7 +153,7 @@ function init() {
   const updateCodesDisplay = (box,arr) =>{
     // box.value = `[${arr.map(ele=>ele).join(',')}]`
     box.value = `${arr.map(ele=>ele).join(',')}`
-    const index = box === codesBox[0]? 0 : 1 
+    const index = box === codesBox[0] ? 0 : 1 
     populatePalette(index,arr)
   }
 
@@ -237,13 +237,13 @@ function init() {
   //! maybe add selectCopy here?
   const addDraw = () =>{
     const cells = document.querySelectorAll('.cell')
-      cells.forEach((c,i)=>{
-        c.style.height = `${cellSize}px`
-        c.style.width = `${cellSize}px`
-        c.dataset.cell = i
-        c.addEventListener('click',(e)=>colorCell(e))
-        c.addEventListener('mousemove',(e)=>continuousDraw(e,colorCell))
-      })
+    cells.forEach((c,i)=>{
+      c.style.height = `${cellSize}px`
+      c.style.width = `${cellSize}px`
+      c.dataset.cell = i
+      c.addEventListener('click',(e)=>colorCell(e))
+      c.addEventListener('mousemove',(e)=>continuousDraw(e,colorCell))
+    })
   }
 
   const addCodeDraw = clear =>{
@@ -280,6 +280,7 @@ function init() {
     let iHeight
     let iWidth
 
+
     imageTarget.onload = () => {
       row = rowInputs[0].value
       column = columnInputs[0].value
@@ -311,8 +312,8 @@ function init() {
 
         // this thing included here to prevent rendering black instead of transparent
         c[3] === 0
-        ? codes[0].push('transparent')
-        : codes[0].push(hex(rgbToHex(c[0], c[1], c[2])))
+          ? codes[0].push('transparent')
+          : codes[0].push(hex(rgbToHex(c[0], c[1], c[2])))
         // var hex = '#' + ('000000' + rgbToHex(c[0], c[1], c[2])).slice(-6)
         
       }
@@ -346,7 +347,7 @@ function init() {
 
     const cells = document.querySelectorAll('.cell')
     codesBox[0].value.split(',').forEach((ele,i)=>{
-      if(!cells[i]) return
+      if (!cells[i]) return
       cells[i].style.backgroundColor = ele
     })
     addDraw()
@@ -373,7 +374,7 @@ function init() {
     codes[1] = codesBox[1].value.split(',')
     const mapCells = document.querySelectorAll('.map_cell')
     codesBox[1].value.split(',').forEach((ele,i)=>{
-      if(!mapCells[i]) return
+      if (!mapCells[i]) return
       mapCells[i].innerHTML = ele
     })
     generateMap(false)
@@ -383,7 +384,7 @@ function init() {
 
   const downloadImage = (canvas,name) =>{
     const link = document.createElement('a')
-    link.download = `${name}_${new Date().getTime()}.png`;
+    link.download = `${name}_${new Date().getTime()}.png`
     link.href = canvas.toDataURL()
     link.click()
   }
@@ -457,7 +458,7 @@ function init() {
     inputAssignWrapper.appendChild(inputAssign)
 
     const updateAssignedCodes = () =>{
-      assignedCodes[input.value]=assign.value
+      assignedCodes[input.value] = assign.value
       console.log(assignedCodes)
     }
 
@@ -542,13 +543,13 @@ function init() {
         const eachImage = new Image()   
         eachImage.onload = () => {
           // console.log(w,h,eachImage)  
-          ctx.drawImage(eachImage,i*w,0,w,h)
-          ctxThree.drawImage(eachImage,i*w2,0,w2,h2)
+          ctx.drawImage(eachImage,i * w,0,w,h)
+          ctxThree.drawImage(eachImage,i * w2,0,w2,h2)
         }
         eachImage.src = blobURL
       })
     }
-    firstImage.src=window.URL.createObjectURL(uploadTwo.files[0])    
+    firstImage.src = window.URL.createObjectURL(uploadTwo.files[0])    
     // console.log('u',uploadedFiles)
   })
 
@@ -599,8 +600,8 @@ function init() {
 
 
   const hexToRgb = hex => {
-    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-    return result ? `rgb(${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)})`: null
+    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
+    return result ? `rgb(${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)})` : null
   }
   
   //TODO old version
@@ -629,7 +630,7 @@ function init() {
     const column = +columnInputs[0].value
     fillStack.push(i)
     
-    while(fillStack.length > 0){
+    while (fillStack.length > 0){
       const cellToCheck = fillStack.pop()
       
       if (codeRef[cellToCheck] !== valueToCheck) continue
@@ -732,7 +733,7 @@ function init() {
     const trace = (index) =>{
       let traceIndex = index
       
-      while(!stop){
+      while (!stop){
         indexPattern.forEach(i=>recordTraceData(i,traceIndex))
 
         checkedIndex.length = 0
@@ -830,6 +831,8 @@ function init() {
     const queryArray = query.split('#')
     columnInputs[0].value = queryArray[1]
     rowInputs[0].value = queryArray[2]
+    column = queryArray[1]
+    row = queryArray[2]
 
     createGrid(0,'cell')
   }

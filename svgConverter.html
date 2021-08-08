@@ -1,0 +1,68 @@
+<!doctype html>
+<html>
+
+<head>
+  <link rel="stylesheet" type="text/css" href="./styles/map.css" />
+  <script src ="./scripts/svgConverter.js" charset="utf-8"></script>
+
+  <title>svg converter</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+
+<body>
+  <nav>
+    svg converter
+    <div class="input_wrap">
+      <label>column</label>
+      <input class="column input" placeholder="column" value="5" />
+    </div>
+    <div class="input_wrap">
+      <label>row</label>
+      <input class="row input" placeholder="row" value="5" />
+    </div>
+    <div class="input_wrap">
+      <label>cell size</label>
+      <input class="cell_size input" placeholder="cell size" value="20" />
+    </div>
+    <div class="input_wrap">
+      <label>file name</label>
+      <input class="file_name input" value="img" />
+    </div>
+
+      <button class="create_grid create icon alt" data-index="0" data-grid_class="cell" data-alt="create grid"></button> 
+      <button class="clear icon eraser alt" data-alt="eraser"></button>
+      <button class="grid_display icon hide alt" data-alt="hide grid"></button>
+      <button class="generate icon alt" data-alt="generate from code"></button> 
+      <button class="download icon download_file alt" data-alt="download pixel art"></button>  
+  </nav>
+
+  <div class="pagewrap">
+
+    <!-- grid 2 -->
+    <canvas class="svg_output" ></canvas>
+    <div class="grid"></div>
+    
+    <div class="palette"></div>
+    <textarea class="codes" spellcheck="false"></textarea>
+    <div class="mini_wrap">
+      <button class="copy icon alt" data-alt="copy code"></button>
+    </div>
+
+
+
+
+    <textarea class="codes" spellcheck="false" placeholder="decoded"></textarea>
+    <div class="mini_wrap">
+      <button class="copy icon alt" data-alt="copy code"></button>
+    </div>
+
+
+
+  </div>
+
+  <a class="download_link hidden" download="" href="" ></a>
+  <div class="cursor" data-text="test"><div></div></div>
+</body>
+
+</html>
