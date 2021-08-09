@@ -114,7 +114,14 @@ function init() {
     const main = '#adfffe'
     const sub = '#50fbf9'
 
-    return `<path fill="${main}" d="M 0 0h1v4h1v-4h7v4h1v-4h6v16hTv-6hNv6h-3vThNv2h-3v-6hNv6h-3vThNv2hNvN6"/ <path fill="${sub}" d="M 1 0h1v4hNv-4"/ <path fill="${sub}" d="M 9 0h1v4hNv-4"/ <path fill="${sub}" d="M 6 2h1v6hNv-6"/ <path fill="${sub}" d="M 14 2h1v6hNv-6"/ <path fill="${sub}" d="M 2 6h1v6hNv-6"/ <path fill="${sub}" d="M 10 6h1v6hNv-6"/ <path fill="${sub}" d="M 5 10h1v6hNv-6"/ <path fill="${sub}" d="M 13 10h1v6hNv-6"/ <path fill="${sub}" d="M 1 14h1v2hNvT"/ <path fill="${sub}" d="M 9 14h1v2hNvT"/`
+    return `<path fill="${main}" d="M 0 0h2v7h2v-7h12v16hTv-7hTv7hN2vN6"/ <path fill="#50fbf9" d="M 2 0h2v7hTv-7"/ <path fill="${sub}" d="M 7 4h2v8hTv-8"/ <path fill="${sub}" d="M 12 9h2v7hTv-7"/`
+  }
+
+  const riverAnim = () =>{
+    const main = '#adfffe'
+    const sub = '#50fbf9'
+
+    return `<path fill="${main}" d="M 0 0h7v4h2v-4h7v16h-7v-5hTv5h-7vN6"/ <path fill="#50fbf9" d="M 7 0h2v4hTv-4"/ <path fill="${sub}" d="M 12 3h2v9hTv-9"/ <path fill="${sub}" d="M 2 4h2v9hTv-9"/ <path fill="${sub}" d="M 7 11h2v5hTv-5"/`
   }
 
   const riverCurve = () =>{
@@ -169,8 +176,8 @@ function init() {
     'pb': { svg: plainEdge, color: main, subColor: sub, rotate: 180 },
     'pu': { svg: plainEdge, color: main, subColor: sub, rotate: 270 },
     'b': { svg: plain, subColor: '#afff7a' },
-    'r': { svg: river },
-    'rh': { svg: river, rotate: 90 },
+    'r': { svg: river, animation: riverAnim },
+    'rh': { svg: river, rotate: 90, animation: riverAnim },
     'ra': { svg: riverCurve, animation: riverCurveAnim },
     'rb': { svg: riverCurve, rotate: 90, animation: riverCurveAnim },
     'rd': { svg: riverCurve, rotate: 180, animation: riverCurveAnim },
