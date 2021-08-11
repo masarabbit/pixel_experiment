@@ -60,19 +60,19 @@ function init() {
   }
 
   const buildingCorner = subColor =>{
-    return `D 5 0h11v1hN1vN"/ D 3 1h2v1hTvN"/ <path fill="${subColor ? subColor : 'white'}" d="M 5 1h11v15hN5vN1h1vTh1vNh2vN"/ D 2 2h1v1hNvN"/ D 1 3h1v2hNvT"/ D 0 5h1v11hNvN1"/`
+    return `D 5 0h11v1hN1vN"/ D 3 1h2v1hTvN"/ <path fill="${subColor || 'white'}" d="M 5 1h11v15hN5vN1h1vTh1vNh2vN"/ D 2 2h1v1hNvN"/ D 1 3h1v2hNvT"/ D 0 5h1v11hNvN1"/`
   }
 
   const roofCorner = subColor =>{
-    return `D 0 0h1v11h1v2hNv3hNvN6"/ <path fill="${subColor ? subColor : 'white'}" d="M 1 0h15v15hN1vNhTvNhNvThNvN1"/ F 1 13h1v1h1v1h2v1h-4v-3"/ D 2 13h1v1hNvN"/ D 3 14h2v1hTvN"/ D 5 15h11v1hN1vN"/`
+    return `D 0 0h1v11h1v2hNv3hNvN6"/ <path fill="${subColor || 'white'}" d="M 1 0h15v15hN1vNhTvNhNvThNvN1"/ F 1 13h1v1h1v1h2v1h-4v-3"/ D 2 13h1v1hNvN"/ D 3 14h2v1hTvN"/ D 5 15h11v1hN1vN"/`
   }
 
   const plain = subColor =>{
-    return `<path fill="${subColor ? subColor : 'white'}" d="M 0 0h16v16hN6vN6"/`
+    return `<path fill="${subColor || 'white'}" d="M 0 0h16v16hN6vN6"/`
   }
 
   const plainEdge = subColor =>{
-    return `D 0 0h16v1hN6vN"/ <path fill="${subColor ? subColor : 'white'}" d="M 0 1h16v15hN6vN5"/`
+    return `D 0 0h16v1hN6vN"/ <path fill="${subColor || 'white'}" d="M 0 1h16v15hN6vN5"/`
   }
 
   const door = () =>{
@@ -103,11 +103,11 @@ function init() {
   }
 
   const roofCurve = subColor =>{
-    return `<path fill="${subColor ? subColor : 'white'}" d="M 0 0h16v15hTvNhNvNhNvNhTvNh-4v1hTv1hNv1hNv1hTvN5"/ D 6 11h4v1h-4vN"/ D 4 12h2v1hTvN"/ F 6 12h4v1h2v1h1v1h1v1hN2vNh1vNh1vNh2vN"/ D 10 12h2v1hTvN"/ D 3 13h1v1hNvN"/ D 12 13h1v1hNvN"/ D 2 14h1v1hNvN"/ D 13 14h1v1hNvN"/ D 0 15h2v1hTvN"/ D 14 15h2v1hTvN"/`
+    return `<path fill="${subColor || 'white'}" d="M 0 0h16v15hTvNhNvNhNvNhTvNh-4v1hTv1hNv1hNv1hTvN5"/ D 6 11h4v1h-4vN"/ D 4 12h2v1hTvN"/ F 6 12h4v1h2v1h1v1h1v1hN2vNh1vNh1vNh2vN"/ D 10 12h2v1hTvN"/ D 3 13h1v1hNvN"/ D 12 13h1v1hNvN"/ D 2 14h1v1hNvN"/ D 13 14h1v1hNvN"/ D 0 15h2v1hTvN"/ D 14 15h2v1hTvN"/`
   }
 
   const roofTopBottomCorner = subColor =>{
-    return `D 0 0h1v11hNvN1"/ F 1 0h15v15hN1vNhTvNhNvThNvN1"/ <path fill="${subColor ? subColor : 'white'}" d="M 0 11h1v2h1v1h1v1h2v1h-5v-5"/ D 1 11h1v2hNvT"/ D 2 13h1v1hNvN"/ D 3 14h2v1hTvN"/ D 5 15h11v1hN1vN"/`
+    return `D 0 0h1v11hNvN1"/ F 1 0h15v15hN1vNhTvNhNvThNvN1"/ <path fill="${subColor || 'white'}" d="M 0 11h1v2h1v1h1v1h2v1h-5v-5"/ D 1 11h1v2hNvT"/ D 2 13h1v1hNvN"/ D 3 14h2v1hTvN"/ D 5 15h11v1hN1vN"/`
   }
 
   const river = () =>{
@@ -128,14 +128,21 @@ function init() {
     const main = '#adfffe'
     const sub = '#50fbf9'
     
-    return `<path fill="${main}" d="M 8 0h8v6hNv1hTv1hTv2hNv1hNv3h2v-3h1vNh1vNh2vNh1v8hN2v-6h1vNh1vTh1vNh2vNh1vThNv1hTv1hNv1hNv1hNv2hNv1hNv6hTv-8h1vTh1vTh1vNh1vNh2vNh2vN"/ <path fill="${sub}" d="M 9 3h1v2hNv1hTv1hNv2hNv1hNv6hTv-6h1vNh1vTh1vNh1vNh1vNh2vN"/ <path fill="${sub}" d="M 15 6h1v2hNv1hTv1hNv1hNv3hTv-3h1vNh1vTh2vNh2vN"/`
+    // return `<path fill="${main}" d="M 8 0h8v6hNv1hTv1hTv2hNv1hNv3h2v-3h1vNh1vNh2vNh1v8hN2v-6h1vNh1vTh1vNh2vNh1vThNv1hTv1hNv1hNv1hNv2hNv1hNv6hTv-8h1vTh1vTh1vNh1vNh2vNh2vN"/ <path fill="${sub}" d="M 9 3h1v2hNv1hTv1hNv2hNv1hNv6hTv-6h1vNh1vTh1vNh1vNh1vNh2vN"/ <path fill="${sub}" d="M 15 6h1v2hNv1hTv1hNv1hNv3hTv-3h1vNh1vTh2vNh2vN"/`
+    return `<path fill="${main}" d="M 8 0h8v12hTv1hTv3h-3v-4h1vTh1vNh2vThTv1hNv1hNv1hNv2hNv4h-7v-8h1vTh1vTh1vNh1vNh2vNh2vN"/ <path fill="${sub}" d="M 10 2h5v2h-5v1hTv1hNv1hTvTh2vNh1vNh2vN"/ <path fill="${sub}" d="M 11 7h2v2hTv1hNv2hNv4hTv-4h1vTh1vNh1vNh1vN"/ <path fill="${sub}" d="M 14 12h2v2hTv2hTv-3h2vN"/ <path fill="${main}" d="M 14 14h2v2hTvT"/`
   }
 
   const riverCurveAnim = () =>{
     const main = '#adfffe'
     const sub = '#50fbf9'
 
-    return `<path fill="${main}" d="M 8 0h4v1hNv1hTv1hNv1hNv1hNv1hNv1hNv2h2vTh1vNh2vNh1vNh1vNh1vNh2vNh1vNh1v16h-6v-4h1vNh1vNh1vNh1vThNv1hNv1hNv1hNv1hNv1hNv4h-8v-8h1vTh1vTh1vNh1vNh2vNh2vN"/ <path fill="${sub}" d="M 12 0h3v1hNv1hTv1hNv1hNv1hNv1hTv1hNv2hTvTh1vNh1vNh1vNh1vNh1vNh2vNh1vN"/ <path fill="${sub}" d="M 13 7h1v2hNv1hNv1hNv1hNv4hTv-4h1vNh1vNh1vNh1vNh1vN"/`
+    // return `<path fill="${main}" d="M 8 0h4v1hNv1hTv1hNv1hNv1hNv1hNv1hNv2h2vTh1vNh2vNh1vNh1vNh1vNh2vNh1vNh1v16h-6v-4h1vNh1vNh1vNh1vThNv1hNv1hNv1hNv1hNv1hNv4h-8v-8h1vTh1vTh1vNh1vNh2vNh2vN"/ <path fill="${sub}" d="M 12 0h3v1hNv1hTv1hNv1hNv1hNv1hTv1hNv2hTvTh1vNh1vNh1vNh1vNh1vNh2vNh1vN"/ <path fill="${sub}" d="M 13 7h1v2hNv1hNv1hNv1hNv4hTv-4h1vNh1vNh1vNh1vNh1vN"/`
+    return `<path fill="${main}" d="M 8 0h8v2h-3v1h-4v2h4vNh3v12hTvTh1vNhTv1hNv2h-8v-5h1vThTv2hNv5hTv-8h1vTh1vTh1vNh1vNh2vNh2vN"/ <path fill="${sub}" d="M 13 2h3v2h-3v1h-4vTh4vN"/ <path fill="${sub}" d="M 10 7h3v2h-3v1hNv1hTvTh1vNh2vN"/ <path fill="${sub}" d="M 3 9h2v2hNv5hTv-5h1vT"/ <path fill="${sub}" d="M 13 13h2v1hNv2hTvTh1vN"/`
+  }
+
+  const ladder = subColor =>{
+    // return `<path fill="${subColor || 'white'}" d="M 0 0h16v16hN6vN6"/ D 4 1h8v1h-8vN"/ D 4 5h8v1h-8vN"/ D 4 9h8v1h-8vN"/ D 4 13h8v1h-8vN"/`
+    return `<path fill="${subColor || 'white'}" d="M 0 0h16v16hN6vN6"/ D 3 1h1v1hNvN"/ D 12 1h1v1hNvN"/ D 4 2h8v1h-8vN"/ D 3 5h1v1hNvN"/ D 12 5h1v1hNvN"/ D 4 6h8v1h-8vN"/ D 3 9h1v1hNvN"/ D 12 9h1v1hNvN"/ D 4 10h8v1h-8vN"/ D 3 13h1v1hNvN"/ D 12 13h1v1hNvN"/ D 4 14h8v1h-8vN"/`
   }
 
   const sub = '#e2cc9c'
@@ -153,6 +160,8 @@ function init() {
     'bl': { svg: buildingCorner, color: main, rotate: 270 },
     'rbr': { svg: roofTopBottomCorner, color: main, subColor: sub },
     'rbl': { svg: roofTopBottomCorner, color: main, subColor: sub, flip: 'h' },
+    'rtr': { svg: roofTopBottomCorner, rotate: 180, color: main, subColor: sub },
+    'rtl': { svg: roofTopBottomCorner, rotate: 180, color: main, subColor: sub, flip: 'h' },
     'g': { svg: roofCorner, color: main, subColor: sub },
     'y': { svg: roofCorner, color: main, subColor: sub, flip: 'h' },
     'p': { svg: plain },
@@ -181,7 +190,8 @@ function init() {
     'ra': { svg: riverCurve, animation: riverCurveAnim },
     'rb': { svg: riverCurve, rotate: 90, animation: riverCurveAnim },
     'rd': { svg: riverCurve, rotate: 180, animation: riverCurveAnim },
-    're': { svg: riverCurve, rotate: 270, animation: riverCurveAnim }
+    're': { svg: riverCurve, rotate: 270, animation: riverCurveAnim },
+    'la': {svg: ladder, color: main, subColor: sub}
   }
 
   // const svgAnimFrames = {
@@ -282,39 +292,7 @@ function init() {
       `
 
       target.innerHTML = svgContent
-
-      // if (!animation) {
-      //   target.innerHTML = 
-      //   svgWrapper(
-      //     decode(subColor ? svg(subColor) : svg()),
-      //     color ? colorAction : '',
-      //     rotate ? rotate : 0,
-      //     flip ? flip : null, 
-      //     false
-      //   )
-      // } else {
-      //   const animationWrapper = document.createElement('div')
-      //   animationWrapper.classList.add('svg_anim_wrap')
-      //   animationWrapper.style.transform = `rotate(${rotate}deg)`
-      //   // console.log(`rotate(${rotate}deg)`)
-      //   // animationWrapper.style.transform = 'rotate(90deg)'
-      //   animationWrapper.innerHTML =  
-      //   svgWrapper(
-      //     decode(subColor ? svg(subColor) : svg()),
-      //     color ? colorAction : '',
-      //     0,
-      //     null, 
-      //     true
-      //   )
-      //   target.appendChild(animationWrapper)
-      // }
-    
-
-      // if (animation) setInterval(()=>{
-      //   target.style.paddingLeft = target.style.paddingLeft === '0px' ? '32px' : '0px'
-      // },500) 
     } 
-  
   }
 
 
