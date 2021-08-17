@@ -67,6 +67,10 @@ function init() {
     return `D 0 0h1v11h1v2hNv3hNvN6"/ <path fill="${subColor || 'white'}" d="M 1 0h15v15hN1vNhTvNhNvThNvN1"/ F 1 13h1v1h1v1h2v1h-4v-3"/ D 2 13h1v1hNvN"/ D 3 14h2v1hTvN"/ D 5 15h11v1hN1vN"/`
   }
 
+  const checkered = () =>{
+    return 'D 0 0h2v2hTvT"/ D 4 0h2v2hTvT"/ D 8 0h2v2hTvT"/ D 12 0h2v2hTvT"/ D 2 2h2v2hTvT"/ D 6 2h2v2hTvT"/ D 10 2h2v2hTvT"/ D 14 2h2v2hTvT"/ D 0 4h2v2hTvT"/ D 4 4h2v2hTvT"/ D 8 4h2v2hTvT"/ D 12 4h2v2hTvT"/ D 2 6h2v2hTvT"/ D 6 6h2v2hTvT"/ D 10 6h2v2hTvT"/ D 14 6h2v2hTvT"/ D 0 8h2v2hTvT"/ D 4 8h2v2hTvT"/ D 8 8h2v2hTvT"/ D 12 8h2v2hTvT"/ D 2 10h2v2hTvT"/ D 6 10h2v2hTvT"/ D 10 10h2v2hTvT"/ D 14 10h2v2hTvT"/ D 0 12h2v2hTvT"/ D 4 12h2v2hTvT"/ D 8 12h2v2hTvT"/ D 12 12h2v2hTvT"/ D 2 14h2v2hTvT"/ D 6 14h2v2hTvT"/ D 10 14h2v2hTvT"/ D 14 14h2v2hTvT"/'
+  }
+
   const plain = subColor =>{
     return `<path fill="${subColor || 'white'}" d="M 0 0h16v16hN6vN6"/`
   }
@@ -111,33 +115,34 @@ function init() {
   }
 
   const river = () =>{
-    const main = '#adfffe'
-    const sub = '#50fbf9'
+    const main = '#58d3d8'
+    const sub = '#a2fcf0'
 
-    return `<path fill="${main}" d="M 0 0h2v7h2v-7h12v16hTv-7hTv7hN2vN6"/ <path fill="#50fbf9" d="M 2 0h2v7hTv-7"/ <path fill="${sub}" d="M 7 4h2v8hTv-8"/ <path fill="${sub}" d="M 12 9h2v7hTv-7"/`
+    return `<path fill="${main}" d="M 0 0h2v7h2v-7h12v16hTv-7hTv7hN2vN6"/ <path fill="${sub}" d="M 2 0h2v7hTv-7"/ <path fill="${sub}" d="M 7 4h2v8hTv-8"/ <path fill="${sub}" d="M 12 9h2v7hTv-7"/`
   }
 
   const riverAnim = () =>{
-    const main = '#adfffe'
-    const sub = '#50fbf9'
+    const main = '#58d3d8'
+    const sub = '#a2fcf0'
 
-    return `<path fill="${main}" d="M 0 0h7v4h2v-4h7v16h-7v-5hTv5h-7vN6"/ <path fill="#50fbf9" d="M 7 0h2v4hTv-4"/ <path fill="${sub}" d="M 12 3h2v9hTv-9"/ <path fill="${sub}" d="M 2 4h2v9hTv-9"/ <path fill="${sub}" d="M 7 11h2v5hTv-5"/`
+    return `<path fill="${main}" d="M 0 0h7v4h2v-4h7v16h-7v-5hTv5h-7vN6"/ <path fill="${sub}" d="M 7 0h2v4hTv-4"/ <path fill="${sub}" d="M 12 3h2v9hTv-9"/ <path fill="${sub}" d="M 2 4h2v9hTv-9"/ <path fill="${sub}" d="M 7 11h2v5hTv-5"/`
   }
 
   const riverCurve = () =>{
-    const main = '#adfffe'
-    const sub = '#50fbf9'
+    const main = '#58d3d8'
+    const sub = '#a2fcf0'
     
     // return `<path fill="${main}" d="M 8 0h8v6hNv1hTv1hTv2hNv1hNv3h2v-3h1vNh1vNh2vNh1v8hN2v-6h1vNh1vTh1vNh2vNh1vThNv1hTv1hNv1hNv1hNv2hNv1hNv6hTv-8h1vTh1vTh1vNh1vNh2vNh2vN"/ <path fill="${sub}" d="M 9 3h1v2hNv1hTv1hNv2hNv1hNv6hTv-6h1vNh1vTh1vNh1vNh1vNh2vN"/ <path fill="${sub}" d="M 15 6h1v2hNv1hTv1hNv1hNv3hTv-3h1vNh1vTh2vNh2vN"/`
-    return `<path fill="${main}" d="M 8 0h8v12hTv1hTv3h-3v-4h1vTh1vNh2vThTv1hNv1hNv1hNv2hNv4h-7v-8h1vTh1vTh1vNh1vNh2vNh2vN"/ <path fill="${sub}" d="M 10 2h5v2h-5v1hTv1hNv1hTvTh2vNh1vNh2vN"/ <path fill="${sub}" d="M 11 7h2v2hTv1hNv2hNv4hTv-4h1vTh1vNh1vNh1vN"/ <path fill="${sub}" d="M 14 12h2v2hTv2hTv-3h2vN"/ <path fill="${main}" d="M 14 14h2v2hTvT"/`
+    // return `<path fill="${main}" d="M 8 0h8v12hTv1hTv3h-3v-4h1vTh1vNh2vThTv1hNv1hNv1hNv2hNv4h-7v-8h1vTh1vTh1vNh1vNh2vNh2vN"/ <path fill="${sub}" d="M 10 2h5v2h-5v1hTv1hNv1hTvTh2vNh1vNh2vN"/ <path fill="${sub}" d="M 11 7h2v2hTv1hNv2hNv4hTv-4h1vTh1vNh1vNh1vN"/ <path fill="${sub}" d="M 14 12h2v2hTv2hTv-3h2vN"/ <path fill="${main}" d="M 14 14h2v2hTvT"/`
+
+    return `<path fill="${main}" d="M 8 0h8v16h-7v-4h1vTh1vNh2vThTv1hNv1hNv1hNv2hNv4h-7v-8h1vTh1vTh1vNh1vNh2vNh2vN"/ <path fill="${sub}" d="M 10 2h5v2h-5v1hTv1hNv1hTvTh2vNh1vNh2vN"/ <path fill="${sub}" d="M 11 7h2v2hTv1hNv2hNv4hTv-4h1vTh1vNh1vNh1vN"/`
   }
 
   const riverCurveAnim = () =>{
-    const main = '#adfffe'
-    const sub = '#50fbf9'
-
-    // return `<path fill="${main}" d="M 8 0h4v1hNv1hTv1hNv1hNv1hNv1hNv1hNv2h2vTh1vNh2vNh1vNh1vNh1vNh2vNh1vNh1v16h-6v-4h1vNh1vNh1vNh1vThNv1hNv1hNv1hNv1hNv1hNv4h-8v-8h1vTh1vTh1vNh1vNh2vNh2vN"/ <path fill="${sub}" d="M 12 0h3v1hNv1hTv1hNv1hNv1hNv1hTv1hNv2hTvTh1vNh1vNh1vNh1vNh1vNh2vNh1vN"/ <path fill="${sub}" d="M 13 7h1v2hNv1hNv1hNv1hNv4hTv-4h1vNh1vNh1vNh1vNh1vN"/`
-    return `<path fill="${main}" d="M 8 0h8v2h-3v1h-4v2h4vNh3v12hTvTh1vNhTv1hNv2h-8v-5h1vThTv2hNv5hTv-8h1vTh1vTh1vNh1vNh2vNh2vN"/ <path fill="${sub}" d="M 13 2h3v2h-3v1h-4vTh4vN"/ <path fill="${sub}" d="M 10 7h3v2h-3v1hNv1hTvTh1vNh2vN"/ <path fill="${sub}" d="M 3 9h2v2hNv5hTv-5h1vT"/ <path fill="${sub}" d="M 13 13h2v1hNv2hTvTh1vN"/`
+    const main = '#58d3d8'
+    const sub = '#a2fcf0'
+    
+    return ` <path fill="${main}" d="M 8 0h8v2h-3v1h-4v2h4vNh3v8hTv1hTv3h-8v-5h1vThTv2hNv5hTv-8h1vTh1vTh1vNh1vNh2vNh2vN"/ <path fill="${sub}" d="M 13 2h3v2h-3v1h-4vTh4vN"/ <path fill="${sub}" d="M 10 7h3v2h-3v1hNv1hTvTh1vNh2vN"/ <path fill="${sub}" d="M 3 9h2v2hNv5hTv-5h1vT"/ <path fill="${sub}" d="M 14 12h2v2hTv2hTv-3h2vN"/ <path fill="${main}" d="M 14 14h2v2hTvT"/`
   }
 
   const ladder = subColor =>{
@@ -145,12 +150,14 @@ function init() {
     return `<path fill="${subColor || 'white'}" d="M 0 0h16v16hN6vN6"/ D 3 1h1v1hNvN"/ D 12 1h1v1hNvN"/ D 4 2h8v1h-8vN"/ D 3 5h1v1hNvN"/ D 12 5h1v1hNvN"/ D 4 6h8v1h-8vN"/ D 3 9h1v1hNvN"/ D 12 9h1v1hNvN"/ D 4 10h8v1h-8vN"/ D 3 13h1v1hNvN"/ D 12 13h1v1hNvN"/ D 4 14h8v1h-8vN"/`
   }
 
-  const sub = '#e2cc9c'
-  const main = '#7d551c'
+  // const sub = '#e2cc9c'
+  const sub = '#f9ede5'
+  // const main = '#7d551c'
+  const main = '#74645a'
 
   const svgData = {
-    't': { svg: tree, color: randomGreen },
-    'w': { svg: tree, color: randomGreen },
+    't': { svg: tree, color: '#0d8799' },
+    'w': { svg: tree, color: '#0d8799' },
     'o': { svg: flowers, color: randomColor },
     'd': { svg: buildingCorner, color: main, subColor: sub },
     's': { svg: buildingCorner, color: main, subColor: sub, rotate: 90 },
@@ -184,14 +191,15 @@ function init() {
     'pr': { svg: plainEdge, color: main, subColor: sub, rotate: 90 },
     'pb': { svg: plainEdge, color: main, subColor: sub, rotate: 180 },
     'pu': { svg: plainEdge, color: main, subColor: sub, rotate: 270 },
-    'b': { svg: plain, subColor: '#afff7a' },
+    'b': { svg: plain, subColor: '#a2fcf0' },
     'r': { svg: river, animation: riverAnim },
     'rh': { svg: river, rotate: 90, animation: riverAnim },
     'ra': { svg: riverCurve, animation: riverCurveAnim },
     'rb': { svg: riverCurve, rotate: 90, animation: riverCurveAnim },
     'rd': { svg: riverCurve, rotate: 180, animation: riverCurveAnim },
     're': { svg: riverCurve, rotate: 270, animation: riverCurveAnim },
-    'la': {svg: ladder, color: main, subColor: sub}
+    'la': {svg: ladder, color: main, subColor: sub},
+    'c': {svg: checkered, color: '#a2e8fc'}
   }
 
   // const svgAnimFrames = {
