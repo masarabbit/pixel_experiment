@@ -319,7 +319,7 @@ img {
   border: 0 !important;
 }
 
-.palette {
+.palette, .map_link {
   position: relative;
   margin: 20px auto 0;
   width: 100%;
@@ -327,6 +327,19 @@ img {
   display: flex;
   flex-wrap: wrap;
   background-color: rgba(255, 255, 255, 0.349);
+}
+
+.map_link_cell {
+  margin: 4px;
+  padding: 4px 8px;
+  color: black;
+  background-color: white;
+  cursor: pointer;
+}
+
+.map_link_cell:hover {
+  color: white;
+  background-color: black;
 }
 
 .palette_cell {

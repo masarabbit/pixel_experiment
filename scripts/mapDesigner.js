@@ -1,9 +1,10 @@
 function init() {
   
-  //TODO add the output code here so that decoder doesn't have to be used.
-  //TODO change logic to enter SVG's rather than change background
-  //TODO change logic for clearing grid / erase
-  //TODO debug reason for SVG sometimes not showing up
+  //TODO change style to display grid number using pseudo elements
+  //TODO add highlights for event points etc
+
+
+
 
 
   let cellSize = 20
@@ -21,6 +22,80 @@ function init() {
     }).join('')
   }
 
+  const mapData = [
+    {
+      name: 'one',
+      iWidth: 30,
+      iHeight: 20,
+      characters: [
+        '155_bunny_0_hello',
+        '156_bunny_0_apple',
+        '309_bunny_0_tomato'
+      ],
+      events: [
+        '5_transport-portal3',
+        '6_transport-portal3',
+        '419_transport-portal4',
+        '449_transport-portal4',
+        '253_transport-portal7',
+        '288_transport-portal6'
+      ],
+      map: 'v5,b2,v24,w4,b2,w22,v2,w1,b14,d1,pt2,s1,b8,w1,v2,w1,b12,t1,b1,g1,pb2,y1,b6,t1,b1,w1,v2,w1,b2,t1,b10,d1,al1,p1,nwr1,swr1,pt1,s1,b6,w1,v2,w1,b10,d1,pt2,pu1,rbr1,do1,ab1,rbl1,rp1,pr1,b6,w1,v2,w1,b6,t1,b3,g1,rc1,pb1,g1,pb5,y1,b6,w1,v2,w1,b10,swl1,p1,nwr1,al1,p5,ar1,b6,w1,v2,w1,b10,bl1,do1,ab1,al1,wi1,p1,sw1,p1,wi1,ar1,b2,d1,pt1,s1,b1,w1,v2,w1,b13,bl1,ab2,do1,ab2,bb1,b2,g1,rc1,y1,b1,w1,v2,w1,b1,t1,b3,t1,b3,t1,b12,swl1,p1,swr1,b1,w1,v2,w1,b19,t1,b2,bl1,do1,bb1,b1,w1,v2,w1,b2,t1,b6,ra1,rh5,rb1,b10,w1,v2,w1,b5,ra1,rh3,rd1,b5,r1,b12,v1,w1,b5,r1,b7,w1,b1,r1,b7,t1,b4,v1,w1,b1,t1,b3,r1,b1,t1,b7,r1,b4,t1,b5,w1,v2,w1,b5,r1,b5,w1,b3,re1,rh2,rb1,b7,w1,v2,w1,b5,r1,b12,r1,b7,w1,v2,w6,r1,w12,r1,w8,v8,r1,v12,r1,v9',
+    },
+    {
+      name: 'two',
+      iWidth: 40,
+      iHeight: 30,
+      characters: [
+        '779_bunny_0_hello'
+      ],
+      events: [
+        '1178_transport-portal1',
+        '1179_transport-portal1',
+        '1180_transport-portal1'
+      ],
+      map: 'v18,b3,v20,w17,b3,w12,v8,w1,b30,w1,v2,t1,v5,w1,b11,t1,b18,w1,v8,w1,b6,t1,b19,t1,b3,w1,v5,t1,v2,w1,b2,t1,b27,w1,v8,w1,b18,t1,b2,t1,b8,w7,v2,w1,b36,w1,v2,w1,b11,t1,b24,w1,v2,w1,b33,t1,b2,w1,v2,w1,b6,t1,b29,w1,v2,w1,b2,t1,b20,o8,b5,w1,v2,w1,b23,o8,b5,w1,v2,w1,b16,t1,b6,o8,b5,w1,v2,w1,b23,o8,b2,t1,b2,w1,v2,w1,b23,o8,b5,w1,v2,w1,b3,t1,b8,t1,b10,o8,b5,w1,v2,w1,b36,w1,v2,w1,b36,w1,v2,w1,b7,t1,b25,t1,b2,w1,v2,w1,b36,w1,v2,w13,b24,w1,v14,w1,b4,t1,b4,t1,b9,t1,b4,w1,v4,t1,v4,t1,v4,w1,b24,w1,v14,w1,b24,w1,v6,t1,v7,w1,b1,t1,b22,w1,v12,t1,v1,w1,b12,t1,b3,t1,b2,t1,b4,w1,v14,w1,b24,w1,v4,t1,v5,t1,v3,w5,b3,w18,v19,b3,v19'
+    },
+    {
+      name: 'three',
+      iWidth: 18,
+      iHeight: 14,
+      characters: [
+        '135_bunny_9_hello',
+        '101_bunny_6_hello',
+        '165_bunny_3_hello'
+      ],
+      events: [
+        '241_transport-portal1',
+        '242_transport-portal1',
+        '243_transport-portal1',
+        '44_check-tree1',
+        '112_check-bunny1'
+      ],
+      map: 'v19,w16,v2,w1,b1,o3,b6,o3,b1,w1,v2,w1,b14,w1,v2,w1,b14,w1,v2,w1,b1,o1,b10,o1,b1,w1,v2,w1,b1,o1,b10,o1,b1,w1,v2,w1,b1,o1,b10,o1,b1,w1,v2,w1,b14,w1,v2,w1,b14,w1,v2,w1,b14,w1,v2,w1,b1,o3,b6,o3,b1,w1,v2,w6,b3,w7,v8,b3,v8'
+    },
+    {
+      name: 'four',
+      iWidth: 20,
+      iHeight: 10,
+      events: [
+        '80_transport-portal5',
+        '100_transport-portal5',
+      ],
+      map: 'v21,w14,v6,w1,b12,w1,v6,w1,b2,o3,b7,w5,v1,b18,w1,v1,b18,w1,v2,w1,b12,o3,b1,w1,v2,w1,b16,w1,v2,w18,v21'
+    },
+    {
+      name: 'house_one',
+      iWidth: 12,
+      iHeight: 9,
+      events: [
+        '74_transport-portal8',
+        '91_transport-portal9',
+      ],
+      map: 'bd4,rp1,la1,rp5,bd5,rp1,la1,rp5,bd2,rp4,la1,rp5,bd2,rp3,rtl1,at5,rtr1,bd2,rtl1,at2,p6,ar1,bd2,bx1,p1,ab1,p6,ar1,bd5,bx1,ab2,p1,ab2,by1,bd25'
+    }
+  ]
+
   const svgWrapper = (content, color, rotate, flip, wrapper ) =>{
     let scale = 1
     if (flip === 'h') scale = '-1, 1'
@@ -32,12 +107,6 @@ function init() {
       `
   }
 
-  // const svgAnimFrame = (content, color, rotate, flip) =>{
-  //   let scale = 1
-  //   if (flip === 'h') scale = '-1, 1'
-  //   if (flip === 'v') scale = '1, -1'
-  //   return `<div class="svg_anim_frame" style="transform: rotate(${rotate}deg) scale(${scale});"><svg x="0px" y="0px" width="100%" height="100%" viewBox="0 0 32 16" fill="${color ? color : 'black'}">${content}</svg></div>`
-  // }
 
   const randomColor = () =>{
     const r = ()=> Math.ceil(Math.random() * 255)
@@ -92,9 +161,6 @@ function init() {
   }
 
   const sideSquareWindow = () =>{
-    // return `D 0 0h1v16hNvN6"/ F 1 0h15v16hN5vN6"/ D 7 2h6v1h1v10hNv1h-6vNhNvN0h1vN"/`
-    // return `D 0 0h1v16hNvN6"/ F 1 0h15v16hN5vN6"/ D 9 3h5v1h1v10hNv1h-5vNhNvN0h1vN"/`
-    // return `D 0 0h1v16hNvN6"/ F 1 0h15v16hN5vN6"/ D 10 4h4v1h1v9hNv1h-4vNhNv-9h1vN"/`
     return 'D 0 0h1v16hNvN6"/ F 1 0h15v16h-3vNh1v-9hNvNh-4v1hNv9h1v1h-8vN6"/ D 9 5h4v1h1v9hNv1h-4vNhNv-9h1vN"/'
   }
 
@@ -131,9 +197,6 @@ function init() {
   const riverCurve = () =>{
     const main = '#58d3d8'
     const sub = '#a2fcf0'
-    
-    // return `<path fill="${main}" d="M 8 0h8v6hNv1hTv1hTv2hNv1hNv3h2v-3h1vNh1vNh2vNh1v8hN2v-6h1vNh1vTh1vNh2vNh1vThNv1hTv1hNv1hNv1hNv2hNv1hNv6hTv-8h1vTh1vTh1vNh1vNh2vNh2vN"/ <path fill="${sub}" d="M 9 3h1v2hNv1hTv1hNv2hNv1hNv6hTv-6h1vNh1vTh1vNh1vNh1vNh2vN"/ <path fill="${sub}" d="M 15 6h1v2hNv1hTv1hNv1hNv3hTv-3h1vNh1vTh2vNh2vN"/`
-    // return `<path fill="${main}" d="M 8 0h8v12hTv1hTv3h-3v-4h1vTh1vNh2vThTv1hNv1hNv1hNv2hNv4h-7v-8h1vTh1vTh1vNh1vNh2vNh2vN"/ <path fill="${sub}" d="M 10 2h5v2h-5v1hTv1hNv1hTvTh2vNh1vNh2vN"/ <path fill="${sub}" d="M 11 7h2v2hTv1hNv2hNv4hTv-4h1vTh1vNh1vNh1vN"/ <path fill="${sub}" d="M 14 12h2v2hTv2hTv-3h2vN"/ <path fill="${main}" d="M 14 14h2v2hTvT"/`
 
     return `<path fill="${main}" d="M 8 0h8v16h-7v-4h1vTh1vNh2vThTv1hNv1hNv1hNv2hNv4h-7v-8h1vTh1vTh1vNh1vNh2vNh2vN"/ <path fill="${sub}" d="M 10 2h5v2h-5v1hTv1hNv1hTvTh2vNh1vNh2vN"/ <path fill="${sub}" d="M 11 7h2v2hTv1hNv2hNv4hTv-4h1vTh1vNh1vNh1vN"/`
   }
@@ -208,8 +271,6 @@ function init() {
   //   'rd': { svg: riverCurve, rotate: 180 },
   //   're': { svg: riverCurve, rotate: 270 }
   // }
-
-
 
 
 
@@ -547,6 +608,28 @@ function init() {
     //   if (keys.indexOf(letter) === -1) console.log(letter)
     // })
   }
+
+  //* map links
+  
+  const mapLinks = document.querySelector('.map_link')
+  mapLinks.innerHTML=mapData.map(map=>{
+    return `
+      <div class="map_link_cell">
+        ${map.name}
+      </div>
+    `
+  }).join('')
+
+  const mapLinkCells = document.querySelectorAll('.map_link_cell')
+
+  mapLinkCells.forEach((link,i)=>{
+    link.addEventListener('click',()=>{
+      const { iWidth, iHeight, map } = mapData[i]
+      const url = `${iWidth}#${iHeight}#${map.replaceAll(',','-')}`
+      window.location.hash = url      
+      location.reload(true)
+    })
+  })
 
 }
 
