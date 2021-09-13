@@ -30,6 +30,8 @@ function init() {
   const grids = document.querySelectorAll('.grid')
   const palettes = document.querySelectorAll('.palette')
   const cursor = document.querySelector('.cursor')
+  const copyGrid = document.querySelector('.copy_grid')
+  const indicator = document.querySelector('.indicator')
   
   // button
   const alts = document.querySelectorAll('.alt')
@@ -363,6 +365,12 @@ function init() {
       'map_cell',
       false
     )
+    createCopyGrids(
+      rowInputs[1].value,
+      columnInputs[1].value,
+      cellSizeInputs[1].value,
+      'copy_cell',
+    )
     createGridCells(
       rowInputs[2].value,
       columnInputs[2].value,
@@ -415,6 +423,45 @@ function init() {
         `
     }).join('')
     drawFunctions[index](clear)
+  }
+  
+
+  const createCopyGrids = (row,column,cellSize,cellStyle) =>{
+    const arr = new Array(row * column).fill('')
+    copyGrid.style.width = `${column * cellSize}px`
+    copyGrid.style.height = `${row * cellSize}px`
+    copyGrid.style.marginTop = '100px'
+    copyGrid.style.marginBottom = `-${(row * cellSize) + 100}px`
+    copyGrid.innerHTML = arr.map((_ele,i)=>{
+      return `
+        <div 
+          class="${cellStyle}"
+          style="
+            width:${cellSize}px;
+            height:${cellSize}px;
+          "
+          data-cell=${i}
+        >
+        </div>
+        `
+    }).join('')
+    const copyGrids = document.querySelectorAll(`.${cellStyle}`)
+    copyGrids.forEach(grid=>{
+      grid.addEventListener('click',(e)=>{
+        const pos = e.target.getBoundingClientRect()
+        indicator.innerText = `${e.target.dataset.cell}`
+        indicator.innerText=`${pos.x}-${pos.y}`
+        console.log('test',e.target.dataset.cell)
+
+        const copyBox = document.createElement('div')
+        copyBox.classList.add('copy_box')
+        copyGrid.append(copyBox)
+        copyBox.style.width = `${cellSize}px`
+        copyBox.style.height = `${cellSize}px`
+        copyBox.style.top = `${pos.y}px`
+        copyBox.style.left = `${pos.x}px`
+      })
+    })
   }
   
 
@@ -513,6 +560,9 @@ function init() {
     grid.addEventListener('mouseenter',()=>cursor.classList.add(cursorType))
     grid.addEventListener('mouseleave',()=>cursor.classList.remove(cursorType))
   })
+
+  copyGrid.addEventListener('mouseenter',()=>cursor.classList.add(cursorType))
+  copyGrid.addEventListener('mouseleave',()=>cursor.classList.remove(cursorType))
 
   colorInput.addEventListener('change',()=>{
     colorLabel.style.backgroundColor = colorInput.value
@@ -823,6 +873,7 @@ function init() {
 
   selectCopyButton.addEventListener('click',()=>{
     selectCopy = !selectCopy
+    copyGrid.classList.toggle('active')
   })
 
   // reads from url
@@ -835,7 +886,20 @@ function init() {
     row = queryArray[2]
 
     createGrid(0,'cell')
+    createCopyGrids(
+      rowInputs[0].value,
+      columnInputs[0].value,
+      cellSizeInputs[0].value,
+      'copy_cell',
+    )
+
   }
+
+
+  // copyGrid.addEventListener('click',()=>{
+
+  //   indicator.innerHTML = ''
+  // })
 
 }
 

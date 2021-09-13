@@ -151,6 +151,16 @@ button:hover {
   margin: 100px 0 10px 0;
 }
 
+.copy_grid {
+  z-index: 999;
+  display: flex;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  background-color: red;
+  border: red 1px solid;
+  cursor: none !important;
+}
+
 .img_wrap {
   display: flex;
   justify-content: space-evenly;
@@ -231,12 +241,19 @@ img {
   border-width: 0 0 1px 1px;
 }
 
+.copy_cell,
 .cell,
 .map_cell,
 .map_gen_cell {
   transition: 0.2s;
 }
 
+.copy_cell {
+  border: red solid;
+  border-width: 0 0 1px 1px;
+}
+
+.copy_cell,
 .map_gen_cell,
 .map_cell {
   height: 5px;
