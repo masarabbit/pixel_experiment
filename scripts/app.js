@@ -425,6 +425,17 @@ function init() {
     drawFunctions[index](clear)
   }
   
+  let copyState
+  let copyBoxCreated
+  let copyBox
+  let copyGrids
+  let prevX
+  let prevY
+  const defaultPos = {
+    top: null,
+    left: null,
+    cell: null
+  }
 
   const createCopyGrids = (row,column,cellSize,cellStyle) =>{
     const arr = new Array(row * column).fill('')
@@ -445,28 +456,65 @@ function init() {
         </div>
         `
     }).join('')
-    const copyGrids = document.querySelectorAll(`.${cellStyle}`)
-    copyGrids.forEach(grid=>{
-      grid.addEventListener('click',(e)=>{
-        const pos = e.target.getBoundingClientRect() //this is getting position in relation to the page, not the parent div
-        indicator.innerText = `${e.target.dataset.cell}`
-        indicator.innerText=`${pos.x}-${pos.y}`
-        console.log('test',e.target.dataset.cell)
-        
-        //TODO edit
+    copyGrids = document.querySelectorAll(`.${cellStyle}`)
 
-        const copyBox = document.createElement('div')
-        copyBox.classList.add('copy_box')
-        copyGrid.append(copyBox)
-        copyBox.style.width = `${cellSize}px`
-        copyBox.style.height = `${cellSize}px`
-        copyBox.style.top = `${e.target.offsetTop}px` //TODO need offset
-        copyBox.style.left = `${e.target.offsetLeft}px`
-        //TODO make this stretchable by dragging.
-        //need way to reposition this, or get the pos in relation to the copyGrid. 
+
+    copyGrids.forEach((grid,i)=>{
+      
+      grid.addEventListener('click',(e)=>{
+        if (!copyBoxCreated){
+          copyBox = document.createElement('div')
+          copyBox.classList.add('copy_box')
+          copyGrid.append(copyBox)
+          copyBoxCreated = true
+          copyBox.style.width = `${cellSize}px`
+          copyBox.style.height = `${cellSize}px`
+          
+          defaultPos.top = e.target.offsetTop
+          defaultPos.left = e.target.offsetLeft
+          defaultPos.defPos = i
+          prevX = i % column * cellSize
+          prevY = Math.floor(i / column)
+          defaultPos.defX = prevX
+
+          copyBox.style.top = `${defaultPos.top}px`
+          copyBox.style.left = `${defaultPos.left}px`
+
+          const handle = document.createElement('div')
+          handle.classList.add('handle')
+          handle.style.width = `${cellSize}px`
+          handle.style.height = `${cellSize}px`
+          copyBox.append(handle)
+          
+          
+        }
       })
     })
   }
+
+  copyGrid.addEventListener('mousedown', ()=> copyState = true)
+  copyGrid.addEventListener('mouseup', ()=> copyState = false)
+
+  //TODO add way to confirm selected area
+  //make box moveable
+  copyGrid.addEventListener('mousemove',(e)=>{     
+    if (copyState) {
+      const next = e.target.dataset.cell
+      const newX = next % column * cellSize
+      const newY = Math.floor(next / column)
+      const { defPos, defX } = defaultPos
+
+      if (newX !== prevX && newY === prevY) {
+        copyBox.style.width = `${(newX - defX) + 1 * cellSize}px`
+      } else if (newY !== prevY) {
+        const newHeight = Math.floor(next / column) - Math.floor(defPos / column) + 1
+        copyBox.style.height = `${newHeight * cellSize}px`
+        console.log('newHeight', newHeight)
+      } 
+      prevX = newX
+      prevY = newY
+    }     
+  })
   
 
   const createGrid = (index,cellStyle) =>{
