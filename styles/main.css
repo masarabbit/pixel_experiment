@@ -262,6 +262,7 @@ img {
 }
 
 .copy_grid {
+  position: absolute;
   z-index: 99;
   display: flex;
   justify-content: flex-start;
@@ -526,6 +527,7 @@ button.icon:hover {
 
 .copy_box {
   position: fixed;
+  position: absolute;
   border: yellow 1px solid;
   background-color: rgba(252, 138, 39, 0.438);
 }

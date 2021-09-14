@@ -448,18 +448,22 @@ function init() {
     const copyGrids = document.querySelectorAll(`.${cellStyle}`)
     copyGrids.forEach(grid=>{
       grid.addEventListener('click',(e)=>{
-        const pos = e.target.getBoundingClientRect()
+        const pos = e.target.getBoundingClientRect() //this is getting position in relation to the page, not the parent div
         indicator.innerText = `${e.target.dataset.cell}`
         indicator.innerText=`${pos.x}-${pos.y}`
         console.log('test',e.target.dataset.cell)
+        
+        //TODO edit
 
         const copyBox = document.createElement('div')
         copyBox.classList.add('copy_box')
         copyGrid.append(copyBox)
         copyBox.style.width = `${cellSize}px`
         copyBox.style.height = `${cellSize}px`
-        copyBox.style.top = `${pos.y}px`
-        copyBox.style.left = `${pos.x}px`
+        copyBox.style.top = `${e.target.offsetTop}px` //TODO need offset
+        copyBox.style.left = `${e.target.offsetLeft}px`
+        //TODO make this stretchable by dragging.
+        //need way to reposition this, or get the pos in relation to the copyGrid. 
       })
     })
   }
