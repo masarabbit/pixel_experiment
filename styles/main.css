@@ -252,6 +252,15 @@ img {
   color: black;
 }
 
+.cell::after {
+  content: attr(index);
+  color: rgba(255, 0, 212, 0.493);
+  position: absolute;
+  margin-left: 3px;
+  font-size:10px;
+}
+
+
 .cell:hover,
 .map_cell:hover,
 .map_gen_cell:hover {

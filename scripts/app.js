@@ -45,6 +45,7 @@ function init() {
   const gridToggleButtons = document.querySelectorAll('.grid_display')
   const clearButtons = document.querySelectorAll('.clear')
   const fillButtons = document.querySelector('.fill')
+  const copySelectionButton = document.querySelector('.copy_selection')
 
   // input
   const upload = document.querySelector('#upload')
@@ -101,6 +102,15 @@ function init() {
   const hex = rgb =>{
     return '#' + ('000000' + rgb).slice(-6)
   }
+
+  const calcX = cell =>{
+    return cell % column * cellSize
+  } 
+  
+  const calcY = cell =>{
+    return Math.floor(cell / column)
+  }
+
 
   const sortedByFrequencyDuplicatesAndBlankRemoved = array =>{  
     const countOccurrences = (arr, val) => arr.reduce((a, v) => (v === val ? a + 1 : a), 0)
@@ -417,6 +427,7 @@ function init() {
             font-size:${cellSize}px;
             line-height:${cellSize}px;
           "
+          index="${i}"
           data-cell=${i}
         >
         </div>
@@ -500,20 +511,34 @@ function init() {
   copyGrid.addEventListener('mousemove',(e)=>{     
     if (copyState) {
       const next = e.target.dataset.cell
-      const newX = next % column * cellSize
-      const newY = Math.floor(next / column)
+      const newX = calcX(next)
+      const newY = calcY(next)
       const { defPos, defX } = defaultPos
-
+      
+      if (!copyBox) return
       if (newX !== prevX && newY === prevY) {
         copyBox.style.width = `${(newX - defX) + 1 * cellSize}px`
       } else if (newY !== prevY) {
-        const newHeight = Math.floor(next / column) - Math.floor(defPos / column) + 1
-        copyBox.style.height = `${newHeight * cellSize}px`
-        console.log('newHeight', newHeight)
+        copyBox.style.height = `${(newY - calcY(defPos) + 1) * cellSize}px`
       } 
       prevX = newX
       prevY = newY
     }     
+  })
+
+  copySelectionButton.addEventListener('click',()=>{
+    const width = copyBox.style.width.replace('px','') / cellSize
+    const height = copyBox.style.height.replace('px','') / cellSize
+    const defPos = defaultPos.defPos
+    
+    const selection = []
+    for(let a = defPos; a < defPos + (height * column); a+= +column){
+      for (let b = a; b<(a + width); b++){
+        selection.push(b)
+      }
+    }
+  
+    console.log('test', selection)
   })
   
 
@@ -540,14 +565,6 @@ function init() {
     input.classList.add('key')
     const assign = document.createElement('textarea')
     assign.classList.add('assign') 
-    
-    //* option to add thumbnail... doesn't work because the image would not be defined yet.
-    // const thumb = document.createElement('div')
-    // thumb.classList.add('image_thumb')
-    // thumb.style.backgroundImage = `url(./assets/${assign.value})`
-    // thumb.addEventListener('click',()=>{
-    //   letterInput.value = input.value
-    // })
 
     const inputAssign = document.createElement('div')
     // inputAssign.appendChild(thumb)
