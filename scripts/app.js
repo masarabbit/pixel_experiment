@@ -46,6 +46,7 @@ function init() {
   const clearButtons = document.querySelectorAll('.clear')
   const fillButtons = document.querySelector('.fill')
   const copySelectionButton = document.querySelector('.copy_selection')
+  const moveSelectionButton = document.querySelector('.move_selection')
 
   // input
   const upload = document.querySelector('#upload')
@@ -495,8 +496,13 @@ function init() {
           handle.classList.add('handle')
           handle.style.width = `${cellSize}px`
           handle.style.height = `${cellSize}px`
+          const moveHandle = document.createElement('div')  //? maybe don't need this?
+          moveHandle.classList.add('move_handle')
+          moveHandle.style.width = `${cellSize}px`
+          moveHandle.style.height = `${cellSize}px`
+
           copyBox.append(handle)
-          
+          copyBox.append(moveHandle)       
           
         }
       })
@@ -526,21 +532,65 @@ function init() {
     }     
   })
 
-  copySelectionButton.addEventListener('click',()=>{
+  const returnSelectedCells = firstCell =>{
     const width = copyBox.style.width.replace('px','') / cellSize
     const height = copyBox.style.height.replace('px','') / cellSize
-    const defPos = defaultPos.defPos
-    
     const selection = []
-    for(let a = defPos; a < defPos + (height * column); a+= +column){
+    for(let a = firstCell; a < firstCell + (height * column); a+= +column){
       for (let b = a; b<(a + width); b++){
         selection.push(b)
       }
     }
-  
-    console.log('test', selection)
+    return selection
+  }
+
+  copySelectionButton.addEventListener('click',()=>{
+    const defPos = defaultPos.defPos
+    console.log('selection', returnSelectedCells(defPos))   
   })
   
+
+  //TODO move
+  moveSelectionButton.addEventListener('click', ()=>{
+
+    copyBox.classList.toggle('move')
+    copyGrid.classList.toggle('fix')
+    let newX
+    let newY
+    const onDrag = e => {
+    copyBox.style.transtion = '0s'
+    let originalStyles = window.getComputedStyle(copyBox)
+    newX = parseInt(originalStyles.left) + e.movementX
+    newY = parseInt(originalStyles.top) + e.movementY
+    copyBox.style.left = `${newX}px`
+    copyBox.style.top = `${newY}px`
+    }
+
+    const rounded = i =>{
+      return ~~(i / cellSize) 
+    }
+
+    const onLetGo = () => {
+  
+      console.log('roundedY', rounded(newY))
+      console.log('roundedX', rounded(newX))
+      console.log('filtered', 
+        returnSelectedCells((rounded(newY) * column) + rounded(newX)) //! to be edited to filter out bits if roundedX or roundedY is negative or over column or row (outside the grid)
+      )
+      console.log('new selection', returnSelectedCells((rounded(newY) * column) + rounded(newX)))
+
+      copyBox.style.left = `${rounded(newX) * cellSize}px`
+      copyBox.style.top = `${rounded(newY) * cellSize}px`
+
+      document.removeEventListener('mousemove', onDrag)
+      document.removeEventListener('mouseup', onLetGo)
+    }
+    const onGrab = () => {
+      document.addEventListener('mousemove', onDrag)
+      document.addEventListener('mouseup', onLetGo)
+    }
+    copyBox.addEventListener('mousedown', onGrab)
+  })
 
   const createGrid = (index,cellStyle) =>{
     const row = rowInputs[index].value ? rowInputs[index].value : 50
