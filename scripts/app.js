@@ -836,9 +836,12 @@ function init() {
     const column = columnInputs[0].value
     // const w = 100 / column
     const w = 1
-    const direction = [ 1, +column, -1, -column ]
-    const checkDirection = [ -column, +1, +column, -1 ]
-    const directionFactor = [ 1, 1, -1, -1 ]
+    const direction = [ 1, +column, -1, -column ] // move right, down, left, up
+    const checkDirection = [ -column, +1, +column, -1 ] // check up, left, down, left of current cell
+
+    // switches distance to move depending on which way the line is going.
+    // corresponds to right, down, left, up
+    const directionFactor = [ 1, 1, -1, -1 ] 
     const indexPattern = [0,1,2,3,0,1,2,3]
 
     //? values which needs reset for each trace
@@ -858,8 +861,9 @@ function init() {
       //TODO since transparent is converted to '', perhaps no longer need to check for it.
       if (stop) return 
       if (dirIndex === dirIndexToCheck && 
-        (arr[index + checkDirection[dirIndex]] === 'transparent' || 
-        !arr[index + checkDirection[dirIndex]] ||
+        (arr[index + checkDirection[dirIndex]] === 'transparent' || // cell in the  check direction is not filled
+        !arr[index + checkDirection[dirIndex]] || // cell in the check direction is the edge
+
         // below added to ensure trace don't continue on from right edge to left edge
         ((dirIndex === 1) && arr[index + 1] !== 'transparent' && index % column === column - 1) || 
         ((dirIndex === 3) && arr[index - 1] !== 'transparent' && index % column === 0)
@@ -898,7 +902,7 @@ function init() {
         checkedIndex.length = 0
         dirIndex = dirIndex === 0 ? 3 : dirIndex - 1
         letter = letter === 'h' ? 'v' : 'h'
-        traceIndex = traceIndex += direction[dirIndex]
+        traceIndex = traceIndex += direction[dirIndex] // moves to next cell to trace
       }
     }
 
