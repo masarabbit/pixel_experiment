@@ -105,11 +105,15 @@ function init() {
   }
 
   const calcX = cell =>{
-    return cell % column * cellSize
+    return cell % column
   } 
   
   const calcY = cell =>{
     return Math.floor(cell / column)
+  }
+
+  const rounded = i =>{
+    return ~~(i / cellSize) 
   }
 
 
@@ -292,7 +296,6 @@ function init() {
     const imageTarget = new Image()
     let iHeight
     let iWidth
-
 
     imageTarget.onload = () => {
       row = rowInputs[0].value
@@ -487,7 +490,7 @@ function init() {
           defaultPos.defPos = i
           prevX = i % column * cellSize
           prevY = Math.floor(i / column)
-          defaultPos.defX = prevX
+          // defaultPos.defX = prevX
 
           copyBox.style.top = `${defaultPos.top}px`
           copyBox.style.left = `${defaultPos.left}px`
@@ -519,11 +522,11 @@ function init() {
       const next = e.target.dataset.cell
       const newX = calcX(next)
       const newY = calcY(next)
-      const { defPos, defX } = defaultPos
+      const { defPos } = defaultPos
       
       if (!copyBox) return
       if (newX !== prevX && newY === prevY) {
-        copyBox.style.width = `${(newX - defX) + 1 * cellSize}px`
+        copyBox.style.width = `${(newX - calcX(defPos) + 1) * cellSize}px`
       } else if (newY !== prevY) {
         copyBox.style.height = `${(newY - calcY(defPos) + 1) * cellSize}px`
       } 
@@ -532,12 +535,24 @@ function init() {
     }     
   })
 
-  const returnSelectedCells = firstCell =>{
-    const width = copyBox.style.width.replace('px','') / cellSize
-    const height = copyBox.style.height.replace('px','') / cellSize
+  const returnSelectedCells = (firstCell, roundedX, roundedY) =>{
+    let width = copyBox.style.width.replace('px','') / cellSize
+    let height = copyBox.style.height.replace('px','') / cellSize
     const selection = []
+
+    if (roundedX < 0) width += roundedX // adjusts width if selection is beyond left edge of copyBox
+    if (roundedY < 0) height += roundedY // adjusts height if selection is beyond top edge of copyBox 
+
+    // adjusts width if selection is beyond right edge of copyBox
+    if (roundedX + width > column) width -= Math.abs((roundedX + width) - column) 
+
     for(let a = firstCell; a < firstCell + (height * column); a+= +column){
-      for (let b = a; b<(a + width); b++){
+      for (
+            let b = a; 
+            b<(a + width) && // stops at box edge
+            calcY(a) < row; // ignores selection outside bottom of copyBox
+            b++
+          ){
         selection.push(b)
       }
     }
@@ -545,7 +560,7 @@ function init() {
   }
 
   copySelectionButton.addEventListener('click',()=>{
-    const defPos = defaultPos.defPos
+    const { defPos } = defaultPos
     console.log('selection', returnSelectedCells(defPos))   
   })
   
@@ -566,18 +581,13 @@ function init() {
     copyBox.style.top = `${newY}px`
     }
 
-    const rounded = i =>{
-      return ~~(i / cellSize) 
-    }
-
     const onLetGo = () => {
-  
-      console.log('roundedY', rounded(newY))
-      console.log('roundedX', rounded(newX))
-      console.log('filtered', 
-        returnSelectedCells((rounded(newY) * column) + rounded(newX)) //! to be edited to filter out bits if roundedX or roundedY is negative or over column or row (outside the grid)
-      )
-      console.log('new selection', returnSelectedCells((rounded(newY) * column) + rounded(newX)))
+      // adjustments made here to ensure 'firstcell' is within selection.
+      // this needs to be done because numbers continue to next row.
+      const roundedY = rounded(newY) > 0 ? rounded(newY) : 0
+      const roundedX = rounded(newX) > 0 ? rounded(newX) : 0
+
+      console.log('new selection', returnSelectedCells( (roundedY * column) + roundedX, rounded(newX), rounded(newY)) )
 
       copyBox.style.left = `${rounded(newX) * cellSize}px`
       copyBox.style.top = `${rounded(newY) * cellSize}px`
@@ -772,44 +782,23 @@ function init() {
     const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
     return result ? `rgb(${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)})` : null
   }
-  
-  //TODO old version
-  // const checkIfAreaIsFilled = (codeRef, i, valueToCheck, arr) =>{
-  //   if(codeRef[i] === valueToCheck){
-  //     if (arr.filter(d=>d === i).length > 3) return
-  //     arr.push(i)
-  //     checkAreaToFill(codeRef, i, valueToCheck, arr)
-  //     }
-  // }
-  
-  // need to fill areaToFill with first Index first
-  // //! could this be improved? does not work on grid that is bigger than 40
-  // //! also won't work if image is too complicated.
-  // const checkAreaToFill = (codeRef, codeIndex, valueToCheck, areaToFill) =>{
-  //   // checks 4 direction
-  //   const column = +columnInputs[0].value
-  //   if (codeIndex % column !== 0) checkIfAreaIsFilled(codeRef,codeIndex - 1,valueToCheck, areaToFill)
-  //   if (codeIndex % column !== column - 1) checkIfAreaIsFilled(codeRef, codeIndex + 1, valueToCheck, areaToFill)
-  //   checkIfAreaIsFilled(codeRef, codeIndex + column, valueToCheck, areaToFill)
-  //   checkIfAreaIsFilled(codeRef, codeIndex - column, valueToCheck, areaToFill)
-  // }
 
   const checkAreaToFill = (codeRef, i, valueToCheck, areaToFill) =>{
     const fillStack = []
     const column = +columnInputs[0].value
-    fillStack.push(i)
+    fillStack.push(i) // first cell to fill
     
     while (fillStack.length > 0){
-      const cellToCheck = fillStack.pop()
+      const cellToCheck = fillStack.pop() // removes from area to check
       
-      if (codeRef[cellToCheck] !== valueToCheck) continue
-      if (areaToFill.filter(d=>d === cellToCheck).length) continue
-      areaToFill.push(cellToCheck)
+      if (codeRef[cellToCheck] !== valueToCheck) continue // is the cell value already valueToCheck?
+      if (areaToFill.filter(d=>d === cellToCheck).length) continue // is it in areaToFill already?
+      areaToFill.push(cellToCheck) // if passed above check, include in areaToFill
     
-      if (cellToCheck % column !== 0) fillStack.push(cellToCheck - 1)
-      if (cellToCheck % column !== column - 1) fillStack.push(cellToCheck + 1)
-      fillStack.push(cellToCheck + column)
-      fillStack.push(cellToCheck - column)
+      if (cellToCheck % column !== 0) fillStack.push(cellToCheck - 1) // check left
+      if (cellToCheck % column !== column - 1) fillStack.push(cellToCheck + 1) // check right
+      fillStack.push(cellToCheck + column) // check up
+      fillStack.push(cellToCheck - column) // check down
     }
     // console.log('fillStack last',fillStack)
     console.log('areaToFill',areaToFill)
@@ -880,11 +869,12 @@ function init() {
         if (checkedIndex.filter(d=>d === dirIndexToCheck).length) return
         checkedIndex.push(dirIndexToCheck)
 
-        // const distance = 100 / column
+        //// const distance = 100 / column
         const distance = 1
         const distanceToMove = distance * directionFactor[dirIndex]
         if (d[d.length - 1].split(' ')[0] === letter){
-          console.log('trigger')
+          ////console.log('trigger')
+          //* this increases distance to move if previous letter was the same (ie combines 'h1 h1' to 'h2')
           d[d.length - 1] = `${letter} ${+d[d.length - 1].split(' ')[1] + distanceToMove}`
         } else {
           d.push(`${letter} ${distanceToMove}`)
@@ -899,7 +889,7 @@ function init() {
     }
     
 
-    const trace = (index) =>{
+    const trace = index =>{
       let traceIndex = index
       
       while (!stop){
@@ -938,13 +928,13 @@ function init() {
         stop = false
         trace(first)
         //* recording traced area
-        //TODO probably could minimise svg code by adding values (eg if h 10 h 10, then could be h20)
+
         pathData.push(`<path fill="${currentColor}" d="${d.join(' ')}"/>`)
 
         //* removing traced area
         //// console.log('processedCodes before last',processedCodes)
         // when only one square is being traced, area to be traced doesn't get overwritten, so needed to reset it to [], and check below if it has been updated
-        //TODO may not need this workaround whne the areaToTrace/fill bucket logic is changed
+        //TODO may not need this workaround when the areaToTrace/fill bucket logic is changed
         processedCodes = areaToTrace.length 
           ? processedCodes.map((code,i)=> areaToTrace.indexOf(i) === -1 ? code : '')
           : processedCodes.map((code,i)=> i === first ? '' : code )
