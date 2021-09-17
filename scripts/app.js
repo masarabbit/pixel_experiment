@@ -1,6 +1,4 @@
 function init() {
-  
-  //TODO make windows bigger so that it could be used as door as well. make it so that houses can be stacked on top of each other
 
   // convert rgb(xxx,xxx,xxx) to hex
   // const c = cell.style.backgroundColor.replace('rgb(','').replace(')','').split(', ')
