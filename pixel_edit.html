@@ -1,0 +1,84 @@
+<!doctype html>
+<html>
+
+<head>
+  <link rel="stylesheet" type="text/css" href="./styles/pixel.css" />
+  <script src ="./scripts/pixelEdit.js" charset="utf-8"></script>
+
+  <title>pixel edit</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+
+<body>
+  <!-- <div class="trace_output"></div> -->
+  <nav>
+    pixel edit
+    <div class="input_wrap">
+      <label>column</label>
+      <input class="column input" placeholder="column" value="5" />
+    </div>
+    <div class="input_wrap">
+      <label>row</label>
+      <input class="row input" placeholder="row" value="5" />
+    </div>
+    <div class="input_wrap">
+      <label>cell size</label>
+      <input class="cell_size input" placeholder="cell size" value="20" />
+    </div>
+
+    <label for="color" class="color_label"></label>
+      <input id="color" type="color">
+      
+      <input id="upload" type="file" single/>
+      <label for="upload" data-alt="upload image file" class="upload icon alt"></label>
+      <div class="file_name"></div>
+      <button class="draw display_none alt" data-alt="pixelise">pixelise</button>
+      <button class="download icon download_file alt" data-alt="download pixel art"></button>
+      <button class="create_grid create icon alt" data-index="0" data-grid_class="cell" data-alt="create grid"></button> 
+
+      <button class="select_copy icon alt" data-alt="select copy"></button>
+      <button class="fill icon bucket alt" data-alt="fill bucket"></button>
+      <button class="clear icon eraser alt" data-alt="eraser"></button>
+      <button class="flip icon flip_h alt" data-alt="horizontal flip"></button>
+      <button class="flip icon flip_v alt" data-alt="vertical flip"></button>
+      <button class="grid_display icon hide alt" data-alt="hide grid"></button>
+  </nav>
+
+  <div class="pagewrap">
+    
+    <div class="img_wrap">
+      <canvas class="canvas display_none"></canvas>
+      <canvas class="canvas display_none"></canvas>
+    </div> 
+    
+    <!--generate grid1 -->
+    <div class="copy_grid"></div>
+    <div class="grid extra_margin"></div>
+  
+
+    <div class="mini_wrap">
+      <button class="download display_none alt">download small</button> <!-- remove??? -->
+      <button class="url">dataURL</button>
+      <button class="perimeter alt" data-alt="trace">trace</button>
+      <button class="copy_selection">copy</button>
+      <button class="move_selection">move</button>
+    </div>
+
+    <div class="palette"></div>
+    <textarea class="codes" spellcheck="false"></textarea>
+    <textarea class="test_codes" spellcheck="false"></textarea>
+
+    <div class="mini_wrap">
+      <button class="generate icon alt" data-alt="generate from code"></button>
+      <button class="copy icon alt" data-alt="copy code"></button>
+    </div>
+
+  </div>
+
+
+  <div class="cursor" data-text="test"><div></div></div>
+  <div class="indicator"></div>
+</body>
+
+</html>

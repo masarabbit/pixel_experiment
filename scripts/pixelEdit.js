@@ -1,13 +1,4 @@
 function init() {
-  
-
-  // convert rgb(xxx,xxx,xxx) to hex
-  // const c = cell.style.backgroundColor.replace('rgb(','').replace(')','').split(', ')
-  // console.log(hex(rgbToHex(c[0], c[1], c[2])))
-  
-  // cell_1624118130397.png
-  // cell_1624118654510.png
-  // const traceOutput = document.querySelector('.trace_output')
 
   let cursorType = 'pen_cursor'
   let canDraw = false
@@ -25,10 +16,11 @@ function init() {
   const canvas = document.querySelectorAll('.canvas')
   const ctx = canvas[0].getContext('2d')
   const ctxTwo = canvas[1].getContext('2d')
-  const ctxThree = canvas[2].getContext('2d')
   const grids = document.querySelectorAll('.grid')
   const palettes = document.querySelectorAll('.palette')
   const cursor = document.querySelector('.cursor')
+  const copyGrid = document.querySelector('.copy_grid')
+  // const indicator = document.querySelector('.indicator')
   
   // button
   const alts = document.querySelectorAll('.alt')
@@ -37,11 +29,12 @@ function init() {
   const downloadButtons = document.querySelectorAll('.download')
   const copyButtons = document.querySelectorAll('.copy') 
   const createGridButtons = document.querySelectorAll('.create_grid')
-  const add = document.querySelector('.add')
   const generate = document.querySelectorAll('.generate')
   const gridToggleButtons = document.querySelectorAll('.grid_display')
   const clearButtons = document.querySelectorAll('.clear')
   const fillButtons = document.querySelector('.fill')
+  const copySelectionButton = document.querySelector('.copy_selection')
+  const moveSelectionButton = document.querySelector('.move_selection')
 
   // input
   const upload = document.querySelector('#upload')
@@ -54,11 +47,7 @@ function init() {
   const colorLabel = document.querySelector('.color_label')
   // const codesBox[0] = document.querySelector('.dots')
   const codesBox = document.querySelectorAll('.codes')
-  const inputAssignWrapper = document.querySelector('.input_assign_wrapper')
-  const assignedCodes = {
-    't':'tree.svg',
-    '2':'tree_one.png'
-  }
+  
 
   const codes = {
     0: [],
@@ -75,6 +64,19 @@ function init() {
     return '#' + ('000000' + rgb).slice(-6)
   }
 
+  const calcX = cell =>{
+    return cell % column
+  } 
+  
+  const calcY = cell =>{
+    return Math.floor(cell / column)
+  }
+
+  const rounded = i =>{
+    return ~~(i / cellSize) 
+  }
+
+
   const sortedByFrequencyDuplicatesAndBlankRemoved = array =>{  
     const countOccurrences = (arr, val) => arr.reduce((a, v) => (v === val ? a + 1 : a), 0)
     const blankRemoved = array.filter(dot=> dot !== '' && dot)
@@ -86,7 +88,7 @@ function init() {
 
 
   const updateGrid = () =>{
-    grids[0].innerHTML=codes[0].map(dot=>{
+    grids[0].innerHTML = codes[0].map(dot=>{
       return `
         <div class="cell" style="background-color:${dot};">
         </div>
@@ -98,8 +100,7 @@ function init() {
     const filteredData = sortedByFrequencyDuplicatesAndBlankRemoved(arr)
     palettes[index].innerHTML = filteredData.map(d=>{
       if (index === 0 && filteredData[0][0] !== '#' && filteredData[0][0] !== 't') return
-      if (index === 1 && !assignedCodes[d]) return
-      const background = index === 0 ? `background-color:${d}` : `background-image:url(./assets/${assignedCodes[d]})`
+      const background = `background-color:${d}`
       return `
         <div class="palette_cell">
           <div class="palette_color" style="${background};">
@@ -110,14 +111,10 @@ function init() {
     const paletteColors = document.querySelectorAll('.palette_color')
     paletteColors.forEach((cell,i)=>{
       cell.addEventListener('click',()=>{
-        if (filteredData[0][0] === '#'){
-          colorInput.value = filteredData[i]
-          colorLabel.style.backgroundColor = filteredData[i]
-        } else {
-          letterInput.value = Object.keys(assignedCodes).find(k => {
-            return assignedCodes[k] === assignedCodes[filteredData[i]]
-          })
-        }
+        console.log('color3', filteredData[i] === 'transparent')
+        //! some logic required for transparency
+        colorInput.value = filteredData[i]
+        colorLabel.style.backgroundColor = filteredData[i]
       })
     })
   }
@@ -125,7 +122,7 @@ function init() {
   const updateCodesDisplay = (box,arr) =>{
     // box.value = `[${arr.map(ele=>ele).join(',')}]`
     box.value = `${arr.map(ele=>ele).join(',')}`
-    const index = box === codesBox[0]? 0 : 1 
+    const index = box === codesBox[0] ? 0 : 1 
     populatePalette(index,arr)
   }
 
@@ -138,7 +135,7 @@ function init() {
       fillBucket(index)
       return
     }
-    const value = erase ? '' : colorInput.value  //! transparent replaced with ''
+    const value = erase ? 'transparent' : colorInput.value  //! transparent replaced with ''
     codes[0][index] = value
     e.target.style.backgroundColor = value
     updateCodesDisplay(codesBox[0],codes[0])
@@ -152,14 +149,6 @@ function init() {
     updateCodesDisplay(codesBox[1],codes[1])
   }
 
-  const drawWithImage = e =>{
-    const index = e.target.dataset.cell
-    codes[1][index] = letterInput.value
-    const background = codes[1][index] === '' ? '' : assignedCodes[codes[1][index]]
-    if (background )e.target.style.backgroundImage = `url(./assets/${background})`
-    updateCodesDisplay(codesBox[1],codes[1])
-    // drawMap(e) //* draws letters
-  }
 
   const continuousDraw = (e,action) =>{
     if (!canDraw) return
@@ -208,13 +197,13 @@ function init() {
   //! maybe add selectCopy here?
   const addDraw = () =>{
     const cells = document.querySelectorAll('.cell')
-      cells.forEach((c,i)=>{
-        c.style.height = `${cellSize}px`
-        c.style.width = `${cellSize}px`
-        c.dataset.cell = i
-        c.addEventListener('click',(e)=>colorCell(e))
-        c.addEventListener('mousemove',(e)=>continuousDraw(e,colorCell))
-      })
+    cells.forEach((c,i)=>{
+      c.style.height = `${cellSize}px`
+      c.style.width = `${cellSize}px`
+      c.dataset.cell = i
+      c.addEventListener('click',(e)=>colorCell(e))
+      c.addEventListener('mousemove',(e)=>continuousDraw(e,colorCell))
+    })
   }
 
   const addCodeDraw = clear =>{
@@ -226,22 +215,10 @@ function init() {
     if (clear) updateCodesDisplay(codesBox[1],codes[1])
   }
 
-  const generateMap = clear =>{
-    const mapGenCells = document.querySelectorAll('.map_gen_cell')
-    mapGenCells.forEach((mapGenCell,i)=>{
-      const background = codes[1][i] === '' ? '' : assignedCodes[codes[1][i]]
-
-      if (background) mapGenCell.style.backgroundImage = `url(./assets/${background})`
-      mapGenCell.addEventListener('click',(e)=>drawWithImage(e))
-      mapGenCell.addEventListener('mousemove',(e)=>continuousDraw(e,drawWithImage))
-    })
-    if (clear) updateCodesDisplay(codesBox[1],codes[1])  
-  }
-
   const drawFunctions = [
     addDraw,
-    addCodeDraw,
-    generateMap
+    addCodeDraw
+    // generateMap
   ]
 
   const output = ()=>{
@@ -252,6 +229,8 @@ function init() {
     let iWidth
 
     imageTarget.onload = () => {
+      row = rowInputs[0].value
+      column = columnInputs[0].value
       const maxWidth = column * cellSize 
       iWidth = imageTarget.naturalWidth 
       iHeight = imageTarget.naturalHeight 
@@ -261,8 +240,7 @@ function init() {
       canvas[0].setAttribute('height', calcHeight - (calcHeight % cellSize))
       // row = rowInputs[0].value ? rowInputs[0].value : (calcHeight - (calcHeight % cellSize)) / cellSize
       // rowInputs[0].value = row
-      row = rowInputs[0].value
-      column = columnInputs[0].value
+      
       grids[0].style.height = `${row * cellSize}px`
       grids[0].style.width = `${column * cellSize}px` 
 
@@ -281,8 +259,8 @@ function init() {
 
         // this thing included here to prevent rendering black instead of transparent
         c[3] === 0
-        ? codes[0].push('transparent')
-        : codes[0].push(hex(rgbToHex(c[0], c[1], c[2])))
+          ? codes[0].push('transparent')
+          : codes[0].push(hex(rgbToHex(c[0], c[1], c[2])))
         // var hex = '#' + ('000000' + rgbToHex(c[0], c[1], c[2])).slice(-6)
         
       }
@@ -291,7 +269,6 @@ function init() {
       updateCodesDisplay(codesBox[0],codes[0])
       paintCanvasTwo()
       addDraw()
-      downloadButtons[0].classList.remove('display_none')
     }
     imageTarget.src = blobURL
   }
@@ -317,44 +294,16 @@ function init() {
 
     const cells = document.querySelectorAll('.cell')
     codesBox[0].value.split(',').forEach((ele,i)=>{
-      if(!cells[i]) return
+      if (!cells[i]) return
       cells[i].style.backgroundColor = ele
     })
     addDraw()
     populatePalette(0,codes[0])
   }
 
-  const generateFromCode = () =>{
-    createGridCells(
-      rowInputs[1].value,
-      columnInputs[1].value,
-      cellSizeInputs[1].value,
-      1,
-      'map_cell',
-      false
-    )
-    createGridCells(
-      rowInputs[2].value,
-      columnInputs[2].value,
-      cellSizeInputs[2].value,
-      2,
-      'map_gen_cell',
-      false
-    ) 
-    codes[1] = codesBox[1].value.split(',')
-    const mapCells = document.querySelectorAll('.map_cell')
-    codesBox[1].value.split(',').forEach((ele,i)=>{
-      if(!mapCells[i]) return
-      mapCells[i].innerHTML = ele
-    })
-    generateMap(false)
-    populatePalette(1,codes[1])
-  }
-
-
   const downloadImage = (canvas,name) =>{
     const link = document.createElement('a')
-    link.download = `${name}_${new Date().getTime()}.png`;
+    link.download = `${name}_${new Date().getTime()}.png`
     link.href = canvas.toDataURL()
     link.click()
   }
@@ -379,6 +328,7 @@ function init() {
             font-size:${cellSize}px;
             line-height:${cellSize}px;
           "
+          index="${i}"
           data-cell=${i}
         >
         </div>
@@ -387,6 +337,167 @@ function init() {
     drawFunctions[index](clear)
   }
   
+  let copyState
+  let copyBoxCreated
+  let copyBox
+  let copyGrids
+  let prevX
+  let prevY
+  const defaultPos = {
+    top: null,
+    left: null,
+    cell: null
+  }
+
+  const createCopyGrids = (row,column,cellSize,cellStyle) =>{
+    const arr = new Array(row * column).fill('')
+    copyGrid.style.width = `${column * cellSize}px`
+    copyGrid.style.height = `${row * cellSize}px`
+    copyGrid.style.marginTop = '100px'
+    copyGrid.style.marginBottom = `-${(row * cellSize) + 100}px`
+    copyGrid.innerHTML = arr.map((_ele,i)=>{
+      return `
+        <div 
+          class="${cellStyle}"
+          style="
+            width:${cellSize}px;
+            height:${cellSize}px;
+          "
+          data-cell=${i}
+        >
+        </div>
+        `
+    }).join('')
+    copyGrids = document.querySelectorAll(`.${cellStyle}`)
+
+
+    copyGrids.forEach((grid,i)=>{
+      
+      grid.addEventListener('click',(e)=>{
+        if (!copyBoxCreated){
+          copyBox = document.createElement('div')
+          copyBox.classList.add('copy_box')
+          copyGrid.append(copyBox)
+          copyBoxCreated = true
+          copyBox.style.width = `${cellSize}px`
+          copyBox.style.height = `${cellSize}px`
+          
+          defaultPos.top = e.target.offsetTop
+          defaultPos.left = e.target.offsetLeft
+          defaultPos.defPos = i
+          prevX = i % column * cellSize
+          prevY = Math.floor(i / column)
+          // defaultPos.defX = prevX
+
+          copyBox.style.top = `${defaultPos.top}px`
+          copyBox.style.left = `${defaultPos.left}px`
+
+          const handle = document.createElement('div')
+          handle.classList.add('handle')
+          handle.style.width = `${cellSize}px`
+          handle.style.height = `${cellSize}px`
+          const moveHandle = document.createElement('div')  //? maybe don't need this?
+          moveHandle.classList.add('move_handle')
+          moveHandle.style.width = `${cellSize}px`
+          moveHandle.style.height = `${cellSize}px`
+
+          copyBox.append(handle)
+          copyBox.append(moveHandle)       
+          
+        }
+      })
+    })
+  }
+
+  copyGrid.addEventListener('mousedown', ()=> copyState = true)
+  copyGrid.addEventListener('mouseup', ()=> copyState = false)
+
+  //TODO add way to confirm selected area
+  //make box moveable
+  copyGrid.addEventListener('mousemove',(e)=>{     
+    if (copyState) {
+      const next = e.target.dataset.cell
+      const newX = calcX(next)
+      const newY = calcY(next)
+      const { defPos } = defaultPos
+      
+      if (!copyBox) return
+      if (newX !== prevX && newY === prevY) {
+        copyBox.style.width = `${(newX - calcX(defPos) + 1) * cellSize}px`
+      } else if (newY !== prevY) {
+        copyBox.style.height = `${(newY - calcY(defPos) + 1) * cellSize}px`
+      } 
+      prevX = newX
+      prevY = newY
+    }     
+  })
+
+  const returnSelectedCells = (firstCell, roundedX, roundedY) =>{
+    let width = copyBox.style.width.replace('px','') / cellSize
+    let height = copyBox.style.height.replace('px','') / cellSize
+    const selection = []
+
+    if (roundedX < 0) width += roundedX // adjusts width if selection is beyond left edge of copyBox
+    if (roundedY < 0) height += roundedY // adjusts height if selection is beyond top edge of copyBox 
+
+    // adjusts width if selection is beyond right edge of copyBox
+    if (roundedX + width > column) width -= Math.abs((roundedX + width) - column) 
+
+    for (let a = firstCell; a < firstCell + (height * column); a += +column){
+      for (
+        let b = a; 
+        b < (a + width) && // stops at box edge
+            calcY(a) < row; // ignores selection outside bottom of copyBox
+        b++
+      ){
+        selection.push(b)
+      }
+    }
+    return selection
+  }
+
+  copySelectionButton.addEventListener('click',()=>{
+    const { defPos } = defaultPos
+    console.log('selection', returnSelectedCells(defPos))   
+  })
+  
+
+  //TODO move
+  moveSelectionButton.addEventListener('click', ()=>{
+
+    copyBox.classList.toggle('move')
+    copyGrid.classList.toggle('fix')
+    let newX
+    let newY
+    const onDrag = e => {
+      copyBox.style.transtion = '0s'
+      const originalStyles = window.getComputedStyle(copyBox)
+      newX = parseInt(originalStyles.left) + e.movementX
+      newY = parseInt(originalStyles.top) + e.movementY
+      copyBox.style.left = `${newX}px`
+      copyBox.style.top = `${newY}px`
+    }
+
+    const onLetGo = () => {
+      // adjustments made here to ensure 'firstcell' is within selection.
+      // this needs to be done because numbers continue to next row.
+      const roundedY = rounded(newY) > 0 ? rounded(newY) : 0
+      const roundedX = rounded(newX) > 0 ? rounded(newX) : 0
+
+      console.log('new selection', returnSelectedCells( (roundedY * column) + roundedX, rounded(newX), rounded(newY)) )
+
+      copyBox.style.left = `${rounded(newX) * cellSize}px`
+      copyBox.style.top = `${rounded(newY) * cellSize}px`
+
+      document.removeEventListener('mousemove', onDrag)
+      document.removeEventListener('mouseup', onLetGo)
+    }
+    const onGrab = () => {
+      document.addEventListener('mousemove', onDrag)
+      document.addEventListener('mouseup', onLetGo)
+    }
+    copyBox.addEventListener('mousedown', onGrab)
+  })
 
   const createGrid = (index,cellStyle) =>{
     const row = rowInputs[index].value ? rowInputs[index].value : 50
@@ -405,47 +516,6 @@ function init() {
   }
   
   // eventlistener
-  add.addEventListener('click',()=>{
-
-    const input = document.createElement('input')
-    input.classList.add('key')
-    const assign = document.createElement('textarea')
-    assign.classList.add('assign') 
-    
-    //* option to add thumbnail... doesn't work because the image would not be defined yet.
-    // const thumb = document.createElement('div')
-    // thumb.classList.add('image_thumb')
-    // thumb.style.backgroundImage = `url(./assets/${assign.value})`
-    // thumb.addEventListener('click',()=>{
-    //   letterInput.value = input.value
-    // })
-
-    const inputAssign = document.createElement('div')
-    // inputAssign.appendChild(thumb)
-    inputAssign.appendChild(input)
-    inputAssign.appendChild(assign)
-    inputAssign.classList.add('input_assign')
-    inputAssignWrapper.appendChild(inputAssign)
-
-    const updateAssignedCodes = () =>{
-      assignedCodes[input.value]=assign.value
-      console.log(assignedCodes)
-    }
-
-    // assign button
-    input.addEventListener('change',updateAssignedCodes)
-    assign.addEventListener('change',updateAssignedCodes)
-    
-    // remove button
-    const remove = document.createElement('button')
-    remove.innerHTML = '-'
-    inputAssign.appendChild(remove)
-    remove.addEventListener('click',()=>{
-      delete assignedCodes[input.value]
-      inputAssignWrapper.removeChild(inputAssign)
-      console.log(assignedCodes)
-    })
-  })
 
   const toggleGrid = () =>{
     grids.forEach(grid=>grid.classList.toggle('grid_hide'))
@@ -457,8 +527,6 @@ function init() {
   rowInputs[0].addEventListener('change',()=>row = rowInputs[0].value)
   columnInputs[0].addEventListener('change',()=>column = columnInputs[0].value)
 
-  rowInputs[1].addEventListener('change',()=>rowInputs[2].value = rowInputs[1].value)
-  columnInputs[1].addEventListener('change',()=>columnInputs[2].value = columnInputs[1].value)
   
   downloadButtons[0].addEventListener('click',()=>{
     paintCanvas()
@@ -470,9 +538,7 @@ function init() {
   })
   draw.addEventListener('click',output)
   generate[0].addEventListener('click',generateFromColorCode)
-  generate[1].addEventListener('click',generateFromCode)
   copyButtons[0].addEventListener('click',()=>copyText(codesBox[0]))
-  copyButtons[1].addEventListener('click',()=>copyText(codesBox[1]))
   gridToggleButtons.forEach(button=>button.addEventListener('click',toggleGrid))
 
   grids.forEach(grid=>{
@@ -483,6 +549,9 @@ function init() {
     grid.addEventListener('mouseenter',()=>cursor.classList.add(cursorType))
     grid.addEventListener('mouseleave',()=>cursor.classList.remove(cursorType))
   })
+
+  copyGrid.addEventListener('mouseenter',()=>cursor.classList.add(cursorType))
+  copyGrid.addEventListener('mouseleave',()=>cursor.classList.remove(cursorType))
 
   colorInput.addEventListener('change',()=>{
     colorLabel.style.backgroundColor = colorInput.value
@@ -495,37 +564,6 @@ function init() {
     draw.classList.remove('display_none')
   })
 
-  uploadTwo.addEventListener('change',()=>{
-    const firstImage = new Image()
-    firstImage.onload = () => {
-      const w = firstImage.naturalWidth
-      const h = firstImage.naturalHeight
-      canvas[0].setAttribute('width', w * uploadTwo.files.length)
-      canvas[0].setAttribute('height', h)
-
-      const w2 = 50
-      const h2 = w2 * (w / h)
-      canvas[2].setAttribute('width', w2 * uploadTwo.files.length)
-      canvas[2].setAttribute('height', h2)
-      
-      Array.from(uploadTwo.files).forEach((upload,i)=>{
-        const blobURL = window.URL.createObjectURL(upload)
-        const eachImage = new Image()   
-        eachImage.onload = () => {
-          // console.log(w,h,eachImage)  
-          ctx.drawImage(eachImage,i*w,0,w,h)
-          ctxThree.drawImage(eachImage,i*w2,0,w2,h2)
-        }
-        eachImage.src = blobURL
-      })
-    }
-    firstImage.src=window.URL.createObjectURL(uploadTwo.files[0])    
-    // console.log('u',uploadedFiles)
-  })
-
-  downloadButtons[2].addEventListener('click',()=>{
-    downloadImage(canvas[0],'sprite')
-  })
 
   const arrayGroupedForFlipping = () =>{
     const arr = new Array(+columnInputs[0].value).fill('')
@@ -570,42 +608,43 @@ function init() {
 
 
   const hexToRgb = hex => {
-    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-    return result ? `rgb(${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)})`: null
-  }
-  
-  const checkIfAreaIsFilled = (codeRef, i, valueToCheck, arr) =>{
-    if(codeRef[i] === valueToCheck){
-      if (arr.filter(d=>d === i).length > 3) return
-      arr.push(i)
-      checkAreaToFill(codeRef, i, valueToCheck, arr)
-      }
-  }
-  
-  //! could this be improved? does not work on grid that is bigger than 40
-  //! also won't work if image is too complicated.
-  const checkAreaToFill = (codeRef, codeIndex, valueToCheck, areaToFill) =>{
-    // checks 4 direction
-    const column = +columnInputs[0].value
-    if (codeIndex % column !== 0) checkIfAreaIsFilled(codeRef,codeIndex - 1,valueToCheck, areaToFill)
-    if (codeIndex % column !== column - 1) checkIfAreaIsFilled(codeRef, codeIndex + 1, valueToCheck, areaToFill)
-    checkIfAreaIsFilled(codeRef, codeIndex + column, valueToCheck, areaToFill)
-    checkIfAreaIsFilled(codeRef, codeIndex - column, valueToCheck, areaToFill)
+    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
+    return result ? `rgb(${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)})` : null
   }
 
+  const checkAreaToFill = (codeRef, i, valueToCheck, areaToFill) =>{
+    const fillStack = []
+    const column = +columnInputs[0].value
+    fillStack.push(i) // first cell to fill
+    
+    while (fillStack.length > 0){
+      const cellToCheck = fillStack.pop() // removes from area to check
+      
+      if (codeRef[cellToCheck] !== valueToCheck) continue // is the cell value already valueToCheck?
+      if (areaToFill.filter(d=>d === cellToCheck).length) continue // is it in areaToFill already?
+      areaToFill.push(cellToCheck) // if passed above check, include in areaToFill
+    
+      if (cellToCheck % column !== 0) fillStack.push(cellToCheck - 1) // check left
+      if (cellToCheck % column !== column - 1) fillStack.push(cellToCheck + 1) // check right
+      fillStack.push(cellToCheck + column) // check up
+      fillStack.push(cellToCheck - column) // check down
+    }
+    // console.log('fillStack last',fillStack)
+    console.log('areaToFill',areaToFill)
+  }
 
   const fillBucket = index =>{
-    const fillValue = erase ? '' : colorInput.value  //! '' instead of transparent
-    const areaToFillBucket = [+index]
+    const fillValue = erase ? 'transparent' : colorInput.value  //! '' instead of transparent
+    const areaToFillBucket = []
     const valueToSwap = codes[0][index]
     
     checkAreaToFill(codes[0], +index, valueToSwap, areaToFillBucket)
-    
+
     codesBox[0].value = codesBox[0].value.split(',').map((c,i)=>{
       if (areaToFillBucket.indexOf(i) === -1) return c
       return c === valueToSwap ? fillValue : c
     }).join(',')
-    
+
     generateFromColorCode()
   }
 
@@ -624,10 +663,15 @@ function init() {
     const pathData = []
     const areaToTrace = []
     const column = columnInputs[0].value
-    const w = 100 / column
-    const direction = [ 1, +column, -1, -column ]
-    const checkDirection = [ -column, +1, +column, -1 ]
-    const directionFactor = [ 1, 1, -1, -1 ]
+    // const w = 100 / column
+    const w = 1
+    const direction = [ 1, +column, -1, -column ] // move right, down, left, up
+    const checkDirection = [ -column, +1, +column, -1 ] // check up, left, down, left of current cell
+
+    // switches distance to move depending on which way the line is going.
+    // corresponds to right, down, left, up
+    const directionFactor = [ 1, 1, -1, -1 ] 
+    const indexPattern = [0,1,2,3,0,1,2,3]
 
     //? values which needs reset for each trace
     let arr
@@ -646,8 +690,9 @@ function init() {
       //TODO since transparent is converted to '', perhaps no longer need to check for it.
       if (stop) return 
       if (dirIndex === dirIndexToCheck && 
-        (arr[index + checkDirection[dirIndex]] === 'transparent' || 
-        !arr[index + checkDirection[dirIndex]] ||
+        (arr[index + checkDirection[dirIndex]] === 'transparent' || // cell in the  check direction is not filled
+        !arr[index + checkDirection[dirIndex]] || // cell in the check direction is the edge
+
         // below added to ensure trace don't continue on from right edge to left edge
         ((dirIndex === 1) && arr[index + 1] !== 'transparent' && index % column === column - 1) || 
         ((dirIndex === 3) && arr[index - 1] !== 'transparent' && index % column === 0)
@@ -657,9 +702,17 @@ function init() {
         if (checkedIndex.filter(d=>d === dirIndexToCheck).length) return
         checkedIndex.push(dirIndexToCheck)
 
-        const distance = 100 / column
+        //// const distance = 100 / column
+        const distance = 1
         const distanceToMove = distance * directionFactor[dirIndex]
-        d.push(`${letter} ${distanceToMove}`)
+        if (d[d.length - 1].split(' ')[0] === letter){
+          ////console.log('trigger')
+          //* this increases distance to move if previous letter was the same (ie combines 'h1 h1' to 'h2')
+          d[d.length - 1] = `${letter} ${+d[d.length - 1].split(' ')[1] + distanceToMove}`
+        } else {
+          d.push(`${letter} ${distanceToMove}`)
+        }
+        
         if (letter === 'h') initialX += distanceToMove
         if (letter === 'v') initialY += distanceToMove
         if (initialX === x * w && initialY === y * w) stop = true
@@ -669,16 +722,17 @@ function init() {
     }
     
 
-    const trace = (index) =>{
-      const indexPattern = [0,1,2,3,0,1,2,3]
-      indexPattern.forEach(i=>recordTraceData(i,index))
-
-      checkedIndex.length = 0
-      dirIndex = dirIndex === 0 ? 3 : dirIndex - 1
-      letter = letter === 'h' ? 'v' : 'h'
+    const trace = index =>{
+      let traceIndex = index
       
-      if (stop) return
-      trace(index + direction[dirIndex])
+      while (!stop){
+        indexPattern.forEach(i=>recordTraceData(i,traceIndex))
+
+        checkedIndex.length = 0
+        dirIndex = dirIndex === 0 ? 3 : dirIndex - 1
+        letter = letter === 'h' ? 'v' : 'h'
+        traceIndex = traceIndex += direction[dirIndex] // moves to next cell to trace
+      }
     }
 
     const convertToSvg = (processedCodes) =>{  
@@ -707,16 +761,16 @@ function init() {
         stop = false
         trace(first)
         //* recording traced area
-        //TODO probably could minimise svg code by adding values (eg if h 10 h 10, then could be h20)
+
         pathData.push(`<path fill="${currentColor}" d="${d.join(' ')}"/>`)
 
         //* removing traced area
         //// console.log('processedCodes before last',processedCodes)
         // when only one square is being traced, area to be traced doesn't get overwritten, so needed to reset it to [], and check below if it has been updated
-        //TODO may not need this workaround whne the areaToTrace/fill bucket logic is changed
+        //TODO may not need this workaround when the areaToTrace/fill bucket logic is changed
         processedCodes = areaToTrace.length 
           ? processedCodes.map((code,i)=> areaToTrace.indexOf(i) === -1 ? code : '')
-          : processedCodes.map((code,i)=> i === first ? '' : code ) //! not fool proof?
+          : processedCodes.map((code,i)=> i === first ? '' : code )
         //// console.log('processedCodes last',processedCodes)
         //// console.log('areaToTrace',areaToTrace)
         
@@ -726,9 +780,13 @@ function init() {
     const processedCodes = codesBox[0].value.split(',').map(code =>{
       return code === 'transparent' ? '' : code
     })
-    console.log('processedCodes',processedCodes)
+    // console.log('processedCodes',processedCodes)
     convertToSvg(processedCodes)
-    testCode.value = pathData.join(' ')
+
+    // put in to compress
+    testCode.value = pathData.join(' ').replaceAll('<path d="M','D').replaceAll('<path fill="#ffffff" d="M','F').replaceAll('/>','/').replaceAll('-1','N').replaceAll('-2','T').replaceAll(' v ','v').replaceAll(' h ','h').replaceAll('<path fill="#000000" d="M','D')
+
+
   })
 
   const dataUrlButton = document.querySelector('.url')
@@ -757,7 +815,33 @@ function init() {
 
   selectCopyButton.addEventListener('click',()=>{
     selectCopy = !selectCopy
+    copyGrid.classList.toggle('active')
   })
+
+  // reads from url
+  const query = window.location.hash
+  if (query){
+    const queryArray = query.split('#')
+    columnInputs[0].value = queryArray[1]
+    rowInputs[0].value = queryArray[2]
+    column = queryArray[1]
+    row = queryArray[2]
+
+    createGrid(0,'cell')
+    createCopyGrids(
+      rowInputs[0].value,
+      columnInputs[0].value,
+      cellSizeInputs[0].value,
+      'copy_cell'
+    )
+
+  }
+
+
+  // copyGrid.addEventListener('click',()=>{
+
+  //   indicator.innerHTML = ''
+  // })
 
 }
 

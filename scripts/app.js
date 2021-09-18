@@ -381,7 +381,7 @@ function init() {
       rowInputs[1].value,
       columnInputs[1].value,
       cellSizeInputs[1].value,
-      'copy_cell',
+      'copy_cell'
     )
     createGridCells(
       rowInputs[2].value,
@@ -544,13 +544,13 @@ function init() {
     // adjusts width if selection is beyond right edge of copyBox
     if (roundedX + width > column) width -= Math.abs((roundedX + width) - column) 
 
-    for(let a = firstCell; a < firstCell + (height * column); a+= +column){
+    for (let a = firstCell; a < firstCell + (height * column); a += +column){
       for (
-            let b = a; 
-            b<(a + width) && // stops at box edge
+        let b = a; 
+        b < (a + width) && // stops at box edge
             calcY(a) < row; // ignores selection outside bottom of copyBox
-            b++
-          ){
+        b++
+      ){
         selection.push(b)
       }
     }
@@ -571,12 +571,12 @@ function init() {
     let newX
     let newY
     const onDrag = e => {
-    copyBox.style.transtion = '0s'
-    let originalStyles = window.getComputedStyle(copyBox)
-    newX = parseInt(originalStyles.left) + e.movementX
-    newY = parseInt(originalStyles.top) + e.movementY
-    copyBox.style.left = `${newX}px`
-    copyBox.style.top = `${newY}px`
+      copyBox.style.transtion = '0s'
+      const originalStyles = window.getComputedStyle(copyBox)
+      newX = parseInt(originalStyles.left) + e.movementX
+      newY = parseInt(originalStyles.top) + e.movementY
+      copyBox.style.left = `${newX}px`
+      copyBox.style.top = `${newY}px`
     }
 
     const onLetGo = () => {
@@ -1001,7 +1001,7 @@ function init() {
       rowInputs[0].value,
       columnInputs[0].value,
       cellSizeInputs[0].value,
-      'copy_cell',
+      'copy_cell'
     )
 
   }
