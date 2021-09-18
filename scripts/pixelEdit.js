@@ -12,7 +12,6 @@ function init() {
   let fill = false
   let selectCopy = false
   
-  const testCode =  document.querySelector('.test_codes')
   const canvas = document.querySelectorAll('.canvas')
   const ctx = canvas[0].getContext('2d')
   const ctxTwo = canvas[1].getContext('2d')
@@ -38,17 +37,14 @@ function init() {
 
   // input
   const upload = document.querySelector('#upload')
-  const uploadTwo = document.querySelector('#upload_two')
   const cellSizeInputs = document.querySelectorAll('.cell_size')
   const rowInputs = document.querySelectorAll('.row')
   const columnInputs = document.querySelectorAll('.column')
   const colorInput = document.querySelector('#color')
   const letterInput = document.querySelector('.letter')
   const colorLabel = document.querySelector('.color_label')
-  // const codesBox[0] = document.querySelector('.dots')
   const codesBox = document.querySelectorAll('.codes')
   
-
   const codes = {
     0: [],
     1: []
@@ -59,6 +55,11 @@ function init() {
       throw 'Invalid color component'
     return ((r << 16) | (g << 8) | b).toString(16)
   }
+
+  // const hexToRgb = hex => {
+  //   const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
+  //   return result ? `rgb(${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)})` : null
+  // }
 
   const hex = rgb =>{
     return '#' + ('000000' + rgb).slice(-6)
@@ -120,7 +121,6 @@ function init() {
   }
 
   const updateCodesDisplay = (box,arr) =>{
-    // box.value = `[${arr.map(ele=>ele).join(',')}]`
     box.value = `${arr.map(ele=>ele).join(',')}`
     const index = box === codesBox[0] ? 0 : 1 
     populatePalette(index,arr)
@@ -153,8 +153,6 @@ function init() {
   const continuousDraw = (e,action) =>{
     if (!canDraw) return
     action(e)
-    // e.target.classList.add('enlarge')
-    // setTimeout(()=>e.target.classList.remove('enlarge'),200)
   }
   
   
@@ -185,9 +183,8 @@ function init() {
     canvas[0].setAttribute('height', row * cellSize)
   
     arr.forEach((_ele,i)=>{
-      const x = i % column * cellSize
-      const y = Math.floor(i / column) * cellSize
-      // const y = i / column * cellSize
+      const x = calcX(i) * cellSize
+      const y = calcY(i) * cellSize
       ctx.fillStyle = codes[0][i] === '' ? 'transparent' : codes[0][i]
       ctx.fillRect(x, y, cellSize, cellSize)
     })
@@ -218,7 +215,6 @@ function init() {
   const drawFunctions = [
     addDraw,
     addCodeDraw
-    // generateMap
   ]
 
   const output = ()=>{
@@ -229,8 +225,6 @@ function init() {
     let iWidth
 
     imageTarget.onload = () => {
-      row = rowInputs[0].value
-      column = columnInputs[0].value
       const maxWidth = column * cellSize 
       iWidth = imageTarget.naturalWidth 
       iHeight = imageTarget.naturalHeight 
@@ -238,14 +232,10 @@ function init() {
       calcWidth = calcHeight * (iWidth / iHeight)
       canvas[0].setAttribute('width', calcWidth)
       canvas[0].setAttribute('height', calcHeight - (calcHeight % cellSize))
-      // row = rowInputs[0].value ? rowInputs[0].value : (calcHeight - (calcHeight % cellSize)) / cellSize
-      // rowInputs[0].value = row
       
       grids[0].style.height = `${row * cellSize}px`
       grids[0].style.width = `${column * cellSize}px` 
 
-      // grids[0].style.height = `${calcHeight - (calcHeight % cellSize)}px`
-      // grids[0].style.width = `${calcWidth}px` 
       codes[0].length = 0
 
       ctx.drawImage(imageTarget, 0, 0, calcWidth, calcHeight)
@@ -275,12 +265,19 @@ function init() {
 
   const generateFromColorCode = () =>{
     createGridCells(
-      rowInputs[0].value,
-      columnInputs[0].value,
-      cellSizeInputs[0].value,
+      row,
+      column,
+      cellSize,
       0,
       'cell',
       false
+    )
+
+    createCopyGrids(
+      row,
+      column,
+      cellSize,
+      'copy_cell'
     )
 
     if (!codesBox[0].value) {
@@ -402,8 +399,7 @@ function init() {
           moveHandle.style.height = `${cellSize}px`
 
           copyBox.append(handle)
-          copyBox.append(moveHandle)       
-          
+          copyBox.append(moveHandle)        
         }
       })
     })
@@ -413,7 +409,6 @@ function init() {
   copyGrid.addEventListener('mouseup', ()=> copyState = false)
 
   //TODO add way to confirm selected area
-  //make box moveable
   copyGrid.addEventListener('mousemove',(e)=>{     
     if (copyState) {
       const next = e.target.dataset.cell
@@ -500,15 +495,11 @@ function init() {
   })
 
   const createGrid = (index,cellStyle) =>{
-    const row = rowInputs[index].value ? rowInputs[index].value : 50
-    const column = columnInputs[index].value ? columnInputs[index].value : 50
-    const cellSize = cellSizeInputs[index].value ? cellSizeInputs[index].value : 10
     createGridCells(row,column,cellSize,index,cellStyle,true)
     if (index === 0) {
       codes[0] = new Array(row * column).fill('transparent')
       codesBox[0].value = new Array(row * column).fill('transparent')
       console.log('selectCopy',selectCopy)
-
     } else {
       codes[1] = new Array(row * column).fill('')
       codesBox[1].value = new Array(row * column).fill('')
@@ -538,7 +529,11 @@ function init() {
   })
   draw.addEventListener('click',output)
   generate[0].addEventListener('click',generateFromColorCode)
-  copyButtons[0].addEventListener('click',()=>copyText(codesBox[0]))
+  copyButtons.forEach((button, i) =>{
+    button.addEventListener('click',()=>copyText(codesBox[i]))
+  })
+
+
   gridToggleButtons.forEach(button=>button.addEventListener('click',toggleGrid))
 
   grids.forEach(grid=>{
@@ -605,12 +600,6 @@ function init() {
       cursorType = erase ? 'eraser_cursor' : 'pen_cursor'
     })
   })
-
-
-  const hexToRgb = hex => {
-    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
-    return result ? `rgb(${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)})` : null
-  }
 
   const checkAreaToFill = (codeRef, i, valueToCheck, areaToFill) =>{
     const fillStack = []
@@ -784,7 +773,7 @@ function init() {
     convertToSvg(processedCodes)
 
     // put in to compress
-    testCode.value = pathData.join(' ').replaceAll('<path d="M','D').replaceAll('<path fill="#ffffff" d="M','F').replaceAll('/>','/').replaceAll('-1','N').replaceAll('-2','T').replaceAll(' v ','v').replaceAll(' h ','h').replaceAll('<path fill="#000000" d="M','D')
+    codesBox[1].value = pathData.join(' ').replaceAll('<path d="M','D').replaceAll('<path fill="#ffffff" d="M','F').replaceAll('/>','/').replaceAll('-1','N').replaceAll('-2','T').replaceAll(' v ','v').replaceAll(' h ','h').replaceAll('<path fill="#000000" d="M','D')
 
 
   })
@@ -822,16 +811,18 @@ function init() {
   const query = window.location.hash
   if (query){
     const queryArray = query.split('#')
-    columnInputs[0].value = queryArray[1]
-    rowInputs[0].value = queryArray[2]
-    column = queryArray[1]
-    row = queryArray[2]
+    columnInputs[0].value = queryArray[1] || 10
+    rowInputs[0].value = queryArray[2] || 10
+    cellSizeInputs[0].value = queryArray[3] || 20
+    column = columnInputs[0].value
+    row = rowInputs[0].value
+    cellSize = cellSizeInputs[0].value
 
     createGrid(0,'cell')
     createCopyGrids(
-      rowInputs[0].value,
-      columnInputs[0].value,
-      cellSizeInputs[0].value,
+      row,
+      column,
+      cellSize,
       'copy_cell'
     )
 

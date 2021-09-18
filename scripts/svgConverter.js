@@ -22,21 +22,20 @@ function init() {
   }
 
 
-  let cursorType = 'pen_cursor'
+  // let cursorType = 'pen_cursor'
   let erase = false
   
   const canvas = document.querySelector('canvas')
   const ctx = canvas.getContext('2d')
-  const grids = document.querySelectorAll('.grid')
+  // const grids = document.querySelectorAll('.grid')
   const cursor = document.querySelector('.cursor')
-  // const downloadLink = document.querySelector('.download_link')
   
   // button
   const alts = document.querySelectorAll('.alt')
   const copyButtons = document.querySelectorAll('.copy') 
   const createGridButtons = document.querySelectorAll('.create_grid')
   const generate = document.querySelectorAll('.generate')
-  const gridToggleButtons = document.querySelectorAll('.grid_display')
+  // const gridToggleButtons = document.querySelectorAll('.grid_display')
   const clearButtons = document.querySelectorAll('.clear')
   const downloadButton = document.querySelector('.download')
 
@@ -54,9 +53,9 @@ function init() {
 
   const generateFromCode = () =>{
     createGridCells(
-      rowInputs[0].value,
-      columnInputs[0].value,
-      cellSizeInputs[0].value,
+      row,
+      column,
+      cellSize,
       0
     )
     output(svgWrapper(codesBox[1].value))
@@ -68,27 +67,24 @@ function init() {
     document.execCommand('copy')
   }
 
-  const createGridCells = (row,column,cellSize,index) =>{
-    grids[index].style.width = `${column * cellSize}px`
-    grids[index].style.height = `${row * cellSize}px`
+  const createGridCells = (row,column,cellSize) =>{
+    // grids[index].style.width = `${column * cellSize}px`
+    // grids[index].style.height = `${row * cellSize}px`
     canvas.setAttribute('width', column * cellSize)
     canvas.setAttribute('height', row * cellSize)
   }
   
 
-  const createGrid = (index,cellStyle) =>{
-    row = rowInputs[index].value ? rowInputs[index].value : 50
-    column = columnInputs[index].value ? columnInputs[index].value : 50
-    cellSize = cellSizeInputs[index].value ? cellSizeInputs[index].value : 10
-    createGridCells(row,column,cellSize,index,cellStyle,true)
+  const createGrid = () =>{
+    createGridCells(row,column,cellSize)
     codes[0] = new Array(row * column).fill('')
     codesBox[0].value = new Array(row * column).fill('')
   }
   
   // eventlistener
-  const toggleGrid = () =>{
-    grids.forEach(grid=>grid.classList.toggle('grid_hide'))
-  }
+  // const toggleGrid = () =>{
+  //   grids.forEach(grid=>grid.classList.toggle('grid_hide'))
+  // }
 
   cellSizeInputs[0].addEventListener('change',()=>cellSize = cellSizeInputs[0].value)
   rowInputs[0].addEventListener('change',()=>row = rowInputs[0].value)
@@ -108,20 +104,20 @@ function init() {
     codesBox[0].value = codesBox[1].value.replaceAll('<path d="M','D').replaceAll('<path fill="#ffffff" d="M','F').replaceAll('/>','/').replaceAll('-1','N').replaceAll('-2','T').replaceAll(' v ','v').replaceAll(' h ','h').replaceAll('<path fill="#000000" d="M','D')
   })
 
-  gridToggleButtons.forEach(button=>button.addEventListener('click',toggleGrid))
+  // gridToggleButtons.forEach(button=>button.addEventListener('click',toggleGrid))
 
-  grids.forEach(grid=>{
-    grid.addEventListener('mouseenter',()=>cursor.classList.add(cursorType))
-    grid.addEventListener('mouseleave',()=>cursor.classList.remove(cursorType))
-  })
+  // grids.forEach(grid=>{
+  //   grid.addEventListener('mouseenter',()=>cursor.classList.add(cursorType))
+  //   grid.addEventListener('mouseleave',()=>cursor.classList.remove(cursorType))
+  // })
 
 
   // enable grid creation with buttons
   createGridButtons.forEach(button=>{
-    button.addEventListener('click',(e)=>{
-      const gridClass = e.target.dataset.grid_class
-      const index = +e.target.dataset.index
-      createGrid(index,gridClass)
+    button.addEventListener('click',()=>{
+      // const gridClass = e.target.dataset.grid_class
+      // const index = +e.target.dataset.index
+      createGrid()
     })
   })
   
@@ -129,16 +125,16 @@ function init() {
     button.addEventListener('click',()=>{
       erase = !erase
       clearButtons.forEach(button=>button.classList.toggle('active'))
-      cursorType = erase ? 'eraser_cursor' : 'pen_cursor'
+      // cursorType = erase ? 'eraser_cursor' : 'pen_cursor'
     })
   })
 
 
-  const handleCursor = e =>{
-    cursor.style.top = `${e.pageY}px`
-    cursor.style.left = `${e.pageX}px`
-  }
-  window.addEventListener('mousemove', handleCursor)
+  // const handleCursor = e =>{
+  //   cursor.style.top = `${e.pageY}px`
+  //   cursor.style.left = `${e.pageX}px`
+  // }
+  // window.addEventListener('mousemove', handleCursor)
 
 
   alts.forEach(button=>{
@@ -149,20 +145,6 @@ function init() {
       cursor.childNodes[0].innerHTML = ''
     })
   })
-
-
-  // const downloadWithButton = link =>{
-  //   link.click()
-  // }
-
-  // const downloadSvg = content =>{
-  //   const data = new Blob([content], { type: 'svg' })
-  //   const url = window.URL.createObjectURL(data)
-  //   downloadLink.download = `ascii_art_${new Date().getTime()}.svg`
-  //   downloadLink.href = url
-    
-  //   downloadWithButton(downloadLink)
-  // }
   
 
   const output = content =>{
@@ -186,16 +168,12 @@ function init() {
   const query = window.location.hash
   if (query){
     const queryArray = query.split('#')
-    columnInputs[0].value = queryArray[1]
-    rowInputs[0].value = queryArray[2]
-
-    // codesBox[0].value = decompress(queryArray[3].replaceAll('-',','))
-    // generateFromCode()
-
-    // const keys = Object.keys(svgData)
-    // codesBox[0].value.split(',').forEach(letter=>{
-    //   if (keys.indexOf(letter) === -1) console.log(letter)
-    // })
+    columnInputs[0].value = queryArray[1] || 10
+    rowInputs[0].value = queryArray[2] || 10
+    cellSizeInputs[0].value = queryArray[3] || 20
+    column = columnInputs[0].value
+    row = rowInputs[0].value
+    cellSize = cellSizeInputs[0].value
   }
 
   columnInputs[0].addEventListener('change',()=>{
