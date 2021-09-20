@@ -1,5 +1,7 @@
 function init() {
 
+  //todo copy and move to different area.
+
   let cursorType = 'pen_cursor'
   let canDraw = false
   let cellSize = 20
