@@ -29,6 +29,10 @@ nav {
   z-index: 100;
 }
 
+nav.two {
+  top: 45px;
+}
+
 p, h1, h2, h3, h4 {
   display: inline-block;
   margin-block-start: 0em;

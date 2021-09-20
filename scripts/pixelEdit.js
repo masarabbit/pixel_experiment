@@ -11,6 +11,11 @@ function init() {
   let erase = false
   let fill = false
   let selectCopy = false
+  const copyData = {
+    data: null,
+    width: null,
+    height: null,
+  }
   
   const canvas = document.querySelectorAll('.canvas')
   const ctx = canvas[0].getContext('2d')
@@ -34,6 +39,8 @@ function init() {
   const fillButtons = document.querySelector('.fill')
   const copySelectionButton = document.querySelector('.copy_selection')
   const moveSelectionButton = document.querySelector('.move_selection')
+  const cropButton = document.querySelector('.crop_selection')
+  const deleteSelectionButton = document.querySelector('.delete_selection')
 
   // input
   const upload = document.querySelector('#upload')
@@ -418,18 +425,23 @@ function init() {
       
       if (!copyBox) return
       if (newX !== prevX && newY === prevY) {
-        copyBox.style.width = `${(newX - calcX(defPos) + 1) * cellSize}px`
+        const newWidth = (newX - calcX(defPos) + 1)
+        copyData.width = newWidth
+        copyBox.style.width = `${newWidth * cellSize}px`
       } else if (newY !== prevY) {
-        copyBox.style.height = `${(newY - calcY(defPos) + 1) * cellSize}px`
+        const newHeight = (newY - calcY(defPos) + 1)
+        copyData.height = newHeight
+        copyBox.style.height = `${newHeight * cellSize}px`
       } 
       prevX = newX
       prevY = newY
+      copySelection()
     }     
   })
 
   const returnSelectedCells = (firstCell, roundedX, roundedY) =>{
-    let width = copyBox.style.width.replace('px','') / cellSize
-    let height = copyBox.style.height.replace('px','') / cellSize
+    let width = copyBox ? copyBox.style.width.replace('px','') / cellSize : ''
+    let height = copyBox ? copyBox.style.height.replace('px','') / cellSize : ''
     const selection = []
 
     if (roundedX < 0) width += roundedX // adjusts width if selection is beyond left edge of copyBox
@@ -451,10 +463,12 @@ function init() {
     return selection
   }
 
-  copySelectionButton.addEventListener('click',()=>{
+  const copySelection = () =>{
     const { defPos } = defaultPos
-    console.log('selection', returnSelectedCells(defPos))   
-  })
+    copyData.data = returnSelectedCells(defPos)
+  }
+
+  copySelectionButton.addEventListener('click', copySelection)
   
 
   //TODO move
@@ -479,7 +493,14 @@ function init() {
       const roundedY = rounded(newY) > 0 ? rounded(newY) : 0
       const roundedX = rounded(newX) > 0 ? rounded(newX) : 0
 
-      console.log('new selection', returnSelectedCells( (roundedY * column) + roundedX, rounded(newX), rounded(newY)) )
+      
+      // copyData = returnSelectedCells( (roundedY * column) + roundedX, rounded(newX), rounded(newY))
+  
+      copyData.width= copyBox.style.width.replace('px','') / cellSize,
+      copyData.height= copyBox.style.height.replace('px','') / cellSize,
+      copyData.data= returnSelectedCells( (roundedY * column) + roundedX, rounded(newX), rounded(newY))
+
+      console.log('new selection', copyData )
 
       copyBox.style.left = `${rounded(newX) * cellSize}px`
       copyBox.style.top = `${rounded(newY) * cellSize}px`
@@ -505,7 +526,32 @@ function init() {
       codesBox[1].value = new Array(row * column).fill('')
     }
   }
+
+  const crop = () =>{
+    if (!copyData.data) return
+    codesBox[0].value = codesBox[0].value = codesBox[0].value.split(',').filter((_code,i)=>{
+      return copyData.data.find(data=> +data === i)
+    }).join(',')
+    column = copyData.width
+    row = copyData.height
+    paintCanvas()
+    generateFromColorCode()
+  }
+
+
+  const deleteSelection = () =>{
+    if (!copyData.data) return
+    codesBox[0].value = codesBox[0].value = codesBox[0].value.split(',').map((code,i)=>{
+      return copyData.data.find(data=> +data === i) 
+        ? ''
+        : code
+    }).join(',')
+    generateFromColorCode()
+  }
   
+  cropButton.addEventListener('click', crop)
+  deleteSelectionButton.addEventListener('click', deleteSelection)
+
   // eventlistener
 
   const toggleGrid = () =>{
