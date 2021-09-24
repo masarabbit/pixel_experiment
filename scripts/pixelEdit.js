@@ -12,11 +12,24 @@ function init() {
   let calcHeight
   let erase = false
   let fill = false
-  let selectCopy = false
+  // let selectCopy = false
   const copyData = {
     data: null,
     width: null,
     height: null,
+  }
+  
+  // copy selection box
+  let copyState
+  let copyBoxCreated
+  let copyBox
+  let copyGrids
+  let prevX
+  let prevY
+  const defaultPos = {
+    top: null,
+    left: null,
+    cell: null
   }
   
   const canvas = document.querySelectorAll('.canvas')
@@ -31,28 +44,21 @@ function init() {
   // button
   const alts = document.querySelectorAll('.alt')
   const flip = document.querySelectorAll('.flip')
-  const draw = document.querySelector('.draw')
   const downloadButtons = document.querySelectorAll('.download')
   const copyButtons = document.querySelectorAll('.copy') 
-  const createGridButtons = document.querySelectorAll('.create_grid')
   const generate = document.querySelectorAll('.generate')
   const gridToggleButtons = document.querySelectorAll('.grid_display')
-  const clearButtons = document.querySelectorAll('.clear')
-  const fillButtons = document.querySelector('.fill')
-  const copySelectionButton = document.querySelector('.copy_selection')
-  const moveSelectionButton = document.querySelector('.move_selection')
-  const cropButton = document.querySelector('.crop_selection')
-  const deleteSelectionButton = document.querySelector('.delete_selection')
+  const buttons = document.querySelectorAll('.button')
 
   // input
+  const cellSizeInput = document.querySelector('.cell_size')
+  const rowInput = document.querySelector('.row')
+  const columnInput = document.querySelector('.column')
+  const codesBox = document.querySelectorAll('.codes')
   const upload = document.querySelector('#upload')
-  const cellSizeInputs = document.querySelectorAll('.cell_size')
-  const rowInputs = document.querySelectorAll('.row')
-  const columnInputs = document.querySelectorAll('.column')
   const colorInput = document.querySelector('#color')
   const letterInput = document.querySelector('.letter')
   const colorLabel = document.querySelector('.color_label')
-  const codesBox = document.querySelectorAll('.codes')
   
   const codes = {
     0: [],
@@ -138,7 +144,7 @@ function init() {
   
   //draw
   const colorCell = e =>{
-    if (selectCopy) return
+    // if (selectCopy) return
     const index = e.target.dataset.cell
     if (fill) {
       fillBucket(index)
@@ -158,14 +164,11 @@ function init() {
     updateCodesDisplay(codesBox[1],codes[1])
   }
 
-
   const continuousDraw = (e,action) =>{
     if (!canDraw) return
     action(e)
   }
   
-  
-
   const paintCanvasTwo = () =>{
     const arr = new Array(row * column).fill('')
     
@@ -199,8 +202,6 @@ function init() {
     })
   }
 
-
-  //! maybe add selectCopy here?
   const addDraw = () =>{
     const cells = document.querySelectorAll('.cell')
     cells.forEach((c,i)=>{
@@ -342,18 +343,7 @@ function init() {
     }).join('')
     drawFunctions[index](clear)
   }
-  
-  let copyState
-  let copyBoxCreated
-  let copyBox
-  let copyGrids
-  let prevX
-  let prevY
-  const defaultPos = {
-    top: null,
-    left: null,
-    cell: null
-  }
+
 
   const createCopyGrids = (row,column,cellSize,cellStyle) =>{
     const arr = new Array(row * column).fill('')
@@ -376,9 +366,7 @@ function init() {
     }).join('')
     copyGrids = document.querySelectorAll(`.${cellStyle}`)
 
-
     copyGrids.forEach((grid,i)=>{
-      
       grid.addEventListener('click',(e)=>{
         if (!copyBoxCreated){
           copyBox = document.createElement('div')
@@ -470,12 +458,10 @@ function init() {
     copyData.data = returnSelectedCells(defPos)
   }
 
-  copySelectionButton.addEventListener('click', copySelection)
-  
 
   //TODO move
-  moveSelectionButton.addEventListener('click', ()=>{
-
+  const moveSelection = () =>{
+    console.log('test')
     copyBox.classList.toggle('move')
     copyGrid.classList.toggle('fix')
     let newX
@@ -494,13 +480,10 @@ function init() {
       // this needs to be done because numbers continue to next row.
       const roundedY = rounded(newY) > 0 ? rounded(newY) : 0
       const roundedX = rounded(newX) > 0 ? rounded(newX) : 0
-
-      
-      // copyData = returnSelectedCells( (roundedY * column) + roundedX, rounded(newX), rounded(newY))
   
-      copyData.width= copyBox.style.width.replace('px','') / cellSize,
-      copyData.height= copyBox.style.height.replace('px','') / cellSize,
-      copyData.data= returnSelectedCells( (roundedY * column) + roundedX, rounded(newX), rounded(newY))
+      copyData.width = copyBox.style.width.replace('px','') / cellSize,
+      copyData.height = copyBox.style.height.replace('px','') / cellSize,
+      copyData.data = returnSelectedCells( (roundedY * column) + roundedX, rounded(newX), rounded(newY))
 
       console.log('new selection', copyData )
 
@@ -515,14 +498,14 @@ function init() {
       document.addEventListener('mouseup', onLetGo)
     }
     copyBox.addEventListener('mousedown', onGrab)
-  })
+  }
+
 
   const createGrid = (index,cellStyle) =>{
     createGridCells(row,column,cellSize,index,cellStyle,true)
     if (index === 0) {
       codes[0] = new Array(row * column).fill('transparent')
       codesBox[0].value = new Array(row * column).fill('transparent')
-      console.log('selectCopy',selectCopy)
     } else {
       codes[1] = new Array(row * column).fill('')
       codesBox[1].value = new Array(row * column).fill('')
@@ -540,7 +523,6 @@ function init() {
     generateFromColorCode()
   }
 
-
   const deleteSelection = () =>{
     if (!copyData.data) return
     codesBox[0].value = codesBox[0].value = codesBox[0].value.split(',').map((code,i)=>{
@@ -551,68 +533,16 @@ function init() {
     generateFromColorCode()
   }
   
-  cropButton.addEventListener('click', crop)
-  deleteSelectionButton.addEventListener('click', deleteSelection)
-
-  // eventlistener
-
   const toggleGrid = () =>{
     grids.forEach(grid=>grid.classList.toggle('grid_hide'))
     // gridToggleButtons.forEach(button=>button.innerHTML = button.innerHTML === 'hide grid'?'show grid':'hide grid')
   }
   
-  
-  cellSizeInputs[0].addEventListener('change',()=>cellSize = cellSizeInputs[0].value)
-  rowInputs[0].addEventListener('change',()=>row = rowInputs[0].value)
-  columnInputs[0].addEventListener('change',()=>column = columnInputs[0].value)
-
-  
-  downloadButtons[0].addEventListener('click',()=>{
-    paintCanvas()
-    downloadImage(canvas[0],'cell')
-  })
-  downloadButtons[1].addEventListener('click',()=>{
-    paintCanvasTwo()
-    downloadImage(canvas[1],'small_cell')
-  })
-  draw.addEventListener('click',output)
-  generate[0].addEventListener('click',generateFromColorCode)
-  copyButtons.forEach((button, i) =>{
-    button.addEventListener('click',()=>copyText(codesBox[i]))
-  })
-
-
-  gridToggleButtons.forEach(button=>button.addEventListener('click',toggleGrid))
-
-  grids.forEach(grid=>{
-    grid.addEventListener('mousedown',()=>canDraw = true)
-    grid.addEventListener('mouseup',()=>canDraw = false)
-    grid.addEventListener('mouseleave',()=>canDraw = false)
-
-    grid.addEventListener('mouseenter',()=>cursor.classList.add(cursorType))
-    grid.addEventListener('mouseleave',()=>cursor.classList.remove(cursorType))
-  })
-
-  copyGrid.addEventListener('mouseenter',()=>cursor.classList.add(cursorType))
-  copyGrid.addEventListener('mouseleave',()=>cursor.classList.remove(cursorType))
-
-  colorInput.addEventListener('change',()=>{
-    colorLabel.style.backgroundColor = colorInput.value
-  })
-
-  // display filename and pixelise button
-  upload.addEventListener('change',()=>{
-    uploadedFile = upload.files[0]
-    document.querySelector('.file_name').innerHTML = uploadedFile.name
-    draw.classList.remove('display_none')
-  })
-
-
   const arrayGroupedForFlipping = () =>{
-    const arr = new Array(+columnInputs[0].value).fill('')
+    const arr = new Array(+columnInput.value).fill('')
     const mappedArr = arr.map(()=>[])
     codesBox[0].value.split(',').forEach((d,i)=>{
-      mappedArr[Math.floor(i / columnInputs[0].value)].push(d)
+      mappedArr[Math.floor(i / columnInput.value)].push(d)
     })
     return mappedArr
   }
@@ -633,25 +563,16 @@ function init() {
   })
 
   // enable grid creation with buttons
-  createGridButtons.forEach(button=>{
-    button.addEventListener('click',(e)=>{
-      const gridClass = e.target.dataset.grid_class
-      const index = +e.target.dataset.index
-      createGrid(index,gridClass)
-    })
-  })
+  const triggerCreateGrid = (e) =>{
+    const gridClass = e.target.dataset.grid_class
+    const index = +e.target.dataset.index
+    createGrid(index,gridClass)
+  }
   
-  clearButtons.forEach(button=>{
-    button.addEventListener('click',()=>{
-      erase = !erase
-      clearButtons.forEach(button=>button.classList.toggle('active'))
-      cursorType = erase ? 'eraser_cursor' : 'pen_cursor'
-    })
-  })
 
   const checkAreaToFill = (codeRef, i, valueToCheck, areaToFill) =>{
     const fillStack = []
-    const column = +columnInputs[0].value
+    const column = +columnInput.value
     fillStack.push(i) // first cell to fill
     
     while (fillStack.length > 0){
@@ -685,21 +606,14 @@ function init() {
     generateFromColorCode()
   }
 
-  fillButtons.addEventListener('click',()=>{
-    fillButtons.classList.toggle('active')
-    fill = !fill
-    cursorType = fill ? 'bucket_cursor' : 'pen_cursor'
-  })
-
 
   // trace perimeter
   const periButton = document.querySelector('.perimeter')
 
   periButton.addEventListener('click',()=>{
-    console.log('trigger')
     const pathData = []
     const areaToTrace = []
-    const column = columnInputs[0].value
+    const column = columnInput.value
     // const w = 100 / column
     const w = 1
     const direction = [ 1, +column, -1, -column ] // move right, down, left, up
@@ -773,7 +687,7 @@ function init() {
     }
 
     const convertToSvg = (processedCodes) =>{  
-      
+
       //* changed this to while loop to avoid exceeding maximum call limit
       while (processedCodes.filter(code => code !== '').length) {
         //first index
@@ -822,14 +736,116 @@ function init() {
 
     // put in to compress
     codesBox[1].value = pathData.join(' ').replaceAll('<path d="M','D').replaceAll('<path fill="#ffffff" d="M','F').replaceAll('/>','/').replaceAll('-1','N').replaceAll('-2','T').replaceAll(' v ','v').replaceAll(' h ','h').replaceAll('<path fill="#000000" d="M','D')
-
-
   })
 
   const dataUrlButton = document.querySelector('.url')
   dataUrlButton.addEventListener('click',()=>{
     paintCanvas()
     console.log(canvas[0].toDataURL())
+  })
+
+
+  // reads from url
+  const query = window.location.hash
+  if (query){
+    const queryArray = query.split('#')
+    columnInput.value = queryArray[1] || 10
+    rowInput.value = queryArray[2] || 10
+    cellSizeInput.value = queryArray[3] || 20
+    column = columnInput.value
+    row = rowInput.value
+    cellSize = cellSizeInput.value
+
+    createGrid(0,'cell')
+    createCopyGrids(
+      row,
+      column,
+      cellSize,
+      'copy_cell'
+    )
+
+  }
+
+  const triggerFill = e =>{
+    e.target.classList.toggle('active')
+    fill = !fill
+    cursorType = fill ? 'bucket_cursor' : 'pen_cursor'
+  }
+
+  const triggerClear = e =>{
+    e.target.classList.toggle('active')
+    erase = !erase
+    cursorType = erase ? 'eraser_cursor' : 'pen_cursor'
+  }
+  
+  const handleSelect = () =>{ //TODO needs refactor since it doesn't work when copyBox has been made once
+    console.log('test')
+    createCopyGrids(
+      row,
+      column,
+      cellSize,
+      'copy_cell'
+    )
+    copyGrid.classList.toggle('active')
+    copyGrid.classList.remove('fix')
+    // copyBox = null
+    copyBoxCreated = false
+  }
+  
+  // eventlistener
+  cellSizeInput.addEventListener('change',()=>cellSize = cellSizeInput.value)
+  rowInput.addEventListener('change',()=>row = rowInput.value)
+  columnInput.addEventListener('change',()=>column = columnInput.value)
+  
+  downloadButtons[0].addEventListener('click',()=>{
+    paintCanvas()
+    downloadImage(canvas[0],'cell')
+  })
+  downloadButtons[1].addEventListener('click',()=>{
+    paintCanvasTwo()
+    downloadImage(canvas[1],'small_cell')
+  })
+  
+  generate[0].addEventListener('click',generateFromColorCode)
+  copyButtons.forEach((button, i) =>{
+    button.addEventListener('click',()=>copyText(codesBox[i]))
+  })
+  
+  gridToggleButtons.forEach(button=>button.addEventListener('click',toggleGrid))
+  
+  grids.forEach(grid=>{
+    grid.addEventListener('mousedown',()=>canDraw = true)
+    grid.addEventListener('mouseup',()=>canDraw = false)
+    grid.addEventListener('mouseleave',()=>canDraw = false)
+  
+    grid.addEventListener('mouseenter',()=>cursor.classList.add(cursorType))
+    grid.addEventListener('mouseleave',()=>cursor.classList.remove(cursorType))
+  })
+  
+  copyGrid.addEventListener('mouseenter',()=>cursor.classList.add(cursorType))
+  copyGrid.addEventListener('mouseleave',()=>cursor.classList.remove(cursorType))
+  
+  colorInput.addEventListener('change',()=>{
+    colorLabel.style.backgroundColor = colorInput.value
+  })
+  
+  // display filename and pixelise button
+  upload.addEventListener('change',()=>{
+    uploadedFile = upload.files[0]
+    document.querySelector('.file_name').innerHTML = uploadedFile.name
+    // draw.classList.remove('display_none')
+  })
+  
+  buttons.forEach(b =>{
+    if (b.classList.contains('draw')) b.addEventListener('click', output)
+    if (b.classList.contains('fill')) b.addEventListener('click', triggerFill)
+    if (b.classList.contains('copy_selection')) b.addEventListener('click', copySelection)
+    if (b.classList.contains('move_selection')) b.addEventListener('click', moveSelection)
+    if (b.classList.contains('crop_selection')) b.addEventListener('click', crop)
+    if (b.classList.contains('delete_selection')) b.addEventListener('click', deleteSelection)
+    if (b.classList.contains('clear')) b.addEventListener('click', triggerClear)
+    if (b.classList.contains('create_grid')) b.addEventListener('click', triggerCreateGrid)
+    if (b.classList.contains('select')) b.addEventListener('click', handleSelect)
   })
 
   const handleCursor = e =>{
@@ -847,36 +863,7 @@ function init() {
       cursor.childNodes[0].innerHTML = ''
     })
   })
-
-  const selectCopyButton = document.querySelector('.select_copy')
-
-  selectCopyButton.addEventListener('click',()=>{
-    selectCopy = !selectCopy
-    copyGrid.classList.toggle('active')
-  })
-
-  // reads from url
-  const query = window.location.hash
-  if (query){
-    const queryArray = query.split('#')
-    columnInputs[0].value = queryArray[1] || 10
-    rowInputs[0].value = queryArray[2] || 10
-    cellSizeInputs[0].value = queryArray[3] || 20
-    column = columnInputs[0].value
-    row = rowInputs[0].value
-    cellSize = cellSizeInputs[0].value
-
-    createGrid(0,'cell')
-    createCopyGrids(
-      row,
-      column,
-      cellSize,
-      'copy_cell'
-    )
-
-  }
-
-
+  
   // copyGrid.addEventListener('click',()=>{
 
   //   indicator.innerHTML = ''
