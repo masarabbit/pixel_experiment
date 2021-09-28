@@ -414,10 +414,13 @@ button.icon:hover {
 
 .copy_box {
   position: absolute;
-  border: yellow 1px solid;
+  /* border: yellow 1px solid; */
   background-color: #fc8a2770;
   pointer-events: none;
   display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  align-items: flex-end;
 }
 
 .copy_box.move { pointer-events: auto; }
@@ -453,4 +456,15 @@ button.icon:hover {
   color: white;
   height: 20px;
   border: 1px solid white;
+}
+
+.active_area {
+  position: absolute;
+  background-color: rgba(255, 174, 0, 0.219);
+  /* border: red 1px solid; */
+  /* bottom: 0px;
+  right:0px; */
+  display: flex;
+  flex-wrap: wrap;
+  /* pointer-events: none; */
 }

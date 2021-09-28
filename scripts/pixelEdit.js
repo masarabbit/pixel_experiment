@@ -12,9 +12,10 @@ function init() {
   let calcHeight
   let erase = false
   let fill = false
-  // let selectCopy = false
+  let selectCopy = false
   const copyData = {
-    data: null,
+    index: null,
+    data: [],
     width: null,
     height: null,
   }
@@ -24,6 +25,7 @@ function init() {
   let copyBoxCreated
   let copyBox
   let copyGrids
+  let copied
   let prevX
   let prevY
   const defaultPos = {
@@ -144,7 +146,7 @@ function init() {
   
   //draw
   const colorCell = e =>{
-    // if (selectCopy) return
+    if (selectCopy) return
     const index = e.target.dataset.cell
     if (fill) {
       fillBucket(index)
@@ -390,7 +392,7 @@ function init() {
           handle.classList.add('handle')
           handle.style.width = `${cellSize}px`
           handle.style.height = `${cellSize}px`
-          const moveHandle = document.createElement('div')  //? maybe don't need this?
+          const moveHandle = document.createElement('div')  //? maybe don't need these?
           moveHandle.classList.add('move_handle')
           moveHandle.style.width = `${cellSize}px`
           moveHandle.style.height = `${cellSize}px`
@@ -429,7 +431,12 @@ function init() {
     }     
   })
 
+
   const returnSelectedCells = (firstCell, roundedX, roundedY) =>{
+    if (copyBox && !copied){
+      copyBox.style.justifyContent = 'flex-end'
+      copyBox.style.alignItems = 'flex-end'
+    }
     let width = copyBox ? copyBox.style.width.replace('px','') / cellSize : ''
     let height = copyBox ? copyBox.style.height.replace('px','') / cellSize : ''
     const selection = []
@@ -438,29 +445,113 @@ function init() {
     if (roundedY < 0) height += roundedY // adjusts height if selection is beyond top edge of copyBox 
 
     // adjusts width if selection is beyond right edge of copyBox
-    if (roundedX + width > column) width -= Math.abs((roundedX + width) - column) 
+    if (roundedX + width > column) {
+      if (!copied) copyBox.style.justifyContent = 'flex-start'
+      width -= Math.abs((roundedX + width) - column) 
+    }
+    // adjust height if selection is beyond bottom edge of copyBox
+    if (roundedY + height > row) {
+      if (!copied) copyBox.style.alignItems = 'flex-start'
+      height -= Math.abs((roundedY + height) - row) 
+    }
 
     for (let a = firstCell; a < firstCell + (height * column); a += +column){
-      for (
-        let b = a; 
-        b < (a + width) && // stops at box edge
-            calcY(a) < row; // ignores selection outside bottom of copyBox
-        b++
-      ){
-        selection.push(b)
+      for (let b = a; b < (a + width); b++){
+        selection.push(b) 
       }
     }
+    
+    if (!copied){
+      const activeArea = document.querySelector('.active_area')
+      if (!activeArea) {
+        copyBox.innerHTML = `
+      <div   
+      class="active_area"
+      style="
+      width:${width * cellSize}px;
+      height:${height * cellSize}px;
+      ">
+      </div>
+    `
+      } else {
+        activeArea.style.width = `${width * cellSize}px`
+        activeArea.style.height = `${height * cellSize}px`
+      }
+      // copyData.activeArea = selection
+    }
+    
     return selection
   }
 
+
   const copySelection = () =>{
     const { defPos } = defaultPos
-    copyData.data = returnSelectedCells(defPos)
+    copyData.index = returnSelectedCells(defPos)
+    // console.log('copy', copyData.index)
+  }
+  
+
+  //TODO copy
+  const copySelectionToCopyBox = () =>{
+    if (copyData.data.length) return
+    const activeArea = document.querySelector('.active_area')
+    if (!activeArea) return
+    activeArea.innerHTML = copyData.index.map(index=>{
+      return `
+        <div   
+        style="
+        width:${cellSize}px;
+        height:${cellSize}px;
+        background-color:${codes[0][index]};
+        ">
+        </div>
+      `
+    }).join('')
+
+    copyData.index.forEach((index,i)=>{
+      copyData.data[i] = codesBox[0].value.split(',')[index]
+    })
+
+    codes[0] = codesBox[0].value.split(',').map((grid,i)=>{
+      return copyData.index.some(data=> data === i) ? 'transparent' : grid
+    })
+    codesBox[0].value = codes[0]
+
+    paintCanvas()
+    document.querySelectorAll('.cell').forEach((cell,i)=>{
+      cell.style.backgroundColor = codes[0][i]
+    })
+    copied = true
+    copyBox.style.top = `${copyBox.offsetTop + activeArea.offsetTop}px`
+    copyBox.style.left = `${copyBox.offsetLeft + activeArea.offsetLeft}px`
+    copyBox.style.width = activeArea.style.width
+    copyBox.style.height = activeArea.style.height
+  }
+
+  const paste = () =>{
+    if (!copyData.data.length) return
+    console.log('copydata', copyData.data)
+
+    copyData.index.forEach((index,i)=>{
+      if (copyData.data[i] === 'transparent') return
+      codes[0][index] = copyData.data[i]
+    })
+    codesBox[0].value = codes[0]
+
+    paintCanvas()
+    document.querySelectorAll('.cell').forEach((cell,i)=>{
+      cell.style.backgroundColor = codes[0][i]
+    })
+
+    copyData.data.length = 0
+    handleSelect()
   }
 
 
   //TODO move
   const moveSelection = () =>{
+    document.querySelector('.move_selection').classList.add('display_none')
+
     console.log('test')
     copyBox.classList.toggle('move')
     copyGrid.classList.toggle('fix')
@@ -483,9 +574,10 @@ function init() {
   
       copyData.width = copyBox.style.width.replace('px','') / cellSize,
       copyData.height = copyBox.style.height.replace('px','') / cellSize,
-      copyData.data = returnSelectedCells( (roundedY * column) + roundedX, rounded(newX), rounded(newY))
-
-      console.log('new selection', copyData )
+      copyData.index = returnSelectedCells( (roundedY * column) + roundedX, rounded(newX), rounded(newY))
+      
+      codesBox[1].value = copyData.index.join(',')
+      if (copyData.data.length) codesBox[1].value = copyData.index.join(',') + '-' + copyData.data.join(',')
 
       copyBox.style.left = `${rounded(newX) * cellSize}px`
       copyBox.style.top = `${rounded(newY) * cellSize}px`
@@ -513,9 +605,9 @@ function init() {
   }
 
   const crop = () =>{
-    if (!copyData.data) return
+    if (!copyData.index) return
     codesBox[0].value = codesBox[0].value = codesBox[0].value.split(',').filter((_code,i)=>{
-      return copyData.data.find(data=> +data === i)
+      return copyData.index.find(data=> +data === i)
     }).join(',')
     column = copyData.width
     row = copyData.height
@@ -524,9 +616,9 @@ function init() {
   }
 
   const deleteSelection = () =>{
-    if (!copyData.data) return
+    if (!copyData.index) return
     codesBox[0].value = codesBox[0].value = codesBox[0].value.split(',').map((code,i)=>{
-      return copyData.data.find(data=> +data === i) 
+      return copyData.index.find(data=> +data === i) 
         ? ''
         : code
     }).join(',')
@@ -779,7 +871,8 @@ function init() {
   }
   
   const handleSelect = () =>{ //TODO needs refactor since it doesn't work when copyBox has been made once
-    console.log('test')
+    selectCopy = !selectCopy
+    if (copyBox) copyBox.classList.remove('move')
     createCopyGrids(
       row,
       column,
@@ -790,6 +883,8 @@ function init() {
     copyGrid.classList.remove('fix')
     // copyBox = null
     copyBoxCreated = false
+    copied = false
+    document.querySelector('.move_selection').classList.remove('display_none')
   }
   
   // eventlistener
@@ -833,15 +928,17 @@ function init() {
   upload.addEventListener('change',()=>{
     uploadedFile = upload.files[0]
     document.querySelector('.file_name').innerHTML = uploadedFile.name
+    document.querySelector('.draw').classList.remove('display_none')
     // draw.classList.remove('display_none')
   })
   
   buttons.forEach(b =>{
     if (b.classList.contains('draw')) b.addEventListener('click', output)
     if (b.classList.contains('fill')) b.addEventListener('click', triggerFill)
-    if (b.classList.contains('copy_selection')) b.addEventListener('click', copySelection)
+    if (b.classList.contains('copy_selection')) b.addEventListener('click', copySelectionToCopyBox)
     if (b.classList.contains('move_selection')) b.addEventListener('click', moveSelection)
     if (b.classList.contains('crop_selection')) b.addEventListener('click', crop)
+    if (b.classList.contains('paste_selection')) b.addEventListener('click', paste)
     if (b.classList.contains('delete_selection')) b.addEventListener('click', deleteSelection)
     if (b.classList.contains('clear')) b.addEventListener('click', triggerClear)
     if (b.classList.contains('create_grid')) b.addEventListener('click', triggerCreateGrid)
