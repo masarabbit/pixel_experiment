@@ -1,6 +1,7 @@
 function init() {
 
   //todo copy and move to different area.
+  //todo enable copybox to invert?
 
   let cursorType = 'pen_cursor'
   let canDraw = false
@@ -22,6 +23,7 @@ function init() {
   
   // copy selection box
   let copyState
+  let moveState
   let copyBoxCreated
   let copyBox
   let copyGrids
@@ -388,46 +390,72 @@ function init() {
           copyBox.style.top = `${defaultPos.top}px`
           copyBox.style.left = `${defaultPos.left}px`
 
-          const handle = document.createElement('div')
-          handle.classList.add('handle')
-          handle.style.width = `${cellSize}px`
-          handle.style.height = `${cellSize}px`
-          const moveHandle = document.createElement('div')  //? maybe don't need these?
-          moveHandle.classList.add('move_handle')
-          moveHandle.style.width = `${cellSize}px`
-          moveHandle.style.height = `${cellSize}px`
+          // const handle = document.createElement('div')
+          // handle.classList.add('handle')
+          // handle.style.width = `${cellSize}px`
+          // handle.style.height = `${cellSize}px`
+          // const moveHandle = document.createElement('div')  //? maybe don't need these?
+          // moveHandle.classList.add('move_handle')
+          // moveHandle.style.width = `${cellSize}px`
+          // moveHandle.style.height = `${cellSize}px`
 
-          copyBox.append(handle)
-          copyBox.append(moveHandle)        
+          // copyBox.append(handle)
+          // copyBox.append(moveHandle)        
         }
       })
     })
   }
 
   copyGrid.addEventListener('mousedown', ()=> copyState = true)
-  copyGrid.addEventListener('mouseup', ()=> copyState = false)
+  copyGrid.addEventListener('mouseup', ()=> {
+    copyState = false
+    if (copyBox){
+      defaultPos.top = copyBox.offsetTop
+      defaultPos.left = copyBox.offsetLeft
+    }
+  })
 
-  //TODO add way to confirm selected area
   copyGrid.addEventListener('mousemove',(e)=>{     
-    if (copyState) {
+    if (copyState && !moveState) {
       const next = e.target.dataset.cell
       const newX = calcX(next)
       const newY = calcY(next)
-      const { defPos } = defaultPos
+      const { defPos, top, left } = defaultPos
       
       if (!copyBox) return
       if (newX !== prevX && newY === prevY) {
-        const newWidth = (newX - calcX(defPos) + 1)
-        copyData.width = newWidth
-        copyBox.style.width = `${newWidth * cellSize}px`
+        if (calcX(defPos) > newX){
+          const newLeft = left - ((calcX(defPos) - newX) * cellSize)
+          copyBox.style.left = `${newLeft}px`
+          const newWidth = (calcX(defPos) - newX + 1) 
+          copyBox.style.width = `${newWidth * cellSize}px`
+        } else {
+          const newWidth = (newX - calcX(defPos) + 1)
+          copyData.width = newWidth
+          copyBox.style.width = `${newWidth * cellSize}px`
+          copyBox.style.left = `${left}px`
+        }
+        prevX = newX
       } else if (newY !== prevY) {
-        const newHeight = (newY - calcY(defPos) + 1)
-        copyData.height = newHeight
-        copyBox.style.height = `${newHeight * cellSize}px`
+        if (calcY(defPos) > newY){ 
+          const newTop = top - ((calcY(defPos) - newY) * cellSize)
+          copyBox.style.top = `${newTop}px`
+          const newHeight = (calcY(defPos) - newY + 1)
+          copyBox.style.height = `${newHeight * cellSize}px`
+        } else {
+          const newHeight = (newY - calcY(defPos) + 1)
+          copyData.height = newHeight
+          copyBox.style.height = `${newHeight * cellSize}px`
+          copyBox.style.top = `${top}px`
+        }
+        prevY = newY
       } 
-      prevX = newX
-      prevY = newY
-      copySelection()
+
+      const x = copyBox.offsetLeft / cellSize
+      const y = copyBox.offsetTop / cellSize
+      copyData.index = returnSelectedCells((y * column) + x)
+      // console.log('index', copyData.index, 'prevY',prevY, 'prevX', prevX)
+      // copySelection()
     }     
   })
 
@@ -484,11 +512,10 @@ function init() {
   }
 
 
-  const copySelection = () =>{
-    const { defPos } = defaultPos
-    copyData.index = returnSelectedCells(defPos)
-    // console.log('copy', copyData.index)
-  }
+  // const copySelection = () =>{
+  //   const { defPos } = defaultPos
+  //   copyData.index = returnSelectedCells(defPos)
+  // }
   
 
   //TODO copy
@@ -551,17 +578,18 @@ function init() {
   //TODO move
   const moveSelection = () =>{
     document.querySelector('.move_selection').classList.add('display_none')
-
-    console.log('test')
+    moveState = true
     copyBox.classList.toggle('move')
     copyGrid.classList.toggle('fix')
     let newX
     let newY
     const onDrag = e => {
       copyBox.style.transtion = '0s'
-      const originalStyles = window.getComputedStyle(copyBox)
-      newX = parseInt(originalStyles.left) + e.movementX
-      newY = parseInt(originalStyles.top) + e.movementY
+      // const originalStyles = window.getComputedStyle(copyBox)
+      // newX = parseInt(originalStyles.left) + e.movementX
+      // newY = parseInt(originalStyles.top) + e.movementY
+      newX = copyBox.offsetLeft + e.movementX
+      newY = copyBox.offsetTop + e.movementY
       copyBox.style.left = `${newX}px`
       copyBox.style.top = `${newY}px`
     }
@@ -574,8 +602,8 @@ function init() {
   
       copyData.width = copyBox.style.width.replace('px','') / cellSize,
       copyData.height = copyBox.style.height.replace('px','') / cellSize,
-      copyData.index = returnSelectedCells( (roundedY * column) + roundedX, rounded(newX), rounded(newY))
-      
+      copyData.index = returnSelectedCells((roundedY * column) + roundedX, rounded(newX), rounded(newY))
+
       codesBox[1].value = copyData.index.join(',')
       if (copyData.data.length) codesBox[1].value = copyData.index.join(',') + '-' + copyData.data.join(',')
 
@@ -883,6 +911,7 @@ function init() {
     copyGrid.classList.remove('fix')
     // copyBox = null
     copyBoxCreated = false
+    moveState = false
     copied = false
     document.querySelector('.move_selection').classList.remove('display_none')
   }
