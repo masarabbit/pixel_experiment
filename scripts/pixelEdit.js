@@ -273,6 +273,12 @@ function init() {
       updateCodesDisplay(codesBox[0],codes[0])
       paintCanvasTwo()
       addDraw()
+      createCopyGrids(
+        row,
+        column,
+        cellSize,
+        'copy_cell'
+      )
     }
     imageTarget.src = blobURL
   }
@@ -450,7 +456,8 @@ function init() {
         }
         prevY = newY
       } 
-
+      
+      // copy selected area
       const x = copyBox.offsetLeft / cellSize
       const y = copyBox.offsetTop / cellSize
       copyData.index = returnSelectedCells((y * column) + x)
