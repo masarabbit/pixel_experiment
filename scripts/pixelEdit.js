@@ -5,6 +5,15 @@ function init() {
 
   let cursorType = 'pen_cursor'
   let canDraw = false
+ 
+  const prev = [ //? added this but may not use...
+    {
+      // data: [],
+      row: 10,
+      column: 10,
+      cellSize: 20,
+    }
+  ]
   let cellSize = 20
   let row = 10
   let column = 10
@@ -695,6 +704,12 @@ function init() {
     const index = +e.target.dataset.index
     createGrid(index,gridClass)
   }
+
+  // const triggerResizeGrid = (e) =>{
+  //   const gridClass = e.target.dataset.grid_class
+  //   const index = +e.target.dataset.index
+  //   createGrid(index,gridClass)
+  // }
   
 
   const checkAreaToFill = (codeRef, i, valueToCheck, areaToFill) =>{
@@ -924,9 +939,49 @@ function init() {
   }
   
   // eventlistener
-  cellSizeInput.addEventListener('change',()=>cellSize = cellSizeInput.value)
-  rowInput.addEventListener('change',()=>row = rowInput.value)
-  columnInput.addEventListener('change',()=>column = columnInput.value)
+  cellSizeInput.addEventListener('change',()=>{
+    // prev[0].cellSize = cellSize
+    cellSize = cellSizeInput.value
+  })
+  rowInput.addEventListener('change',()=>{
+    const newRow = rowInput.value
+    const diff = Math.abs(newRow - row) 
+    codesBox[0].value = newRow > row
+      ?  [...codes[0], ...Array(diff * row).fill('transparent')]
+      :  codes[0].slice(0, codes[0].length - (diff * row))
+    row = newRow
+
+    paintCanvas()
+    generateFromColorCode()
+  })
+  columnInput.addEventListener('change',()=>{
+    const newColumn = columnInput.value
+    const updatedCodes = [[]]
+    let count = 0
+    let index = 0
+    codes[0].forEach(code =>{
+      if (count === +column) {
+        count = 0
+        index++
+        updatedCodes.push([])
+      }
+      count++
+      updatedCodes[index].push(code)
+    })
+    codesBox[0].value = updatedCodes.map(codes=>{
+      const diff = Math.abs(newColumn - column) //TODO adjust arrays
+      if (newColumn > column){
+        return [...codes, ...Array(diff).fill('transparent')]
+      } else {
+        return codes.slice(0, codes.length - diff)
+      }
+    }).join(',')
+    // prev[0].column = column
+    column = newColumn
+
+    paintCanvas()
+    generateFromColorCode()
+  })
   
   downloadButtons[0].addEventListener('click',()=>{
     paintCanvas()
@@ -978,6 +1033,7 @@ function init() {
     if (b.classList.contains('delete_selection')) b.addEventListener('click', deleteSelection)
     if (b.classList.contains('clear')) b.addEventListener('click', triggerClear)
     if (b.classList.contains('create_grid')) b.addEventListener('click', triggerCreateGrid)
+    // if (b.classList.contains('resize_grid')) b.addEventListener('click', triggerResizeGrid)
     if (b.classList.contains('select')) b.addEventListener('click', handleSelect)
   })
 
