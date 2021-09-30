@@ -554,8 +554,9 @@ function init() {
     copyData.index.forEach((index,i)=>{
       copyData.data[i] = codesBox[0].value.split(',')[index]
     })
-
-    codes[0] = codesBox[0].value.split(',').map((grid,i)=>{
+    
+    //* delete original
+    codes[0] = codesBox[0].value.split(',').map((grid,i)=>{  //TODO it becomes copy if we remove this bit
       return copyData.index.some(data=> data === i) ? 'transparent' : grid
     })
     codesBox[0].value = codes[0]
@@ -978,8 +979,6 @@ function init() {
       count++
       updatedCodes[index].push(code)
     })
-    
-    console.log('updatedCodes', updatedCodes)
 
     codesBox[0].value = updatedCodes.map(codes=>{
       const diff = Math.abs(newColumn - column) //TODO adjust arrays
@@ -990,7 +989,6 @@ function init() {
       }
     }).join(',')
 
-    console.log('updatedCodes after map', codesBox[0].value )
     // prev[0].column = column
     column = newColumn
     codes[0] = codesBox[0].value
@@ -1038,17 +1036,6 @@ function init() {
     document.querySelector('.draw').classList.remove('display_none')
     // draw.classList.remove('display_none')
   })
-
-  // codesBox[0].addEventListener('input',()=>{
-  //   const latestData = {
-  //     data: codesBox[0].value,
-  //     row: rowInput.value,
-  //     column: columnInput.value,
-  //     cellSize: cellSizeInput.value,
-  //   }
-  //   prev.push(latestData)
-  // })
-
 
 
   const undo = () =>{
@@ -1109,7 +1096,7 @@ function init() {
 
   //   indicator.innerHTML = ''
   // })
-  console.log('row',row,'column',column)
+  // console.log('row',row,'column',column)
 }
 
 window.addEventListener('DOMContentLoaded', init)
