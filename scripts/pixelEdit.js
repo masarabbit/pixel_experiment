@@ -1,19 +1,12 @@
 function init() {
 
-  //todo copy and move to different area.
-  //todo enable copybox to invert?
+  //todo when to update?
 
   let cursorType = 'pen_cursor'
   let canDraw = false
- 
-  const prev = [ //? added this but may not use...
-    {
-      // data: [],
-      row: 10,
-      column: 10,
-      cellSize: 20,
-    }
-  ]
+
+  //? added this but may not use...
+  let prev = []
   let cellSize = 20
   let row = 10
   let column = 10
@@ -70,7 +63,7 @@ function init() {
   const codesBox = document.querySelectorAll('.codes')
   const upload = document.querySelector('#upload')
   const colorInput = document.querySelector('#color')
-  const letterInput = document.querySelector('.letter')
+  // const letterInput = document.querySelector('.letter')
   const colorLabel = document.querySelector('.color_label')
   
   const codes = {
@@ -115,6 +108,22 @@ function init() {
     return [...new Set(orderedByFrequency.map(ele=>ele.split('_')[0]))]
   }
 
+  const updateCode = () =>{
+    if (prev[prev.length - 1] && 
+      (
+        prev[prev.length - 1].data === codesBox[0].value &&
+        prev[prev.length - 1].row === +rowInput.value &&
+        prev[prev.length - 1].column === +columnInput.value
+      )
+    ) return
+    const latestData = {
+      data: codesBox[0].value,
+      row: +rowInput.value,
+      column: +columnInput.value,
+      cellSize: +cellSizeInput.value,
+    }
+    prev.push(latestData)
+  }
 
   const updateGrid = () =>{
     grids[0].innerHTML = codes[0].map(dot=>{
@@ -167,15 +176,16 @@ function init() {
     codes[0][index] = value
     e.target.style.backgroundColor = value
     updateCodesDisplay(codesBox[0],codes[0])
+    updateCode()
   }
 
-  const drawMap = e =>{
-    const index = e.target.dataset.cell
-    const value = erase ? '' : letterInput.value
-    codes[1][index] = value
-    e.target.innerHTML = value
-    updateCodesDisplay(codesBox[1],codes[1])
-  }
+  // const drawMap = e =>{
+  //   const index = e.target.dataset.cell
+  //   const value = erase ? '' : letterInput.value
+  //   codes[1][index] = value
+  //   e.target.innerHTML = value
+  //   updateCodesDisplay(codesBox[1],codes[1])
+  // }
 
   const continuousDraw = (e,action) =>{
     if (!canDraw) return
@@ -226,18 +236,18 @@ function init() {
     })
   }
 
-  const addCodeDraw = clear =>{
-    const mapCells = document.querySelectorAll('.map_cell')
-    mapCells.forEach(mapCell=>{
-      mapCell.addEventListener('click',(e)=>drawMap(e))
-      mapCell.addEventListener('mousemove',(e)=>continuousDraw(e,drawMap))
-    })
-    if (clear) updateCodesDisplay(codesBox[1],codes[1])
-  }
+  // const addCodeDraw = clear =>{
+  //   const mapCells = document.querySelectorAll('.map_cell')
+  //   mapCells.forEach(mapCell=>{
+  //     mapCell.addEventListener('click',(e)=>drawMap(e))
+  //     mapCell.addEventListener('mousemove',(e)=>continuousDraw(e,drawMap))
+  //   })
+  //   if (clear) updateCodesDisplay(codesBox[1],codes[1])
+  // }
 
   const drawFunctions = [
-    addDraw,
-    addCodeDraw
+    addDraw
+    // addCodeDraw
   ]
 
   const output = ()=>{
@@ -280,6 +290,7 @@ function init() {
       // populate grid and make it reactive
       updateGrid()
       updateCodesDisplay(codesBox[0],codes[0])
+      updateCode()
       paintCanvasTwo()
       addDraw()
       createCopyGrids(
@@ -325,6 +336,7 @@ function init() {
     })
     addDraw()
     populatePalette(0,codes[0])
+    updateCode()
   }
 
   const downloadImage = (canvas,name) =>{
@@ -404,18 +416,6 @@ function init() {
 
           copyBox.style.top = `${defaultPos.top}px`
           copyBox.style.left = `${defaultPos.left}px`
-
-          // const handle = document.createElement('div')
-          // handle.classList.add('handle')
-          // handle.style.width = `${cellSize}px`
-          // handle.style.height = `${cellSize}px`
-          // const moveHandle = document.createElement('div')  //? maybe don't need these?
-          // moveHandle.classList.add('move_handle')
-          // moveHandle.style.width = `${cellSize}px`
-          // moveHandle.style.height = `${cellSize}px`
-
-          // copyBox.append(handle)
-          // copyBox.append(moveHandle)        
         }
       })
     })
@@ -569,6 +569,7 @@ function init() {
     copyBox.style.left = `${copyBox.offsetLeft + activeArea.offsetLeft}px`
     copyBox.style.width = activeArea.style.width
     copyBox.style.height = activeArea.style.height
+    updateCode()
   }
 
   const paste = () =>{
@@ -587,6 +588,7 @@ function init() {
     })
 
     copyData.data.length = 0
+    updateCode()
     handleSelect()
   }
 
@@ -646,6 +648,7 @@ function init() {
       codes[1] = new Array(row * column).fill('')
       codesBox[1].value = new Array(row * column).fill('')
     }
+    updateCode()
   }
 
   const crop = () =>{
@@ -657,6 +660,8 @@ function init() {
     row = copyData.height
     paintCanvas()
     generateFromColorCode()
+    columnInput.value = column
+    rowInput.value = row
   }
 
   const deleteSelection = () =>{
@@ -894,9 +899,9 @@ function init() {
     columnInput.value = queryArray[1] || 10
     rowInput.value = queryArray[2] || 10
     cellSizeInput.value = queryArray[3] || 20
-    column = columnInput.value
-    row = rowInput.value
-    cellSize = cellSizeInput.value
+    column = +columnInput.value
+    row = +rowInput.value
+    cellSize = +cellSizeInput.value
 
     createGrid(0,'cell')
     createCopyGrids(
@@ -941,21 +946,26 @@ function init() {
   // eventlistener
   cellSizeInput.addEventListener('change',()=>{
     // prev[0].cellSize = cellSize
-    cellSize = cellSizeInput.value
+    cellSize = +cellSizeInput.value
   })
+
+
   rowInput.addEventListener('change',()=>{
-    const newRow = rowInput.value
+    const newRow = +rowInput.value
     const diff = Math.abs(newRow - row) 
     codesBox[0].value = newRow > row
-      ?  [...codes[0], ...Array(diff * row).fill('transparent')]
-      :  codes[0].slice(0, codes[0].length - (diff * row))
+      ?  [...codes[0], ...Array(diff * column).fill('transparent')]
+      :  codes[0].slice(0, codes[0].length - (diff * column))
     row = newRow
-
+    codes[0] = codesBox[0].value
     paintCanvas()
     generateFromColorCode()
+    // console.log('row', row)
   })
+
+
   columnInput.addEventListener('change',()=>{
-    const newColumn = columnInput.value
+    const newColumn = +columnInput.value
     const updatedCodes = [[]]
     let count = 0
     let index = 0
@@ -968,6 +978,9 @@ function init() {
       count++
       updatedCodes[index].push(code)
     })
+    
+    console.log('updatedCodes', updatedCodes)
+
     codesBox[0].value = updatedCodes.map(codes=>{
       const diff = Math.abs(newColumn - column) //TODO adjust arrays
       if (newColumn > column){
@@ -976,11 +989,14 @@ function init() {
         return codes.slice(0, codes.length - diff)
       }
     }).join(',')
+
+    console.log('updatedCodes after map', codesBox[0].value )
     // prev[0].column = column
     column = newColumn
-
+    codes[0] = codesBox[0].value
     paintCanvas()
     generateFromColorCode()
+    // console.log('column',column)
   })
   
   downloadButtons[0].addEventListener('click',()=>{
@@ -1022,6 +1038,42 @@ function init() {
     document.querySelector('.draw').classList.remove('display_none')
     // draw.classList.remove('display_none')
   })
+
+  // codesBox[0].addEventListener('input',()=>{
+  //   const latestData = {
+  //     data: codesBox[0].value,
+  //     row: rowInput.value,
+  //     column: columnInput.value,
+  //     cellSize: cellSizeInput.value,
+  //   }
+  //   prev.push(latestData)
+  // })
+
+
+
+  const undo = () =>{
+    // console.log('prev check', prev[prev.length - 1])
+    if (!prev[prev.length - 1]) return
+    const { data: newData, row: newRow, column: newColumn,  cellSize: newCellSize } = prev[prev.length - 1]
+    // console.log('newData', newData)
+    
+    codes[0] = newData
+    column = newColumn
+    row = newRow
+    cellSize = newCellSize
+    codesBox[0].value = newData
+    rowInput.value = newRow
+    columnInput.value = newColumn
+    cellSizeInput.value = newCellSize
+
+    paintCanvas()
+    generateFromColorCode()
+
+    prev = prev.filter((_data,i)=>{
+      return i !== prev.length - 1
+    })
+    if (!prev.length) updateCode()
+  }
   
   buttons.forEach(b =>{
     if (b.classList.contains('draw')) b.addEventListener('click', output)
@@ -1033,7 +1085,7 @@ function init() {
     if (b.classList.contains('delete_selection')) b.addEventListener('click', deleteSelection)
     if (b.classList.contains('clear')) b.addEventListener('click', triggerClear)
     if (b.classList.contains('create_grid')) b.addEventListener('click', triggerCreateGrid)
-    // if (b.classList.contains('resize_grid')) b.addEventListener('click', triggerResizeGrid)
+    if (b.classList.contains('undo')) b.addEventListener('click', undo)
     if (b.classList.contains('select')) b.addEventListener('click', handleSelect)
   })
 
@@ -1057,7 +1109,7 @@ function init() {
 
   //   indicator.innerHTML = ''
   // })
-
+  console.log('row',row,'column',column)
 }
 
 window.addEventListener('DOMContentLoaded', init)
