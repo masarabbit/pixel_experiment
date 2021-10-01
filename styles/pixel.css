@@ -237,6 +237,7 @@ img {
   cursor: none !important;
   pointer-events: none;
   transition: 0.3s;
+  border: 0;
 }
 
 .copy_grid.active {
@@ -273,7 +274,7 @@ img {
 }
 
 
-.grid.grid_hide div{ border: 0 !important; }
+
 
 .palette {
   position: relative;
@@ -477,3 +478,9 @@ button.icon:hover {
   flex-wrap: wrap;
   /* pointer-events: none; */
 }
+
+.copy_grid.grid_hide div{ border: 0 !important; }
+.grid.grid_hide div{ border: 0 !important; }
+
+
+/* .cell.grid_hide { border: 0 !important; } */

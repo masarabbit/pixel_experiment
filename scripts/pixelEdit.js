@@ -2,6 +2,7 @@ function init() {
 
   //todo when to update?
   //todo change cursor to motion or selection and add icons
+  //todo add redo?
 
   let cursorType = 'pen_cursor'
   let canDraw = false
@@ -686,7 +687,7 @@ function init() {
   
   const toggleGrid = () =>{
     grids.forEach(grid=>grid.classList.toggle('grid_hide'))
-    // gridToggleButtons.forEach(button=>button.innerHTML = button.innerHTML === 'hide grid'?'show grid':'hide grid')
+    copyGrid.classList.toggle('grid_hide')
   }
   
   const arrayGroupedForFlipping = () =>{
