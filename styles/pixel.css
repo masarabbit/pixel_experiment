@@ -337,11 +337,15 @@ button.icon {
   background-repeat: no-repeat, repeat;
   background-size: cover; 
   /* border: 1px solid white; */
+  filter: invert(100%);
+  color: black;
 }
 
 label.icon:hover,
 button.icon:hover {
-  filter: invert(100%);
+  /* filter: invert(100%); */
+  filter: invert(0%);
+
 }
 
 
