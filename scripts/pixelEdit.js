@@ -1,6 +1,7 @@
 function init() {
 
   //todo when to update?
+  //todo change cursor to motion or selection and add icons
 
   let cursorType = 'pen_cursor'
   let canDraw = false
@@ -30,6 +31,7 @@ function init() {
   let copyBox
   let copyGrids
   let copied
+  let isCut
   let prevX
   let prevY
   const defaultPos = {
@@ -535,7 +537,7 @@ function init() {
   
 
   //TODO copy
-  const copySelectionToCopyBox = () =>{
+  const copySelectionToCopyBox = cut =>{
     if (copyData.data.length) return
     const activeArea = document.querySelector('.active_area')
     if (!activeArea) return
@@ -555,22 +557,28 @@ function init() {
       copyData.data[i] = codesBox[0].value.split(',')[index]
     })
     
-    //* delete original
-    codes[0] = codesBox[0].value.split(',').map((grid,i)=>{  //TODO it becomes copy if we remove this bit
-      return copyData.index.some(data=> data === i) ? 'transparent' : grid
-    })
-    codesBox[0].value = codes[0]
+    if (cut){
+      //* delete original
+      codes[0] = codesBox[0].value.split(',').map((grid,i)=>{  //TODO it becomes copy if we remove this bit
+        return copyData.index.some(data=> data === i) ? 'transparent' : grid
+      })
+      codesBox[0].value = codes[0]
+      isCut = true
+    } 
+    copied = true
 
     paintCanvas()
     document.querySelectorAll('.cell').forEach((cell,i)=>{
       cell.style.backgroundColor = codes[0][i]
     })
-    copied = true
+  
     copyBox.style.top = `${copyBox.offsetTop + activeArea.offsetTop}px`
     copyBox.style.left = `${copyBox.offsetLeft + activeArea.offsetLeft}px`
     copyBox.style.width = activeArea.style.width
     copyBox.style.height = activeArea.style.height
     updateCode()
+
+    moveSelection()
   }
 
   const paste = () =>{
@@ -588,15 +596,16 @@ function init() {
       cell.style.backgroundColor = codes[0][i]
     })
 
-    copyData.data.length = 0
+    if (isCut){
+      handleSelect()
+    } 
     updateCode()
-    handleSelect()
   }
 
 
   //TODO move
   const moveSelection = () =>{
-    document.querySelector('.move_selection').classList.add('display_none')
+    // document.querySelector('.move_selection').classList.add('display_none')
     moveState = true
     copyBox.classList.toggle('move')
     copyGrid.classList.toggle('fix')
@@ -928,6 +937,7 @@ function init() {
   
   const handleSelect = () =>{ //TODO needs refactor since it doesn't work when copyBox has been made once
     selectCopy = !selectCopy
+    copyData.data.length = 0
     if (copyBox) copyBox.classList.remove('move')
     createCopyGrids(
       row,
@@ -941,7 +951,8 @@ function init() {
     copyBoxCreated = false
     moveState = false
     copied = false
-    document.querySelector('.move_selection').classList.remove('display_none')
+    isCut = false
+    // document.querySelector('.move_selection').classList.remove('display_none')
   }
   
   // eventlistener
@@ -1065,8 +1076,9 @@ function init() {
   buttons.forEach(b =>{
     if (b.classList.contains('draw')) b.addEventListener('click', output)
     if (b.classList.contains('fill')) b.addEventListener('click', triggerFill)
-    if (b.classList.contains('copy_selection')) b.addEventListener('click', copySelectionToCopyBox)
-    if (b.classList.contains('move_selection')) b.addEventListener('click', moveSelection)
+    if (b.classList.contains('copy_selection')) b.addEventListener('click', ()=>copySelectionToCopyBox(false))
+    if (b.classList.contains('cut_selection')) b.addEventListener('click', ()=>copySelectionToCopyBox(true))
+    // if (b.classList.contains('move_selection')) b.addEventListener('click', moveSelection)
     if (b.classList.contains('crop_selection')) b.addEventListener('click', crop)
     if (b.classList.contains('paste_selection')) b.addEventListener('click', paste)
     if (b.classList.contains('delete_selection')) b.addEventListener('click', deleteSelection)

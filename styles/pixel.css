@@ -63,6 +63,7 @@ h1 {
 label,
 button {
   border: 1px solid white;
+  /* border: 0; */
   background-color: transparent;
   padding: 9.5px 15px;
   text-align: center;
@@ -210,13 +211,13 @@ img {
   color: black;
 }
 
-.cell::after {
+/* .cell::after {
   content: attr(index);
   color: rgba(255, 0, 212, 0.493);
   position: absolute;
   margin-left: 3px;
   font-size:10px;
-}
+} */
 
 
 .cell:hover,
@@ -334,7 +335,7 @@ button.icon {
   width: 32px;
   background-repeat: no-repeat, repeat;
   background-size: cover; 
-  border: 1px solid white;
+  /* border: 1px solid white; */
 }
 
 label.icon:hover,
@@ -421,13 +422,21 @@ button.icon:hover {
   flex-wrap: wrap;
   justify-content: flex-end;
   align-items: flex-end;
+  /* border: dashed 4px #000;
+  animation: dash-border infinite 2s; */
 }
+
+/* @keyframes dash-border {
+  0% { border: dashed 1px #000; }
+  50% { border: dashed 2px #000; }
+  100% { border: dashed 1px #000; }
+} */
 
 .copy_box.move { pointer-events: auto; }
 
 .copy_grid.fix { pointer-events: none; }
 
-.handle {
+/* .handle {
   position: absolute;
   bottom: 0;
   right: 0;
@@ -446,7 +455,7 @@ button.icon:hover {
 
 .copy_box.move .move_handle{ opacity: 1; }
 
-.copy_box.move .handle{ opacity: 0; }
+.copy_box.move .handle{ opacity: 0; } */
 
 .indicator {
   position: fixed;
@@ -460,7 +469,7 @@ button.icon:hover {
 
 .active_area {
   position: absolute;
-  background-color: rgba(255, 174, 0, 0.219);
+  /* background-color: rgba(255, 174, 0, 0.219); */
   /* border: red 1px solid; */
   /* bottom: 0px;
   right:0px; */
