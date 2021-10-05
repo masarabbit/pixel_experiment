@@ -1,8 +1,9 @@
 function init() {
 
   //todo when to update?
-  //todo change cursor to motion or selection and add icons
+  //todo crop has bug... seems to be one pixel off
   //todo add redo?
+
 
   let cursorType = 'pen_cursor'
   let canDraw = false
@@ -608,6 +609,7 @@ function init() {
   const moveSelection = () =>{
     // document.querySelector('.move_selection').classList.add('display_none')
     moveState = true
+    cursorType = 'motion_cursor'
     copyBox.classList.toggle('move')
     copyGrid.classList.toggle('fix')
     let newX
@@ -927,13 +929,21 @@ function init() {
   const triggerFill = e =>{
     e.target.classList.toggle('active')
     fill = !fill
-    cursorType = fill ? 'bucket_cursor' : 'pen_cursor'
+    cursorType = fill 
+      ? 'bucket_cursor' 
+      : moveState 
+        ? 'motion_cursor' 
+        : 'pen_cursor'
   }
 
   const triggerClear = e =>{
     e.target.classList.toggle('active')
     erase = !erase
-    cursorType = erase ? 'eraser_cursor' : 'pen_cursor'
+    cursorType = erase 
+      ? 'eraser_cursor' 
+      : moveState 
+        ? 'motion_cursor' 
+        : 'pen_cursor'
   }
   
   const handleSelect = () =>{ //TODO needs refactor since it doesn't work when copyBox has been made once
@@ -953,6 +963,7 @@ function init() {
     moveState = false
     copied = false
     isCut = false
+    cursorType = 'pen_cursor'
     // document.querySelector('.move_selection').classList.remove('display_none')
   }
   
@@ -1079,7 +1090,7 @@ function init() {
     if (b.classList.contains('fill')) b.addEventListener('click', triggerFill)
     if (b.classList.contains('copy_selection')) b.addEventListener('click', ()=>copySelectionToCopyBox(false))
     if (b.classList.contains('cut_selection')) b.addEventListener('click', ()=>copySelectionToCopyBox(true))
-    // if (b.classList.contains('move_selection')) b.addEventListener('click', moveSelection)
+    if (b.classList.contains('move_selection')) b.addEventListener('click', moveSelection)
     if (b.classList.contains('crop_selection')) b.addEventListener('click', crop)
     if (b.classList.contains('paste_selection')) b.addEventListener('click', paste)
     if (b.classList.contains('delete_selection')) b.addEventListener('click', deleteSelection)

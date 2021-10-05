@@ -369,6 +369,8 @@ button.icon:hover {
 
 .copy { background: url(/icon/copy.svg); }
 
+.draw { background: url(/icon/pixelise.svg); }
+
 .cursor {
   height: 32px;
   width: 32px;
@@ -406,6 +408,8 @@ button.icon:hover {
 .pen_cursor { background: url(/icon/pen_cursor.svg); }
 
 .eraser_cursor { background: url(/icon/eraser_cursor.svg); }
+
+.motion_cursor { background: url(/icon/motion_cursor.svg); }
 
 .bucket_cursor { background: url(/icon/bucket_cursor.svg); }
 
