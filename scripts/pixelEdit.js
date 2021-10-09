@@ -616,9 +616,6 @@ function init() {
     let newY
     const onDrag = e => {
       copyBox.style.transtion = '0s'
-      // const originalStyles = window.getComputedStyle(copyBox)
-      // newX = parseInt(originalStyles.left) + e.movementX
-      // newY = parseInt(originalStyles.top) + e.movementY
       newX = copyBox.offsetLeft + e.movementX
       newY = copyBox.offsetTop + e.movementY
       copyBox.style.left = `${newX}px`
@@ -1088,6 +1085,7 @@ function init() {
   buttons.forEach(b =>{
     if (b.classList.contains('draw')) b.addEventListener('click', output)
     if (b.classList.contains('fill')) b.addEventListener('click', triggerFill)
+    if (b.classList.contains('select')) b.addEventListener('click', handleSelect)
     if (b.classList.contains('copy_selection')) b.addEventListener('click', ()=>copySelectionToCopyBox(false))
     if (b.classList.contains('cut_selection')) b.addEventListener('click', ()=>copySelectionToCopyBox(true))
     if (b.classList.contains('move_selection')) b.addEventListener('click', moveSelection)
@@ -1097,7 +1095,6 @@ function init() {
     if (b.classList.contains('clear')) b.addEventListener('click', triggerClear)
     if (b.classList.contains('create_grid')) b.addEventListener('click', triggerCreateGrid)
     if (b.classList.contains('undo')) b.addEventListener('click', undo)
-    if (b.classList.contains('select')) b.addEventListener('click', handleSelect)
   })
 
   const handleCursor = e =>{

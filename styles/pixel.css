@@ -380,7 +380,7 @@ button.icon:hover {
   
   background-repeat: no-repeat, repeat !important;
   background-size: cover !important; 
-  z-index: 999;
+  z-index: 9999;
 }
 
 .cursor div {

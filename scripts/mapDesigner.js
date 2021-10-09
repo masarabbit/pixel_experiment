@@ -10,6 +10,7 @@ function init() {
   let cellSize = 20
   let row = 20
   let column = 20
+  let selectCopy = false
 
   const decode = arr =>{
     return arr.split('').map(c=>{
@@ -92,7 +93,7 @@ function init() {
         '74_transport-portal8',
         '91_transport-portal9'
       ],
-      map: 'bd4,rp1,la1,rp5,bd5,rp1,la1,rp5,bd2,rp4,la1,rp5,bd2,rp3,ry1,at5,rt1,bd2,ry1,at2,p6,ar1,bd2,bx1,p1,ab1,p6,ar1,bd5,bx1,ab2,p1,ab2,by1,bd25'
+      map: 'bd4,rp1,la1,rp5,bd5,rp1,la1,rp5,bd2,rp4,la1,rp5,bd2,rp3,ry1,at5,rt1,bd2,ry1,at2,p6,ar1,bd2,bx1,p1,ab1,p6,ar1,bd3,e1,bd1,bx1,ab2,p1,ab2,by1,bd8,e1,bd16'
     }
   ]
 
@@ -208,7 +209,14 @@ function init() {
     // return `<path fill="${subColor || 'white'}" d="M 0 0h16v16hN6vN6"/ D 4 1h8v1h-8vN"/ D 4 5h8v1h-8vN"/ D 4 9h8v1h-8vN"/ D 4 13h8v1h-8vN"/`
     return `<path fill="${subColor || 'white'}" d="M 0 0h16v16hN6vN6"/ D 3 1h1v1hNvN"/ D 12 1h1v1hNvN"/ D 4 2h8v1h-8vN"/ D 3 5h1v1hNvN"/ D 12 5h1v1hNvN"/ D 4 6h8v1h-8vN"/ D 3 9h1v1hNvN"/ D 12 9h1v1hNvN"/ D 4 10h8v1h-8vN"/ D 3 13h1v1hNvN"/ D 12 13h1v1hNvN"/ D 4 14h8v1h-8vN"/`
   } // return `<path fill="${subColor || 'white'}" d="M 0 0h16v16hN6vN6"/ D 4 1h8v1h-8vN"/ D 4 5h8v1h-8vN"/ D 4 9h8v1h-8vN"/ D 4 13h8v1h-8vN"/`
- 
+
+  const exit = (main , subColor) =>{
+    // return `
+    // <path fill="${main}" d="M 0 0h16v1hNv1hNv1hNv1hNv1hTv1h-4vNhTvNhNvNhNvNhNvNhNvN"/ <path fill="${subColor}" d="M 0 1h1v1h1v1h1v1h1v1h2v1h4vNh2vNh1vNh1vNh1vNh1v15hN6vN5"/
+    // `
+    return `<path fill="${main}" d="M 0 0h16v4hTv2hTvThTv2hTvThTv2hTvThTv2hTv-6"/ <path fill="${subColor}" d="M 2 4h2v2hTvT"/ <path fill="${subColor}" d="M 6 4h2v2hTvT"/ <path fill="${subColor}" d="M 10 4h2v2hTvT"/ <path fill="${subColor}" d="M 14 4h2v2hTvT"/ <path fill="${subColor}" d="M 0 6h2v2h2vTh2v2h2vTh2v2h2vTh2v2h2v8hN6vN0"/ <path fill="${main}" d="M 2 6h2v2hTvT"/ <path fill="${main}" d="M 6 6h2v2hTvT"/ <path fill="${main}" d="M 10 6h2v2hTvT"/ <path fill="${main}" d="M 14 6h2v2hTvT"/`
+    // return `<path fill="${main}" d="M 0 0h2v2hTvT"/ <path fill="${subColor}" d="M 2 0h2v2hTvT"/ <path fill="${main}" d="M 4 0h2v2hTvT"/ <path fill="${subColor}" d="M 6 0h2v2hTvT"/ <path fill="${main}" d="M 8 0h2v2hTvT"/ <path fill="${subColor}" d="M 10 0h2v2hTvT"/ <path fill="${main}" d="M 12 0h2v2hTvT"/ <path fill="${subColor}" d="M 14 0h2v2hTvT"/ <path fill="${subColor}" d="M 0 2h2v2hTvT"/ <path fill="${main}" d="M 2 2h2v2hTvT"/ <path fill="${subColor}" d="M 4 2h2v2hTvT"/ <path fill="${main}" d="M 6 2h2v2hTvT"/ <path fill="${subColor}" d="M 8 2h2v2hTvT"/ <path fill="${main}" d="M 10 2h2v2hTvT"/ <path fill="${subColor}" d="M 12 2h2v2hTvT"/ <path fill="${main}" d="M 14 2h2v2hTvT"/ <path fill="${main}" d="M 0 4h2v2hTvT"/ <path fill="${subColor}" d="M 2 4h2v2hTvT"/ <path fill="${main}" d="M 4 4h2v2hTvT"/ <path fill="${subColor}" d="M 6 4h2v2hTvT"/ <path fill="${main}" d="M 8 4h2v2hTvT"/ <path fill="${subColor}" d="M 10 4h2v2hTvT"/ <path fill="${main}" d="M 12 4h2v2hTvT"/ <path fill="${subColor}" d="M 14 4h2v2hTvT"/ <path fill="${subColor}" d="M 0 6h2v2h2vTh2v2h2vTh2v2h2vTh2v2h2v8hN6vN0"/ <path fill="${main}" d="M 2 6h2v2hTvT"/ <path fill="${main}" d="M 6 6h2v2hTvT"/ <path fill="${main}" d="M 10 6h2v2hTvT"/ <path fill="${main}" d="M 14 6h2v2hTvT"/`
+  }
 
   // const sub = '#e2cc9c'
   const sub = '#f9ede5'
@@ -260,7 +268,8 @@ function init() {
     'rd': { svg: riverCurve, rotate: 180, animation: riverCurveAnim },
     're': { svg: riverCurve, rotate: 270, animation: riverCurveAnim },
     'la': { svg: ladder, color: main, subColor: sub },
-    'c': { svg: checkered, color: '#a2e8fc' }
+    'c': { svg: checkered, color: '#a2e8fc' },
+    'e': { svg: exit, color: '#0d8799', subColor: '#a2fcf0' }
   }
   // const svgAnimFrames = {
   //   'ra': { svg: riverCurve },
@@ -279,15 +288,13 @@ function init() {
   const grids = document.querySelectorAll('.grid')
   const palettes = document.querySelectorAll('.palette')
   const cursor = document.querySelector('.cursor')
+  const copyGrid = document.querySelector('.copy_grid')
   
   // button
   const alts = document.querySelectorAll('.alt')
   const copyButtons = document.querySelectorAll('.copy') 
-  const createGridButtons = document.querySelectorAll('.create_grid')
-  const generate = document.querySelectorAll('.generate')
-  const gridToggleButtons = document.querySelectorAll('.grid_display')
-  const clearButtons = document.querySelectorAll('.clear')
   const indexToggleButton = document.querySelector('.display_index')
+  const buttons = document.querySelectorAll('button')
 
   // input
   const cellSizeInputs = document.querySelectorAll('.cell_size')
@@ -362,6 +369,7 @@ function init() {
       target.innerHTML = svgContent
     } 
   }
+  
 
 
   const populatePalette = () =>{
@@ -394,6 +402,7 @@ function init() {
   
   //draw
   const drawMap = e =>{
+    if (selectCopy) return
     const index = e.target.dataset.cell
     const value = erase ? 'b' : letterInput.value
     codes[0][index] = value
@@ -403,6 +412,7 @@ function init() {
 
 
   const drawWithImage = e =>{
+    if (selectCopy) return
     const index = e.target.dataset.cell
     const value = erase ? 'b' : letterInput.value
     codes[0][index] = value
@@ -533,10 +543,51 @@ function init() {
   }
 
   cellSizeInputs[0].addEventListener('change',()=>cellSize = cellSizeInputs[0].value)
-  rowInputs[0].addEventListener('change',()=>row = rowInputs[0].value)
-  columnInputs[0].addEventListener('change',()=>column = columnInputs[0].value)
+  // rowInputs[0].addEventListener('change',()=>row = rowInputs[0].value)
+  rowInputs[0].addEventListener('change',()=>{
+    const newRow = +rowInputs[0].value
+    const diff = Math.abs(newRow - row) 
+    codesBox[0].value = newRow > row
+      ?  [...codes[0], ...Array(diff * column).fill('transparent')]
+      :  codes[0].slice(0, codes[0].length - (diff * column))
+    row = newRow
+    codes[0] = codesBox[0].value
+    generateFromCode()
+    // console.log('row', row)
+  })
+  // columnInputs[0].addEventListener('change',()=>column = columnInputs[0].value)
+  columnInputs[0].addEventListener('change',()=>{
+    const newColumn = +columnInputs[0].value
+    const updatedCodes = [[]]
+    let count = 0
+    let index = 0
+    codes[0].forEach(code =>{
+      if (count === +column) {
+        count = 0
+        index++
+        updatedCodes.push([])
+      }
+      count++
+      updatedCodes[index].push(code)
+    })
 
-  generate[0].addEventListener('click',generateFromCode)
+    codesBox[0].value = updatedCodes.map(codes=>{
+      const diff = Math.abs(newColumn - column) //TODO adjust arrays
+      if (newColumn > column){
+        return [...codes, ...Array(diff).fill('transparent')]
+      } else {
+        return codes.slice(0, codes.length - diff)
+      }
+    }).join(',')
+
+    // prev[0].column = column
+    column = newColumn
+    codes[0] = codesBox[0].value
+    generateFromCode()
+    // console.log('column',column)
+  })
+
+
 
   copyButtons.forEach((copyButton,i)=>{
     copyButton.addEventListener('click',()=>copyText(codesBox[i]))
@@ -552,7 +603,7 @@ function init() {
 
 
 
-  gridToggleButtons.forEach(button=>button.addEventListener('click',toggleGrid))
+
   indexToggleButton.addEventListener('click', toggleIndex)
 
   grids.forEach(grid=>{
@@ -564,23 +615,14 @@ function init() {
     grid.addEventListener('mouseleave',()=>cursor.classList.remove(cursorType))
   })
 
+  copyGrid.addEventListener('mouseenter',()=>cursor.classList.add(cursorType))
+  copyGrid.addEventListener('mouseleave',()=>cursor.classList.remove(cursorType))
+
 
   // enable grid creation with buttons
-  createGridButtons.forEach(button=>{
-    button.addEventListener('click',(e)=>{
-      const gridClass = e.target.dataset.grid_class
-      const index = +e.target.dataset.index
-      createGrid(index,gridClass)
-    })
-  })
+
   
-  clearButtons.forEach(button=>{
-    button.addEventListener('click',()=>{
-      erase = !erase
-      clearButtons.forEach(button=>button.classList.toggle('active'))
-      cursorType = erase ? 'eraser_cursor' : 'pen_cursor'
-    })
-  })
+
 
 
   const handleCursor = e =>{
@@ -605,17 +647,15 @@ function init() {
   console.log(query)
   if (query){
     const queryArray = query.split('#')
-    columnInputs[0].value = queryArray[1]
-    rowInputs[0].value = queryArray[2]
+    row = queryArray[2]
+    column = queryArray[1]
+    rowInputs[0].value = row
+    columnInputs[0].value = column
 
-    codesBox[0].value = decompress(queryArray[3].replaceAll('-',','))
+    codes[0] = decompress(queryArray[3].replaceAll('-',','))
+    codesBox[0].value = codes[0]
     if (queryArray[4]) indexIndicator.value = queryArray[4]
     generateFromCode()
-
-    // const keys = Object.keys(svgData)
-    // codesBox[0].value.split(',').forEach(letter=>{
-    //   if (keys.indexOf(letter) === -1) console.log(letter)
-    // })
   }
 
   //* map links
@@ -638,6 +678,394 @@ function init() {
       window.location.hash = url      
       location.reload(true)
     })
+  })
+
+
+
+
+
+
+  //todo copy
+
+  const copyData = {
+    index: null,
+    data: [],
+    width: null,
+    height: null,
+  }
+  
+  let copyState
+  let moveState
+  let copyBoxCreated
+  let copyBox
+  let copyGrids
+  let copied
+  let isCut
+  let prevX
+  let prevY
+  const defaultPos = {
+    top: null,
+    left: null,
+    cell: null
+  }
+
+  const calcX = cell =>{
+    return cell % column
+  } 
+  
+  const calcY = cell =>{
+    return Math.floor(cell / column)
+  }
+
+  const rounded = i =>{
+    return ~~(i / cellSize) 
+  }
+
+  const createCopyGrids = (row,column,cellSize,cellStyle) =>{
+    const arr = new Array(row * column).fill('')
+    copyGrid.style.width = `${column * cellSize}px`
+    copyGrid.style.height = `${row * cellSize}px`
+    copyGrid.style.marginTop = '100px'
+    copyGrid.style.marginBottom = `-${(row * cellSize) + 100}px`
+    copyGrid.innerHTML = arr.map((_ele,i)=>{
+      return `
+        <div 
+          class="${cellStyle}"
+          style="
+            width:${cellSize}px;
+            height:${cellSize}px;
+          "
+          data-cell=${i}
+        >
+        </div>
+        `
+    }).join('')
+    copyGrids = document.querySelectorAll(`.${cellStyle}`)
+
+    copyGrids.forEach((grid,i)=>{
+      grid.addEventListener('click',(e)=>{
+        if (!copyBoxCreated){
+          copyBox = document.createElement('div')
+          copyBox.classList.add('copy_box')
+          copyGrid.append(copyBox)
+          copyBoxCreated = true
+          copyBox.style.width = `${cellSize}px`
+          copyBox.style.height = `${cellSize}px`
+          
+          defaultPos.top = e.target.offsetTop
+          defaultPos.left = e.target.offsetLeft
+          defaultPos.defPos = i
+          prevX = i % column * cellSize
+          prevY = Math.floor(i / column)
+          // defaultPos.defX = prevX
+
+          copyBox.style.top = `${defaultPos.top}px`
+          copyBox.style.left = `${defaultPos.left}px`
+        }
+      })
+    })
+  }
+
+  copyGrid.addEventListener('mousedown', ()=> copyState = true)
+  copyGrid.addEventListener('mouseup', ()=> {
+    copyState = false
+    if (copyBox){
+      defaultPos.top = copyBox.offsetTop
+      defaultPos.left = copyBox.offsetLeft
+    }
+  })
+
+  copyGrid.addEventListener('mousemove',(e)=>{     
+    if (copyState && !moveState) {
+      const next = e.target.dataset.cell
+      const newX = calcX(next)
+      const newY = calcY(next)
+      const { defPos, top, left } = defaultPos
+      
+      if (!copyBox) return
+      if (newX !== prevX && newY === prevY) {
+        if (calcX(defPos) > newX){
+          const newLeft = left - ((calcX(defPos) - newX) * cellSize)
+          copyBox.style.left = `${newLeft}px`
+          const newWidth = (calcX(defPos) - newX + 1) 
+          copyBox.style.width = `${newWidth * cellSize}px`
+        } else {
+          const newWidth = (newX - calcX(defPos) + 1)
+          copyData.width = newWidth
+          copyBox.style.width = `${newWidth * cellSize}px`
+          copyBox.style.left = `${left}px`
+        }
+        prevX = newX
+      } else if (newY !== prevY) {
+        if (calcY(defPos) > newY){ 
+          const newTop = top - ((calcY(defPos) - newY) * cellSize)
+          copyBox.style.top = `${newTop}px`
+          const newHeight = (calcY(defPos) - newY + 1)
+          copyBox.style.height = `${newHeight * cellSize}px`
+        } else {
+          const newHeight = (newY - calcY(defPos) + 1)
+          copyData.height = newHeight
+          copyBox.style.height = `${newHeight * cellSize}px`
+          copyBox.style.top = `${top}px`
+        }
+        prevY = newY
+      } 
+      
+      // copy selected area
+      const x = copyBox.offsetLeft / cellSize
+      const y = copyBox.offsetTop / cellSize
+      copyData.index = returnSelectedCells((y * column) + x)
+      // console.log('index', copyData.index, 'prevY',prevY, 'prevX', prevX)
+      // copySelection()
+    }     
+  })
+
+
+  const returnSelectedCells = (firstCell, roundedX, roundedY) =>{
+    if (copyBox && !copied){
+      copyBox.style.justifyContent = 'flex-end'
+      copyBox.style.alignItems = 'flex-end'
+    }
+    let width = copyBox ? copyBox.style.width.replace('px','') / cellSize : ''
+    let height = copyBox ? copyBox.style.height.replace('px','') / cellSize : ''
+    const selection = []
+
+    if (roundedX < 0) width += roundedX // adjusts width if selection is beyond left edge of copyBox
+    if (roundedY < 0) height += roundedY // adjusts height if selection is beyond top edge of copyBox 
+
+    // adjusts width if selection is beyond right edge of copyBox
+    if (roundedX + width > column) {
+      if (!copied) copyBox.style.justifyContent = 'flex-start'
+      width -= Math.abs((roundedX + width) - column) 
+    }
+    // adjust height if selection is beyond bottom edge of copyBox
+    if (roundedY + height > row) {
+      if (!copied) copyBox.style.alignItems = 'flex-start'
+      height -= Math.abs((roundedY + height) - row) 
+    }
+
+    for (let a = firstCell; a < firstCell + (height * column); a += +column){
+      for (let b = a; b < (a + width); b++){
+        selection.push(b) 
+      }
+    }
+    
+    if (!copied){
+      const activeArea = document.querySelector('.active_area')
+      if (!activeArea) {
+        copyBox.innerHTML = `
+      <div   
+      class="active_area"
+      style="
+      width:${width * cellSize}px;
+      height:${height * cellSize}px;
+      ">
+      </div>
+    `
+      } else {
+        activeArea.style.width = `${width * cellSize}px`
+        activeArea.style.height = `${height * cellSize}px`
+      }
+      // copyData.activeArea = selection
+    }
+    
+    return selection
+  }
+
+
+  const copySelectionToCopyBox = cut =>{
+    if (copyData.data.length) return
+    const activeArea = document.querySelector('.active_area')
+    if (!activeArea) return
+    activeArea.innerHTML = copyData.index.map(()=>{
+      return `
+        <div   
+        class="active_cell"
+        style="
+        width:${cellSize}px;
+        height:${cellSize}px;
+        ">
+        </div>
+      `
+    }).join('')
+    
+    const activeCells = document.querySelectorAll('.active_cell')
+    activeCells.forEach((area,i)=>{
+      const index = copyData.index[i]
+      if (svgData[codes[0][index]]) populateWithSvg(codes[0][index],area) 
+      if (codes[0][index] === 'v') area.innerHTML = 'x'
+    })
+
+    copyData.index.forEach((index,i)=>{
+      copyData.data[i] = codesBox[0].value.split(',')[index]
+    })
+
+    if (cut){
+      //* delete original
+      codes[0] = codesBox[0].value.split(',').map((grid,i)=>{  //TODO it becomes copy if we remove this bit
+        if (copyData.index.some(data=> data === i)) console.log('test',grid) 
+        return copyData.index.some(data=> data === i) ? 'x' : grid
+      })
+      codesBox[0].value = codes[0]
+      isCut = true
+
+      document.querySelectorAll('.map_gen_cell').forEach((cell,i)=>{
+        // if (svgData[codes[0][i]]) populateWithSvg(codes[0][i],cell) 
+        // if (codes[0][i] === 'v') cell.innerHTML = 'x'
+        if (copyData.index.some(data=> data === i)) cell.innerHTML = 'x'
+      })
+    } 
+    copied = true
+    
+  
+    copyBox.style.top = `${copyBox.offsetTop + activeArea.offsetTop}px`
+    copyBox.style.left = `${copyBox.offsetLeft + activeArea.offsetLeft}px`
+    copyBox.style.width = activeArea.style.width
+    copyBox.style.height = activeArea.style.height
+    // updateCode()
+
+    moveSelection()
+  }
+
+  const paste = () =>{
+    if (!copyData.data.length) return
+    console.log('copydata', copyData.data)
+
+    copyData.index.forEach((index,i)=>{
+      if (copyData.data[i] === 'x') return
+      codes[0][index] = copyData.data[i]
+    })
+    codesBox[0].value = codes[0]
+
+    document.querySelectorAll('.map_gen_cell').forEach((cell,i)=>{
+      // cell.style.backgroundColor = codes[0][i]
+      if (svgData[codes[0][i]]) populateWithSvg(codes[0][i],cell) 
+      if (codes[0][i] === 'v') cell.innerHTML = 'x'
+    })
+
+    if (isCut){
+      handleSelect()
+    } 
+    // updateCode()
+  }
+
+
+  //TODO move
+  const moveSelection = () =>{
+    // document.querySelector('.move_selection').classList.add('display_none')
+    moveState = true
+    cursorType = 'motion_cursor'
+    copyBox.classList.toggle('move')
+    copyGrid.classList.toggle('fix')
+    let newX
+    let newY
+    const onDrag = e => {
+      copyBox.style.transtion = '0s'
+      newX = copyBox.offsetLeft + e.movementX
+      newY = copyBox.offsetTop + e.movementY
+      copyBox.style.left = `${newX}px`
+      copyBox.style.top = `${newY}px`
+    }
+
+    const onLetGo = () => {
+      // adjustments made here to ensure 'firstcell' is within selection.
+      // this needs to be done because numbers continue to next row.
+      const roundedY = rounded(newY) > 0 ? rounded(newY) : 0
+      const roundedX = rounded(newX) > 0 ? rounded(newX) : 0
+  
+      copyData.width = copyBox.style.width.replace('px','') / cellSize,
+      copyData.height = copyBox.style.height.replace('px','') / cellSize,
+      copyData.index = returnSelectedCells((roundedY * column) + roundedX, rounded(newX), rounded(newY))
+
+      codesBox[1].value = copyData.index.join(',')
+      if (copyData.data.length) codesBox[1].value = copyData.index.join(',') + '-' + copyData.data.join(',')
+
+      copyBox.style.left = `${rounded(newX) * cellSize}px`
+      copyBox.style.top = `${rounded(newY) * cellSize}px`
+
+      document.removeEventListener('mousemove', onDrag)
+      document.removeEventListener('mouseup', onLetGo)
+    }
+    const onGrab = () => {
+      document.addEventListener('mousemove', onDrag)
+      document.addEventListener('mouseup', onLetGo)
+    }
+    copyBox.addEventListener('mousedown', onGrab)
+  }
+
+    
+  const handleSelect = () =>{ //TODO needs refactor since it doesn't work when copyBox has been made once
+    selectCopy = !selectCopy
+    copyData.data.length = 0
+    if (copyBox) copyBox.classList.remove('move')
+    createCopyGrids(
+      row,
+      column,
+      cellSize,
+      'copy_cell'
+    )
+    copyGrid.classList.toggle('active')
+    copyGrid.classList.remove('fix')
+    // copyBox = null
+    copyBoxCreated = false
+    moveState = false
+    copied = false
+    isCut = false
+    cursorType = 'pen_cursor'
+    // document.querySelector('.move_selection').classList.remove('display_none')
+  }
+  
+
+
+  //TODO to add by editing.
+  // const crop = () =>{
+  //   if (!copyData.index) return
+  //   codesBox[0].value = codesBox[0].value = codesBox[0].value.split(',').filter((_code,i)=>{
+  //     return copyData.index.find(data=> +data === i)
+  //   }).join(',')
+  //   column = copyData.width
+  //   row = copyData.height
+  //   paintCanvas()
+  //   generateFromColorCode()
+  //   columnInput.value = column
+  //   rowInput.value = row
+  // }
+
+  // const deleteSelection = () =>{
+  //   if (!copyData.index) return
+  //   codesBox[0].value = codesBox[0].value = codesBox[0].value.split(',').map((code,i)=>{
+  //     return copyData.index.find(data=> +data === i) 
+  //       ? ''
+  //       : code
+  //   }).join(',')
+  //   generateFromColorCode()
+  // }
+
+
+  buttons.forEach(b =>{
+    if (b.classList.contains('create_grid')) b.addEventListener('click', (e)=>{
+      const gridClass = e.target.dataset.grid_class
+      const index = +e.target.dataset.index
+      createGrid(index,gridClass)
+    })
+    if (b.classList.contains('generate')) b.addEventListener('click', generateFromCode)
+    if (b.classList.contains('grid_display')) b.addEventListener('click', toggleGrid)
+    if (b.classList.contains('clear')) b.addEventListener('click', (e)=>{
+      erase = !erase
+      e.target.classList.toggle('active')
+      cursorType = erase 
+        ? 'eraser_cursor' 
+        : moveState 
+          ? 'motion_cursor' 
+          : 'pen_cursor'
+    })
+    if (b.classList.contains('select')) b.addEventListener('click', handleSelect)
+    if (b.classList.contains('copy_selection')) b.addEventListener('click', ()=>copySelectionToCopyBox(false))
+    if (b.classList.contains('cut_selection')) b.addEventListener('click', ()=>copySelectionToCopyBox(true))
+    if (b.classList.contains('move_selection')) b.addEventListener('click', moveSelection)
+    if (b.classList.contains('paste_selection')) b.addEventListener('click', paste)
+    // if (b.classList.contains('crop_selection')) b.addEventListener('click', crop)
+    // if (b.classList.contains('delete_selection')) b.addEventListener('click', deleteSelection)
   })
 
 }
