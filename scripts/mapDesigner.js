@@ -10,7 +10,30 @@ function init() {
   let cellSize = 20
   let row = 20
   let column = 20
+
+  //copy
+  const copyData = {
+    index: null,
+    data: [],
+    width: null,
+    height: null,
+  }
+  
   let selectCopy = false
+  let copyGrids
+  let copyState
+  let moveState
+  let copyBoxCreated
+  let copyBox
+  let copied
+  let isCut
+  let prevX
+  let prevY
+  const defaultPos = {
+    top: null,
+    left: null,
+    cell: null
+  }
 
   const decode = arr =>{
     return arr.split('').map(c=>{
@@ -337,6 +360,18 @@ function init() {
     })
     return output
   }
+
+  const calcX = cell =>{
+    return cell % column
+  } 
+  
+  const calcY = cell =>{
+    return Math.floor(cell / column)
+  }
+
+  const rounded = i =>{
+    return ~~(i / cellSize) 
+  }
   
   const populateWithSvg = (key,target) =>{
     if (svgData[key]){
@@ -466,6 +501,107 @@ function init() {
     if (clear) updateCodesDisplay(codesBox[0],codes[0])  
   }
 
+  const createCopyGrids = (row,column,cellSize,cellStyle) =>{
+    const arr = new Array(row * column).fill('')
+    copyGrid.style.width = `${column * cellSize}px`
+    copyGrid.style.height = `${row * cellSize}px`
+    copyGrid.style.marginTop = '100px'
+    copyGrid.style.marginBottom = `-${(row * cellSize) + 100}px`
+    copyGrid.innerHTML = arr.map((_ele,i)=>{
+      return `
+        <div 
+          class="${cellStyle}"
+          style="
+            width:${cellSize}px;
+            height:${cellSize}px;
+          "
+          data-cell=${i}
+        >
+        </div>
+        `
+    }).join('')
+    copyGrids = document.querySelectorAll(`.${cellStyle}`)
+
+    copyGrids.forEach((grid,i)=>{
+      grid.addEventListener('click',(e)=>{
+        if (!copyBoxCreated){
+          copyBox = document.createElement('div')
+          copyBox.classList.add('copy_box')
+          copyGrid.append(copyBox)
+          copyBoxCreated = true
+          copyBox.style.width = `${cellSize}px`
+          copyBox.style.height = `${cellSize}px`
+          
+          defaultPos.top = e.target.offsetTop
+          defaultPos.left = e.target.offsetLeft
+          defaultPos.defPos = i
+          prevX = i % column * cellSize
+          prevY = Math.floor(i / column)
+          // defaultPos.defX = prevX
+
+          copyBox.style.top = `${defaultPos.top}px`
+          copyBox.style.left = `${defaultPos.left}px`
+        }
+      })
+    })
+  }
+
+  copyGrid.addEventListener('mousedown', ()=> copyState = true)
+  copyGrid.addEventListener('mouseup', ()=> {
+    copyState = false
+    if (copyBox){
+      defaultPos.top = copyBox.offsetTop
+      defaultPos.left = copyBox.offsetLeft
+    }
+  })
+
+  copyGrid.addEventListener('mousemove',(e)=>{     
+    if (copyState && !moveState) {
+      const next = e.target.dataset.cell
+      const newX = calcX(next)
+      const newY = calcY(next)
+      const { defPos, top, left } = defaultPos
+      
+      if (!copyBox) return
+      if (newX !== prevX && newY === prevY) {
+        if (calcX(defPos) > newX){
+          const newLeft = left - ((calcX(defPos) - newX) * cellSize)
+          copyBox.style.left = `${newLeft}px`
+          const newWidth = (calcX(defPos) - newX + 1) 
+          copyBox.style.width = `${newWidth * cellSize}px`
+        } else {
+          const newWidth = (newX - calcX(defPos) + 1)
+          copyData.width = newWidth
+          copyBox.style.width = `${newWidth * cellSize}px`
+          copyBox.style.left = `${left}px`
+        }
+        prevX = newX
+      } else if (newY !== prevY) {
+        if (calcY(defPos) > newY){ 
+          const newTop = top - ((calcY(defPos) - newY) * cellSize)
+          copyBox.style.top = `${newTop}px`
+          const newHeight = (calcY(defPos) - newY + 1)
+          copyBox.style.height = `${newHeight * cellSize}px`
+        } else {
+          const newHeight = (newY - calcY(defPos) + 1)
+          copyData.height = newHeight
+          copyBox.style.height = `${newHeight * cellSize}px`
+          copyBox.style.top = `${top}px`
+        }
+        prevY = newY
+      } 
+      
+      // copy selected area
+      const x = copyBox.offsetLeft / cellSize
+      const y = copyBox.offsetTop / cellSize
+      copyData.index = returnSelectedCells((y * column) + x)
+      // console.log('index', copyData.index, 'prevY',prevY, 'prevX', prevX)
+      // copySelection()
+    }     
+  })
+
+
+  //todo can be refactored
   const generateFromCode = () =>{
     createGridCells(
       rowInputs[0].value,
@@ -491,6 +627,13 @@ function init() {
       mapCells[i].innerHTML = ele
     })
     generateMap(false)
+    
+    createCopyGrids(
+      row,
+      column,
+      cellSize,
+      'copy_cell'
+    )
   }
 
   const copyText = box =>{
@@ -687,140 +830,9 @@ function init() {
 
   //todo copy
 
-  const copyData = {
-    index: null,
-    data: [],
-    width: null,
-    height: null,
-  }
+
+
   
-  let copyState
-  let moveState
-  let copyBoxCreated
-  let copyBox
-  let copyGrids
-  let copied
-  let isCut
-  let prevX
-  let prevY
-  const defaultPos = {
-    top: null,
-    left: null,
-    cell: null
-  }
-
-  const calcX = cell =>{
-    return cell % column
-  } 
-  
-  const calcY = cell =>{
-    return Math.floor(cell / column)
-  }
-
-  const rounded = i =>{
-    return ~~(i / cellSize) 
-  }
-
-  const createCopyGrids = (row,column,cellSize,cellStyle) =>{
-    const arr = new Array(row * column).fill('')
-    copyGrid.style.width = `${column * cellSize}px`
-    copyGrid.style.height = `${row * cellSize}px`
-    copyGrid.style.marginTop = '100px'
-    copyGrid.style.marginBottom = `-${(row * cellSize) + 100}px`
-    copyGrid.innerHTML = arr.map((_ele,i)=>{
-      return `
-        <div 
-          class="${cellStyle}"
-          style="
-            width:${cellSize}px;
-            height:${cellSize}px;
-          "
-          data-cell=${i}
-        >
-        </div>
-        `
-    }).join('')
-    copyGrids = document.querySelectorAll(`.${cellStyle}`)
-
-    copyGrids.forEach((grid,i)=>{
-      grid.addEventListener('click',(e)=>{
-        if (!copyBoxCreated){
-          copyBox = document.createElement('div')
-          copyBox.classList.add('copy_box')
-          copyGrid.append(copyBox)
-          copyBoxCreated = true
-          copyBox.style.width = `${cellSize}px`
-          copyBox.style.height = `${cellSize}px`
-          
-          defaultPos.top = e.target.offsetTop
-          defaultPos.left = e.target.offsetLeft
-          defaultPos.defPos = i
-          prevX = i % column * cellSize
-          prevY = Math.floor(i / column)
-          // defaultPos.defX = prevX
-
-          copyBox.style.top = `${defaultPos.top}px`
-          copyBox.style.left = `${defaultPos.left}px`
-        }
-      })
-    })
-  }
-
-  copyGrid.addEventListener('mousedown', ()=> copyState = true)
-  copyGrid.addEventListener('mouseup', ()=> {
-    copyState = false
-    if (copyBox){
-      defaultPos.top = copyBox.offsetTop
-      defaultPos.left = copyBox.offsetLeft
-    }
-  })
-
-  copyGrid.addEventListener('mousemove',(e)=>{     
-    if (copyState && !moveState) {
-      const next = e.target.dataset.cell
-      const newX = calcX(next)
-      const newY = calcY(next)
-      const { defPos, top, left } = defaultPos
-      
-      if (!copyBox) return
-      if (newX !== prevX && newY === prevY) {
-        if (calcX(defPos) > newX){
-          const newLeft = left - ((calcX(defPos) - newX) * cellSize)
-          copyBox.style.left = `${newLeft}px`
-          const newWidth = (calcX(defPos) - newX + 1) 
-          copyBox.style.width = `${newWidth * cellSize}px`
-        } else {
-          const newWidth = (newX - calcX(defPos) + 1)
-          copyData.width = newWidth
-          copyBox.style.width = `${newWidth * cellSize}px`
-          copyBox.style.left = `${left}px`
-        }
-        prevX = newX
-      } else if (newY !== prevY) {
-        if (calcY(defPos) > newY){ 
-          const newTop = top - ((calcY(defPos) - newY) * cellSize)
-          copyBox.style.top = `${newTop}px`
-          const newHeight = (calcY(defPos) - newY + 1)
-          copyBox.style.height = `${newHeight * cellSize}px`
-        } else {
-          const newHeight = (newY - calcY(defPos) + 1)
-          copyData.height = newHeight
-          copyBox.style.height = `${newHeight * cellSize}px`
-          copyBox.style.top = `${top}px`
-        }
-        prevY = newY
-      } 
-      
-      // copy selected area
-      const x = copyBox.offsetLeft / cellSize
-      const y = copyBox.offsetTop / cellSize
-      copyData.index = returnSelectedCells((y * column) + x)
-      // console.log('index', copyData.index, 'prevY',prevY, 'prevX', prevX)
-      // copySelection()
-    }     
-  })
-
-
   const returnSelectedCells = (firstCell, roundedX, roundedY) =>{
     if (copyBox && !copied){
       copyBox.style.justifyContent = 'flex-end'
