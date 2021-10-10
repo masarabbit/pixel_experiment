@@ -109,7 +109,7 @@ function init() {
       map: 'v21,w14,v6,w1,b12,w1,v6,w1,b2,o3,b7,w5,v1,b18,w1,v1,b18,w1,v2,w1,b12,o3,b1,w1,v2,w1,b16,w1,v2,w18,v21'
     },
     {
-      name: 'house_one',
+      name: 'house_one_0',
       iWidth: 12,
       iHeight: 9,
       events: [
@@ -117,6 +117,12 @@ function init() {
         '91_transport-portal9'
       ],
       map: 'bd4,rp1,la1,rp5,bd5,rp1,la1,rp5,bd2,rp4,la1,rp5,bd2,rp3,ry1,at5,rt1,bd2,ry1,at2,p6,ar1,bd2,bx1,p1,ab1,p6,ar1,bd3,e1,bd1,bx1,ab2,p1,ab2,by1,bd8,e1,bd16'
+    },
+    {
+      name: 'house_one_1',
+      iWidth: 6,
+      iHeight: 6,
+      map: 'bd7,rp4,bd2,rp1,la1,rp2,bd2,ry1,lh1,at1,rt1,bd2,bx1,p1,ab1,by1,bd3,e1,bd3'
     }
   ]
 
@@ -232,13 +238,17 @@ function init() {
     // return `<path fill="${subColor || 'white'}" d="M 0 0h16v16hN6vN6"/ D 4 1h8v1h-8vN"/ D 4 5h8v1h-8vN"/ D 4 9h8v1h-8vN"/ D 4 13h8v1h-8vN"/`
     return `<path fill="${subColor || 'white'}" d="M 0 0h16v16hN6vN6"/ D 3 1h1v1hNvN"/ D 12 1h1v1hNvN"/ D 4 2h8v1h-8vN"/ D 3 5h1v1hNvN"/ D 12 5h1v1hNvN"/ D 4 6h8v1h-8vN"/ D 3 9h1v1hNvN"/ D 12 9h1v1hNvN"/ D 4 10h8v1h-8vN"/ D 3 13h1v1hNvN"/ D 12 13h1v1hNvN"/ D 4 14h8v1h-8vN"/`
   } // return `<path fill="${subColor || 'white'}" d="M 0 0h16v16hN6vN6"/ D 4 1h8v1h-8vN"/ D 4 5h8v1h-8vN"/ D 4 9h8v1h-8vN"/ D 4 13h8v1h-8vN"/`
+  
 
-  const exit = (main , subColor) =>{
+  const ladderHole = subColor =>{
+    return `D 0 0h16v1hNv10hNv2hTv1hTv1h-4vNhTvNhTvThNvN0hNvN"/ F 0 1h1v10h1v2h2v1h2v1h4vNh2vNh2vTh1vN0h1v15hN6vN5"/ <path fill="${subColor}" d="M 3 1h1v1hNvN"/ <path fill="${subColor}" d="M 12 1h1v1hNvN"/ <path fill="${subColor}" d="M 4 2h8v1h-8vN"/ <path fill="${subColor}" d="M 3 5h1v1hNvN"/ <path fill="${subColor}" d="M 12 5h1v1hNvN"/ <path fill="${subColor}" d="M 4 6h8v1h-8vN"/ <path fill="${subColor}" d="M 3 9h1v1hNvN"/ <path fill="${subColor}" d="M 12 9h1v1hNvN"/ <path fill="${subColor}" d="M 4 10h8v1h-8vN"/`
+  } 
+
+  const exit = subColor =>{
     // return `
     // <path fill="${main}" d="M 0 0h16v1hNv1hNv1hNv1hNv1hTv1h-4vNhTvNhNvNhNvNhNvNhNvN"/ <path fill="${subColor}" d="M 0 1h1v1h1v1h1v1h1v1h2v1h4vNh2vNh1vNh1vNh1vNh1v15hN6vN5"/
     // `
-    return `<path fill="${main}" d="M 0 0h16v4hTv2hTvThTv2hTvThTv2hTvThTv2hTv-6"/ <path fill="${subColor}" d="M 2 4h2v2hTvT"/ <path fill="${subColor}" d="M 6 4h2v2hTvT"/ <path fill="${subColor}" d="M 10 4h2v2hTvT"/ <path fill="${subColor}" d="M 14 4h2v2hTvT"/ <path fill="${subColor}" d="M 0 6h2v2h2vTh2v2h2vTh2v2h2vTh2v2h2v8hN6vN0"/ <path fill="${main}" d="M 2 6h2v2hTvT"/ <path fill="${main}" d="M 6 6h2v2hTvT"/ <path fill="${main}" d="M 10 6h2v2hTvT"/ <path fill="${main}" d="M 14 6h2v2hTvT"/`
-    // return `<path fill="${main}" d="M 0 0h2v2hTvT"/ <path fill="${subColor}" d="M 2 0h2v2hTvT"/ <path fill="${main}" d="M 4 0h2v2hTvT"/ <path fill="${subColor}" d="M 6 0h2v2hTvT"/ <path fill="${main}" d="M 8 0h2v2hTvT"/ <path fill="${subColor}" d="M 10 0h2v2hTvT"/ <path fill="${main}" d="M 12 0h2v2hTvT"/ <path fill="${subColor}" d="M 14 0h2v2hTvT"/ <path fill="${subColor}" d="M 0 2h2v2hTvT"/ <path fill="${main}" d="M 2 2h2v2hTvT"/ <path fill="${subColor}" d="M 4 2h2v2hTvT"/ <path fill="${main}" d="M 6 2h2v2hTvT"/ <path fill="${subColor}" d="M 8 2h2v2hTvT"/ <path fill="${main}" d="M 10 2h2v2hTvT"/ <path fill="${subColor}" d="M 12 2h2v2hTvT"/ <path fill="${main}" d="M 14 2h2v2hTvT"/ <path fill="${main}" d="M 0 4h2v2hTvT"/ <path fill="${subColor}" d="M 2 4h2v2hTvT"/ <path fill="${main}" d="M 4 4h2v2hTvT"/ <path fill="${subColor}" d="M 6 4h2v2hTvT"/ <path fill="${main}" d="M 8 4h2v2hTvT"/ <path fill="${subColor}" d="M 10 4h2v2hTvT"/ <path fill="${main}" d="M 12 4h2v2hTvT"/ <path fill="${subColor}" d="M 14 4h2v2hTvT"/ <path fill="${subColor}" d="M 0 6h2v2h2vTh2v2h2vTh2v2h2vTh2v2h2v8hN6vN0"/ <path fill="${main}" d="M 2 6h2v2hTvT"/ <path fill="${main}" d="M 6 6h2v2hTvT"/ <path fill="${main}" d="M 10 6h2v2hTvT"/ <path fill="${main}" d="M 14 6h2v2hTvT"/`
+    return `<path fill="${subColor}" d="M 0 0h16v4hTv2hTvThTv2hTvThTv2hTvThTv2hTv-6"/ D 2 4h2v2hTvT"/ D 6 4h2v2hTvT"/ D 10 4h2v2hTvT"/ D 14 4h2v2hTvT"/ D 0 6h2v2h2vTh2v2h2vTh2v2h2vTh2v2h2v8hN6vN0"/ <path fill="${subColor}" d="M 2 6h2v2hTvT"/ <path fill="${subColor}" d="M 6 6h2v2hTvT"/ <path fill="${subColor}" d="M 10 6h2v2hTvT"/ <path fill="${subColor}" d="M 14 6h2v2hTvT"/`
   }
 
   // const sub = '#e2cc9c'
@@ -292,7 +302,9 @@ function init() {
     're': { svg: riverCurve, rotate: 270, animation: riverCurveAnim },
     'la': { svg: ladder, color: main, subColor: sub },
     'c': { svg: checkered, color: '#a2e8fc' },
-    'e': { svg: exit, color: '#0d8799', subColor: '#a2fcf0' }
+    'e': { svg: exit, color: '#0d8799', subColor: '#fff' },
+    'lh': { svg: ladderHole, color: '#bba293', subColor: sub }
+    // 'lh': { svg: door, color: '#a58f82', flip: 'v' }
   }
   // const svgAnimFrames = {
   //   'ra': { svg: riverCurve },
@@ -678,6 +690,7 @@ function init() {
   // eventlistener
   const toggleGrid = () =>{
     grids.forEach(grid=>grid.classList.toggle('grid_hide'))
+    copyGrid.classList.toggle('grid_hide')
   }
   
   const toggleIndex = () =>{
