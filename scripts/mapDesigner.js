@@ -604,16 +604,16 @@ function init() {
   //todo can be refactored
   const generateFromCode = () =>{
     createGridCells(
-      rowInputs[0].value,
-      columnInputs[0].value,
+      row,
+      column,
       cellSizeInputs[0].value,
       0,
       'map_gen_cell',
       false
     )
     createGridCells(
-      rowInputs[0].value,
-      columnInputs[0].value,
+      row,
+      column,
       cellSizeInputs[0].value,
       1,
       'map_cell',
@@ -622,7 +622,7 @@ function init() {
 
     codes[0] = codesBox[0].value.split(',')
     const mapCells = document.querySelectorAll('.map_cell')
-    codesBox[0].value.split(',').forEach((ele,i)=>{
+    codes[0].forEach((ele,i)=>{
       if (!mapCells[i]) return
       mapCells[i].innerHTML = ele
     })
@@ -914,7 +914,7 @@ function init() {
 
     if (cut){
       //* delete original
-      codes[0] = codesBox[0].value.split(',').map((grid,i)=>{  //TODO it becomes copy if we remove this bit
+      codes[0] = codesBox[0].value.split(',').map((grid,i)=>{ 
         if (copyData.index.some(data=> data === i)) console.log('test',grid) 
         return copyData.index.some(data=> data === i) ? 'x' : grid
       })
@@ -1030,28 +1030,29 @@ function init() {
 
 
   //TODO to add by editing.
-  // const crop = () =>{
-  //   if (!copyData.index) return
-  //   codesBox[0].value = codesBox[0].value = codesBox[0].value.split(',').filter((_code,i)=>{
-  //     return copyData.index.find(data=> +data === i)
-  //   }).join(',')
-  //   column = copyData.width
-  //   row = copyData.height
-  //   paintCanvas()
-  //   generateFromColorCode()
-  //   columnInput.value = column
-  //   rowInput.value = row
-  // }
+  const crop = () =>{
+    if (!copyData.index) return
+    codesBox[0].value = codesBox[0].value.split(',').filter((_code,i)=>{
+      return copyData.index.find(data=> +data === i)
+    }).join(',')
+    column = copyData.width
+    row = copyData.height
+    columnInputs[0].value = column
+    rowInputs[0].value = row
+    generateFromCode()
+    handleSelect()
+  }
 
-  // const deleteSelection = () =>{
-  //   if (!copyData.index) return
-  //   codesBox[0].value = codesBox[0].value = codesBox[0].value.split(',').map((code,i)=>{
-  //     return copyData.index.find(data=> +data === i) 
-  //       ? ''
-  //       : code
-  //   }).join(',')
-  //   generateFromColorCode()
-  // }
+  const deleteSelection = () =>{
+    if (!copyData.index) return
+    codesBox[0].value = codesBox[0].value.split(',').map((code,i)=>{
+      return copyData.index.find(data=> +data === i) 
+        ? 'x'
+        : code
+    }).join(',')
+    generateFromCode()
+    handleSelect()
+  }
 
 
   buttons.forEach(b =>{
@@ -1076,8 +1077,8 @@ function init() {
     if (b.classList.contains('cut_selection')) b.addEventListener('click', ()=>copySelectionToCopyBox(true))
     if (b.classList.contains('move_selection')) b.addEventListener('click', moveSelection)
     if (b.classList.contains('paste_selection')) b.addEventListener('click', paste)
-    // if (b.classList.contains('crop_selection')) b.addEventListener('click', crop)
-    // if (b.classList.contains('delete_selection')) b.addEventListener('click', deleteSelection)
+    if (b.classList.contains('crop_selection')) b.addEventListener('click', crop)
+    if (b.classList.contains('delete_selection')) b.addEventListener('click', deleteSelection)
   })
 
 }

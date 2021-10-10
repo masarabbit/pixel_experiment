@@ -663,7 +663,7 @@ function init() {
 
   const crop = () =>{
     if (!copyData.index) return
-    codesBox[0].value = codesBox[0].value = codesBox[0].value.split(',').filter((_code,i)=>{
+    codesBox[0].value = codesBox[0].value.split(',').filter((_code,i)=>{
       return copyData.index.find(data=> +data === i)
     }).join(',')
     column = copyData.width
@@ -672,16 +672,18 @@ function init() {
     generateFromColorCode()
     columnInput.value = column
     rowInput.value = row
+    handleSelect()
   }
 
   const deleteSelection = () =>{
     if (!copyData.index) return
-    codesBox[0].value = codesBox[0].value = codesBox[0].value.split(',').map((code,i)=>{
+    codesBox[0].value = codesBox[0].value.split(',').map((code,i)=>{
       return copyData.index.find(data=> +data === i) 
-        ? ''
+        ? 'transparent'
         : code
     }).join(',')
     generateFromColorCode()
+    handleSelect()
   }
   
   const toggleGrid = () =>{
