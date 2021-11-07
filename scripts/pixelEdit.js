@@ -894,9 +894,9 @@ function init() {
     convertToSvg(processedCodes)
 
     // put in to compress
-    codesBox[1].value = pathData.join(' ').replaceAll('<path d="M','D').replaceAll('<path fill="#ffffff" d="M','F').replaceAll('/>','/').replaceAll('-1','N').replaceAll('-2','T').replaceAll(' v ','v').replaceAll(' h ','h').replaceAll('<path fill="#000000" d="M','D')
+    // codesBox[1].value = pathData.join(' ').replaceAll('<path d="M','D').replaceAll('<path fill="#ffffff" d="M','F').replaceAll('/>','/').replaceAll('-1','N').replaceAll('-2','T').replaceAll(' v ','v').replaceAll(' h ','h').replaceAll('<path fill="#000000" d="M','D')
 
-    // codesBox[1].value = pathData.join(' ').replaceAll('ffffff','fff').replaceAll('000000','000')
+    codesBox[1].value = pathData.join(' ').replaceAll('ffffff','fff').replaceAll('000000','000')
   })
 
   const dataUrlButton = document.querySelector('.url')
