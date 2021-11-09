@@ -37,9 +37,28 @@ p, h1, h2, h3, h4 {
 
 canvas {
   margin: 0 5px;
-  background-color: #ffffff;
+  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAAXNSR0IArs4c6QAAACZJREFUGFdj7Pr/6D8DAwNDKYMsiGJgxBD4//8/WEU3w2OICnQBAKEOEtF5D/chAAAAAElFTkSuQmCC) repeat 0 0;
   /* background-color: transparent; */
   /* display: none; */
+}
+
+p.image_count {
+  font-size: 12px;
+}
+
+input.no_input {
+  width: 40px;
+  text-align: center;
+}
+
+.output {
+  margin-top: 30px;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.output canvas{
+  margin: 5px;
 }
 
 .display_none {
