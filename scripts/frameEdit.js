@@ -25,7 +25,7 @@ function init() {
   // drag
   const slotInfo = []
   const sequenceOutput = document.querySelector('.sequence')
-  let sequence = [' ',' ',' ',' ']
+  let sequence = []
   let slots
   let frames
 
@@ -234,94 +234,92 @@ function init() {
 
   // drag
   const addFramePositionActions = frame =>{
+
+    frame.childNodes[1].classList.add('select')
     let newX
     let newY
+    const frameId = +frame.dataset.id
+
+    // TODO sometimes the frame disappears, check what is happening
+    console.log('frameId', frameId)
+    
     const onDrag = e => {
-    frame.style.transtion = '0s'
-    const { x: offSetX, y: offSetY } = frame.getBoundingClientRect()
+      frame.style.transtion = '0s'
+      const { x: offSetX, y: offSetY } = frame.getBoundingClientRect()
       newX = offSetX + e.movementX
       newY = offSetY + e.movementY
-    frame.style.left = `${newX}px`
-    frame.style.top = `${newY}px`
+      frame.style.left = `${newX}px`
+      frame.style.top = `${newY}px`
     }
-    frame.childNodes[1].classList.add('select')
-
-    const tidySequence = () =>{
-      sequence = sequence.map(s => s === frame.dataset.id ? ' ' : s )
-    }
+    
+    const tidySequence = () => sequence = sequence.map(s => s === frameId ? ' ' : s )
 
     const onLetGo = () => {
       frame.childNodes[1].classList.remove('select')
       document.removeEventListener('mousemove', onDrag)
       document.removeEventListener('mouseup', onLetGo)
-      // console.log('slotInfo', slotInfo)
       let matchSlot
+
       slotInfo.forEach((info,i)=>{
-        const openSlot = sequence.map((slot,i)=> slot === ' ' ? i : 'none').filter(slot => slot !== 'none')
-        
-        // TODO needs adjustment
-        //* maybe don't check Y?
-        const newXC = newX + 35
+        const openSlot = sequence.map((slot,i)=> slot === ' ' ? i : 'none').filter(slot => slot !== 'none')        
+        const selectedFrame = frames[sequence[i] - 1]  
+        const positionWithinSequence = sequence.indexOf(frameId)
+        const newXC = newX + 50
         const newYC = newY + 55
+
         if ((newXC > info.x && newXC < info.x + 70) &&
             (newYC > info.y && newYC < info.y + 110)){
           frame.style.transition = '0.3s'
           newX = info.x
           newY = info.y
           matchSlot = true
-        const selectedFrame = frames[sequence[i] - 1]  
-        const positionWithinSequence = sequence.indexOf(frame.dataset.id)
         
-        // if slot is full  
-        if(!openSlot.length && positionWithinSequence === -1) {
-          selectedFrame.style.transition = '0.3s'
-          selectedFrame.style.left =`${20 * frame.dataset.id}px`
-          selectedFrame.style.top = `${output.getBoundingClientRect().y - 100}px`
-          sequence = sequence.map(s => s === selectedFrame.dataset.id ? ' ' : s)
-        }
-
-        //swap if frame outside slot overlap with frame in slot
-        if(openSlot.length && positionWithinSequence === -1 && sequence[i] && sequence[i] !== ' ') {
-          selectedFrame.style.transition = '0.3s'
-          
-          // checks for open slot
-          let availableSlot
-          let offset = 0
-          while (!availableSlot) {
-            offset++
-            if (openSlot.indexOf(i + offset) !== -1) availableSlot = i + offset
-            if (openSlot.indexOf(i - offset) !== -1) availableSlot = i - offset
+          // if slot is full  
+          if(!openSlot.length && positionWithinSequence === -1) {
+            selectedFrame.style.transition = '0.3s'
+            selectedFrame.style.left =`${20 * frameId}px`
+            selectedFrame.style.top = `${output.getBoundingClientRect().y - 100}px`
+            sequence = sequence.map(s => s === selectedFrame.dataset.id ? ' ' : s)
           }
-          // console.log('availableSlot',availableSlot)
+
+          //swap if frame outside slot overlap with frame in slot
+          if(openSlot.length && positionWithinSequence === -1 && sequence[i] && sequence[i] !== ' ') {
+            selectedFrame.style.transition = '0.3s'
+            
+            // checks for open slot
+            let availableSlot
+            let offset = 0
+            while (!availableSlot) {
+              offset++
+              if (openSlot.find(s => s === i + offset)) availableSlot = i + offset
+              if (openSlot.find(s => s === i - offset)) availableSlot = i - offset
+            }
   
           selectedFrame.style.left =`${slotInfo[availableSlot].x}px`
           selectedFrame.style.top =`${slotInfo[availableSlot].y}px`
           sequence[availableSlot] = sequence[i]
-        }
+          }
           
-        //swap if square in slot overlap with another square in slot
-        else if(positionWithinSequence !== -1 && sequence[i] && sequence[i] !== ' ') {
-          // console.log('testA',sequence[i]-1)
-          selectedFrame.style.transition = '0.3s'
-          selectedFrame.style.left =`${slotInfo[positionWithinSequence].x}px`
-          selectedFrame.style.top =`${slotInfo[positionWithinSequence].y}px`
-          sequence[positionWithinSequence] = sequence[i]
-        }
+          //swap if square in slot overlap with another square in slot
+          else if(positionWithinSequence !== -1 && sequence[i] && sequence[i] !== ' ') {
+            selectedFrame.style.transition = '0.3s'
+            selectedFrame.style.left =`${slotInfo[positionWithinSequence].x}px`
+            selectedFrame.style.top =`${slotInfo[positionWithinSequence].y}px`
+            sequence[positionWithinSequence] = sequence[i]
+          }
+
           //update sequence
           tidySequence()
-          sequence[i] = frame.dataset.id
+          sequence[i] = frameId
         }   
       })
 
-      if (!matchSlot) {
-        tidySequence()
-      }
+      if (!matchSlot) tidySequence()
+
       sequenceOutput.value = sequence.join(' ')
       frame.style.left = `${newX}px`
       frame.style.top = `${newY}px`
-      setTimeout(()=>{
-        frames.forEach(frame => frame.style.transition = '0s')
-      },200)
+      setTimeout(()=> frames.forEach(frame => frame.style.transition = '0s'),200)
     }
     const onGrab = () => {
       document.addEventListener('mousemove', onDrag)
