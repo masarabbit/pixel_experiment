@@ -1,0 +1,69 @@
+<!doctype html>
+<html>
+
+<head>
+  <link rel="stylesheet" type="text/css" href="./styles/frame_edit.css" />
+  <script src="./jsgif/b64.js"></script>
+　<script src="./jsgif/LZWEncoder.js"></script>
+　<script src="./jsgif/NeuQuant.js"></script>
+　<script src="./jsgif/GIFEncoder.js"></script>
+　<script src ="./scripts/frameEdit.js" charset="utf-8"></script>
+<!-- <script src ="./scripts/drag.js" charset="utf-8"></script> -->
+
+  <title>frame edit</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+
+<body>
+  <nav>
+    frame edit
+    <label for="color" class="color_label"></label>
+    <input id="color" type="color">
+    <div class="input_wrap">
+      <label>img</label>
+      <input class="img_name input" placeholder="img" value="img" />
+    </div>
+    <input id="upload" type="file" multiple />
+    <label for="upload" class="icon upload alt" data-alt="upload file"></label>
+    <p class="image_count"></p>
+    <button class="download_file download icon alt" data-alt="download sprite"></button>
+    <button class="combine icon alt" data-alt="combine">+</button>
+    <div class="input_wrap">
+      <label>img no.</label>
+      <input class="img_no input no_input" placeholder="img no." value="0" />
+    </div>
+    <div class="input_wrap">
+      <label>scale</label>
+      <input class="scale input no_input" placeholder="1" value="1" />
+    </div>
+    <button class="divide icon alt" data-alt="divide">/</button>
+    <button class="download_imgs download icon alt" data-alt="download divided images">:</button>
+    <button class="create_gif download icon alt" data-alt="create gif">=</button>
+    <button class="download_gif download icon alt" data-alt="download gif">gif</button>
+  </nav>
+
+  <div class="pagewrap">
+
+    <img class="gif">
+
+    
+    <div class="img_wrap">
+      <canvas class="canvas"></canvas>
+      <canvas class="canvas"></canvas>
+    </div>
+    
+    <div class="output_wrapper">
+      <div class="output">
+      </div>
+    </div>
+    <textarea class="sequence" spellcheck="false" placeholder="sequence"></textarea>
+    <div class="canvas_output"></div>
+  </div>
+
+
+  <div class="cursor" data-text="test"><div></div></div>
+  <div class="indicator"></div>
+</body>
+
+</html>
