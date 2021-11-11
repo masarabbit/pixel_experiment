@@ -333,11 +333,9 @@ function init() {
 
   const recordSlotPos = () =>{
     slots.forEach((slot,i)=>{
+      const { x, y } = slot.getBoundingClientRect()
       slot.dataset.i = i
-      slotInfo[i] = {
-        x: slot.getBoundingClientRect().x,
-        y: slot.getBoundingClientRect().y
-      }
+      slotInfo[i] = { x, y }
     })
   }
 
@@ -345,8 +343,9 @@ function init() {
     recordSlotPos()
     sequence.forEach((frame,i)=>{
       if (frame !== ' '){
-        frames[+frame -1].style.left = `${slotInfo[i].x}px`
-        frames[+frame -1].style.top = `${slotInfo[i].y}px`
+        const { x, y } = slotInfo[i]
+        frames[+frame -1].style.left = `${x}px`
+        frames[+frame -1].style.top = `${y}px`
       }
     })
   }
