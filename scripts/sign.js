@@ -1,6 +1,6 @@
 function init() {
   
-  const body = document.querySelector('body')
+  // const body = document.querySelector('body')
   const canvas = document.querySelector('canvas')
   const ctx = canvas.getContext('2d')
   const addButton = document.querySelector('.add')
@@ -46,21 +46,18 @@ function init() {
 </g>
   `
 
-
   const svgWrapper = (content, color, w, h) =>{
     return `<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="${w}px" height="${h}px" viewBox="0 0 ${w} ${h}" fill="${color}">${content}</svg>`
   }
 
-
-  const outputSvg = content =>{
+  const outputSvg = (content, canvas) =>{
     const data = new Blob([content], { type: 'image/svg+xml;charset=utf-8' })
     const url = window.URL.createObjectURL(data)
     const sign = new Image()
-
     sign.onload = () => {
       const { naturalWidth: w, naturalHeight: h, } = sign
       const { offsetWidth: cW, offsetHeight: cH } = canvas
-      ctx.drawImage(sign, cW - (5 + w), cH - (5 + h), w, h)
+      canvas.getContext('2d').drawImage(sign, cW - (5 + w), cH - (5 + h), w, h)
     }
     sign.src = url
   }
@@ -68,7 +65,7 @@ function init() {
 
 
   addButton.addEventListener('click', ()=>{
-    outputSvg(svgWrapper(signSvg, 'red', 71.8, 18.9))
+    outputSvg(svgWrapper(signSvg, 'red', 71.8, 18.9), canvas)
   })
 }
 
