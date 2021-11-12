@@ -49,12 +49,12 @@ function init() {
     return ((r << 16) | (g << 8) | b).toString(16)
   }
 
-  const hex = rgb =>{
-    return '#' + ('000000' + rgb).slice(-6)
-  }
+  const hex = rgb => '#' + ('000000' + rgb).slice(-6)
 
   const combineImages = () =>{
     if (!uploadFiles || uploadFiles.length < 2) return
+    canvas[0].classList.remove('display_none')
+
     const firstImage = new Image()
     firstImage.onload = () => {
       const { naturalWidth:w, naturalHeight:h, } = firstImage
@@ -82,9 +82,9 @@ function init() {
   }
 
   const extractCodes = (w, h, ctx) =>{
-    return new Array(Math.round(w) * Math.round(h)).fill('').map((_code,a)=>{
-      const x = a % w
-      const y = Math.floor(a / h)
+    return new Array(Math.round(w) * Math.round(h)).fill('').map((_code, i)=>{
+      const x = i % w
+      const y = Math.floor(i / h)
       const c = ctx.getImageData(x, y, 1, 1).data
 
       // this thing included here to prevent rendering black instead of transparent
@@ -94,66 +94,81 @@ function init() {
     })
   }
 
+
+  const createThumbs = (i, thumbImage) =>{
+    thumbImage.classList.add('thumb_image')
+    const slot = document.createElement('div')
+    slot.classList.add('slot')
+    slot.innerHTML =  `
+    <div class="thumb_container" data-id="${i + 1}" >
+      <div class="input_wrapper">
+        <p>${i + 1}</p>
+        <input class="transition input" placeholder="100" value="100" />
+      </div>
+    </div>`
+
+    slot.childNodes[1].append(thumbImage)
+    output.append(slot)
+  }
+
+  const createCopyCanvasAndDisplayThumbs = (canvas, thumbImage, imgNo, imageIndex, divide) =>{
+    canvas.classList.add('divided_img')
+    const scale = +scaleInput.value
+    const img = new Image()
+    img.onload = () => {
+      const { naturalWidth:w, naturalHeight:h } = img
+      const newImgWidth = w / imgNo
+      canvas.setAttribute('width', newImgWidth)
+      canvas.setAttribute('height', h)
+
+      const ctx = canvas.getContext('2d')
+      const offset = divide ? imageIndex * -newImgWidth : 0
+      ctx.drawImage(img, offset, 0, w, h)
+      const codes = extractCodes(newImgWidth, h, ctx)
+      
+      // enlarge based on scale value
+      canvas.setAttribute('width', newImgWidth * scale)
+      canvas.setAttribute('height', h * scale)
+
+      codes.forEach((code, i)=>{
+        const x = (i % newImgWidth) * scale
+        const y = (Math.floor(i / h)) * scale
+        ctx.fillStyle = code
+        ctx.fillRect(x, y, scale, scale)
+      })
+
+      thumbImage.src = canvas.toDataURL()
+    }
+    img.src = window.URL.createObjectURL(uploadFiles[ divide ? 0 : imageIndex])  
+  }
+
+  const makeThumbsDraggable = () =>{
+    frames = document.querySelectorAll('.thumb_container')
+    slots = document.querySelectorAll('.slot')
+    sequence = new Array(slots.length).fill('').map((_s, i)=> i + 1)
+    frames.forEach(frame => addFramePositionActions(frame))
+    recordSlotPos()
+    sequenceOutput.value = sequence.join(' ')
+  }
+
+
   const divide = () =>{
     if (!uploadFiles || uploadFiles.length > 1) return
     output.innerHTML = ''
     canvasOutput.innerHTML = ''
     sequence.length = 0
     const imgNo = +imgNoInput.value
-    const scale = +scaleInput.value
 
-    new Array(imgNo).fill('').forEach((_file,i)=>{
-
-      // TODO isolate this bit
-      const newCanvas = document.createElement('canvas')
-      newCanvas.classList.add('divided_img')
-      canvasOutput.append(newCanvas)
-
-      const slot = document.createElement('div')
-      slot.classList.add('slot')
-      slot.innerHTML =  `
-      <div class="thumb_container" data-id="${i + 1}" >
-        <div class="input_wrapper">
-          <p>${i + 1}</p>
-          <input class="transition input" placeholder="100" value="100" />
-        </div>
-      </div>`
+    new Array(imgNo).fill('').forEach((_file,imageIndex)=>{
       const thumbImage = document.createElement('img')
-      thumbImage.classList.add('thumb_image')
-
-      slot.childNodes[1].append(thumbImage)
-      output.append(slot)
-      // console.log(slot.childNodes)
-    
-      // TODO isolate this bit
-      const img = new Image()
-      img.onload = () => {
-        const { naturalWidth:w, naturalHeight:h,  } = img
-        const newImgWidth = w / imgNo
-        newCanvas.setAttribute('width', newImgWidth)
-        newCanvas.setAttribute('height', h)
-
-        const ctx = newCanvas.getContext('2d')
-        ctx.drawImage(img, i * -newImgWidth, 0, w, h)
-
-        const codes = extractCodes(newImgWidth, h, ctx)
-        
-        // enlarge based on scale value
-        newCanvas.setAttribute('width', newImgWidth * scale)
-        newCanvas.setAttribute('height', h * scale)
-
-        codes.forEach((code, b)=>{
-          const x = (b % newImgWidth) * scale
-          const y = (Math.floor(b / h)) * scale
-          ctx.fillStyle = code
-          ctx.fillRect(x, y, scale, scale)
-        })
-
-        thumbImage.src = newCanvas.toDataURL()
-      }
-      img.src = window.URL.createObjectURL(uploadFiles[0])  
-
+      createThumbs(imageIndex, thumbImage)
+      
+      const newCanvas = document.createElement('canvas')
+      canvasOutput.append(newCanvas)
+      createCopyCanvasAndDisplayThumbs(newCanvas, thumbImage, imgNo, imageIndex, true) 
     })
+
+    makeThumbsDraggable()
   }
 
   const downloadDividedImgs = () =>{
@@ -166,12 +181,6 @@ function init() {
     })
   }
 
-  upload.addEventListener('change',()=>{
-    uploadFiles = upload.files
-    imageCount.innerHTML = `image x ${uploadFiles.length}`
-
-    // TODO when multiple image is loaded, display them onto canvas
-  })
 
   const buttonTrigger = (button, classId, action) =>{
     if (button.classList.contains(classId)) button.addEventListener('click', action)
@@ -207,9 +216,12 @@ function init() {
     encoder.setRepeat(0) //auto-loop
     encoder.start()
     
-    dividedImages.forEach((canvas, i)=>{
-      encoder.setDelay(transitionInput[i].value)
-      encoder.addFrame(canvas.getContext('2d'))
+    dividedImages.forEach((_canvas, i)=>{
+      const index = sequence.indexOf(i + 1)
+      if (index === -1) return
+
+      encoder.setDelay(transitionInput[index].value)
+      encoder.addFrame(dividedImages[index].getContext('2d'))
     })
     
     encoder.finish()
@@ -217,6 +229,7 @@ function init() {
     const { offsetHeight, offsetWidth } = dividedImages[0]
     gif.style.height = `${offsetHeight}px`
     gif.style.width = `${offsetWidth}px`
+    gif.onload = () => repositionFrames()
     gif.src = 'data:image/gif;base64,'+encode64(encoder.stream().getData())
   }  
 
@@ -239,10 +252,8 @@ function init() {
     let newX
     let newY
     const frameId = +frame.dataset.id
+    const positionWithinSequence = sequence.indexOf(frameId)
 
-    // TODO sometimes the frame disappears, check what is happening
-    console.log('frameId', frameId)
-    
     const onDrag = e => {
       frame.style.transtion = '0s'
       const { x: offSetX, y: offSetY } = frame.getBoundingClientRect()
@@ -263,7 +274,7 @@ function init() {
       slotInfo.forEach((info,i)=>{
         const openSlot = sequence.map((slot,i)=> slot === ' ' ? i : 'none').filter(slot => slot !== 'none')        
         const selectedFrame = frames[sequence[i] - 1]  
-        const positionWithinSequence = sequence.indexOf(frameId)
+        // const positionWithinSequence = sequence.indexOf(frameId)
         const newXC = newX + 50
         const newYC = newY + 55
 
@@ -299,22 +310,21 @@ function init() {
           selectedFrame.style.top =`${slotInfo[availableSlot].y}px`
           sequence[availableSlot] = sequence[i]
           }
-          
           //swap if square in slot overlap with another square in slot
           else if(positionWithinSequence !== -1 && sequence[i] && sequence[i] !== ' ') {
             selectedFrame.style.transition = '0.3s'
             selectedFrame.style.left =`${slotInfo[positionWithinSequence].x}px`
             selectedFrame.style.top =`${slotInfo[positionWithinSequence].y}px`
             sequence[positionWithinSequence] = sequence[i]
-          }
+          } 
 
           //update sequence
           tidySequence()
           sequence[i] = frameId
-        }   
+        }  else if (!matchSlot && (newX || newY)){
+          tidySequence()
+        }
       })
-
-      if (!matchSlot) tidySequence()
 
       sequenceOutput.value = sequence.join(' ')
       frame.style.left = `${newX}px`
@@ -328,7 +338,6 @@ function init() {
     frame.addEventListener('mousedown', onGrab)
   }  
 
-
   const recordSlotPos = () =>{
     slots.forEach((slot,i)=>{
       const { x, y } = slot.getBoundingClientRect()
@@ -337,7 +346,8 @@ function init() {
     })
   }
 
-  const repositionSquare = () =>{
+  const repositionFrames = () =>{
+    if (!sequence || sequence.length || !slots) return
     recordSlotPos()
     sequence.forEach((frame,i)=>{
       if (frame !== ' '){
@@ -348,31 +358,42 @@ function init() {
     })
   }
 
+  const uploadImage = () =>{
+    uploadFiles = upload.files
+    imageCount.innerHTML = `image x ${uploadFiles.length}`
+    if (uploadFiles.length < 1) return
 
+    output.innerHTML = ''
+    canvasOutput.innerHTML = ''
+    sequence.length = 0
+
+    new Array(uploadFiles.length).fill('').forEach((_file,i)=>{
+      const thumbImage = document.createElement('img')
+      createThumbs(i, thumbImage)
+      // thumbImage.src = uploadFiles[i].toDataURL()
+      const newCanvas = document.createElement('canvas')
+      canvasOutput.append(newCanvas)
+      createCopyCanvasAndDisplayThumbs(newCanvas, thumbImage, 1, i, false)
+    })
+
+    makeThumbsDraggable()
+  }
+
+
+  upload.addEventListener('change', uploadImage )
 
   
   buttons.forEach(button=>{
     buttonTrigger(button, 'download_file', ()=>downloadImage(canvas[0], imgNameInput.value))
     buttonTrigger(button, 'combine', combineImages)
-    buttonTrigger(button, 'divide', ()=>{
-      divide()
-      //TODO for drag
-      frames = document.querySelectorAll('.thumb_container')
-      slots = document.querySelectorAll('.slot')
-      sequence = new Array(slots.length).fill('').map((_s, i)=>i + 1)
-      frames.forEach(frame=>{ 
-        addFramePositionActions(frame)
-      })
-      recordSlotPos()
-      sequenceOutput.value = sequence.join(' ')
-    })
+    buttonTrigger(button, 'divide', divide)
     buttonTrigger(button, 'download_imgs', downloadDividedImgs)
     buttonTrigger(button, 'create_gif', createGif)
     buttonTrigger(button, 'download_gif', downloadGif)
   })
 
   window.addEventListener('resize',()=>{
-    repositionSquare()
+    repositionFrames()
   })   
 }
 

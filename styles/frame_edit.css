@@ -56,15 +56,17 @@ input.no_input {
   display: flex;
   justify-content: center;
   width: 100%;
+  /* overflow-x: scroll; */
 }
 
 .output {
   background-color: rgba(0, 0, 0, 0.4);
+  /* position: absolute; */
   /* position: relative; */
   /* border: red 1px solid; */
   margin-top: 30px;
   /* padding: 10px 0; */
-  overflow-x: scroll;
+  /* overflow-x: scroll; */
   display: flex;
   /* flex-wrap: wrap;
   justify-content: flex-start; */
@@ -154,11 +156,13 @@ button:hover {
 
 
 .img_wrap {
+  margin-top: 50px;
   display: flex;
   flex-direction: column;
   justify-content: space-evenly;
   align-items: space-evenly;
 }
+
 
 canvas {
   margin: 5px;
@@ -167,8 +171,7 @@ canvas {
 
 textarea {
   font-family: sans-serif;
-  width: 100%;
-  max-width: 700px;
+  width: calc(100% - 50px);
   margin: 10px 0 0 0;
   background-color: white;
   font-size: 12px;
@@ -267,7 +270,7 @@ button.icon:hover {
 
 #color { display: none; }
 
-.canvas_output {
+.hide_box {
   height: 0;
   overflow: hidden;
 }
@@ -348,7 +351,7 @@ button.icon:hover {
 }
 
 .gif {
-  margin: -40px 0 30px 0;
+  margin: 50px 0 30px 0;
 }
 
 .bucket {
