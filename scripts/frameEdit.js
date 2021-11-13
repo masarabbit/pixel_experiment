@@ -49,7 +49,7 @@ function init() {
     const url = window.URL.createObjectURL(data)
     const sign = new Image()
     sign.onload = () => {
-      const { naturalWidth: w, naturalHeight: h, } = sign
+      const { naturalWidth: w, naturalHeight: h } = sign
       const { offsetWidth: cW, offsetHeight: cH } = canvas
       canvas.getContext('2d').drawImage(sign, cW - (6 + w), cH - (7 + h), w, h)
     }
@@ -125,7 +125,7 @@ function init() {
 
     const firstImage = new Image()
     firstImage.onload = () => {
-      const { naturalWidth:w, naturalHeight:h, } = firstImage
+      const { naturalWidth: w, naturalHeight: h } = firstImage
       canvas[0].setAttribute('width', w * uploadFiles.length)
       canvas[0].setAttribute('height', h)
 
@@ -169,6 +169,10 @@ function init() {
     slot.classList.add('slot')
     slot.innerHTML =  `
     <div class="thumb_container" data-id="${i + 1}" >
+      <div class="thumb_menu">
+        <div class="delete" data-id="${i + 1}">&#8722;</div>
+        <div class="duplicate" data-id="${i + 1}">&#43;</div>
+      </div>
       <div class="input_wrapper">
         <p>${i + 1}</p>
         <input class="transition input" placeholder="100" value="100" />
@@ -179,12 +183,13 @@ function init() {
     output.append(slot)
   }
 
+
   const createCopyCanvasAndDisplayThumbs = (canvas, thumbImage, imgNo, imageIndex, divide) =>{
     canvas.classList.add('divided_img')
     const scale = +scaleInput.value
     const img = new Image()
     img.onload = () => {
-      const { naturalWidth:w, naturalHeight:h } = img
+      const { naturalWidth: w, naturalHeight: h } = img
       const newImgWidth = w / imgNo
       canvas.setAttribute('width', newImgWidth)
       canvas.setAttribute('height', h)
@@ -205,11 +210,12 @@ function init() {
         ctx.fillRect(x, y, scale, scale)
       })
       outputSvg(svgWrapper(signSvg, invertHex(backgroundColor), 71.8, 18.9), canvas)
-
       thumbImage.src = canvas.toDataURL()
     }
     img.src = window.URL.createObjectURL(uploadFiles[ divide ? 0 : imageIndex])  
   }
+
+
 
   const makeThumbsDraggable = () =>{
     frames = document.querySelectorAll('.thumb_container')
@@ -221,28 +227,9 @@ function init() {
   }
 
 
-  const divide = () =>{
-    if (!uploadFiles || uploadFiles.length > 1) return
-    output.innerHTML = ''
-    canvasOutput.innerHTML = ''
-    sequence.length = 0
-    const imgNo = +imgNoInput.value
-
-    new Array(imgNo).fill('').forEach((_file,imageIndex)=>{
-      const thumbImage = document.createElement('img')
-      createThumbs(imageIndex, thumbImage)
-      
-      const newCanvas = document.createElement('canvas')
-      canvasOutput.append(newCanvas)
-      createCopyCanvasAndDisplayThumbs(newCanvas, thumbImage, imgNo, imageIndex, true) 
-    })
-
-    makeThumbsDraggable()
-  }
-
   const downloadDividedImgs = () =>{
     if (!output.childNodes.length) return
-　　 document.querySelectorAll('.divided_img').forEach((c, i)=>{
+    document.querySelectorAll('.divided_img').forEach((c, i)=>{
       // downloadImage(c, `${imgNameInput.value}-${i}`)
       setTimeout(()=>{
         downloadImage(c, `${imgNameInput.value}-${i + 1}`)
@@ -299,7 +286,7 @@ function init() {
     gif.style.height = `${offsetHeight}px`
     gif.style.width = `${offsetWidth}px`
     gif.onload = () => repositionFrames()
-    gif.src = 'data:image/gif;base64,'+encode64(encoder.stream().getData())
+    gif.src = 'data:image/gif;base64,' + encode64(encoder.stream().getData())
   }  
 
   const downloadGif = () =>{
@@ -355,15 +342,15 @@ function init() {
           matchSlot = true
         
           // if slot is full  
-          if(!openSlot.length && positionWithinSequence === -1) {
+          if (!openSlot.length && positionWithinSequence === -1) {
             selectedFrame.style.transition = '0.3s'
-            selectedFrame.style.left =`${20 * frameId}px`
+            selectedFrame.style.left = `${20 * frameId}px`
             selectedFrame.style.top = `${output.getBoundingClientRect().y - 100}px`
             sequence = sequence.map(s => s === selectedFrame.dataset.id ? ' ' : s)
           }
 
           //swap if frame outside slot overlap with frame in slot
-          if(openSlot.length && positionWithinSequence === -1 && sequence[i] && sequence[i] !== ' ') {
+          if (openSlot.length && positionWithinSequence === -1 && sequence[i] && sequence[i] !== ' ') {
             selectedFrame.style.transition = '0.3s'
             
             // checks for open slot
@@ -375,15 +362,15 @@ function init() {
               if (openSlot.find(s => s === i - offset)) availableSlot = i - offset
             }
   
-          selectedFrame.style.left =`${slotInfo[availableSlot].x}px`
-          selectedFrame.style.top =`${slotInfo[availableSlot].y}px`
-          sequence[availableSlot] = sequence[i]
+            selectedFrame.style.left = `${slotInfo[availableSlot].x}px`
+            selectedFrame.style.top = `${slotInfo[availableSlot].y}px`
+            sequence[availableSlot] = sequence[i]
           }
           //swap if square in slot overlap with another square in slot
-          else if(positionWithinSequence !== -1 && sequence[i] && sequence[i] !== ' ') {
+          else if (positionWithinSequence !== -1 && sequence[i] && sequence[i] !== ' ') {
             selectedFrame.style.transition = '0.3s'
-            selectedFrame.style.left =`${slotInfo[positionWithinSequence].x}px`
-            selectedFrame.style.top =`${slotInfo[positionWithinSequence].y}px`
+            selectedFrame.style.left = `${slotInfo[positionWithinSequence].x}px`
+            selectedFrame.style.top = `${slotInfo[positionWithinSequence].y}px`
             sequence[positionWithinSequence] = sequence[i]
           } 
 
@@ -408,6 +395,7 @@ function init() {
   }  
 
   const recordSlotPos = () =>{
+    slots = document.querySelectorAll('.slot')
     slots.forEach((slot,i)=>{
       const { x, y } = slot.getBoundingClientRect()
       slot.dataset.i = i
@@ -416,13 +404,13 @@ function init() {
   }
 
   const repositionFrames = () =>{
-    if (!sequence || sequence.length || !slots) return
+    if (!sequence || !sequence.length || !slots) return
     recordSlotPos()
     sequence.forEach((frame,i)=>{
       if (frame !== ' '){
         const { x, y } = slotInfo[i]
-        frames[+frame -1].style.left = `${x}px`
-        frames[+frame -1].style.top = `${y}px`
+        frames[+frame - 1].style.left = `${x}px`
+        frames[+frame - 1].style.top = `${y}px`
       }
     })
   }
@@ -450,6 +438,51 @@ function init() {
 
 
   upload.addEventListener('change', uploadImage )
+
+
+  const addDuplicateAction = () =>{
+    const duplicateButtons = document.querySelectorAll('.duplicate')
+
+    duplicateButtons.forEach(button=>{
+      button.addEventListener('click', (e)=>{
+        console.log(e.target.dataset.id)
+        const index = +e.target.dataset.id - 1
+        const thumbImage = document.createElement('img')
+        createThumbs(index, thumbImage)
+        
+        //TODO edit slot edit
+        //* id and index should be separate = e.target.dataset.id and e.target.dataset.index
+        const dividedImages = document.querySelectorAll('.divided_img')
+        createCopyCanvasAndDisplayThumbs(dividedImages[index], thumbImage, +imgNoInput.value, index, true) 
+        frames = document.querySelectorAll('.thumb_container') 
+        addFramePositionActions(frames[frames.length - 1])
+        console.log('sequence', sequence)
+        sequence.push(index + 1)
+        sequenceOutput.value = sequence.join(' ')
+        repositionFrames()
+      })
+    })
+  }
+
+
+  const divide = () =>{
+    if (!uploadFiles || uploadFiles.length > 1) return
+    output.innerHTML = ''
+    canvasOutput.innerHTML = ''
+    sequence.length = 0
+    const imgNo = +imgNoInput.value
+
+    new Array(imgNo).fill('').forEach((_file,imageIndex)=>{
+      const thumbImage = document.createElement('img')
+      createThumbs(imageIndex, thumbImage)
+      
+      const newCanvas = document.createElement('canvas')
+      canvasOutput.append(newCanvas)
+      createCopyCanvasAndDisplayThumbs(newCanvas, thumbImage, imgNo, imageIndex, true) 
+    })
+    addDuplicateAction()
+    makeThumbsDraggable()
+  }
 
   
   buttons.forEach(button=>{

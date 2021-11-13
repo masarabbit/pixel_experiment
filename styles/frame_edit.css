@@ -154,7 +154,6 @@ button:hover {
   margin: -20px 0 20px 0;
 }
 
-
 .img_wrap {
   margin-top: 50px;
   display: flex;
@@ -163,11 +162,9 @@ button:hover {
   align-items: space-evenly;
 }
 
-
 canvas {
   margin: 5px;
 }
-
 
 textarea {
   font-family: sans-serif;
@@ -280,7 +277,7 @@ button.icon:hover {
 
 .slot {
   width: 70px;
-  height: 110px;
+  height: 115px;
   background-color: rgba(255, 255, 255, 0.2);
 }
 
@@ -294,9 +291,9 @@ button.icon:hover {
   align-items: center;
   flex-direction: column-reverse;
   /* border: red 1px solid; */
-  padding: 10px 5px;
+  padding: 20px 5px 5px;
   width: 70px;
-  height: 110px;
+  height: 115px;
   cursor: pointer;
 }
 
@@ -311,6 +308,35 @@ button.icon:hover {
   pointer-events: none;
 }
 
+.thumb_menu {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  display: flex;
+  margin-bottom: 0px;
+  /* background-color: rgba(8, 138, 127, 0.87); */
+}
+
+.thumb_menu div {
+  height: 20px;
+  padding: 2px 3px 0 5px;
+  font-size: 16px;
+  line-height: 14px;
+  text-align: center;
+  color:#00e8d1;
+}
+
+/* .thumb_menu div:last-child {
+  background-color: rgba(3, 75, 69);
+}
+
+.thumb_menu div:first-child {
+  background-color: rgba(8, 138, 127);
+} */
+
+.thumb_menu div:hover {
+  color: white;
+}
 /* .thumb_image:hover {
   opacity: 0.5;
 } */
