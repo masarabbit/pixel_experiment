@@ -271,9 +271,9 @@ button.icon:hover {
   height: 0;
   overflow: hidden;
 }
-.divided_img {
+/* .divided_img {
   visibility: hidden;
-}
+} */
 
 .slot {
   width: 70px;

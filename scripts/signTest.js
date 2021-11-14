@@ -1,3 +1,10 @@
+function init() {
+  
+  // const body = document.querySelector('body')
+  const canvas = document.querySelector('canvas')
+  const ctx = canvas.getContext('2d')
+  const addButton = document.querySelector('.add')
+  
 
   const signSvg = `
   <g>
@@ -48,9 +55,18 @@
     const url = window.URL.createObjectURL(data)
     const sign = new Image()
     sign.onload = () => {
-      const { naturalWidth: w, naturalHeight: h } = sign
+      const { naturalWidth: w, naturalHeight: h, } = sign
       const { offsetWidth: cW, offsetHeight: cH } = canvas
-      canvas.getContext('2d').drawImage(sign, cW - (6 + w), cH - (7 + h), w, h)
+      canvas.getContext('2d').drawImage(sign, cW - (5 + w), cH - (5 + h), w, h)
     }
     sign.src = url
   }
+
+
+
+  addButton.addEventListener('click', ()=>{
+    outputSvg(svgWrapper(signSvg, 'red', 71.8, 18.9), canvas)
+  })
+}
+
+window.addEventListener('DOMContentLoaded', init)
