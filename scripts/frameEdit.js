@@ -25,6 +25,7 @@ function init() {
   // drag
   const slotInfo = []
   const sequenceOutput = document.querySelector('.sequence')
+  const thumbOutput = document.querySelector('.s_output')
   let sequence = []
   let slots
   let frames
@@ -230,10 +231,14 @@ function init() {
       document.removeEventListener('mouseup', onLetGo)
       let matchSlot
 
-      slotInfo.forEach((info,i)=>{
-        const openSlot = sequence.map((slot,i)=> slot === ' ' ? i : 'none').filter(slot => slot !== 'none')        
-        const selectedFrame = frames[sequence[i]]  
-        const positionWithinSequence = sequence.indexOf(thumbId)
+      frames.forEach(frame=>{
+        frame.style.backgroundColor = 'transparent'
+      }) 
+      const currentSequence = [...sequence]
+      const currentSelection = currentSequence.indexOf(+frame.dataset.thumb_id)
+
+      slotInfo.forEach((info,i)=>{      
+        const frameInsideSlot = frames[currentSequence[i]]  
         const newXC = newX + 50
         const newYC = newY + 55
 
@@ -243,47 +248,38 @@ function init() {
           newX = info.x
           newY = info.y
           matchSlot = true   
-          // if slot is full  
-          if (!openSlot.length && positionWithinSequence === -1) {
-            selectedFrame.style.transition = '0.3s'
-            setTargetPos(selectedFrame, 20 * (thumbId + 1), output.getBoundingClientRect().y - 100)
-            sequence = sequence.map(s => s === +selectedFrame.dataset.thumb_id ? ' ' : s)
-            // tidySequence()
+
+          // TODO refactor
+          //* ends up with duplicate when there are slots with no content
+          if (frameInsideSlot) {
+            frames.forEach(frame=>{
+              const framePos = currentSequence.indexOf(+frame.dataset.thumb_id)    
+              frame.style.transition = '0.3s'
+              if (framePos < currentSelection && framePos >= i) { 
+                frame.style.backgroundColor = 'yellow'  // migi
+                frame.style.left = `${slotInfo[framePos + 1].x}px`
+                sequence[framePos + 1] = currentSequence[framePos]
+                if (sequence[framePos] === currentSequence[framePos]) sequence[framePos] = ' ' // TODO doesn't always work
+              } 
+              if (framePos > currentSelection && framePos <= i) {
+                frame.style.backgroundColor = 'green'  // hidari
+                frame.style.left = `${slotInfo[framePos - 1].x}px`
+                sequence[framePos - 1] = currentSequence[framePos]
+                if (sequence[framePos] === currentSequence[framePos]) sequence[framePos] = ' ' // TODO doesn't always work
+              }  
+            })
           }
-          //swap if frame outside slot overlap with frame in slot
-          if (openSlot.length && positionWithinSequence === -1 && sequence[i] && sequence[i] !== ' ') {
-            selectedFrame.style.transition = '0.3s'  
-            // checks for open slot
-            let availableSlot
-            let offset = 0
-            console.log('open slot', openSlot)
-            while (!availableSlot) {
-              // TODO how to prevent loop here?
-              offset++
-              if (openSlot.find(s => s === i + offset)) availableSlot = i + offset
-              if (openSlot.find(s => s === i - offset)) availableSlot = i - offset
-            }
-            setTargetPos(selectedFrame, slotInfo[availableSlot].x, slotInfo[availableSlot].y)
-            sequence[availableSlot] = sequence[i]
-          } else if (positionWithinSequence !== -1 && sequence[i] && sequence[i] !== ' ') {
-            //swap if square in slot overlap with another square in slot
-            selectedFrame.style.transition = '0.3s'
-            setTargetPos(selectedFrame, slotInfo[positionWithinSequence].x, slotInfo[positionWithinSequence].y)
-            sequence[positionWithinSequence] = sequence[i]
-          } 
-          //update sequence
-          tidySequence()
-          sequence[i] = thumbId
+          sequence[i] = frameInsideSlot ? currentSequence[currentSelection] : +frame.dataset.thumb_id
         } else if (!matchSlot && (newX || newY)){
           tidySequence()
+          slots[i].style.backgroundColor = 'transparent'
         }
       })
-      // sequenceOutput.value = sequence.join(' ')
       sequenceOutput.value = sequence.map(s=>thumbData[s]).join(' ')
+      thumbOutput.value = sequence.join(' ')
       setTargetPos(frame, newX, newY)
       setTimeout(()=> frames.forEach(frame => frame.style.transition = '0s'), 0)
       setTimeout(()=> draggable = true, 400)
-      
     }
     const onGrab = () => {
       document.addEventListener('mousemove', onDrag)
