@@ -221,7 +221,7 @@ function init() {
       setTargetPos(frame, newX, newY)
     }
     
-    const tidySequence = () => sequence = sequence.map(s => s === thumbId ? ' ' : s )
+    const tidySequence = id => sequence = sequence.map(s => s === id ? ' ' : s )
 
     const onLetGo = () => {
       if (!draggable) return //TODO could this be made specific to the frame currently being dragged?
@@ -258,20 +258,24 @@ function init() {
               if (framePos < currentSelection && framePos >= i) { 
                 frame.style.backgroundColor = 'yellow'  // migi
                 frame.style.left = `${slotInfo[framePos + 1].x}px`
+                // sequence[framePos] = ' ' //* use tidySequence
+                tidySequence(currentSequence[framePos])
                 sequence[framePos + 1] = currentSequence[framePos]
-                if (sequence[framePos] === currentSequence[framePos]) sequence[framePos] = ' ' // TODO doesn't always work
+                // if (sequence[framePos] === currentSequence[framePos]) sequence[framePos] = ' ' // TODO doesn't always work
               } 
               if (framePos > currentSelection && framePos <= i) {
                 frame.style.backgroundColor = 'green'  // hidari
                 frame.style.left = `${slotInfo[framePos - 1].x}px`
+                // sequence[framePos] = ' ' //* use tidy sequence
+                tidySequence(currentSequence[framePos])
                 sequence[framePos - 1] = currentSequence[framePos]
-                if (sequence[framePos] === currentSequence[framePos]) sequence[framePos] = ' ' // TODO doesn't always work
+                // if (sequence[framePos] === currentSequence[framePos]) sequence[framePos] = ' ' // TODO doesn't always work
               }  
             })
           }
           sequence[i] = frameInsideSlot ? currentSequence[currentSelection] : +frame.dataset.thumb_id
         } else if (!matchSlot && (newX || newY)){
-          tidySequence()
+          tidySequence(thumbId)  // TODO check
           slots[i].style.backgroundColor = 'transparent'
         }
       })
