@@ -29,7 +29,6 @@ function init() {
   let sequence = []
   let slots
   let frames
-  let draggable = true
   const thumbData = []
 
     
@@ -107,7 +106,7 @@ function init() {
         <input class="transition input" placeholder="100" value="100" />
       </div>
     </div>`
-    thumbData[thumbIndex] = frameId
+    thumbData[thumbIndex] = { frameId, draggable: true }
     slot.childNodes[1].append(thumbImage)
     output.append(slot)
   }
@@ -140,6 +139,7 @@ function init() {
     }
     img.src = window.URL.createObjectURL(uploadFiles[ divide ? 0 : imageIndex])  
   }
+  
 
   const makeThumbsDraggable = () =>{
     frames = document.querySelectorAll('.thumb_container')
@@ -147,14 +147,12 @@ function init() {
     sequence = new Array(slots.length).fill('').map((_s, i)=> i)
     frames.forEach(frame => addFramePositionActions(frame))
     recordSlotPos()
-    // sequenceOutput.value = sequence.join(' ')
-    sequenceOutput.value = sequence.map(s=>thumbData[s]).join(' ')
+    updateSequence()
   }
 
   const downloadDividedImgs = () =>{
     if (!output.childNodes.length) return
     document.querySelectorAll('.divided_img').forEach((c, i)=>{
-      // downloadImage(c, `${imgNameInput.value}-${i}`)
       setTimeout(()=>{
         downloadImage(c, `${imgNameInput.value}-${i + 1}`)
       }, i * 200)
@@ -170,14 +168,24 @@ function init() {
       encoder.setRepeat(0) //auto-loop
       encoder.start()
       console.log('sequence', sequence, 'thumbData', thumbData)
-      sequence.forEach(index=>{
-        if (index !== ' '){
-          encoder.setDelay(transitionInput[index].value)
-          console.log('dividedImages index', thumbData[index] - 1, 'index', index)
-
-          encoder.addFrame(dividedImages[thumbData[index] - 1].getContext('2d'))
-        }
+      transitionInput.forEach(t=>{
+        console.log('transitionInput', t.value)
       })
+      let count = 0
+      sequence.filter(s=>s !== ' ').forEach((index,i) =>{
+        count++
+        console.log('count', count, 'index',i)
+
+        encoder.setDelay(transitionInput[i]?.value)
+        encoder.addFrame(dividedImages[thumbData[index].frameId - 1].getContext('2d'))
+      })
+      // sequence.forEach(index=>{
+      //   if (index !== ' ' && transitionInput[index]){
+      //     encoder.setDelay(transitionInput[index].value)
+      //     // console.log('dividedImages index', thumbData[index].frameId - 1, 'index', index)
+      //     encoder.addFrame(dividedImages[thumbData[index].frameId - 1].getContext('2d'))
+      //   }
+      // })
       encoder.finish()
   
       const { offsetHeight, offsetWidth } = dividedImages[0]
@@ -204,14 +212,18 @@ function init() {
     target.style.top = `${y}px`
   }
 
+  const updateSequence = () =>{
+    sequenceOutput.value = sequence.map(s=> (s === ' ' || (!s && s !== 0)) ? ' ': thumbData[s].frameId).join(' ')
+  }
+
+  const tidySequence = id => sequence = sequence.map(s => s === id ? ' ' : s )
+
   // drag
   const addFramePositionActions = frame =>{
     frame.childNodes[1].classList.add('select')
     let newX
     let newY
-    // const frameId = +frame.dataset.frame_id
     const thumbId = +frame.dataset.thumb_id
-    // const positionWithinSequence = sequence.indexOf(frameId)
 
     const onDrag = e => {
       frame.style.transtion = '0s'
@@ -221,11 +233,12 @@ function init() {
       setTargetPos(frame, newX, newY)
     }
     
-    const tidySequence = id => sequence = sequence.map(s => s === id ? ' ' : s )
-
     const onLetGo = () => {
-      if (!draggable) return //TODO could this be made specific to the frame currently being dragged?
-      draggable = false
+      const currentSequence = [...sequence]
+      const currentSelection = currentSequence.indexOf(thumbId)
+      // console.log('currentSelection', currentSelection)
+      // console.log('thumbId', thumbId)
+
       frame.childNodes[1].classList.remove('select')
       document.removeEventListener('mousemove', onDrag)
       document.removeEventListener('mouseup', onLetGo)
@@ -234,8 +247,6 @@ function init() {
       frames.forEach(frame=>{
         frame.style.backgroundColor = 'transparent'
       }) 
-      const currentSequence = [...sequence]
-      const currentSelection = currentSequence.indexOf(+frame.dataset.thumb_id)
 
       slotInfo.forEach((info,i)=>{      
         const frameInsideSlot = frames[currentSequence[i]]  
@@ -244,46 +255,50 @@ function init() {
 
         if ((newXC > info.x && newXC < info.x + 70) &&
             (newYC > info.y && newYC < info.y + 110)){
+
+          if (!thumbData[thumbId].draggable) return 
+          thumbData[thumbId].draggable = false    
           frame.style.transition = '0.3s'
           newX = info.x
           newY = info.y
           matchSlot = true   
 
-          // TODO refactor
-          //* ends up with duplicate when there are slots with no content
           if (frameInsideSlot) {
             frames.forEach(frame=>{
               const framePos = currentSequence.indexOf(+frame.dataset.thumb_id)    
               frame.style.transition = '0.3s'
+              frame.style.backgroundColor = 'yellow'
+              if (currentSelection === -1) return
               if (framePos < currentSelection && framePos >= i) { 
-                frame.style.backgroundColor = 'yellow'  // migi
+                // console.log('currentSelection yellow', currentSelection)
                 frame.style.left = `${slotInfo[framePos + 1].x}px`
-                // sequence[framePos] = ' ' //* use tidySequence
                 tidySequence(currentSequence[framePos])
+                // console.log('thumbId', thumbId, 'currentSequence[framePos]', currentSequence[framePos])
                 sequence[framePos + 1] = currentSequence[framePos]
-                // if (sequence[framePos] === currentSequence[framePos]) sequence[framePos] = ' ' // TODO doesn't always work
               } 
               if (framePos > currentSelection && framePos <= i) {
-                frame.style.backgroundColor = 'green'  // hidari
+                // console.log('currentSelection green', currentSelection)
                 frame.style.left = `${slotInfo[framePos - 1].x}px`
-                // sequence[framePos] = ' ' //* use tidy sequence
                 tidySequence(currentSequence[framePos])
                 sequence[framePos - 1] = currentSequence[framePos]
-                // if (sequence[framePos] === currentSequence[framePos]) sequence[framePos] = ' ' // TODO doesn't always work
               }  
             })
           }
-          sequence[i] = frameInsideSlot ? currentSequence[currentSelection] : +frame.dataset.thumb_id
+          sequence[i] = frameInsideSlot ? currentSequence[currentSelection] : thumbId
+          frames[thumbId].style.backgroundColor = 'grey'
         } else if (!matchSlot && (newX || newY)){
-          tidySequence(thumbId)  // TODO check
+          // console.log('currentSelection', currentSelection)
+          thumbData[thumbId].draggable = true
+          tidySequence(thumbId)
           slots[i].style.backgroundColor = 'transparent'
         }
       })
-      sequenceOutput.value = sequence.map(s=>thumbData[s]).join(' ')
+      // console.log('sequence', sequence)
+      updateSequence()
       thumbOutput.value = sequence.join(' ')
       setTargetPos(frame, newX, newY)
       setTimeout(()=> frames.forEach(frame => frame.style.transition = '0s'), 0)
-      setTimeout(()=> draggable = true, 400)
+      setTimeout(()=> thumbData[thumbId].draggable = true, 300)
     }
     const onGrab = () => {
       document.addEventListener('mousemove', onDrag)
@@ -305,7 +320,7 @@ function init() {
     if (!sequence || !sequence.length || !slots) return
     recordSlotPos()
     sequence.forEach((frame,i)=>{
-      if (frame !== ' '){
+      if (frame !== ' '){ //TODO check
         const { x, y } = slotInfo[i]
         setTargetPos(frames[+frame], x, y)
       }
@@ -329,7 +344,7 @@ function init() {
       canvasOutput.append(newCanvas)
       createCopyCanvasAndDisplayThumbs(newCanvas, thumbImage, 1, i, false)
     })
-
+    addDuplicateAction(true)
     makeThumbsDraggable()
   }
 
@@ -337,25 +352,41 @@ function init() {
   upload.addEventListener('change', uploadImage )
 
 
-  const addDuplicateAction = () =>{
+  const addDuplicateAction = upload =>{
     const duplicateButtons = document.querySelectorAll('.duplicate')
 
     duplicateButtons.forEach(button=>{
       button.addEventListener('click', (e)=>{
-        // console.log(e.target.dataset.id)
         const frameIndex = +e.target.dataset.frame_id - 1
         const thumbIndex = slots.length
         const thumbImage = document.createElement('img')
         createThumbs(frameIndex, thumbIndex, thumbImage)
         
-        //TODO edit slot edit
         const dividedImages = document.querySelectorAll('.divided_img')
-        createCopyCanvasAndDisplayThumbs(dividedImages[frameIndex], thumbImage, +imgNoInput.value, frameIndex, true) 
+        createCopyCanvasAndDisplayThumbs(dividedImages[frameIndex], thumbImage, upload ? 1 : +imgNoInput.value, frameIndex, !upload) 
         frames = document.querySelectorAll('.thumb_container') 
         addFramePositionActions(frames[frames.length - 1])
         sequence.push(thumbIndex)
-        sequenceOutput.value = sequence.map(s=>thumbData[s]).join(' ')
+        updateSequence()
+
         repositionFrames()
+      })
+    })
+
+    const deleteButtons = document.querySelectorAll('.delete')
+
+    deleteButtons.forEach(button=>{
+      button.addEventListener('click', (e)=>{
+        const frameIndex = +e.target.dataset.frame_id - 1
+        // console.log(frameIndex)
+        slots[frameIndex].innerHTML = ''
+        tidySequence(frameIndex)
+        // sequence = sequence.filter(s => s !== frameIndex)
+        updateSequence()
+        console.log('sequence', sequence)
+        
+
+        // TODO neeed to do something to enable add 
       })
     })
   }
@@ -376,7 +407,7 @@ function init() {
       canvasOutput.append(newCanvas)
       createCopyCanvasAndDisplayThumbs(newCanvas, thumbImage, imgNo, imageIndex, true) 
     })
-    addDuplicateAction()
+    addDuplicateAction(false)
     makeThumbsDraggable()
   }
   
