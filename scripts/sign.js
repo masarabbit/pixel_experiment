@@ -54,3 +54,8 @@
     }
     sign.src = url
   }
+
+  const signDim = {
+    w: 71.8, 
+    h: 18.9,
+  }

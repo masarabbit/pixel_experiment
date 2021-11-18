@@ -5,14 +5,10 @@
 body {
   margin: 0;
   padding: 0;
-  /* background-color: #5e5f5f; */
   font-family: sans-serif;
   color: white;
   background-color: rgb(60, 60, 60);
-
-  
 }
-
 
 nav {
   position: fixed;
@@ -61,29 +57,19 @@ input.no_input {
 
 .output {
   background-color: rgba(0, 0, 0, 0.4);
-  /* position: absolute; */
-  /* position: relative; */
-  /* border: red 1px solid; */
   margin-top: 30px;
   /* padding: 10px 0; */
   /* overflow-x: scroll; */
   display: flex;
-  /* flex-wrap: wrap;
-  justify-content: flex-start; */
 }
-
 
 .output canvas{
   margin: 5px;
 }
 
-.display_none {
-  display: none;
-}
+.display_none { display: none; }
 
-h1 {
-  margin: 30px;
-}
+h1 { margin: 30px; }
 
 
 [type="file"] {
@@ -147,7 +133,6 @@ button:hover {
   align-items: center;
   justify-content: flex-end;
   flex-wrap: wrap;
-  /* border: red 1px solid; */
 }
 
 .mini_wrap.no_margin {
@@ -205,7 +190,6 @@ img {
   display: flex;
   flex-direction: column;
   margin: 0 5px;
-  /* border: red 1px solid; */
 }
 
 .input_wrap label {
@@ -240,8 +224,6 @@ label.icon,
 button.icon {
   height: 32px;
   width: 32px;
-  /* height: 40px;
-  width: 40px; */
   background-repeat: no-repeat, repeat;
   background-size: cover; 
   border: 1px solid white;
@@ -251,7 +233,6 @@ label.icon:hover,
 button.icon:hover {
   filter: invert(100%);
   color: red;
-  /* background-color: black; */
 }
 
 .color_label {
@@ -326,14 +307,6 @@ button.icon:hover {
   color:#00e8d1;
 }
 
-/* .thumb_menu div:last-child {
-  background-color: rgba(3, 75, 69);
-}
-
-.thumb_menu div:first-child {
-  background-color: rgba(8, 138, 127);
-} */
-
 .thumb_menu div:hover {
   color: white;
 }
@@ -380,42 +353,18 @@ button.icon:hover {
   margin: 50px 0 30px 0;
 }
 
-.bucket {
-  background: url(/icon/bucket.svg);
-}
-
-.download_file {
-  background: url(/icon/download.svg);
-}
-
-.eraser {
-  background: url(/icon/eraser.svg);
-}
-
-.generate {
-  background: url(/icon/generate.svg);
-}
-
-.hide {
-  background: url(/icon/hide_grid.svg);
-}
-
-.upload {
-  background: url(/icon/upload.svg);
-}
-
-.create {
-  background: url(/icon/create_grid.svg);
-}
-
-.copy {
-  background: url(/icon/copy.svg);
-}
+.bucket { background: url(/icon/bucket.svg); }
+.download_file { background: url(/icon/download.svg); }
+.eraser { background: url(/icon/eraser.svg); }
+.generate { background: url(/icon/generate.svg); }
+.hide { background: url(/icon/hide_grid.svg); }
+.upload { background: url(/icon/upload.svg); }
+.create { background: url(/icon/create_grid.svg); }
+.copy { background: url(/icon/copy.svg); }
 
 .cursor {
   height: 32px;
   width: 32px;
-  /* border: black 1px solid; */
   position: absolute;
   transform: translate(-50%, -50%);
   pointer-events: none;
@@ -427,7 +376,6 @@ button.icon:hover {
 
 .cursor div {
   position: absolute;
-  /* top: -40px; */
   bottom: -40px;
   color: black;
   font-size: 12px;
@@ -447,22 +395,11 @@ button.icon:hover {
   animation: none;
 }
 
+.pen_cursor { background: url(/icon/pen_cursor.svg); }
+.eraser_cursor { background: url(/icon/eraser_cursor.svg); }
+.bucket_cursor { background: url(/icon/bucket_cursor.svg); }
 
-.pen_cursor {
-  background: url(/icon/pen_cursor.svg);
-}
-
-.eraser_cursor {
-  background: url(/icon/eraser_cursor.svg);
-}
-
-.bucket_cursor {
-  background: url(/icon/bucket_cursor.svg);
-}
-
-.cursor_none {
-  cursor: none !important;
-}
+.cursor_none { cursor: none !important; }
 
 .svg_wrap {
   transform-origin: center;
@@ -470,7 +407,6 @@ button.icon:hover {
   width: 100%;
   pointer-events: none;
 }
-
 
 .indicator {
   position: fixed;
@@ -480,4 +416,12 @@ button.icon:hover {
   color: white;
   height: 20px;
   border: 1px solid white;
+}
+
+.deleted_frame {
+  position: absolute;
+  pointer-events: none;
+  opacity: 0;
+  top: -100%;
+  left: -100%;
 }

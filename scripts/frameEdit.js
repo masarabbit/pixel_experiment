@@ -1,5 +1,7 @@
 function init() {
 
+  // TODO enable resize using scale.
+
   const canvas = document.querySelectorAll('.canvas')
   const canvasOutput = document.querySelector('.canvas_output')
   const cursor = document.querySelector('.cursor')
@@ -8,7 +10,6 @@ function init() {
   const imgNameInput = document.querySelector('.img_name')
   const imgNoInput = document.querySelector('.img_no')
   const scaleInput = document.querySelector('.scale')
-  // const indicator = document.querySelector('.indicator')
   const gif = document.querySelector('.gif')
   
   // button
@@ -49,30 +50,61 @@ function init() {
     canvas.setAttribute('height', h)
   }
 
+  // const combineImages = () =>{
+  //   if (!uploadFiles || uploadFiles.length < 2) return
+  //   canvas[0].classList.remove('display_none')
+
+  //   const firstImage = new Image()
+  //   firstImage.onload = () => {
+  //     const { naturalWidth: w, naturalHeight: h } = firstImage
+  //     setUpCanvas(canvas[0], w * uploadFiles.length, h)
+
+  //     const w2 = 50
+  //     const h2 = w2 * (w / h)
+  //     setUpCanvas(canvas[1], w * uploadFiles.length, h)
+      
+  //     Array.from(uploadFiles).forEach((upload,i)=>{
+  //       const blobURL = window.URL.createObjectURL(upload)
+  //       const eachImage = new Image()   
+  //       eachImage.onload = () => { 
+  //         canvas[0].getContext('2d').drawImage(eachImage,i * w, 0, w, h)
+  //         canvas[1].getContext('2d').drawImage(eachImage,i * w2, 0, w2, h2)
+  //       }
+  //       eachImage.src = blobURL
+  //     })
+  //   }
+  //   firstImage.src = window.URL.createObjectURL(uploadFiles[0])    
+  //   // console.log('u',uploadedFiles)
+  // }
+  
+
+  // TODO refactor this
   const combineImages = () =>{
-    if (!uploadFiles || uploadFiles.length < 2) return
+    const dividedImages = document.querySelectorAll('.divided_img')
+    // console.log('dividedImages', dividedImages)
+    if (!uploadFiles && !dividedImages.length) return
     canvas[0].classList.remove('display_none')
 
-    const firstImage = new Image()
-    firstImage.onload = () => {
-      const { naturalWidth: w, naturalHeight: h } = firstImage
-      setUpCanvas(canvas[0], w * uploadFiles.length, h)
+    const img = new Image()
+    img.onload = () => {
+      const { naturalWidth: w, naturalHeight: h } = img
+      setUpCanvas(canvas[0], w * (+imgNoInput.value || uploadFiles.length), h)
 
       const w2 = 50
       const h2 = w2 * (w / h)
-      setUpCanvas(canvas[1], w * uploadFiles.length, h)
+      setUpCanvas(canvas[1], w * (+imgNoInput.value || uploadFiles.length), h)
       
-      Array.from(uploadFiles).forEach((upload,i)=>{
-        const blobURL = window.URL.createObjectURL(upload)
+      sequence.filter(s=>s !== ' ').forEach((index,i)=>{
+        const url = dividedImages[thumbData[index].frameId - 1].toDataURL()
         const eachImage = new Image()   
         eachImage.onload = () => { 
-          canvas[0].getContext('2d').drawImage(eachImage,i * w, 0, w, h)
-          canvas[1].getContext('2d').drawImage(eachImage,i * w2, 0, w2, h2)
+          canvas[0].getContext('2d').drawImage(eachImage, i * w, 0, w, h)
+          canvas[1].getContext('2d').drawImage(eachImage, i * w2, 0, w2, h2)
         }
-        eachImage.src = blobURL
+        eachImage.src = url
       })
     }
-    firstImage.src = window.URL.createObjectURL(uploadFiles[0])    
+    img.src = dividedImages[0].toDataURL() 
     // console.log('u',uploadedFiles)
   }
 
@@ -98,8 +130,8 @@ function init() {
     slot.innerHTML =  `
     <div class="thumb_container" data-thumb_id=${thumbIndex} data-frame_id="${frameId}" >
       <div class="thumb_menu">
-        <div class="delete" data-frame_id="${frameId}">&#8722;</div>
-        <div class="duplicate" data-frame_id="${frameId}">&#43;</div>
+        <div class="delete" data-thumb_id=${thumbIndex} data-frame_id="${frameId}">&#8722;</div>
+        <div class="duplicate" data-thumb_id=${thumbIndex} data-frame_id="${frameId}">&#43;</div>
       </div>
       <div class="input_wrapper">
         <p>${frameId}</p>
@@ -111,7 +143,8 @@ function init() {
     output.append(slot)
   }
 
-
+  
+  // TODO take bits out of here and use to refactor combineImage
   const createCopyCanvasAndDisplayThumbs = (canvas, thumbImage, imgNo, imageIndex, divide) =>{
     canvas.classList.add('divided_img')
     const scale = +scaleInput.value
@@ -134,7 +167,7 @@ function init() {
         ctx.fillStyle = code
         ctx.fillRect(x, y, scale, scale)
       })
-      outputSvg(svgWrapper(signSvg, invertHex(backgroundColor), 71.8, 18.9), canvas)
+      outputSvg(svgWrapper(signSvg, invertHex(backgroundColor), signDim.w, signDim.h), canvas)
       thumbImage.src = canvas.toDataURL()
     }
     img.src = window.URL.createObjectURL(uploadFiles[ divide ? 0 : imageIndex])  
@@ -167,25 +200,10 @@ function init() {
       const encoder = new GIFEncoder()
       encoder.setRepeat(0) //auto-loop
       encoder.start()
-      console.log('sequence', sequence, 'thumbData', thumbData)
-      transitionInput.forEach(t=>{
-        console.log('transitionInput', t.value)
-      })
-      let count = 0
       sequence.filter(s=>s !== ' ').forEach((index,i) =>{
-        count++
-        console.log('count', count, 'index',i)
-
         encoder.setDelay(transitionInput[i]?.value)
         encoder.addFrame(dividedImages[thumbData[index].frameId - 1].getContext('2d'))
       })
-      // sequence.forEach(index=>{
-      //   if (index !== ' ' && transitionInput[index]){
-      //     encoder.setDelay(transitionInput[index].value)
-      //     // console.log('dividedImages index', thumbData[index].frameId - 1, 'index', index)
-      //     encoder.addFrame(dividedImages[thumbData[index].frameId - 1].getContext('2d'))
-      //   }
-      // })
       encoder.finish()
   
       const { offsetHeight, offsetWidth } = dividedImages[0]
@@ -197,7 +215,7 @@ function init() {
   }  
 
   const downloadGif = () =>{
-    console.log(gif.src)
+    // console.log(gif.src)
     if (!gif.src) return
 
     const link = document.createElement('a')
@@ -205,7 +223,6 @@ function init() {
     link.href = gif.src
     link.click()
   }
-
 
   const setTargetPos = (target, x, y) =>{
     target.style.left = `${x}px`
@@ -220,7 +237,7 @@ function init() {
 
   // drag
   const addFramePositionActions = frame =>{
-    frame.childNodes[1].classList.add('select')
+    // frame.childNodes[1].classList.add('select')
     let newX
     let newY
     const thumbId = +frame.dataset.thumb_id
@@ -236,8 +253,6 @@ function init() {
     const onLetGo = () => {
       const currentSequence = [...sequence]
       const currentSelection = currentSequence.indexOf(thumbId)
-      // console.log('currentSelection', currentSelection)
-      // console.log('thumbId', thumbId)
 
       frame.childNodes[1].classList.remove('select')
       document.removeEventListener('mousemove', onDrag)
@@ -270,14 +285,11 @@ function init() {
               frame.style.backgroundColor = 'yellow'
               if (currentSelection === -1) return
               if (framePos < currentSelection && framePos >= i) { 
-                // console.log('currentSelection yellow', currentSelection)
                 frame.style.left = `${slotInfo[framePos + 1].x}px`
                 tidySequence(currentSequence[framePos])
-                // console.log('thumbId', thumbId, 'currentSequence[framePos]', currentSequence[framePos])
                 sequence[framePos + 1] = currentSequence[framePos]
               } 
               if (framePos > currentSelection && framePos <= i) {
-                // console.log('currentSelection green', currentSelection)
                 frame.style.left = `${slotInfo[framePos - 1].x}px`
                 tidySequence(currentSequence[framePos])
                 sequence[framePos - 1] = currentSequence[framePos]
@@ -287,13 +299,11 @@ function init() {
           sequence[i] = frameInsideSlot ? currentSequence[currentSelection] : thumbId
           frames[thumbId].style.backgroundColor = 'grey'
         } else if (!matchSlot && (newX || newY)){
-          // console.log('currentSelection', currentSelection)
           thumbData[thumbId].draggable = true
           tidySequence(thumbId)
           slots[i].style.backgroundColor = 'transparent'
         }
       })
-      // console.log('sequence', sequence)
       updateSequence()
       thumbOutput.value = sequence.join(' ')
       setTargetPos(frame, newX, newY)
@@ -320,8 +330,8 @@ function init() {
     if (!sequence || !sequence.length || !slots) return
     recordSlotPos()
     sequence.forEach((frame,i)=>{
-      if (frame !== ' '){ //TODO check
-        const { x, y } = slotInfo[i]
+      if (frame !== ' '){
+        const { x, y } = slotInfo[i] 
         setTargetPos(frames[+frame], x, y)
       }
     })
@@ -351,44 +361,46 @@ function init() {
 
   upload.addEventListener('change', uploadImage )
 
+  const addAddAction = (button, upload) =>{
+    button.addEventListener('click', (e)=>{
+      const frameIndex = +e.target.dataset.frame_id - 1
+      const thumbIndex = slots.length
+      const thumbImage = document.createElement('img')
+      createThumbs(frameIndex, thumbIndex, thumbImage)
+      
+      const dividedImages = document.querySelectorAll('.divided_img')
+      createCopyCanvasAndDisplayThumbs(dividedImages[frameIndex], thumbImage, upload ? 1 : +imgNoInput.value, frameIndex, !upload) 
+      frames = document.querySelectorAll('.thumb_container') 
+      addFramePositionActions(frames[frames.length - 1])
+      sequence.push(thumbIndex)
+      updateSequence()
+      repositionFrames()
+      
+      const newFrame = frames[thumbIndex]
+      newFrame.style.backgroundColor = '#00e8d18e'
+      
+      // console.log('newFrame', newFrame.childNodes[1].childNodes)
+      addAddAction(newFrame.childNodes[1].childNodes[3], upload)
+      addDeleteAction(newFrame.childNodes[1].childNodes[1])
+      const { left, top } = frames[frameIndex].style
+      setTargetPos(frames[thumbIndex], +left.replace('px',''), +top.replace('px', '') - 150 )
+    })
+  }
+
+  const addDeleteAction = button =>{
+    button.addEventListener('click', (e)=>{
+      const thumbIndex = +e.target.dataset.thumb_id
+
+      frames[thumbIndex].classList.add('deleted_frame')
+      tidySequence(thumbIndex)
+      updateSequence()
+    })
+  }
+
 
   const addDuplicateAction = upload =>{
-    const duplicateButtons = document.querySelectorAll('.duplicate')
-
-    duplicateButtons.forEach(button=>{
-      button.addEventListener('click', (e)=>{
-        const frameIndex = +e.target.dataset.frame_id - 1
-        const thumbIndex = slots.length
-        const thumbImage = document.createElement('img')
-        createThumbs(frameIndex, thumbIndex, thumbImage)
-        
-        const dividedImages = document.querySelectorAll('.divided_img')
-        createCopyCanvasAndDisplayThumbs(dividedImages[frameIndex], thumbImage, upload ? 1 : +imgNoInput.value, frameIndex, !upload) 
-        frames = document.querySelectorAll('.thumb_container') 
-        addFramePositionActions(frames[frames.length - 1])
-        sequence.push(thumbIndex)
-        updateSequence()
-
-        repositionFrames()
-      })
-    })
-
-    const deleteButtons = document.querySelectorAll('.delete')
-
-    deleteButtons.forEach(button=>{
-      button.addEventListener('click', (e)=>{
-        const frameIndex = +e.target.dataset.frame_id - 1
-        // console.log(frameIndex)
-        slots[frameIndex].innerHTML = ''
-        tidySequence(frameIndex)
-        // sequence = sequence.filter(s => s !== frameIndex)
-        updateSequence()
-        console.log('sequence', sequence)
-        
-
-        // TODO neeed to do something to enable add 
-      })
-    })
+    document.querySelectorAll('.duplicate').forEach(button => addAddAction(button, upload))
+    document.querySelectorAll('.delete').forEach(button => addDeleteAction(button))
   }
 
 
@@ -427,12 +439,7 @@ function init() {
   window.addEventListener('resize',()=>{
     repositionFrames()
   })   
-
-  // copyGrid.addEventListener('click',()=>{
-  //   indicator.innerHTML = ''
-  // })
-
-
+  
   // icon alt
   const handleCursor = e =>{
     cursor.style.top = `${e.pageY}px`
@@ -449,6 +456,54 @@ function init() {
     })
   })
 
+  // const indicator = document.querySelector('.indicator')
+  // copyGrid.addEventListener('click',()=>{
+  //   indicator.innerHTML = ''
+  // })
+
 }
 
 window.addEventListener('DOMContentLoaded', init)
+
+
+// * sign testing
+// const combineImages = () =>{
+//   const dividedImages = document.querySelectorAll('.divided_img')
+//   console.log('dividedImages', dividedImages)
+//   if (!uploadFiles && !dividedImages.length) return
+//   canvas[0].classList.remove('display_none')
+//   const scale = +scaleInput.value
+
+//   const img = new Image()
+//   img.onload = () => {
+//     const { naturalWidth: w, naturalHeight: h } = img
+//     setUpCanvas(canvas[0], w * (+imgNoInput.value || uploadFiles.length), h)
+
+//     const w2 = 50
+//     const h2 = w2 * (w / h)
+//     setUpCanvas(canvas[1], w * (+imgNoInput.value || uploadFiles.length), h)
+    
+//     sequence.filter(s=>s !== ' ').forEach((index,i)=>{
+//       const canvas = dividedImages[thumbData[index].frameId - 1]
+//       const url = canvas.toDataURL()
+//       const eachImage = new Image()   
+//       eachImage.onload = () => { 
+//         canvas[0].getContext('2d').drawImage(eachImage, i * w, 0, w, h)
+//         canvas[1].getContext('2d').drawImage(eachImage, i * w2, 0, w2, h2)
+        
+//         // const ctx = canvas.getContext('2d')
+//         // const codes = extractCodes(w, h, ctx)
+//         // codes.forEach((code, i)=>{
+//         //   const x = w * scale
+//         //   const y = (Math.floor(i / h)) * scale
+//         //   ctx.fillStyle = code
+//         //   ctx.fillRect((i * w) + x, y, scale, scale)
+//         // })
+//         // outputSvg(svgWrapper(signSvg, invertHex(backgroundColor), signDim.w, signDim.h), canvas[0])
+//       }
+//       eachImage.src = url
+//     })
+//   }
+//   img.src = dividedImages[0].toDataURL() 
+//   // console.log('u',uploadedFiles)
+// }
