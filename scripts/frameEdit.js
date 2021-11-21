@@ -1,7 +1,5 @@
 function init() {
 
-  // TODO enable resize using scale.
-
   const canvas = document.querySelectorAll('.canvas')
   const canvasOutput = document.querySelector('.canvas_output')
   const cursor = document.querySelector('.cursor')
@@ -57,7 +55,6 @@ function init() {
   createSign(svgWrapper(signSvg, invertHex(backgroundColor), signDim.w, signDim.h), hideBox)
   
 
-  // TODO refactor this
   const combineImages = () =>{
     const dividedImages = document.querySelectorAll('.divided_img')
     // console.log('dividedImages', dividedImages)
@@ -134,8 +131,6 @@ function init() {
       })
   }
 
-  
-  // TODO take bits out of here and use to refactor combineImage
   const createCopyCanvasAndDisplayThumbs = (canvas, thumbImage, imgNo, imageIndex, divide) =>{
     canvas.classList.add('divided_img')
     const scale = +scaleInput.value
@@ -191,8 +186,6 @@ function init() {
         // outputSvg(svgWrapper(signSvg, invertHex(backgroundColor), signDim.w, signDim.h), dividedImages[thumbData[index].frameId - 1])
         printSign(dividedImages[thumbData[index].frameId - 1])
       })
-
-      //TODO trigger below after above finished?
 
       const encoder = new GIFEncoder()
       encoder.setRepeat(0) //auto-loop
@@ -382,7 +375,7 @@ function init() {
       addAddAction(newFrame.childNodes[1].childNodes[3], upload)
       addDeleteAction(newFrame.childNodes[1].childNodes[1])
       const { left, top } = frames[frameIndex].style
-      setTargetPos(frames[thumbIndex], +left.replace('px',''), +top.replace('px', '') - 150 )
+      setTargetPos(frames[thumbIndex], +left.replace('px',''), +top.replace('px', '') - 120 )
     })
   }
 
