@@ -51,6 +51,9 @@
       const { naturalWidth: w, naturalHeight: h } = sign
       const { offsetWidth: cW, offsetHeight: cH } = canvas
       canvas.getContext('2d').drawImage(sign, cW - (6 + w), cH - (7 + h), w, h)
+      // canvas.setAttribute('width', w)
+      // canvas.setAttribute('height', h)
+      // canvas.getContext('2d').drawImage(sign,0, 0, w, h)
     }
     sign.src = url
   }
@@ -58,4 +61,20 @@
   const signDim = {
     w: 71.8, 
     h: 18.9,
+  }
+
+  const createSign = (content, target) =>{
+    const data = new Blob([content], { type: 'image/svg+xml;charset=utf-8' })
+    const url = window.URL.createObjectURL(data)
+    const sign = new Image()
+    sign.src = url
+    sign.classList.add('sign')
+    target.append(sign)
+  }
+
+  const printSign = canvas =>{
+    const sign = document.querySelector('.sign')
+    const { naturalWidth: w, naturalHeight: h } = sign
+    const { offsetWidth: cW, offsetHeight: cH } = canvas
+    canvas.getContext('2d').drawImage(sign, cW - (6 + w), cH - (7 + h), w, h)
   }

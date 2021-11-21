@@ -11,6 +11,7 @@ function init() {
   const imgNoInput = document.querySelector('.img_no')
   const scaleInput = document.querySelector('.scale')
   const gif = document.querySelector('.gif')
+  const hideBox = document.querySelector('.hide_box')
   
   // button
   const alts = document.querySelectorAll('.alt')
@@ -25,12 +26,15 @@ function init() {
 
   // drag
   const slotInfo = []
+  const codeData = []
   const sequenceOutput = document.querySelector('.sequence')
   const thumbOutput = document.querySelector('.s_output')
   let sequence = []
+  let canvasData = { w:null, h:null }
   let slots
   let frames
   const thumbData = []
+  let frameMode = 'upload'
 
     
   colorInput.addEventListener('change',()=>{
@@ -50,32 +54,7 @@ function init() {
     canvas.setAttribute('height', h)
   }
 
-  // const combineImages = () =>{
-  //   if (!uploadFiles || uploadFiles.length < 2) return
-  //   canvas[0].classList.remove('display_none')
-
-  //   const firstImage = new Image()
-  //   firstImage.onload = () => {
-  //     const { naturalWidth: w, naturalHeight: h } = firstImage
-  //     setUpCanvas(canvas[0], w * uploadFiles.length, h)
-
-  //     const w2 = 50
-  //     const h2 = w2 * (w / h)
-  //     setUpCanvas(canvas[1], w * uploadFiles.length, h)
-      
-  //     Array.from(uploadFiles).forEach((upload,i)=>{
-  //       const blobURL = window.URL.createObjectURL(upload)
-  //       const eachImage = new Image()   
-  //       eachImage.onload = () => { 
-  //         canvas[0].getContext('2d').drawImage(eachImage,i * w, 0, w, h)
-  //         canvas[1].getContext('2d').drawImage(eachImage,i * w2, 0, w2, h2)
-  //       }
-  //       eachImage.src = blobURL
-  //     })
-  //   }
-  //   firstImage.src = window.URL.createObjectURL(uploadFiles[0])    
-  //   // console.log('u',uploadedFiles)
-  // }
+  createSign(svgWrapper(signSvg, invertHex(backgroundColor), signDim.w, signDim.h), hideBox)
   
 
   // TODO refactor this
@@ -84,15 +63,17 @@ function init() {
     // console.log('dividedImages', dividedImages)
     if (!uploadFiles && !dividedImages.length) return
     canvas[0].classList.remove('display_none')
+    const wOffset = frameMode === 'divide' ? +imgNoInput.value : uploadFiles.length
+    // const scale = +scaleInput.value
 
     const img = new Image()
     img.onload = () => {
       const { naturalWidth: w, naturalHeight: h } = img
-      setUpCanvas(canvas[0], w * (+imgNoInput.value || uploadFiles.length), h)
+      setUpCanvas(canvas[0], w * wOffset, h)
 
       const w2 = 50
       const h2 = w2 * (w / h)
-      setUpCanvas(canvas[1], w * (+imgNoInput.value || uploadFiles.length), h)
+      setUpCanvas(canvas[1], w * wOffset, h)
       
       sequence.filter(s=>s !== ' ').forEach((index,i)=>{
         const url = dividedImages[thumbData[index].frameId - 1].toDataURL()
@@ -143,6 +124,16 @@ function init() {
     output.append(slot)
   }
 
+  const resizeAndPaintCanvas = (canvas, w, h, scale, codes, ctx) =>{
+    setUpCanvas(canvas, w * scale, h * scale)
+      codes.forEach((code, i)=>{
+        const x = (i % w) * scale
+        const y = (Math.floor(i / h)) * scale
+        ctx.fillStyle = code
+        ctx.fillRect(x, y, scale, scale)
+      })
+  }
+
   
   // TODO take bits out of here and use to refactor combineImage
   const createCopyCanvasAndDisplayThumbs = (canvas, thumbImage, imgNo, imageIndex, divide) =>{
@@ -153,21 +144,19 @@ function init() {
       // set up canvas and extract codes
       const { naturalWidth: w, naturalHeight: h } = img
       const newImgWidth = w / imgNo
+
+      // record canvas' raw width and height to enable scaling
+      if (imageIndex === 0) canvasData = { w: newImgWidth, h }
+
       setUpCanvas(canvas, newImgWidth, h)
       const ctx = canvas.getContext('2d')
       const offset = divide ? imageIndex * -newImgWidth : 0
       ctx.drawImage(img, offset, 0, w, h)
       const codes = extractCodes(newImgWidth, h, ctx)
       
-      // enlarge based on scale value and draw on canvas
-      setUpCanvas(canvas, newImgWidth * scale, h * scale)
-      codes.forEach((code, i)=>{
-        const x = (i % newImgWidth) * scale
-        const y = (Math.floor(i / h)) * scale
-        ctx.fillStyle = code
-        ctx.fillRect(x, y, scale, scale)
-      })
-      outputSvg(svgWrapper(signSvg, invertHex(backgroundColor), signDim.w, signDim.h), canvas)
+      resizeAndPaintCanvas(canvas, newImgWidth, h, scale, codes, ctx)
+      codeData[imageIndex] = codes
+      // outputSvg(svgWrapper(signSvg, invertHex(backgroundColor), signDim.w, signDim.h), canvas)
       thumbImage.src = canvas.toDataURL()
     }
     img.src = window.URL.createObjectURL(uploadFiles[ divide ? 0 : imageIndex])  
@@ -197,6 +186,14 @@ function init() {
     const dividedImages = document.querySelectorAll('.divided_img')
     if (dividedImages.length) {
       const transitionInput = document.querySelectorAll('.transition')
+
+      sequence.filter(s=>s !== ' ').forEach( index =>{
+        // outputSvg(svgWrapper(signSvg, invertHex(backgroundColor), signDim.w, signDim.h), dividedImages[thumbData[index].frameId - 1])
+        printSign(dividedImages[thumbData[index].frameId - 1])
+      })
+
+      //TODO trigger below after above finished?
+
       const encoder = new GIFEncoder()
       encoder.setRepeat(0) //auto-loop
       encoder.start()
@@ -339,13 +336,14 @@ function init() {
 
   const uploadImage = () =>{
     uploadFiles = upload.files
+    frameMode = 'upload'
     imageCount.innerHTML = `image x ${uploadFiles.length}`
     if (uploadFiles.length < 1) return
 
     output.innerHTML = ''
     canvasOutput.innerHTML = ''
     sequence.length = 0
-
+    codeData.length = 0
     new Array(uploadFiles.length).fill('').forEach((_file,i)=>{
       const thumbImage = document.createElement('img')
       createThumbs(i, i, thumbImage)
@@ -354,6 +352,7 @@ function init() {
       canvasOutput.append(newCanvas)
       createCopyCanvasAndDisplayThumbs(newCanvas, thumbImage, 1, i, false)
     })
+    // recordCanvasSize()
     addDuplicateAction(true)
     makeThumbsDraggable()
   }
@@ -406,11 +405,12 @@ function init() {
 
   const divide = () =>{
     if (!uploadFiles || uploadFiles.length > 1) return
+    frameMode = 'divide'
     output.innerHTML = ''
     canvasOutput.innerHTML = ''
     sequence.length = 0
     const imgNo = +imgNoInput.value
-
+    codeData.length = 0
     new Array(imgNo).fill('').forEach((_file,imageIndex)=>{
       const thumbImage = document.createElement('img')
       createThumbs(imageIndex, imageIndex, thumbImage)
@@ -419,12 +419,31 @@ function init() {
       canvasOutput.append(newCanvas)
       createCopyCanvasAndDisplayThumbs(newCanvas, thumbImage, imgNo, imageIndex, true) 
     })
+    // recordCanvasSize()
+    
     addDuplicateAction(false)
     makeThumbsDraggable()
   }
   
   const buttonTrigger = (button, classId, action) =>{
     if (button.classList.contains(classId)) button.addEventListener('click', action)
+  }
+
+  const updateCanvas = () => {
+    // console.log('update canvas', frameMode)
+    const dividedImages = document.querySelectorAll('.divided_img')
+    if (dividedImages.length) {
+      const { w, h } = canvasData
+      const scale = +scaleInput.value
+
+      dividedImages.forEach((canvas, index)=>{
+        const { offsetWidth:w, offsetHeight:h } = canvas
+        const ctx = canvas.getContext('2d')
+        resizeAndPaintCanvas(canvas, w, h, scale, codeData[index], ctx)
+      })
+    }
+    // console.log(codeData)
+    console.log(canvasData)
   }
   
   buttons.forEach(button=>{
@@ -434,6 +453,7 @@ function init() {
     buttonTrigger(button, 'download_imgs', downloadDividedImgs)
     buttonTrigger(button, 'create_gif', createGif)
     buttonTrigger(button, 'download_gif', downloadGif)
+    buttonTrigger(button, 'update_canvas', updateCanvas)
   })
 
   window.addEventListener('resize',()=>{
@@ -465,45 +485,3 @@ function init() {
 
 window.addEventListener('DOMContentLoaded', init)
 
-
-// * sign testing
-// const combineImages = () =>{
-//   const dividedImages = document.querySelectorAll('.divided_img')
-//   console.log('dividedImages', dividedImages)
-//   if (!uploadFiles && !dividedImages.length) return
-//   canvas[0].classList.remove('display_none')
-//   const scale = +scaleInput.value
-
-//   const img = new Image()
-//   img.onload = () => {
-//     const { naturalWidth: w, naturalHeight: h } = img
-//     setUpCanvas(canvas[0], w * (+imgNoInput.value || uploadFiles.length), h)
-
-//     const w2 = 50
-//     const h2 = w2 * (w / h)
-//     setUpCanvas(canvas[1], w * (+imgNoInput.value || uploadFiles.length), h)
-    
-//     sequence.filter(s=>s !== ' ').forEach((index,i)=>{
-//       const canvas = dividedImages[thumbData[index].frameId - 1]
-//       const url = canvas.toDataURL()
-//       const eachImage = new Image()   
-//       eachImage.onload = () => { 
-//         canvas[0].getContext('2d').drawImage(eachImage, i * w, 0, w, h)
-//         canvas[1].getContext('2d').drawImage(eachImage, i * w2, 0, w2, h2)
-        
-//         // const ctx = canvas.getContext('2d')
-//         // const codes = extractCodes(w, h, ctx)
-//         // codes.forEach((code, i)=>{
-//         //   const x = w * scale
-//         //   const y = (Math.floor(i / h)) * scale
-//         //   ctx.fillStyle = code
-//         //   ctx.fillRect((i * w) + x, y, scale, scale)
-//         // })
-//         // outputSvg(svgWrapper(signSvg, invertHex(backgroundColor), signDim.w, signDim.h), canvas[0])
-//       }
-//       eachImage.src = url
-//     })
-//   }
-//   img.src = dividedImages[0].toDataURL() 
-//   // console.log('u',uploadedFiles)
-// }
