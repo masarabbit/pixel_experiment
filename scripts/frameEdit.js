@@ -60,7 +60,9 @@ function init() {
     // console.log('dividedImages', dividedImages)
     if (!uploadFiles && !dividedImages.length) return
     canvas[0].classList.remove('display_none')
-    const wOffset = frameMode === 'divide' ? +imgNoInput.value : uploadFiles.length
+    // const wOffset = frameMode === 'divide' ? +imgNoInput.value : uploadFiles.length
+    const wOffset = +imgNoInput.value
+    console.log('wOffset', wOffset)
     // const scale = +scaleInput.value
 
     const img = new Image()
@@ -137,7 +139,9 @@ function init() {
     const img = new Image()
     img.onload = () => {
       // set up canvas and extract codes
-      const { naturalWidth: w, naturalHeight: h } = img
+      // const { naturalWidth: w, naturalHeight: h } = img
+      const w = 48
+      const h = 48
       const newImgWidth = w / imgNo
 
       // record canvas' raw width and height to enable scaling
