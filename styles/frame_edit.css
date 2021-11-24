@@ -61,6 +61,9 @@ input.no_input {
   /* padding: 10px 0; */
   /* overflow-x: scroll; */
   display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+  max-width: calc(10 * 70px);
 }
 
 .output canvas{
@@ -317,6 +320,14 @@ button.icon:hover {
 .transition {
   width: 50px;
   text-align: center;
+}
+
+.no_input.transition_input {
+  width: 60px;
+}
+
+.hex {
+  width: 75px;
 }
 
 .input_wrapper {

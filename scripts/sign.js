@@ -64,6 +64,8 @@
   }
 
   const createSign = (content, target) =>{
+    const oldSign = document.querySelector('.sign')
+    if (oldSign) target.removeChild(oldSign)
     const data = new Blob([content], { type: 'image/svg+xml;charset=utf-8' })
     const url = window.URL.createObjectURL(data)
     const sign = new Image()

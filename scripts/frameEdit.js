@@ -19,6 +19,9 @@ function init() {
   const upload = document.querySelector('#upload')
   const colorInput = document.querySelector('#color')
   const colorLabel = document.querySelector('.color_label')
+  const uploadSizeInput = document.querySelector('.upload_size')
+  const hexInput = document.querySelector('.hex')
+  const transitionInput = document.querySelector('.transition_input')
   let uploadFiles
   let backgroundColor = '#ffffff'
 
@@ -35,9 +38,17 @@ function init() {
   let frameMode = 'upload'
 
     
+  hexInput.addEventListener('change',()=>{
+    backgroundColor = hexInput.value
+    colorLabel.style.backgroundColor = backgroundColor
+    createSign(svgWrapper(signSvg, invertHex(backgroundColor), signDim.w, signDim.h), hideBox)
+  })
+
   colorInput.addEventListener('change',()=>{
     backgroundColor = colorInput.value
+    hexInput.value = backgroundColor
     colorLabel.style.backgroundColor = backgroundColor
+    createSign(svgWrapper(signSvg, invertHex(backgroundColor), signDim.w, signDim.h), hideBox)
   })
 
   const downloadImage = (canvas, name, date) =>{
@@ -62,7 +73,7 @@ function init() {
     canvas[0].classList.remove('display_none')
     // const wOffset = frameMode === 'divide' ? +imgNoInput.value : uploadFiles.length
     const wOffset = +imgNoInput.value
-    console.log('wOffset', wOffset)
+    // console.log('wOffset', wOffset)
     // const scale = +scaleInput.value
 
     const img = new Image()
@@ -106,6 +117,7 @@ function init() {
     thumbImage.classList.add('thumb_image')
     const slot = document.createElement('div')
     const frameId = frameIndex + 1
+    const transition = +transitionInput.value || 100
     slot.classList.add('slot')
     slot.innerHTML =  `
     <div class="thumb_container" data-thumb_id=${thumbIndex} data-frame_id="${frameId}" >
@@ -115,7 +127,7 @@ function init() {
       </div>
       <div class="input_wrapper">
         <p>${frameId}</p>
-        <input class="transition input" placeholder="100" value="100" />
+        <input class="transition input" placeholder="100" value="${transition}" />
       </div>
     </div>`
     thumbData[thumbIndex] = { frameId, draggable: true }
@@ -139,9 +151,13 @@ function init() {
     const img = new Image()
     img.onload = () => {
       // set up canvas and extract codes
-      // const { naturalWidth: w, naturalHeight: h } = img
-      const w = 48
-      const h = 48
+      
+      const uploadSize = +uploadSizeInput.value
+      let { naturalWidth: w, naturalHeight: h } = img
+      if (uploadSize){
+        w = uploadSize
+        h = uploadSize
+      }
       const newImgWidth = w / imgNo
 
       // record canvas' raw width and height to enable scaling
@@ -161,7 +177,6 @@ function init() {
     img.src = window.URL.createObjectURL(uploadFiles[ divide ? 0 : imageIndex])  
   }
   
-
   const makeThumbsDraggable = () =>{
     frames = document.querySelectorAll('.thumb_container')
     slots = document.querySelectorAll('.slot')
@@ -179,7 +194,6 @@ function init() {
       }, i * 200)
     })
   }
-
 
   const createGif = () =>{
     const dividedImages = document.querySelectorAll('.divided_img')
@@ -276,15 +290,17 @@ function init() {
             frames.forEach(frame=>{
               const framePos = currentSequence.indexOf(+frame.dataset.thumb_id)    
               frame.style.transition = '0.3s'
-              frame.style.backgroundColor = 'yellow'
+              frame.style.backgroundColor = 'rgba(0, 0, 0, 0.2)'
               if (currentSelection === -1) return
               if (framePos < currentSelection && framePos >= i) { 
-                frame.style.left = `${slotInfo[framePos + 1].x}px`
+                // frame.style.left = `${slotInfo[framePos + 1].x}px`
+                setTargetPos(frame, slotInfo[framePos + 1].x, slotInfo[framePos + 1].y)
                 tidySequence(currentSequence[framePos])
                 sequence[framePos + 1] = currentSequence[framePos]
               } 
               if (framePos > currentSelection && framePos <= i) {
-                frame.style.left = `${slotInfo[framePos - 1].x}px`
+                // frame.style.left = `${slotInfo[framePos - 1].x}px`
+                setTargetPos(frame, slotInfo[framePos - 1].x, slotInfo[framePos - 1].y)
                 tidySequence(currentSequence[framePos])
                 sequence[framePos - 1] = currentSequence[framePos]
               }  
@@ -313,11 +329,13 @@ function init() {
 
   const recordSlotPos = () =>{
     slots = document.querySelectorAll('.slot')
-    slots.forEach((slot,i)=>{
-      const { x, y } = slot.getBoundingClientRect()
-      slot.dataset.i = i
-      slotInfo[i] = { x, y }
-    })
+    setTimeout(()=>{
+      slots.forEach((slot,i)=>{
+        const { x, y } = slot.getBoundingClientRect()
+        slot.dataset.i = i
+        slotInfo[i] = { x, y }
+      })
+    },100)
   }
 
   const repositionFrames = () =>{
@@ -378,8 +396,8 @@ function init() {
       // console.log('newFrame', newFrame.childNodes[1].childNodes)
       addAddAction(newFrame.childNodes[1].childNodes[3], upload)
       addDeleteAction(newFrame.childNodes[1].childNodes[1])
-      const { left, top } = frames[frameIndex].style
-      setTargetPos(frames[thumbIndex], +left.replace('px',''), +top.replace('px', '') - 120 )
+      // const { left, top } = frames[frameIndex].style
+      // setTargetPos(frames[thumbIndex], +left.replace('px',''), +top.replace('px', '') - 120 )
     })
   }
 
@@ -393,12 +411,10 @@ function init() {
     })
   }
 
-
   const addDuplicateAction = upload =>{
     document.querySelectorAll('.duplicate').forEach(button => addAddAction(button, upload))
     document.querySelectorAll('.delete').forEach(button => addDeleteAction(button))
   }
-
 
   const divide = () =>{
     if (!uploadFiles || uploadFiles.length > 1) return
@@ -440,7 +456,7 @@ function init() {
       })
     }
     // console.log(codeData)
-    console.log(canvasData)
+    // console.log(canvasData)
   }
   
   buttons.forEach(button=>{

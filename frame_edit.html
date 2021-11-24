@@ -19,11 +19,20 @@
 <body>
   <nav>
     frame edit
+
     <label for="color" class="color_label"></label>
     <input id="color" type="color">
     <div class="input_wrap">
+      <label>hex</label>
+      <input class="hex input" placeholder="#000000" />
+    </div>
+    <div class="input_wrap">
       <label>img</label>
       <input class="img_name input" placeholder="img" value="img" />
+    </div>
+    <div class="input_wrap">
+      <label>size</label>
+      <input class="upload_size input no_input" placeholder="n/a" />
     </div>
     <input id="upload" type="file" multiple />
     <label for="upload" class="icon upload alt" data-alt="upload file"></label>
@@ -37,6 +46,10 @@
     <div class="input_wrap">
       <label>scale</label>
       <input class="scale input no_input" placeholder="1" value="1" />
+    </div>
+    <div class="input_wrap">
+      <label>transition</label>
+      <input class="transition_input input no_input" placeholder="100" value="100" />
     </div>
     <button class="divide icon alt" data-alt="divide">/</button>
     <button class="download_imgs download icon alt" data-alt="download divided images">:</button>
