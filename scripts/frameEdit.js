@@ -23,7 +23,7 @@ function init() {
   const hexInput = document.querySelector('.hex')
   const transitionInput = document.querySelector('.transition_input')
   let uploadFiles
-  let backgroundColor = '#ffffff'
+  let backgroundColor = 'transparent'
 
   // drag
   const slotInfo = []
@@ -63,7 +63,7 @@ function init() {
     canvas.setAttribute('height', h)
   }
 
-  createSign(svgWrapper(signSvg, invertHex(backgroundColor), signDim.w, signDim.h), hideBox)
+  createSign(svgWrapper(signSvg, invertHex('#ffffff'), signDim.w, signDim.h), hideBox)
   
 
   const combineImages = () =>{
