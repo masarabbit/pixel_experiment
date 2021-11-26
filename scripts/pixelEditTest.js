@@ -325,16 +325,8 @@ function init() {
     copyGrid.style.marginTop = '100px'
     copyGrid.style.marginBottom = `-${(row * cellSize) + 100}px`
     copyGrid.innerHTML = arr.map((_ele,i)=>{
-      return `
-        <div 
-          class="${cellStyle}"
-          style="${cellWidthAndHeight()}"
-          data-cell=${i}
-        >
-        </div>
-        `
+      return `<div class="${cellStyle}" style="${cellWidthAndHeight()}" data-cell=${i}></div>`
     }).join('')
-
 
     copyGrid.addEventListener('click',(e)=>{
       if (!copyBoxCreated){
@@ -417,26 +409,26 @@ function init() {
       copyBox.style.justifyContent = 'flex-end'
       copyBox.style.alignItems = 'flex-end'
     }
-    let width = copyBox ? copyBox.style.width.replace('px','') / cellSize : ''
-    let height = copyBox ? copyBox.style.height.replace('px','') / cellSize : ''
+    let w = copyBox ? copyBox.style.width.replace('px','') / cellSize : ''
+    let h = copyBox ? copyBox.style.height.replace('px','') / cellSize : ''
     const selection = []
 
-    if (roundedX < 0) width += roundedX // adjusts width if selection is beyond left edge of copyBox
-    if (roundedY < 0) height += roundedY // adjusts height if selection is beyond top edge of copyBox 
+    if (roundedX < 0) w += roundedX // adjusts width if selection is beyond left edge of copyBox
+    if (roundedY < 0) h += roundedY // adjusts height if selection is beyond top edge of copyBox 
 
     // adjusts width if selection is beyond right edge of copyBox
-    if (roundedX + width > column) {
+    if (roundedX + w > column) {
       if (!copied) copyBox.style.justifyContent = 'flex-start'
-      width -= Math.abs((roundedX + width) - column) 
+      w -= Math.abs((roundedX + w) - column) 
     }
     // adjust height if selection is beyond bottom edge of copyBox
-    if (roundedY + height > row) {
+    if (roundedY + h > row) {
       if (!copied) copyBox.style.alignItems = 'flex-start'
-      height -= Math.abs((roundedY + height) - row) 
+      h -= Math.abs((roundedY + h) - row) 
     }
 
-    for (let a = firstCell; a < firstCell + (height * column); a += +column){
-      for (let b = a; b < (a + width); b++){
+    for (let a = firstCell; a < firstCell + (h * column); a += +column){
+      for (let b = a; b < (a + w); b++){
         selection.push(b) 
       }
     }
@@ -444,18 +436,10 @@ function init() {
     if (!copied){
       const activeArea = document.querySelector('.active_area')
       if (!activeArea) {
-        copyBox.innerHTML = `
-      <div   
-      class="active_area"
-      style="
-      width:${width * cellSize}px;
-      height:${height * cellSize}px;
-      ">
-      </div>
-    `
+        copyBox.innerHTML = `<div class="active_area" style="width:${w * cellSize}px; height:${h * cellSize}px;"></div>`
       } else {
-        activeArea.style.width = `${width * cellSize}px`
-        activeArea.style.height = `${height * cellSize}px`
+        activeArea.style.width = `${w * cellSize}px`
+        activeArea.style.height = `${h * cellSize}px`
       }
       // copyData.activeArea = selection
     }
