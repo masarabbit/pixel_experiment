@@ -201,7 +201,6 @@ function init() {
       const transitionInput = document.querySelectorAll('.transition')
 
       sequence.filter(s=>s !== ' ').forEach( index =>{
-        // outputSvg(svgWrapper(signSvg, invertHex(backgroundColor), signDim.w, signDim.h), dividedImages[thumbData[index].frameId - 1])
         printSign(dividedImages[thumbData[index].frameId - 1])
       })
 
@@ -245,7 +244,6 @@ function init() {
 
   // drag
   const addFramePositionActions = frame =>{
-    // frame.childNodes[1].classList.add('select')
     let newX
     let newY
     const thumbId = +frame.dataset.thumb_id
