@@ -1,7 +1,0 @@
-
-
-// penguin svg 1
-
-flip selected section
-
-<path fill="#000" d="M 9 1 h 5 v 1 h 2 v 1 h 1 v 3 h -2 v -2 h -2 v -1 h -2 v 1 h -2 v 1 h 1 v 2 h -2 v 1 h -1 v -1 h -3 v -1 h 1 v -1 h 2 v -2 h 1 v -1 h 1 v -1"/> <path fill="#fff" d="M 11 3 h 2 v 1 h 2 v 2 h 2 v 2 h -3 v 1 h -3 v 1 h -2 v -2 h -1 v -1 h 2 v -2 h -1 v -1 h 2 v -1"/> <path fill="#000" d="M 11 5 h 1 v 2 h -1 v -2"/> <path fill="#000" d="M 17 6 h 1 v 4 h 1 v 1 h 1 v 2 h 1 v 4 h -2 v -1 h -1 v -5 h -1 v -1 h -3 v 1 h -1 v 2 h -1 v 3 h -1 v 2 h -2 v -3 h -1 v 1 h -1 v 1 h -1 v 3 h -2 v -1 h -1 v -1 h 1 v -1 h 1 v -1 h 1 v -2 h 1 v -2 h 1 v -4 h 1 v 2 h 2 v -1 h 3 v -1 h 3 v -2"/> <path fill="#fff" d="M 14 10 h 3 v 1 h 1 v 5 h -1 v 2 h -1 v 1 h -1 v 1 h -9 v -3 h 1 v -1 h 1 v -1 h 1 v 3 h 2 v -2 h 1 v -3 h 1 v -2 h 1 v -1"/> <path fill="#000" d="M 17 16 h 1 v 2 h -1 v -2"/> <path fill="#000" d="M 16 18 h 1 v 2 h -1 v 2 h 1 v 2 h -2 v -1 h -1 v -2 h -3 v 1 h 1 v 2 h -2 v -1 h -1 v -2 h -3 v -1 h 9 v -1 h 1 v -1"/>

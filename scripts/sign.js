@@ -1,5 +1,5 @@
 
-  const signSvg = `
+const signSvg = `
   <g>
 	<g>
 		<path d="M3.1,18.3C2,19,0.8,18.8,0.2,18c-0.4-0.5,0-4.8,0-6.5C0.3,9.3,0.3,6.6,1.7,6c0.5-0.2,1.6-0.2,2,0
@@ -39,44 +39,44 @@
 </g>
   `
 
-  const svgWrapper = (content, color, w, h) =>{
-    return `<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="${w}px" height="${h}px" viewBox="0 0 ${w} ${h}" fill="${color}">${content}</svg>`
-  }
+const svgWrapper = (content, color, w, h) =>{
+  return `<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="${w}px" height="${h}px" viewBox="0 0 ${w} ${h}" fill="${color}">${content}</svg>`
+}
 
-  const outputSvg = (content, canvas) =>{
-    const data = new Blob([content], { type: 'image/svg+xml;charset=utf-8' })
-    const url = window.URL.createObjectURL(data)
-    const sign = new Image()
-    sign.onload = () => {
-      const { naturalWidth: w, naturalHeight: h } = sign
-      const { offsetWidth: cW, offsetHeight: cH } = canvas
-      canvas.getContext('2d').drawImage(sign, cW - (6 + w), cH - (7 + h), w, h)
-      // canvas.setAttribute('width', w)
-      // canvas.setAttribute('height', h)
-      // canvas.getContext('2d').drawImage(sign,0, 0, w, h)
-    }
-    sign.src = url
-  }
-
-  const signDim = {
-    w: 71.8, 
-    h: 18.9,
-  }
-
-  const createSign = (content, target) =>{
-    const oldSign = document.querySelector('.sign')
-    if (oldSign) target.removeChild(oldSign)
-    const data = new Blob([content], { type: 'image/svg+xml;charset=utf-8' })
-    const url = window.URL.createObjectURL(data)
-    const sign = new Image()
-    sign.src = url
-    sign.classList.add('sign')
-    target.append(sign)
-  }
-
-  const printSign = canvas =>{
-    const sign = document.querySelector('.sign')
+const outputSvg = (content, canvas) =>{
+  const data = new Blob([content], { type: 'image/svg+xml;charset=utf-8' })
+  const url = window.URL.createObjectURL(data)
+  const sign = new Image()
+  sign.onload = () => {
     const { naturalWidth: w, naturalHeight: h } = sign
     const { offsetWidth: cW, offsetHeight: cH } = canvas
     canvas.getContext('2d').drawImage(sign, cW - (6 + w), cH - (7 + h), w, h)
+    // canvas.setAttribute('width', w)
+    // canvas.setAttribute('height', h)
+    // canvas.getContext('2d').drawImage(sign,0, 0, w, h)
   }
+  sign.src = url
+}
+
+const signDim = {
+  w: 71.8, 
+  h: 18.9,
+}
+
+const createSign = (content, target) =>{
+  const oldSign = document.querySelector('.sign')
+  if (oldSign) target.removeChild(oldSign)
+  const data = new Blob([content], { type: 'image/svg+xml;charset=utf-8' })
+  const url = window.URL.createObjectURL(data)
+  const sign = new Image()
+  sign.src = url
+  sign.classList.add('sign')
+  target.append(sign)
+}
+
+const printSign = canvas =>{
+  const sign = document.querySelector('.sign')
+  const { naturalWidth: w, naturalHeight: h } = sign
+  const { offsetWidth: cW, offsetHeight: cH } = canvas
+  canvas.getContext('2d').drawImage(sign, cW - (6 + w), cH - (7 + h), w, h)
+}
