@@ -1,0 +1,69 @@
+<!doctype html>
+<html>
+
+<head>
+  <link rel="stylesheet" type="text/css" href="./styles/color_test.css" />
+  <script src ="./scripts/colorTest.js" charset="utf-8"></script>
+
+  <title>color test</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+
+<body>
+  <nav>
+    color test
+    <div class="input_wrap">
+      <label>column</label>
+      <input class="column input" placeholder="column" value="10" />
+    </div>
+    <div class="input_wrap">
+      <label>row</label>
+      <input class="row input" placeholder="row" value="10" />
+    </div>
+    <div class="input_wrap">
+      <label>cell size</label>
+      <input class="cell_size input" placeholder="cell size" value="20" />
+    </div>
+
+    <label for="color" class="color_label"></label>
+      <input id="color" type="color">
+      
+      <input id="upload" type="file" single/>
+      <label for="upload" data-alt="upload image file" class="upload icon alt"></label>
+      <div class="file_name"></div>
+      <button class="button draw icon display_none alt" data-alt="pixelise"></button>
+  </nav>
+
+  <div class="pagewrap">
+    
+    <div class="img_wrap">
+      <canvas class="canvas display_none"></canvas>
+      <canvas class="canvas display_none"></canvas>
+    </div> 
+    
+    <!--generate grid1 -->
+    <div class="grid extra_margin"></div>
+  
+
+    <div class="palette"></div>
+    <div class="color_output"></div>
+    <textarea class="codes" spellcheck="false"></textarea>
+    <div class="mini_wrap">
+      <button class="generate icon alt" data-alt="generate from code"></button>
+      <button class="copy icon alt" data-alt="copy code"></button>
+    </div>
+
+    <textarea class="codes" spellcheck="false"></textarea>
+    <div class="mini_wrap">
+      <button class="copy icon alt" data-alt="copy code"></button>
+    </div>
+
+  </div>
+
+
+  <div class="cursor" data-text="test"><div></div></div>
+  <div class="indicator"></div>
+</body>
+
+</html>

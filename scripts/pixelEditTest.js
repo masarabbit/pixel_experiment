@@ -89,11 +89,9 @@ function init() {
 
   const sortedByFrequencyDuplicatesAndBlankRemoved = array =>{  
     const countOccurrences = (arr, val) => arr.reduce((a, v) => (v === val ? a + 1 : a), 0)
-    const blankRemoved = array.filter(dot=> dot !== '' && dot)
-    const orderedByFrequency = blankRemoved.map(ele=>{  
-      return `${ele}_${countOccurrences(blankRemoved,ele)}`
-    }).sort((a, b) => b.split('_')[1] - a.split('_')[1])  
-    return [...new Set(orderedByFrequency.map(ele=>ele.split('_')[0]))]
+    const blankRemoved = array.filter(dot=> dot)
+    const orderedByFrequency = blankRemoved.map(ele=>[ele, countOccurrences(blankRemoved,ele)]).sort((a, b) => b[1] - a[1])  
+    return [...new Set(orderedByFrequency.map(ele=>ele[0]))]
   }
 
   const updateCode = () =>{
@@ -255,8 +253,7 @@ function init() {
       column,
       cellSize,
       0,
-      'cell',
-      false
+      'cell'
     )
 
     createCopyGrids(
@@ -297,7 +294,7 @@ function init() {
     document.execCommand('copy')
   }
 
-  const createGridCells = (row, column, cellSize, index, cellStyle, clear) =>{
+  const createGridCells = (row, column, cellSize, index, cellStyle) =>{
     const arr = new Array(row * column).fill('')
     grids[index].style.width = `${column * cellSize}px`
     grids[index].style.height = `${row * cellSize}px`
@@ -540,7 +537,7 @@ function init() {
   }
 
   const createGrid = (index,cellStyle) =>{
-    createGridCells(row, column, cellSize, index, cellStyle,true)
+    createGridCells(row, column, cellSize, index, cellStyle)
     codes[0] = new Array(row * column).fill('transparent')
     codesBox[0].value = codes[0]
 

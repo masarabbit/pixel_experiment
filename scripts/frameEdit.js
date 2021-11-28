@@ -31,7 +31,7 @@ function init() {
   const sequenceOutput = document.querySelector('.sequence')
   const thumbOutput = document.querySelector('.s_output')
   let sequence = []
-  let canvasData = { w:null, h:null }
+  let canvasData = { w: null, h: null }
   let slots
   let frames
   const thumbData = []
@@ -137,12 +137,12 @@ function init() {
 
   const resizeAndPaintCanvas = (canvas, w, h, scale, codes, ctx) =>{
     setUpCanvas(canvas, w * scale, h * scale)
-      codes.forEach((code, i)=>{
-        const x = (i % w) * scale
-        const y = (Math.floor(i / h)) * scale
-        ctx.fillStyle = code
-        ctx.fillRect(x, y, scale, scale)
-      })
+    codes.forEach((code, i)=>{
+      const x = (i % w) * scale
+      const y = (Math.floor(i / h)) * scale
+      ctx.fillStyle = code
+      ctx.fillRect(x, y, scale, scale)
+    })
   }
 
   const createCopyCanvasAndDisplayThumbs = (canvas, thumbImage, imgNo, imageIndex, divide) =>{
@@ -237,7 +237,7 @@ function init() {
   }
 
   const updateSequence = () =>{
-    sequenceOutput.value = sequence.map(s=> (s === ' ' || (!s && s !== 0)) ? ' ': thumbData[s].frameId).join(' ')
+    sequenceOutput.value = sequence.map(s=> (s === ' ' || (!s && s !== 0)) ? ' ' : thumbData[s].frameId).join(' ')
   }
 
   const tidySequence = id => sequence = sequence.map(s => s === id ? ' ' : s )
@@ -448,7 +448,7 @@ function init() {
       const scale = +scaleInput.value
 
       dividedImages.forEach((canvas, index)=>{
-        const { offsetWidth:w, offsetHeight:h } = canvas
+        const { offsetWidth: w, offsetHeight: h } = canvas
         const ctx = canvas.getContext('2d')
         resizeAndPaintCanvas(canvas, w, h, scale, codeData[index], ctx)
       })
