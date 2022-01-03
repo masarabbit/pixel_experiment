@@ -113,10 +113,11 @@ function init() {
   const cellWidthAndHeight = () => `width:${cellSize}px; height:${cellSize}px;`
 
   const updateGrid = () =>{
-    grids[0].innerHTML = codes[0].map(dot => {
-      return `<div class="cell" style="background-color:${dot}; ${cellWidthAndHeight()}"></div>`
+    grids[0].innerHTML = codes[0].map((dot, i) => {
+      return `<div class="cell" index="${i}" data-cell=${i} style="background-color:${dot}; ${cellWidthAndHeight()}"></div>`
     }).join('')
   }
+
 
   const populatePalette = (index, arr) =>{
     const filteredData = sortedByFrequencyDuplicatesAndBlankRemoved(arr)
@@ -163,7 +164,9 @@ function init() {
     updateCode()
   }
 
-  const continuousDraw = (e, action) => { if (canDraw) action(e) }
+  const continuousDraw = (e, action) => {
+    if (canDraw) action(e) 
+  }
 
   const resizeCanvas = (canvas, w, h) =>{
     canvas.setAttribute('width', w)
@@ -234,15 +237,16 @@ function init() {
       // populate grid and make it reactive
       updateGrid()
       updateCodesDisplay(codesBox[0],codes[0])
-      updateCode()
+      // updateCode()
       paintCanvasTwo()
       // addDraw()
-      createCopyGrids(
-        row,
-        column,
-        cellSize,
-        'copy_cell'
-      )
+      // createCopyGrids(
+      //   row,
+      //   column,
+      //   cellSize,
+      //   'copy_cell'
+      // )
+      generateFromColorCode()
     }
     imageTarget.src = blobURL
   }
@@ -482,7 +486,9 @@ function init() {
     if (!copyData.data.length) return
     console.log('copydata', copyData.data)
 
-    copyData.index.forEach((index, i)=> { if (copyData.data[i] !== 'transparent') codes[0][index] = copyData.data[i] })
+    copyData.index.forEach((index, i)=> {
+      if (copyData.data[i] !== 'transparent') codes[0][index] = copyData.data[i] 
+    })
     codesBox[0].value = codes[0]
 
     paintCanvas()
@@ -624,7 +630,7 @@ function init() {
       fillStack.push(cellToCheck - column) // check down
     }
     // console.log('fillStack last',fillStack)
-    console.log('areaToFill',areaToFill)
+    // console.log('areaToFill',areaToFill)
   }
 
   const fillBucket = index =>{
@@ -962,7 +968,7 @@ function init() {
   }
   
   buttons.forEach(b =>{
-    addClickEvent(b, 'draw', output)
+    addClickEvent(b, 'draw', output) //pixelise
     addClickEvent(b, 'fill', triggerFill)
     addClickEvent(b, 'select', handleSelect)
     addClickEvent(b, 'copy_selection', ()=>copySelectionToCopyBox(false))
