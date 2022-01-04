@@ -141,8 +141,7 @@ function init() {
     const paletteColors = document.querySelectorAll('.palette_color')
     paletteColors.forEach((cell, i)=>{
       cell.addEventListener('click',()=>{
-        console.log('color3', filteredData[i] === 'transparent')
-        //! some logic required for transparency
+        // console.log('color3', filteredData[i] === 'transparent')
         updateColor(filteredData[i])
       })
     })
