@@ -60,6 +60,7 @@ function init() {
   const codesBox = document.querySelectorAll('.codes')
   const upload = document.querySelector('#upload')
   const colorInput = document.querySelector('#color')
+  const hexInput = document.querySelector('.hex')
   // const letterInput = document.querySelector('.letter')
   const colorLabel = document.querySelector('.color_label')
   
@@ -92,6 +93,12 @@ function init() {
     const blankRemoved = array.filter(dot=> dot)
     const orderedByFrequency = blankRemoved.map(ele=>[ele, countOccurrences(blankRemoved,ele)]).sort((a, b) => b[1] - a[1])  
     return [...new Set(orderedByFrequency.map(ele=>ele[0]))]
+  }
+
+  const updateColor = color =>{
+    colorLabel.style.backgroundColor = color
+    hexInput.value = color
+    colorInput.value = color
   }
 
   const updateCode = () =>{
@@ -136,8 +143,7 @@ function init() {
       cell.addEventListener('click',()=>{
         console.log('color3', filteredData[i] === 'transparent')
         //! some logic required for transparency
-        colorInput.value = filteredData[i]
-        colorLabel.style.backgroundColor = filteredData[i]
+        updateColor(filteredData[i])
       })
     })
   }
@@ -157,7 +163,9 @@ function init() {
       fillBucket(index)
       return
     }
-    const value = erase ? 'transparent' : colorInput.value  //! transparent replaced with ''
+    const value = erase || hexInput.value === 'transparent' 
+      ? 'transparent' 
+      : colorInput.value  //! transparent replaced with ''
     codes[0][index] = value
     e.target.style.backgroundColor = value
     updateCodesDisplay(codesBox[0],codes[0])
@@ -925,10 +933,12 @@ function init() {
   
   copyGrid.addEventListener('mouseenter',()=>cursor.classList.add(cursorType))
   copyGrid.addEventListener('mouseleave',()=>cursor.classList.remove(cursorType))
+
   
-  colorInput.addEventListener('change',()=>{
-    colorLabel.style.backgroundColor = colorInput.value
-  })
+  
+  colorInput.addEventListener('change',()=>updateColor(colorInput.value))
+
+  hexInput.addEventListener('change', updateColor(hexInput.value))
   
   // display filename and pixelise button
   upload.addEventListener('change',()=>{

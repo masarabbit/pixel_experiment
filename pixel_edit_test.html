@@ -28,25 +28,42 @@
     </div>
 
     <label for="color" class="color_label"></label>
-      <input id="color" type="color">
-      
-      <input id="upload" type="file" single/>
-      <label for="upload" data-alt="upload image file" class="upload icon alt"></label>
-      <div class="file_name"></div>
-      <button class="button draw icon display_none alt" data-alt="pixelise"></button>
-      <button class="download icon download_file alt" data-alt="download pixel art"></button>
-      <button class="button create_grid create icon alt" data-index="0" data-grid_class="cell" data-alt="create grid"></button> 
-      <button class="button undo icon alt" data-alt="undo"><</button> 
+    <input id="color" type="color">
+
+    <div class="input_wrap">
+      <label>hex</label>
+      <input class="hex input" placeholder="#000000" />
+    </div>
+    
+    <input id="upload" type="file" single/>
+    <label for="upload" data-alt="upload image file" class="upload icon alt"></label>
+    <div class="file_name"></div>
+    <button class="button draw icon display_none alt" data-alt="pixelise"></button>
+    <button class="download icon download_file alt" data-alt="download pixel art"></button>
+    <button class="button create_grid create icon alt" data-index="0" data-grid_class="cell" data-alt="create grid"></button> 
+    <button class="button undo icon alt" data-alt="undo"><</button> 
 
 
-      <button class="button select icon alt" data-alt="select">c</button>
-      <button class="button fill icon bucket alt" data-alt="fill bucket"></button>
-      <button class="button clear icon eraser alt" data-alt="eraser"></button>
-      <button class="flip icon flip_h alt" data-alt="horizontal flip"></button>
-      <button class="flip icon flip_v alt" data-alt="vertical flip"></button>
-      <button class="grid_display icon hide alt" data-alt="hide grid"></button>
+    <button class="button select icon alt" data-alt="select">c</button>
+    <button class="button fill icon bucket alt" data-alt="fill bucket"></button>
+    <button class="button clear icon eraser alt" data-alt="eraser"></button>
+    <button class="flip icon flip_h alt" data-alt="horizontal flip"></button>
+    <button class="flip icon flip_v alt" data-alt="vertical flip"></button>
+    <button class="grid_display icon hide alt" data-alt="hide grid"></button>
   </nav>
-  <nav class="two"></nav>
+  <nav class="two">
+    <button class="download display_none alt">download small</button> <!-- remove??? -->
+    <button class="url">dataURL</button>
+    <button class="perimeter alt" data-alt="trace">trace</button>
+
+    <button class="button copy_selection alt" data-alt="copy">copy</button>
+    <button class="button cut_selection alt" data-alt="cut">cut</button>
+    <button class="button paste_selection alt" data-alt="paste">paste</button>
+    
+    <button class="button move_selection alt" data-alt="move selection">move</button>
+    <button class="button crop_selection alt" data-alt="crop">crop</button>
+    <button class="button delete_selection alt" data-alt="delete selection">delete</button>
+  </nav>
 
   <div class="pagewrap">
     
@@ -60,19 +77,9 @@
     <div class="grid extra_margin"></div>
   
 
-    <div class="mini_wrap">
-      <button class="download display_none alt">download small</button> <!-- remove??? -->
-      <button class="url">dataURL</button>
-      <button class="perimeter alt" data-alt="trace">trace</button>
-
-      <button class="button copy_selection alt" data-alt="copy">copy</button>
-      <button class="button cut_selection alt" data-alt="cut">cut</button>
-      <button class="button paste_selection alt" data-alt="paste">paste</button>
-      
-      <button class="button move_selection alt" data-alt="move selection">move</button>
-      <button class="button crop_selection alt" data-alt="crop">crop</button>
-      <button class="button delete_selection alt" data-alt="delete selection">delete</button>
-    </div>
+    <!-- <div class="mini_wrap">
+    
+    </div> -->
 
     <div class="palette"></div>
     <textarea class="codes" spellcheck="false"></textarea>
