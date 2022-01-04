@@ -599,8 +599,7 @@ function init() {
   
   // flip horizontal
   flip[0].addEventListener('click',()=>{
-    const flippedArr = arrayGroupedForFlipping().map(a => a.reverse())
-    codesBox[0].value = flippedArr.join(',')
+    codesBox[0].value = arrayGroupedForFlipping().map(a => a.reverse()).join(',')
     paintCanvas()
     generateFromColorCode()
   })
@@ -972,24 +971,23 @@ function init() {
     })
     if (!prev.length) updateCode()
   }
-
-  const addClickEvent = (b, className, event) =>{
-    if (b.classList.contains(className)) b.addEventListener('click', event)
-  }
   
   buttons.forEach(b =>{
-    addClickEvent(b, 'draw', output) //pixelise
-    addClickEvent(b, 'fill', triggerFill)
-    addClickEvent(b, 'select', handleSelect)
-    addClickEvent(b, 'copy_selection', ()=>copySelectionToCopyBox(false))
-    addClickEvent(b, 'cut_selection', ()=>copySelectionToCopyBox(true))
-    addClickEvent(b, 'move_selection', moveSelection)
-    addClickEvent(b, 'crop_selection', crop)
-    addClickEvent(b, 'paste_selection', paste)
-    addClickEvent(b, 'delete_selection', deleteSelection)
-    addClickEvent(b, 'clear', triggerClear)
-    addClickEvent(b, 'create_grid', triggerCreateGrid)
-    addClickEvent(b, 'undo', undo)
+    const addClickEvent = (className, event) =>{
+      if (b.classList.contains(className)) b.addEventListener('click', event)
+    }
+    addClickEvent('draw', output) //pixelise
+    addClickEvent('fill', triggerFill)
+    addClickEvent('select', handleSelect)
+    addClickEvent('copy_selection', ()=>copySelectionToCopyBox(false))
+    addClickEvent('cut_selection', ()=>copySelectionToCopyBox(true))
+    addClickEvent('move_selection', moveSelection)
+    addClickEvent('crop_selection', crop)
+    addClickEvent('paste_selection', paste)
+    addClickEvent('delete_selection', deleteSelection)
+    addClickEvent('clear', triggerClear)
+    addClickEvent('create_grid', triggerCreateGrid)
+    addClickEvent('undo', undo)
   })
 
   const handleCursor = e =>{
