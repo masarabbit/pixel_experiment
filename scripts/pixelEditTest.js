@@ -406,6 +406,8 @@ function init() {
       const x = copyBox.offsetLeft / cellSize
       const y = copyBox.offsetTop / cellSize
       copyData.index = returnSelectedCells((y * column) + x)
+
+      // console.log('copyData index', copyData.index)
       // console.log('index', copyData.index, 'prevY',prevY, 'prevX', prevX)
       // copySelection()
     }     
@@ -559,9 +561,11 @@ function init() {
 
   const crop = () =>{
     if (!copyData.index) return
+
     codesBox[0].value = codesBox[0].value.split(',').filter((_code,i)=>{
-      return copyData.index.find(data=> +data === i)
+      return copyData.index.some(data=> +data === i)
     }).join(',')
+
     column = copyData.width
     row = copyData.height
     paintCanvas()
@@ -932,10 +936,7 @@ function init() {
   copyGrid.addEventListener('mouseenter',()=>cursor.classList.add(cursorType))
   copyGrid.addEventListener('mouseleave',()=>cursor.classList.remove(cursorType))
 
-  
-  
   colorInput.addEventListener('change',()=>updateColor(colorInput.value))
-
   hexInput.addEventListener('change', updateColor(hexInput.value))
   
   // display filename and pixelise button
