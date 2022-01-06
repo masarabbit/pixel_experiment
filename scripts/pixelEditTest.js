@@ -535,8 +535,8 @@ function init() {
       copyData.height = copyBox.style.height.replace('px','') / cellSize,
       copyData.index = returnSelectedCells((roundedY * column) + roundedX, rounded(newX), rounded(newY))
 
-      codesBox[1].value = copyData.index.join(',')
-      if (copyData.data.length) codesBox[1].value = copyData.index.join(',') + '-' + copyData.data.join(',')
+      // codesBox[1].value = copyData.index.join(',')
+      // if (copyData.data.length) codesBox[1].value = copyData.index.join(',') + '-' + copyData.data.join(',')
 
       copyBox.style.left = `${rounded(newX) * cellSize}px`
       copyBox.style.top = `${rounded(newY) * cellSize}px`

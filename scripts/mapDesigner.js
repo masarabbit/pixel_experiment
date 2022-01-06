@@ -150,6 +150,22 @@ function init() {
     return `rgb(${r()},${g()},${b()})`
   }
 
+  const treeOne = () =>{
+    return '<path fill="#3ddbbc" d="M 13 0 h 3 v 9 h -2 v -1 h -2 v -2 h -1 v -3 h -1 v -1 h 2 v -1 h 1 v -1"/> <path fill="#239f86" d="M 9 3 h 2 v 3 h 1 v 2 h 2 v 1 h 2 v 7 h -9 v -2 h -1 v -2 h -2 v -3 h 1 v -2 h 1 v -2 h 2 v -1 h 1 v -1"/> <path fill="#185463" d="M 3 12 h 3 v 2 h 1 v 2 h -6 v -1 h 1 v -1 h 1 v -2"/>'
+  }
+
+  const treeTwo = () =>{
+    return '<path fill="#3ddbbc" d="M 0 0 h 3 v 1 h 1 v 1 h 2 v 1 h 1 v 1 h 1 v 1 h 2 v 2 h 1 v 2 h -2 v 1 h -1 v 1 h -4 v -1 h -1 v -2 h -1 v 1 h -2 v -9"/> <path fill="#239f86" d="M 2 8 h 1 v 2 h 1 v 1 h 4 v -1 h 1 v -1 h 3 v 3 h 1 v 2 h 1 v 1 h 1 v 1 h -15 v -7 h 2 v -1"/>'
+  }
+
+  const treeThree = () =>{
+    return '<path fill="#185463" d="M 1 0 h 7 v 1 h 2 v 1 h 4 v -1 h 2 v 7 h -8 v -1 h -3 v -1 h -2 v -1 h -1 v -2 h -1 v -3"/> <path fill="#239f86" d="M 8 0 h 8 v 1 h -2 v 1 h -4 v -1 h -2 v -1"/> <path fill="#2e114b" d="M 11 8 h 3 v 4 h 2 v 3 h -4 v -1 h -1 v -1 h -1 v -1 h 1 v -4"/> <path fill="#542682" d="M 14 8 h 2 v 4 h -2 v -4"/> <path fill="#185463" d="M 10 10 h 1 v 2 h -1 v 1 h 1 v 1 h 1 v 1 h -2 v -1 h -1 v -3 h 1 v -1"/>'
+  }
+
+  const treeFour = () =>{
+    return '<path fill="#239f86" d="M 0 0 h 1 v 1 h -1 v -1"/> <path fill="#185463" d="M 1 0 h 1 v 2 h 1 v 1 h 1 v 1 h 5 v -1 h 1 v -1 h 1 v -1 h 1 v 1 h 3 v 1 h -1 v 2 h -1 v 1 h -2 v 1 h -3 v 1 h -4 v 1 h -4 v -8 h 1 v -1"/> <path fill="#239f86" d="M 2 0 h 13 v 2 h -3 v -1 h -1 v 1 h -1 v 1 h -1 v 1 h -5 v -1 h -1 v -1 h -1 v -2"/> <path fill="#542682" d="M 4 8 h 1 v 4 h -1 v 1 h -4 v -4 h 4 v -1"/> <path fill="#185463" d="M 5 10 h 1 v 1 h 1 v 3 h -1 v 1 h -2 v -1 h 1 v -1 h 1 v -1 h -1 v -2"/> <path fill="#2e114b" d="M 4 12 h 2 v 1 h -1 v 1 h -1 v 1 h -4 v -2 h 4 v -1"/>'
+  }
+
   const tree = () =>{
     return 'D 5 0h6v1h2v1h1v1h1v1h1v7hNv1hNv1hNv1hTv2hNv-3hNvNhTv1hNv3hNvThTvNhNvNhNvNhNv-7h1vNh1vNh1vNh2vN"/ F 7 12h2v1h1v3h-4v-3h1vN"/'
   }
@@ -257,6 +273,10 @@ function init() {
   const main = '#74645a'
 
   const svgData = {
+    'ta': { svg: treeOne },
+    'tb': { svg: treeTwo },
+    'tc': { svg: treeThree },
+    'td': { svg: treeFour },
     't': { svg: tree, color: '#0d8799' },
     'w': { svg: tree, color: '#0d8799' },
     'o': { svg: flowers, color: randomColor },
@@ -1002,8 +1022,8 @@ function init() {
       copyData.height = copyBox.style.height.replace('px','') / cellSize,
       copyData.index = returnSelectedCells((roundedY * column) + roundedX, rounded(newX), rounded(newY))
 
-      codesBox[1].value = copyData.index.join(',')
-      if (copyData.data.length) codesBox[1].value = copyData.index.join(',') + '-' + copyData.data.join(',')
+      // codesBox[1].value = copyData.index.join(',')
+      // if (copyData.data.length) codesBox[1].value = copyData.index.join(',') + '-' + copyData.data.join(',')
 
       copyBox.style.left = `${rounded(newX) * cellSize}px`
       copyBox.style.top = `${rounded(newY) * cellSize}px`
