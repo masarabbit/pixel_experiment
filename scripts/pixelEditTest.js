@@ -96,6 +96,7 @@ function init() {
   }
 
   const updateColor = color =>{
+    console.log('color', color)
     colorLabel.style.backgroundColor = color
     hexInput.value = color
     colorInput.value = color
@@ -937,7 +938,7 @@ function init() {
   copyGrid.addEventListener('mouseleave',()=>cursor.classList.remove(cursorType))
 
   colorInput.addEventListener('change',()=>updateColor(colorInput.value))
-  hexInput.addEventListener('change', updateColor(hexInput.value))
+  hexInput.addEventListener('change', ()=>updateColor(hexInput.value))
   
   // display filename and pixelise button
   upload.addEventListener('change',()=>{
