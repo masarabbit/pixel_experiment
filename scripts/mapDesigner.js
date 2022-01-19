@@ -48,6 +48,25 @@ function init() {
 
   const mapData = [
     {
+      name: 'test',
+      iWidth: 30,
+      iHeight: 20,
+      // characters: [
+      //   '155_bunny_0_hello',
+      //   '156_bunny_0_apple',
+      //   '309_bunny_0_tomato'
+      // ],
+      // events: [
+      //   '5_transport-portal3',
+      //   '6_transport-portal3',
+      //   '419_transport-portal4',
+      //   '449_transport-portal4',
+      //   '253_transport-portal7',
+      //   '288_transport-portal6'
+      // ],
+      map: 'v5,b2,v24,w4,b2,w22,v2,w1,b26,w1,v2,w1,b12,t1,b11,nt1,b1,w1,v2,w1,b2,t1,b10,za1,zb1,zc1,zf1,ze1,zd1,b7,w1,v2,w1,b13,bd6,b7,w1,v2,w1,b6,t1,b6,za1,zb1,zc1,zf1,ze1,zd1,b7,w1,v2,w1,b13,zi6,b7,w1,v2,w1,b13,zi4,zh1,zi1,b3,d1,pt1,s1,b1,w1,v2,w1,b13,zi2,zg1,zi3,b3,g1,rc1,y1,b1,w1,v2,w1,b1,t1,b3,t1,b3,t1,b12,sl1,p1,sr1,b1,w1,v2,w1,b19,t1,b2,bl1,do1,bb1,b1,w1,v2,w1,b2,t1,b6,ra1,rh5,rb1,b10,w1,v2,w1,b5,ra1,rh3,rd1,b5,r1,b12,v1,w1,b5,r1,b7,w1,b1,r1,b7,t1,b4,v1,w1,b1,t1,b3,r1,b1,t1,b7,r1,b4,t1,b5,w1,v2,w1,b5,r1,b5,w1,b3,re1,rh2,rb1,b7,w1,v2,w1,b5,r1,b12,r1,b7,w1,v2,w6,r1,w12,r1,w8,v8,r1,v12,r1,v9',
+    },
+    {
       name: 'one',
       iWidth: 30,
       iHeight: 20,
@@ -267,12 +286,39 @@ function init() {
     return `<path fill="${subColor}" d="M 0 0h16v4hTv2hTvThTv2hTvThTv2hTvThTv2hTv-6"/ D 2 4h2v2hTvT"/ D 6 4h2v2hTvT"/ D 10 4h2v2hTvT"/ D 14 4h2v2hTvT"/ D 0 6h2v2h2vTh2v2h2vTh2v2h2vTh2v2h2v8hN6vN0"/ <path fill="${subColor}" d="M 2 6h2v2hTvT"/ <path fill="${subColor}" d="M 6 6h2v2hTvT"/ <path fill="${subColor}" d="M 10 6h2v2hTvT"/ <path fill="${subColor}" d="M 14 6h2v2hTvT"/`
   }
 
+  const roof = [
+    ()=>'<path fill="#53596a" d="M 0 0 h 16 v 11 h -2 v 1 h -3 v 1 h -3 v 1 h -3 v 1 h -3 v 1 h -2 v -16"/> <path fill="#d2eff9" d="M 14 11 h 2 v 5 h -14 v -1 h 3 v -1 h 3 v -1 h 3 v -1 h 3 v -1"/>',
+    ()=>'<path fill="#53596a" d="M 0 0 h 16 v 6 h -3 v 1 h -3 v 1 h -3 v 1 h -3 v 1 h -3 v 1 h -1 v -11"/> <path fill="#d2eff9" d="M 13 6 h 3 v 10 h -16 v -5 h 1 v -1 h 3 v -1 h 3 v -1 h 3 v -1 h 3 v -1"/>',
+    ()=>'<path fill="#53596a" d="M 0 0 h 15 v 1 h -3 v 1 h -3 v 1 h -3 v 1 h -3 v 1 h -3 v -5"/> <path fill="#d2eff9" d="M 15 0 h 1 v 16 h -16 v -11 h 3 v -1 h 3 v -1 h 3 v -1 h 3 v -1 h 3 v -1"/>'
+  ]
+
+  const zDoor = () =>{
+    return '<path fill="#d2eff9" d="M 0 0 h 16 v 16 h -1 v -15 h -14 v 15 h -1 v -16"/> <path fill="#53596a" d="M 1 1 h 14 v 14 h -14 v -14"/> <path fill="#fff" d="M 1 15 h 14 v 1 h -14 v -1"/>'
+  }
+
+  const zWindow = () =>{
+    return '<path fill="#d2eff9" d="M 0 0 h 16 v 16 h -16 v -16"/> <path fill="#53596a" d="M 5 1 h 6 v 13 h -6 v -13"/> <path fill="#fff" d="M 5 14 h 6 v 1 h -6 v -1"/>'
+  }
+
+  // const renderSvg = svg => {
+  //   return svg
+  // }
+
   // const sub = '#e2cc9c'
   const sub = '#f9ede5'
   // const main = '#7d551c'
   const main = '#74645a'
 
   const svgData = {
+    'za': { svg: roof[0] },
+    'zb': { svg: roof[1] },
+    'zc': { svg: roof[2] },
+    'zf': { svg: roof[2], flip: 'h' },
+    'ze': { svg: roof[1], flip: 'h' },
+    'zd': { svg: roof[0], flip: 'h' },
+    'zg': { svg: zDoor },
+    'zh': { svg: zWindow },
+    'zi': { svg: plain, subColor: '#d2eff9' },
     'ta': { svg: treeOne },
     'tb': { svg: treeTwo },
     'tc': { svg: treeThree },
@@ -763,15 +809,15 @@ function init() {
     // console.log('column',column)
   })
 
-
+  const compressCode = () =>{
+    codesBox[1].value = compress(codesBox[0].value)
+  }
 
   copyButtons.forEach((copyButton,i)=>{
     copyButton.addEventListener('click',()=>copyText(codesBox[i]))
   })
 
-  codesBox[0].addEventListener('change',()=>{
-    codesBox[1].value = compress(codesBox[0].value)
-  })
+  codesBox[0].addEventListener('change', compressCode)
 
   codesBox[1].addEventListener('change',()=>{   
     codesBox[0].value = decompress(codesBox[1].value)
@@ -1112,6 +1158,7 @@ function init() {
     if (b.classList.contains('paste_selection')) b.addEventListener('click', paste)
     if (b.classList.contains('crop_selection')) b.addEventListener('click', crop)
     if (b.classList.contains('delete_selection')) b.addEventListener('click', deleteSelection)
+    if (b.classList.contains('compress')) b.addEventListener('click', compressCode)
   })
 
 }
