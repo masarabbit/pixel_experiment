@@ -64,7 +64,7 @@ function init() {
       //   '253_transport-portal7',
       //   '288_transport-portal6'
       // ],
-      map: 'v5,b2,v24,w4,b2,w22,v2,w1,b26,w1,v2,w1,b12,t1,b11,nt1,b1,w1,v2,w1,b2,t1,b10,za1,zb1,zc1,zf1,ze1,zd1,b7,w1,v2,w1,b13,bd6,b7,w1,v2,w1,b6,t1,b6,za1,zb1,zc1,zf1,ze1,zd1,b7,w1,v2,w1,b13,zi6,b7,w1,v2,w1,b13,zi4,zh1,zi1,b3,d1,pt1,s1,b1,w1,v2,w1,b13,zi2,zg1,zi3,b3,g1,rc1,y1,b1,w1,v2,w1,b1,t1,b3,t1,b3,t1,b12,sl1,p1,sr1,b1,w1,v2,w1,b19,t1,b2,bl1,do1,bb1,b1,w1,v2,w1,b2,t1,b6,ra1,rh5,rb1,b10,w1,v2,w1,b5,ra1,rh3,rd1,b5,r1,b12,v1,w1,b5,r1,b7,w1,b1,r1,b7,t1,b4,v1,w1,b1,t1,b3,r1,b1,t1,b7,r1,b4,t1,b5,w1,v2,w1,b5,r1,b5,w1,b3,re1,rh2,rb1,b7,w1,v2,w1,b5,r1,b12,r1,b7,w1,v2,w6,r1,w12,r1,w8,v8,r1,v12,r1,v9',
+      map: 'v5,b2,v24,w4,b2,w22,v2,w1,b26,w1,v2,w1,b12,t1,b11,w1,b1,w1,v2,w1,b13,zj1,zk1,zl1,zt1,zu1,zv1,b7,w1,v2,w1,b3,p3,b7,zp3,zw3,b7,w1,v2,w1,b3,p3,b7,za1,zb1,zc1,ya1,yb1,yc1,b7,w1,v2,w1,b3,zi3,b7,zi6,b3,yg1,yh1,yi1,b1,w1,v2,w1,b3,zh1,zi1,zh1,b7,zi4,zh1,zi1,b3,zp3,b1,w1,v2,w1,b3,zi1,zg1,zi1,b7,zi2,zg1,zi3,b3,yd1,ye1,yf1,b1,w1,v2,w1,b1,t1,b7,t1,b12,zh1,zi1,zh1,b1,w1,v2,w1,b19,t1,b2,zi1,zg1,zi1,b1,w1,v2,w1,b2,t1,b6,ra1,rh5,rb1,b10,w1,v2,w1,b5,ra1,rh3,rd1,b5,r1,b12,v1,w1,b5,r1,b7,w1,b1,r1,b7,t1,b4,v1,w1,b1,t1,b3,r1,b1,t1,b7,r1,b4,t1,b5,w1,v2,w1,b5,r1,b5,w1,b3,re1,rh2,rb1,b7,w1,v2,w1,b5,r1,b12,r1,b7,w1,v2,w6,r1,w12,r1,w8,v8,r1,v12,r1,v9',
     },
     {
       name: 'one',
@@ -287,9 +287,17 @@ function init() {
   }
 
   const roof = [
-    ()=>'<path fill="#53596a" d="M 0 0 h 16 v 11 h -2 v 1 h -3 v 1 h -3 v 1 h -3 v 1 h -3 v 1 h -2 v -16"/> <path fill="#d2eff9" d="M 14 11 h 2 v 5 h -14 v -1 h 3 v -1 h 3 v -1 h 3 v -1 h 3 v -1"/>',
-    ()=>'<path fill="#53596a" d="M 0 0 h 16 v 6 h -3 v 1 h -3 v 1 h -3 v 1 h -3 v 1 h -3 v 1 h -1 v -11"/> <path fill="#d2eff9" d="M 13 6 h 3 v 10 h -16 v -5 h 1 v -1 h 3 v -1 h 3 v -1 h 3 v -1 h 3 v -1"/>',
-    ()=>'<path fill="#53596a" d="M 0 0 h 15 v 1 h -3 v 1 h -3 v 1 h -3 v 1 h -3 v 1 h -3 v -5"/> <path fill="#d2eff9" d="M 15 0 h 1 v 16 h -16 v -11 h 3 v -1 h 3 v -1 h 3 v -1 h 3 v -1 h 3 v -1"/>'
+    subColor =>`<path fill="${subColor || '#53596a'}" d="M 0 0 h 16 v 11 h -2 v 1 h -3 v 1 h -3 v 1 h -3 v 1 h -3 v 1 h -2 v -16"/> <path fill="#d2eff9" d="M 14 11 h 2 v 5 h -14 v -1 h 3 v -1 h 3 v -1 h 3 v -1 h 3 v -1"/>`,
+    subColor =>`<path fill="${subColor || '#53596a'}" d="M 0 0 h 16 v 6 h -3 v 1 h -3 v 1 h -3 v 1 h -3 v 1 h -3 v 1 h -1 v -11"/> <path fill="#d2eff9" d="M 13 6 h 3 v 10 h -16 v -5 h 1 v -1 h 3 v -1 h 3 v -1 h 3 v -1 h 3 v -1"/>`,
+    subColor =>`<path fill="${subColor || '#53596a'}" d="M 0 0 h 15 v 1 h -3 v 1 h -3 v 1 h -3 v 1 h -3 v 1 h -3 v -5"/> <path fill="#d2eff9" d="M 15 0 h 1 v 16 h -16 v -11 h 3 v -1 h 3 v -1 h 3 v -1 h 3 v -1 h 3 v -1"/>`,
+    subColor =>`<path fill="${subColor}" d="M 14 11 h 2 v 5 h -14 v -1 h 3 v -1 h 3 v -1 h 3 v -1 h 3 v -1"/>`,
+    subColor =>`<path fill="${subColor}" d="M 13 6 h 3 v 10 h -16 v -5 h 1 v -1 h 3 v -1 h 3 v -1 h 3 v -1 h 3 v -1"/>`,
+    subColor=>`<path fill="${subColor}" d="M 15 0 h 1 v 16 h -16 v -11 h 3 v -1 h 3 v -1 h 3 v -1 h 3 v -1 h 3 v -1"/>`
+  ]
+
+  const smallerRoof = [
+    subColor => `<path fill="${subColor}" d="M 0 0 h 16 v 8 h -1 v 1 h -2 v 1 h -2 v 1 h -2 v 1 h -2 v 1 h -2 v 1 h -2 v 1 h -2 v 1 h -1 v -16"/> <path d="M 15 8 h 1 v 8 h -15 v -1 h 2 v -1 h 2 v -1 h 2 v -1 h 2 v -1 h 2 v -1 h 2 v -1 h 2 v -1"/>`,
+    subColor => `<path fill="${subColor}" d="M 0 0 h 16 v 8 h -1 v -1 h -2 v -1 h -2 v -1 h -2 v -1 h -2 v 1 h -2 v 1 h -2 v 1 h -2 v 1 h -1 v -8"/> <path d="M 7 4 h 2 v 1 h 2 v 1 h 2 v 1 h 2 v 1 h 1 v 8 h -16 v -8 h 1 v -1 h 2 v -1 h 2 v -1 h 2 v -1"/>`
   ]
 
   const zDoor = () =>{
@@ -319,6 +327,32 @@ function init() {
     'zg': { svg: zDoor },
     'zh': { svg: zWindow },
     'zi': { svg: plain, subColor: '#d2eff9' },
+    'zj': { svg: roof[3], subColor: '#53596a' },
+    'zk': { svg: roof[4], subColor: '#53596a' },
+    'zl': { svg: roof[5], subColor: '#53596a' },
+    'zm': { svg: roof[5], subColor: '#53596a', flip: 'h' },
+    'zn': { svg: roof[4], subColor: '#53596a', flip: 'h' },
+    'zo': { svg: roof[3], subColor: '#53596a', flip: 'h' },
+    'zp': { svg: plain, subColor: '#53596a' },
+    'zq': { svg: roof[3], subColor: '#fff' },
+    'zr': { svg: roof[4], subColor: '#fff' },
+    'zs': { svg: roof[5], subColor: '#fff' },
+    'zt': { svg: roof[5], subColor: '#fff', flip: 'h' },
+    'zu': { svg: roof[4], subColor: '#fff', flip: 'h' },
+    'zv': { svg: roof[3], subColor: '#fff', flip: 'h' },
+    'zw': { svg: plain, subColor: '#fff' },
+    'zx': { svg: roof[0], subColor: '#fff' },
+    'zy': { svg: roof[1], subColor: '#fff' },
+    'zz': { svg: roof[2], subColor: '#fff' },
+    'ya': { svg: roof[2], subColor: '#fff', flip: 'h' },
+    'yb': { svg: roof[1], subColor: '#fff', flip: 'h' },
+    'yc': { svg: roof[0], subColor: '#fff', flip: 'h' },
+    'yd': { svg: smallerRoof[0], color:'#d2eff9', subColor: '#53596a' },
+    'ye': { svg: smallerRoof[1], color:'#d2eff9', subColor: '#53596a' },
+    'yf': { svg: smallerRoof[0], color:'#d2eff9', subColor: '#53596a', flip: 'h' },
+    'yg': { svg: smallerRoof[0], color:'#53596a', subColor: 'none' },
+    'yh': { svg: smallerRoof[1], color:'#53596a', subColor: 'none' },
+    'yi': { svg: smallerRoof[0], color:'#53596a', subColor: 'none', flip: 'h' },
     'ta': { svg: treeOne },
     'tb': { svg: treeTwo },
     'tc': { svg: treeThree },
