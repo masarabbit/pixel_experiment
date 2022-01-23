@@ -64,7 +64,7 @@ function init() {
       //   '253_transport-portal7',
       //   '288_transport-portal6'
       // ],
-      map: 'v5,b2,v24,w4,b2,w22,v2,w1,b26,w1,v2,w1,b12,t1,b11,w1,b1,w1,v2,w1,b13,zj1,zk1,zl1,zt1,zu1,zv1,b7,w1,v2,w1,b3,p3,b7,zp3,zw3,b7,w1,v2,w1,b3,p3,b7,za1,zb1,zc1,ya1,yb1,yc1,b7,w1,v2,w1,b3,zi3,b7,zi6,b3,yg1,yh1,yi1,b1,w1,v2,w1,b3,zh1,zi1,zh1,b7,zi4,zh1,zi1,b3,zp3,b1,w1,v2,w1,b3,zi1,zg1,zi1,b7,zi2,zg1,zi3,b3,yd1,ye1,yf1,b1,w1,v2,w1,b1,t1,b7,t1,b12,zh1,zi1,zh1,b1,w1,v2,w1,b19,t1,b2,zi1,zg1,zi1,b1,w1,v2,w1,b2,t1,b6,ra1,rh5,rb1,b10,w1,v2,w1,b5,ra1,rh3,rd1,b5,r1,b12,v1,w1,b5,r1,b7,w1,b1,r1,b7,t1,b4,v1,w1,b1,t1,b3,r1,b1,t1,b7,r1,b4,t1,b5,w1,v2,w1,b5,r1,b5,w1,b3,re1,rh2,rb1,b7,w1,v2,w1,b5,r1,b12,r1,b7,w1,v2,w6,r1,w12,r1,w8,v8,r1,v12,r1,v9',
+      map: 'v5,b2,v24,w4,b2,w22,v2,w1,b26,w1,v2,w1,b1,p3,b8,t1,b11,w1,b1,w1,v2,w1,b1,p3,b22,w1,v2,w1,b1,zi3,b13,yg1,yh1,yi1,b6,w1,v2,w1,b1,zh1,zi1,zh1,b13,zp3,b6,w1,v2,w1,b1,zi1,zg1,zi1,b12,zw1,yd1,ye1,yf1,zw1,b5,w1,v2,w1,b8,zj1,zk1,zl1,zt1,zu1,zv1,b2,zw1,zi2,zh1,zw1,zm1,zn1,zo1,b2,w1,v2,w1,b5,yg1,yh1,yi1,zp3,zw3,b2,zw1,zi1,zg1,zi1,zw1,zp3,b2,w1,v2,w1,b1,t1,b3,zp6,zw3,zp2,zw5,zf1,ze1,zd1,b2,w1,v2,w1,b5,yd1,ye1,yf1,za1,zb1,zc1,ya1,yb1,yc1,zp2,zi8,b2,w1,v2,w1,b2,t1,b2,zh1,zi1,zh1,zi9,yg1,yh1,yi1,zi3,zh1,b2,w1,v2,w1,b4,t1,zi1,zg1,zi2,zg1,zi4,zh1,zi2,yd1,ye1,yf1,zi2,zg1,zi1,b4,v1,w1,b8,zi4,zh1,zi8,b2,t1,b4,v1,w1,b1,t1,b6,zi2,zg1,zi3,b3,zi1,zg1,zi1,b6,w1,v2,w1,b26,w1,v2,w1,b26,w1,v2,w6,t1,w12,t1,w8,v8,b1,v12,b1,v9',
     },
     {
       name: 'one',
@@ -286,10 +286,14 @@ function init() {
     return `<path fill="${subColor}" d="M 0 0h16v4hTv2hTvThTv2hTvThTv2hTvThTv2hTv-6"/ D 2 4h2v2hTvT"/ D 6 4h2v2hTvT"/ D 10 4h2v2hTvT"/ D 14 4h2v2hTvT"/ D 0 6h2v2h2vTh2v2h2vTh2v2h2vTh2v2h2v8hN6vN0"/ <path fill="${subColor}" d="M 2 6h2v2hTvT"/ <path fill="${subColor}" d="M 6 6h2v2hTvT"/ <path fill="${subColor}" d="M 10 6h2v2hTvT"/ <path fill="${subColor}" d="M 14 6h2v2hTvT"/`
   }
 
+
+  
+  const lightColour = '#e5f8ff'
+
   const roof = [
-    subColor =>`<path fill="${subColor || '#53596a'}" d="M 0 0 h 16 v 11 h -2 v 1 h -3 v 1 h -3 v 1 h -3 v 1 h -3 v 1 h -2 v -16"/> <path fill="#d2eff9" d="M 14 11 h 2 v 5 h -14 v -1 h 3 v -1 h 3 v -1 h 3 v -1 h 3 v -1"/>`,
-    subColor =>`<path fill="${subColor || '#53596a'}" d="M 0 0 h 16 v 6 h -3 v 1 h -3 v 1 h -3 v 1 h -3 v 1 h -3 v 1 h -1 v -11"/> <path fill="#d2eff9" d="M 13 6 h 3 v 10 h -16 v -5 h 1 v -1 h 3 v -1 h 3 v -1 h 3 v -1 h 3 v -1"/>`,
-    subColor =>`<path fill="${subColor || '#53596a'}" d="M 0 0 h 15 v 1 h -3 v 1 h -3 v 1 h -3 v 1 h -3 v 1 h -3 v -5"/> <path fill="#d2eff9" d="M 15 0 h 1 v 16 h -16 v -11 h 3 v -1 h 3 v -1 h 3 v -1 h 3 v -1 h 3 v -1"/>`,
+    subColor =>`<path fill="${subColor || '#53596a'}" d="M 0 0 h 16 v 11 h -2 v 1 h -3 v 1 h -3 v 1 h -3 v 1 h -3 v 1 h -2 v -16"/> <path fill="${lightColour}" d="M 14 11 h 2 v 5 h -14 v -1 h 3 v -1 h 3 v -1 h 3 v -1 h 3 v -1"/>`,
+    subColor =>`<path fill="${subColor || '#53596a'}" d="M 0 0 h 16 v 6 h -3 v 1 h -3 v 1 h -3 v 1 h -3 v 1 h -3 v 1 h -1 v -11"/> <path fill="${lightColour}" d="M 13 6 h 3 v 10 h -16 v -5 h 1 v -1 h 3 v -1 h 3 v -1 h 3 v -1 h 3 v -1"/>`,
+    subColor =>`<path fill="${subColor || '#53596a'}" d="M 0 0 h 15 v 1 h -3 v 1 h -3 v 1 h -3 v 1 h -3 v 1 h -3 v -5"/> <path fill="${lightColour}" d="M 15 0 h 1 v 16 h -16 v -11 h 3 v -1 h 3 v -1 h 3 v -1 h 3 v -1 h 3 v -1"/>`,
     subColor =>`<path fill="${subColor}" d="M 14 11 h 2 v 5 h -14 v -1 h 3 v -1 h 3 v -1 h 3 v -1 h 3 v -1"/>`,
     subColor =>`<path fill="${subColor}" d="M 13 6 h 3 v 10 h -16 v -5 h 1 v -1 h 3 v -1 h 3 v -1 h 3 v -1 h 3 v -1"/>`,
     subColor=>`<path fill="${subColor}" d="M 15 0 h 1 v 16 h -16 v -11 h 3 v -1 h 3 v -1 h 3 v -1 h 3 v -1 h 3 v -1"/>`
@@ -301,11 +305,11 @@ function init() {
   ]
 
   const zDoor = () =>{
-    return '<path fill="#d2eff9" d="M 0 0 h 16 v 16 h -1 v -15 h -14 v 15 h -1 v -16"/> <path fill="#53596a" d="M 1 1 h 14 v 14 h -14 v -14"/> <path fill="#fff" d="M 1 15 h 14 v 1 h -14 v -1"/>'
+    return `<path fill="${lightColour}" d="M 0 0 h 16 v 16 h -1 v -15 h -14 v 15 h -1 v -16"/> <path fill="#53596a" d="M 1 1 h 14 v 12 h -14 v -12"/> <path fill="#fff" d="M 1 13 h 14 v 3 h -14 v -3"/>`
   }
 
   const zWindow = () =>{
-    return '<path fill="#d2eff9" d="M 0 0 h 16 v 16 h -16 v -16"/> <path fill="#53596a" d="M 5 1 h 6 v 13 h -6 v -13"/> <path fill="#fff" d="M 5 14 h 6 v 1 h -6 v -1"/>'
+    return `<path fill="${lightColour}" d="M 0 0 h 16 v 16 h -16 v -16"/> <path fill="#53596a" d="M 5 1 h 6 v 12 h -6 v -12"/> <path fill="#fff" d="M 5 13 h 6 v 2 h -6 v -2"/>`
   }
 
   // const renderSvg = svg => {
@@ -326,7 +330,7 @@ function init() {
     'zd': { svg: roof[0], flip: 'h' },
     'zg': { svg: zDoor },
     'zh': { svg: zWindow },
-    'zi': { svg: plain, subColor: '#d2eff9' },
+    'zi': { svg: plain, subColor: lightColour },
     'zj': { svg: roof[3], subColor: '#53596a' },
     'zk': { svg: roof[4], subColor: '#53596a' },
     'zl': { svg: roof[5], subColor: '#53596a' },
@@ -347,9 +351,9 @@ function init() {
     'ya': { svg: roof[2], subColor: '#fff', flip: 'h' },
     'yb': { svg: roof[1], subColor: '#fff', flip: 'h' },
     'yc': { svg: roof[0], subColor: '#fff', flip: 'h' },
-    'yd': { svg: smallerRoof[0], color:'#d2eff9', subColor: '#53596a' },
-    'ye': { svg: smallerRoof[1], color:'#d2eff9', subColor: '#53596a' },
-    'yf': { svg: smallerRoof[0], color:'#d2eff9', subColor: '#53596a', flip: 'h' },
+    'yd': { svg: smallerRoof[0], color: lightColour, subColor: '#53596a' },
+    'ye': { svg: smallerRoof[1], color: lightColour, subColor: '#53596a' },
+    'yf': { svg: smallerRoof[0], color: lightColour, subColor: '#53596a', flip: 'h' },
     'yg': { svg: smallerRoof[0], color:'#53596a', subColor: 'none' },
     'yh': { svg: smallerRoof[1], color:'#53596a', subColor: 'none' },
     'yi': { svg: smallerRoof[0], color:'#53596a', subColor: 'none', flip: 'h' },
