@@ -210,7 +210,8 @@ function init() {
   }
 
   const plainEdge = subColor =>{
-    return `D 0 0h16v1hN6vN"/ <path fill="${subColor || 'white'}" d="M 0 1h16v15hN6vN5"/`
+    // return `D 0 0h16v1hN6vN"/ <path fill="${subColor || 'white'}" d="M 0 1h16v15hN6vN5"/`
+    return `<path fill="#000" d="M 0 0 h 4 v 1 h -4 v -1"/> <path fill="${subColor || 'white'}" d="M 4 0 h 4 v 1 h -4 v -1"/> <path fill="#000" d="M 8 0 h 4 v 1 h -4 v -1"/> <path fill="${subColor || 'white'}" d="M 12 0 h 4 v 1 h -4 v -1"/> <path fill="${subColor || 'white'}" d="M 0 1 h 4 v 1 h 4 v -1 h 4 v 1 h 4 v 14 h -16 v -15"/> <path fill="#000" d="M 4 1 h 4 v 1 h -4 v -1"/> <path fill="#000" d="M 12 1 h 4 v 1 h -4 v -1"/>`
   }
 
   const door = () =>{
@@ -312,6 +313,11 @@ function init() {
     return `<path fill="${lightColour}" d="M 0 0 h 16 v 16 h -16 v -16"/> <path fill="#53596a" d="M 5 1 h 6 v 12 h -6 v -12"/> <path fill="#fff" d="M 5 13 h 6 v 2 h -6 v -2"/>`
   }
 
+  const brick = () =>{
+    return `<path fill="#fff" d="M 0 0 h 16 v 1 h -7 v 2 h 7 v 1 h -3 v 2 h 3 v 1 h -7 v 2 h 7 v 1 h -3 v 2 h 3 v 1 h -7 v 2 h 7 v 1 h -16 v -16"/> <path fill="#e0f7ff" d="M 9 1 h 7 v 2 h -7 v -2"/> <path fill="#e0f7ff" d="M 5 4 h 7 v 2 h -7 v -2"/> <path fill="#e0f7ff" d="M 13 4 h 3 v 2 h -3 v -2"/> <path fill="#e0f7ff" d="M 9 7 h 7 v 2 h -7 v -2"/> <path fill="#e0f7ff" d="M 5 10 h 7 v 2 h -7 v -2"/> <path fill="#e0f7ff" d="M 13 10 h 3 v 2 h -3 v -2"/> <path fill="#e0f7ff" d="M 9 13 h 7 v 2 h -7 v -2"/>`
+    // return `F 0 0h16v1h-7v2h7v1h-3v2h3v1h-7v2h7v1h-3v2h3v1h-7v2h7v1hN6v-4h4vTh-4v-4h4vTh-4v-4"/ <path fill="#949494" d="M 1 1h7v2h-7vT"/ <path fill="#949494" d="M 9 1h7v2h-7vT"/ <path fill="#949494" d="M 0 4h4v2h-4vT"/ <path fill="#949494" d="M 5 4h7v2h-7vT"/ <path fill="#949494" d="M 13 4h3v2h-3vT"/ <path fill="#949494" d="M 1 7h7v2h-7vT"/ <path fill="#949494" d="M 9 7h7v2h-7vT"/ <path fill="#949494" d="M 0 10h4v2h-4vT"/ <path fill="#949494" d="M 5 10h7v2h-7vT"/ <path fill="#949494" d="M 13 10h3v2h-3vT"/ <path fill="#949494" d="M 1 13h7v2h-7vT"/ <path fill="#949494" d="M 9 13h7v2h-7vT"/`
+  }
+
   // const renderSvg = svg => {
   //   return svg
   // }
@@ -372,6 +378,7 @@ function init() {
     'bl': { svg: buildingCorner, color: main, rotate: 270 },
     'bx': { svg: roofTopBottomCorner, color: main, subColor: '#0d8799' },
     'by': { svg: roofTopBottomCorner, color: main, subColor: '#0d8799', flip: 'h' },
+    'bz': { svg: brick, color: main },
     'rr': { svg: roofTopBottomCorner, color: main, subColor: sub },
     'rl': { svg: roofTopBottomCorner, color: main, subColor: sub, flip: 'h' },
     'rt': { svg: roofTopBottomCorner, rotate: 180, color: main, subColor: sub },
