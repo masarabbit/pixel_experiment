@@ -1,0 +1,79 @@
+<!doctype html>
+<html>
+
+<head>
+  <link rel="stylesheet" type="text/css" href="./styles/img_manip.css" />
+  <script src ="./scripts/imgManip.js" charset="utf-8"></script>
+
+  <title>img_manip</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+
+<body>
+  <nav>
+    img manip
+    <div class="input_wrap">
+      <label>column</label>
+      <input class="column input" placeholder="column" value="10" />
+    </div>
+    <div class="input_wrap">
+      <label>row</label>
+      <input class="row input" placeholder="row" value="10" />
+    </div>
+    <div class="input_wrap">
+      <label>cell size</label>
+      <input class="cell_size input" placeholder="cell size" value="20" />
+    </div>
+
+    <label for="color" class="color_label"></label>
+    <input id="color" type="color">
+
+    <div class="input_wrap">
+      <label>hex</label>
+      <input class="hex input" placeholder="#000000" />
+    </div>
+    
+    <!-- <input id="upload" type="file" single/>
+    <label for="upload" data-alt="upload image file" class="upload icon alt"></label>
+    <div class="file_name"></div>
+    <button class="button draw icon display_none alt" data-alt="pixelise"></button>
+    <button class="download icon download_file alt" data-alt="download pixel art"></button>
+    <button class="button create_grid create icon alt" data-index="0" data-grid_class="cell" data-alt="create grid"></button> 
+    <button class="button undo icon alt" data-alt="undo"><</button> 
+
+
+    <button class="button select icon alt" data-alt="select">c</button>
+    <button class="button fill icon bucket alt" data-alt="fill bucket"></button>
+    <button class="button clear icon eraser alt" data-alt="eraser"></button>
+    <button class="flip icon flip_h alt" data-alt="horizontal flip"></button>
+    <button class="flip icon flip_v alt" data-alt="vertical flip"></button>
+    <button class="grid_display icon hide alt" data-alt="hide grid"></button> -->
+  </nav>
+
+  <div class="pagewrap">
+    
+    <div class="img_wrap">
+      <canvas class="canvas display_none"></canvas>
+    </div> 
+    
+    <div class="playground">
+      <div class="sample_wrapper">
+          <div class="sample"></div>
+      </div>
+    
+    </div>
+
+    <!-- <textarea class="codes" spellcheck="false"></textarea> -->
+
+
+
+
+  </div>
+
+
+  <div class="cursor" data-text="test"><div></div></div>
+  <div class="indicator"></div>
+</body>
+
+</html>

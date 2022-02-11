@@ -67,6 +67,25 @@ function init() {
       map: 'v5,b2,v24,w4,b2,w22,v2,w1,b26,w1,v2,w1,b1,p3,b8,t1,b11,w1,b1,w1,v2,w1,b1,p3,b22,w1,v2,w1,b1,zi3,b13,yg1,yh1,yi1,b6,w1,v2,w1,b1,zh1,zi1,zh1,b13,zp3,b6,w1,v2,w1,b1,zi1,zg1,zi1,b12,zw1,yd1,ye1,yf1,zw1,b5,w1,v2,w1,b8,zj1,zk1,zl1,zt1,zu1,zv1,b2,zw1,zi2,zh1,zw1,zm1,zn1,zo1,b2,w1,v2,w1,b5,yg1,yh1,yi1,zp3,zw3,b2,zw1,zi1,zg1,zi1,zw1,zp3,b2,w1,v2,w1,b1,t1,b3,zp6,zw3,zp2,zw5,zf1,ze1,zd1,b2,w1,v2,w1,b5,yd1,ye1,yf1,za1,zb1,zc1,ya1,yb1,yc1,zp2,zi8,b2,w1,v2,w1,b2,t1,b2,zh1,zi1,zh1,zi9,yg1,yh1,yi1,zi3,zh1,b2,w1,v2,w1,b4,t1,zi1,zg1,zi2,zg1,zi4,zh1,zi2,yd1,ye1,yf1,zi2,zg1,zi1,b4,v1,w1,b8,zi4,zh1,zi8,b2,t1,b4,v1,w1,b1,t1,b6,zi2,zg1,zi3,b3,zi1,zg1,zi1,b6,w1,v2,w1,b26,w1,v2,w1,b26,w1,v2,w6,t1,w12,t1,w8,v8,b1,v12,b1,v9',
     },
     {
+      name: 'test2',
+      iWidth: 30,
+      iHeight: 20,
+      // characters: [
+      //   '155_bunny_0_hello',
+      //   '156_bunny_0_apple',
+      //   '309_bunny_0_tomato'
+      // ],
+      // events: [
+      //   '5_transport-portal3',
+      //   '6_transport-portal3',
+      //   '419_transport-portal4',
+      //   '449_transport-portal4',
+      //   '253_transport-portal7',
+      //   '288_transport-portal6'
+      // ],
+      map: 'v5,b2,v24,w4,b2,w22,v2,w1,b14,d1,pt2,s1,b4,d1,s1,b2,w1,v2,w1,b12,t1,b1,g1,pb2,y1,b4,g1,y1,b2,w1,v2,w1,b2,t1,b10,bt1,al1,p1,nr1,sr1,at1,br1,b2,bl1,bb1,b2,w1,v2,w1,b10,d1,pt2,al1,bl1,do1,ab1,bb1,p1,ar1,rb1,b5,w1,v2,w1,b6,t1,b2,ra1,g1,rc1,pb1,bl1,ab5,bb1,r1,b1,d1,pt1,s1,b1,w1,v2,w1,b4,d1,pt1,s1,b2,r1,sl1,p1,nr1,al1,p3,bz2,ar1,r1,b1,g1,rc1,y1,b1,w1,v2,w1,b1,d1,pt2,g1,rc1,y1,s1,b1,r1,bl1,do1,ab1,al1,wi1,p3,wi1,ar1,r1,b1,sl1,p1,sr1,b1,w1,v2,w1,b1,pu1,rp2,rr1,do1,rl1,pr1,b1,re1,rh2,rb1,bl1,ab2,do1,ab2,bb1,r1,b1,bl1,do1,bb1,b1,w1,v2,w1,b1,pu1,rp5,pr1,b1,t1,b2,re1,rh7,rd1,b5,w1,v2,w1,b1,g1,rc1,pb3,rc1,y1,b8,d1,pt2,s1,b1,d1,pt1,s1,b2,w1,v2,w1,b1,al1,p5,ar1,b1,ra1,rh4,b1,d1,g1,pb2,y1,pt1,g1,pb1,y1,s1,b1,w1,v2,w1,b1,al1,p2,wi1,bz1,p1,ar1,b1,rd1,b5,pu1,rr1,ab2,rl1,rp1,rr1,ab1,rl1,pr1,b3,v1,w1,b1,al1,wi1,p3,wi1,ar1,b5,w1,b1,g1,pb5,rc1,pb2,y1,b3,v1,w1,b1,al1,p1,bz2,p2,ar1,b7,al1,sw4,p2,bz2,ar1,b1,w1,v2,w1,b1,bl1,do5,bb1,b3,w1,b3,bl1,ab5,do1,ab2,bb1,b1,w1,v2,w1,b26,w1,v2,w6,r1,w12,r1,w8,v8,r1,v12,r1,v9',
+    },
+    {
       name: 'one',
       iWidth: 30,
       iHeight: 20,
@@ -194,11 +213,13 @@ function init() {
   }
 
   const buildingCorner = subColor =>{
-    return `D 5 0h11v1hN1vN"/ D 3 1h2v1hTvN"/ <path fill="${subColor || 'white'}" d="M 5 1h11v15hN5vN1h1vTh1vNh2vN"/ D 2 2h1v1hNvN"/ D 1 3h1v2hNvT"/ D 0 5h1v11hNvN1"/`
+    // return `D 5 0h11v1hN1vN"/ D 3 1h2v1hTvN"/ <path fill="${subColor || 'white'}" d="M 5 1h11v15hN5vN1h1vTh1vNh2vN"/ D 2 2h1v1hNvN"/ D 1 3h1v2hNvT"/ D 0 5h1v11hNvN1"/`
+    return `D 5 0h3v1h-3vN"/ <path fill="${subColor || 'white'}" d="M 8 0h2v1h2vNh2v1h2v15hN5vThNvTh1vThNvTh1v-3h1vTh1vNh2vNh3vN"/ D 10 0h2v1hTvN"/ D 14 0h2v1hTvN"/ D 3 1h2v1hTvN"/ D 2 2h1v1hNvN"/ D 1 3h1v2hNvT"/ D 0 5h1v3hNv-3"/ D 0 10h1v2hNvT"/ D 0 14h1v2hNvT"/`
   }
 
   const roofCorner = subColor =>{
-    return `D 0 0h1v11h1v2hNv3hNvN6"/ <path fill="${subColor || 'white'}" d="M 1 0h15v15hN1vNhTvNhNvThNvN1"/ F 1 13h1v1h1v1h2v1h-4v-3"/ D 2 13h1v1hNvN"/ D 3 14h2v1hTvN"/ D 5 15h11v1hN1vN"/`
+    // return `D 0 0h1v11h1v2hNv3hNvN6"/ <path fill="${subColor || 'white'}" d="M 1 0h15v15hN1vNhTvNhNvThNvN1"/ F 1 13h1v1h1v1h2v1h-4v-3"/ D 2 13h1v1hNvN"/ D 3 14h2v1hTvN"/ D 5 15h11v1hN1vN"/`
+    return `D 0 0h1v2hNvT"/ <path fill="${subColor || 'white'}" d="M 1 0h15v15hTv1hTvNhTv1hTvNh-3vNhTvNhNvThNv-3hNvTh1vThNvTh1vT"/ D 0 4h1v2hNvT"/ D 0 8h1v3hNv-3"/ F 0 11h1v2hNvT"/ D 1 11h1v2hNvT"/ D 0 13h1v3hNv-3"/ F 1 13h1v1h1v1h2v1h-4v-3"/ D 2 13h1v1hNvN"/ D 3 14h2v1hTvN"/ D 5 15h3v1h-3vN"/ D 10 15h2v1hTvN"/ D 14 15h2v1hTvN"/`
   }
 
   const checkered = () =>{
@@ -207,11 +228,15 @@ function init() {
 
   const plain = subColor =>{
     return `<path fill="${subColor || 'white'}" d="M 0 0h16v16hN6vN6"/`
+    // return `<path fill="${subColor || 'white'}" d="M 0 0 h 16 v 10 h -3 v 3 h -3 v 3 h -10 v -16"/> <path fill="#f7f7f7" d="M 1 1 h 6 v 3 h -3 v 3 h -3 v -6"/> <path fill="#f7f7f7" d="M 12 1 h 3 v 6 h -6 v -3 h 3 v -3"/> <path fill="#f7f7f7" d="M 5 8 h 3 v 6 h -6 v -3 h 3 v -3"/> <path fill="#f7f7f7" d="M 13 10 h 3 v 6 h -6 v -3 h 3 v -3"/>`
+    // return `<path fill="${subColor || 'white'}"  d="M 0 0 h 16 v 10 h -3 v 3 h -3 v 3 h -10 v -16"/> <path fill="#f7f7f7" d="M 4 1 h 3 v 6 h -6 v -3 h 3 v -3"/> <path fill="#f7f7f7" d="M 13 10 h 3 v 6 h -6 v -3 h 3 v -3"/>`
   }
 
   const plainEdge = subColor =>{
-    // return `D 0 0h16v1hN6vN"/ <path fill="${subColor || 'white'}" d="M 0 1h16v15hN6vN5"/`
-    return `<path fill="#000" d="M 0 0 h 4 v 1 h -4 v -1"/> <path fill="${subColor || 'white'}" d="M 4 0 h 4 v 1 h -4 v -1"/> <path fill="#000" d="M 8 0 h 4 v 1 h -4 v -1"/> <path fill="${subColor || 'white'}" d="M 12 0 h 4 v 1 h -4 v -1"/> <path fill="${subColor || 'white'}" d="M 0 1 h 4 v 1 h 4 v -1 h 4 v 1 h 4 v 14 h -16 v -15"/> <path fill="#000" d="M 4 1 h 4 v 1 h -4 v -1"/> <path fill="#000" d="M 12 1 h 4 v 1 h -4 v -1"/>`
+    return `D 0 0h16v1hN6vN"/ <path fill="${subColor || 'white'}" d="M 0 1h16v15hN6vN5"/`
+    // return `D 0 0 h 3 v 1 h -3 v -1"/> <path fill="${subColor || 'white'}" d="M 3 0 h 2 v 1 h 6 v -1 h 1 v 1 h 3 v -1 h 1 v 16 h -16 v -15 h 3 v -1"/> D 5 0 h 6 v 1 h -6 v -1"/> D 12 0 h 3 v 1 h -3 v -1"/>`
+    // return `D 0 0 h 2 v 1 h -2 v -1"/> <path fill="${subColor || 'white'}" d="M 2 0 h 2 v 1 h 2 v -1 h 2 v 1 h 2 v -1 h 2 v 1 h 2 v -1 h 2 v 16 h -16 v -15 h 2 v -1"/> D 4 0 h 2 v 1 h -2 v -1"/> D 8 0 h 2 v 1 h -2 v -1"/> D 12 0 h 2 v 1 h -2 v -1"/>`
+
   }
 
   const door = () =>{
@@ -227,7 +252,9 @@ function init() {
   }
 
   const sideSquareWindow = () =>{
-    return 'D 0 0h1v16hNvN6"/ F 1 0h15v16h-3vNh1v-9hNvNh-4v1hNv9h1v1h-8vN6"/ D 9 5h4v1h1v9hNv1h-4vNhNv-9h1vN"/'
+    // return 'D 0 0h1v16hNvN6"/ F 1 0h15v16h-3vNh1v-9hNvNh-4v1hNv9h1v1h-8vN6"/ D 9 5h4v1h1v9hNv1h-4vNhNv-9h1vN"/'
+    // return `F 0 0h16v16h-3vNh1v-9hNvNh-4v1hNv9h1v1h-8vThNvTh1vThNvTh1vThNvTh1vThNvT"/ D 0 2h1v2hNvT"/ D 9 5h4v1h1v9hNv1h-4vNhNv-9h1vN"/ D 0 6h1v2hNvT"/ D 0 10h1v2hNvT"/ D 0 14h1v2hNvT"/`
+    return `D 0 0h1v2hNvT"/ F 1 0h15v16h-3vNh1v-9hNvNh-4v1hNv9h1v1h-9vTh1vThNvTh1vThNvTh1vThNvTh1vT"/ D 0 4h1v2hNvT"/ D 9 5h4v1h1v9hNv1h-4vNhNv-9h1vN"/ D 0 8h1v2hNvT"/ D 0 12h1v2hNvT"/`
   }
 
   const noSideWindow = () =>{
@@ -239,7 +266,8 @@ function init() {
   }
 
   const roofTopBottomCorner = subColor =>{
-    return `D 0 0h1v11hNvN1"/ F 1 0h15v15hN1vNhTvNhNvThNvN1"/ <path fill="${subColor || 'white'}" d="M 0 11h1v2h1v1h1v1h2v1h-5v-5"/ D 1 11h1v2hNvT"/ D 2 13h1v1hNvN"/ D 3 14h2v1hTvN"/ D 5 15h11v1hN1vN"/`
+    // return `D 0 0h1v11hNvN1"/ F 1 0h15v15hN1vNhTvNhNvThNvN1"/ <path fill="${subColor || 'white'}" d="M 0 11h1v2h1v1h1v1h2v1h-5v-5"/ D 1 11h1v2hNvT"/ D 2 13h1v1hNvN"/ D 3 14h2v1hTvN"/ D 5 15h11v1hN1vN"/`
+    return `D 0 0h1v2hNvT"/ F 1 0h15v15hTv1hTvNhTv1hTvNh-3vNhTvNhNvThNv-3hNvTh1vThNvTh1vT"/ D 0 4h1v2hNvT"/ D 0 8h1v3hNv-3"/ <path fill="${subColor || 'white'}" d="M 0 11h1v2h1v1h1v1h2v1h-5v-5"/ D 1 11h1v2hNvT"/ D 2 13h1v1hNvN"/ D 3 14h2v1hTvN"/ D 5 15h3v1h-3vN"/ D 10 15h2v1hTvN"/ D 14 15h2v1hTvN"/`
   }
 
   const river = () =>{
@@ -314,8 +342,10 @@ function init() {
   }
 
   const brick = () =>{
-    return `<path fill="#fff" d="M 0 0 h 16 v 1 h -7 v 2 h 7 v 1 h -3 v 2 h 3 v 1 h -7 v 2 h 7 v 1 h -3 v 2 h 3 v 1 h -7 v 2 h 7 v 1 h -16 v -16"/> <path fill="#e0f7ff" d="M 9 1 h 7 v 2 h -7 v -2"/> <path fill="#e0f7ff" d="M 5 4 h 7 v 2 h -7 v -2"/> <path fill="#e0f7ff" d="M 13 4 h 3 v 2 h -3 v -2"/> <path fill="#e0f7ff" d="M 9 7 h 7 v 2 h -7 v -2"/> <path fill="#e0f7ff" d="M 5 10 h 7 v 2 h -7 v -2"/> <path fill="#e0f7ff" d="M 13 10 h 3 v 2 h -3 v -2"/> <path fill="#e0f7ff" d="M 9 13 h 7 v 2 h -7 v -2"/>`
+    // return `<path fill="#fff" d="M 0 0 h 16 v 1 h -7 v 2 h 7 v 1 h -3 v 2 h 3 v 1 h -7 v 2 h 7 v 1 h -3 v 2 h 3 v 1 h -7 v 2 h 7 v 1 h -16 v -16"/> <path fill="#e0f7ff" d="M 9 1 h 7 v 2 h -7 v -2"/> <path fill="#e0f7ff" d="M 5 4 h 7 v 2 h -7 v -2"/> <path fill="#e0f7ff" d="M 13 4 h 3 v 2 h -3 v -2"/> <path fill="#e0f7ff" d="M 9 7 h 7 v 2 h -7 v -2"/> <path fill="#e0f7ff" d="M 5 10 h 7 v 2 h -7 v -2"/> <path fill="#e0f7ff" d="M 13 10 h 3 v 2 h -3 v -2"/> <path fill="#e0f7ff" d="M 9 13 h 7 v 2 h -7 v -2"/>`
     // return `F 0 0h16v1h-7v2h7v1h-3v2h3v1h-7v2h7v1h-3v2h3v1h-7v2h7v1hN6v-4h4vTh-4v-4h4vTh-4v-4"/ <path fill="#949494" d="M 1 1h7v2h-7vT"/ <path fill="#949494" d="M 9 1h7v2h-7vT"/ <path fill="#949494" d="M 0 4h4v2h-4vT"/ <path fill="#949494" d="M 5 4h7v2h-7vT"/ <path fill="#949494" d="M 13 4h3v2h-3vT"/ <path fill="#949494" d="M 1 7h7v2h-7vT"/ <path fill="#949494" d="M 9 7h7v2h-7vT"/ <path fill="#949494" d="M 0 10h4v2h-4vT"/ <path fill="#949494" d="M 5 10h7v2h-7vT"/ <path fill="#949494" d="M 13 10h3v2h-3vT"/ <path fill="#949494" d="M 1 13h7v2h-7vT"/ <path fill="#949494" d="M 9 13h7v2h-7vT"/`
+    // return `F 0 0 h 16 v 10 h -3 v 3 h -3 v 3 h -10 v -16"/> <path fill="#f7f7f7" d="M 1 1 h 6 v 3 h -3 v 3 h -3 v -6"/> <path fill="#f7f7f7" d="M 12 1 h 3 v 6 h -6 v -3 h 3 v -3"/> <path fill="#f7f7f7" d="M 5 8 h 3 v 6 h -6 v -3 h 3 v -3"/> <path fill="#f7f7f7" d="M 13 10 h 3 v 6 h -6 v -3 h 3 v -3"/>`
+    return `F 0 0 h 16 v 10 h -3 v 3 h -3 v 3 h -10 v -16"/> <path fill="#f7f7f7" d="M 4 1 h 3 v 6 h -6 v -3 h 3 v -3"/> <path fill="#f7f7f7" d="M 13 10 h 3 v 6 h -6 v -3 h 3 v -3"/>`
   }
 
   // const renderSvg = svg => {

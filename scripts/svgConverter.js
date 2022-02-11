@@ -139,7 +139,7 @@ function init() {
   })
 
   codesBox[1].addEventListener('change',()=>{   
-    codesBox[0].value = codesBox[1].value.replaceAll('<path d="M','D').replaceAll('<path fill="#ffffff" d="M','F').replaceAll('/>','/').replaceAll('-1','N').replaceAll('-2','T').replaceAll(' v ','v').replaceAll(' h ','h').replaceAll('<path fill="#000000" d="M','D').replaceAll('<path fill="#fff" d="M','F')
+    codesBox[0].value = codesBox[1].value.replaceAll('<path d="M','D').replaceAll('<path fill="#ffffff" d="M','F').replaceAll('/>','/').replaceAll('-1','N').replaceAll('-2','T').replaceAll(' v ','v').replaceAll(' h ','h').replaceAll('<path fill="#000000" d="M','D').replaceAll('<path fill="#fff" d="M','F').replaceAll('<path fill="#000" d="M','D')
 
   //   codesBox[0].value = codesBox[1].value
   //     .replaceAll(' <path d="M','D')
