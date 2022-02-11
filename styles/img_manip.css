@@ -412,7 +412,7 @@ button.icon:hover {
   width: 80px;
 }
 
-.sample_wrapper::before {
+/* .sample_wrapper::before {
   position: absolute;
   border-radius: 50%;
   background-color: hotpink;
@@ -421,18 +421,18 @@ button.icon:hover {
   height: 15px;
   top: -15px;
   right: -15px;
-}
-
-/* .handle {
-  position: absolute;
-  border-radius: 50%;
-  background-color: hotpink;
-  content: '';
-  width: 10px;
-  height: 10px;
-  margin-top: -10px;
-  margin-right: -10px;
 } */
+
+.handle {
+  position: absolute;
+  /* border-radius: 50%; */
+  background-color: hotpink;
+  width: 15px;
+  height: 15px;
+  top: -15px;
+  right: -15px;
+  /* transform-origin: -200%, -200%; */
+}
 
 .sample {
   position: absolute;
@@ -441,6 +441,7 @@ button.icon:hover {
   width: 80px;
   overflow: hidden;
   pointer-events: none;
+  /* transition: 2s; */
 }
 
 
