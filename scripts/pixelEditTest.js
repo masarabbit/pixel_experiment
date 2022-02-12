@@ -1012,6 +1012,7 @@ function init() {
   //   indicator.innerHTML = ''
   // })
   // console.log('row',row,'column',column)
+
 }
 
 window.addEventListener('DOMContentLoaded', init)

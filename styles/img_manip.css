@@ -383,9 +383,19 @@ button.icon:hover {
   bottom: 10px;
   left: 10px;
   width: 200px;
-  color: white;
+  color: hotpink;
   height: 20px;
-  border: 1px solid white;
+  border: 1px solid hotpink;
+}
+
+.indicator_two {
+  position: fixed;
+  bottom: 10px;
+  left: 230px;
+  width: 200px;
+  color: rgb(0, 81, 255);
+  height: 20px;
+  border: 1px solid rgb(0, 81, 255);
 }
 
 .active_area {
@@ -399,6 +409,7 @@ button.icon:hover {
 .grid.grid_hide div{ border: 0 !important; }
 
 .playground {
+  /* position: absolute; */
   border: pink 1px solid;
   margin: 20px;
   height: 600px;
@@ -426,12 +437,26 @@ button.icon:hover {
 .handle {
   position: absolute;
   /* border-radius: 50%; */
+  background-color: rgba(255, 105, 180, 0.253);
+  width: 110px;
+  height: 110px;
+  top: -15px;
+  left: -15px;
+  /* transform-origin: center center;
+  transform: rotate(0); */
+  pointer-events: none;
+}
+
+.handle_square {
+  position: absolute;
+  /* border-radius: 50%; */
   background-color: hotpink;
   width: 15px;
   height: 15px;
-  top: -15px;
-  right: -15px;
-  /* transform-origin: -200%, -200%; */
+  top: 0px;
+  right: 0px;
+  content: '';
+  pointer-events: auto;
 }
 
 .sample {
@@ -440,7 +465,7 @@ button.icon:hover {
   height: 80px;
   width: 80px;
   overflow: hidden;
-  pointer-events: none;
+  /* pointer-events: none; */
   /* transition: 2s; */
 }
 
@@ -452,5 +477,30 @@ button.icon:hover {
   left: 0px;
 }
 
+.mark {
+  position: absolute;
+  border-radius: 50%;
+  border: 1px solid hotpink;
+  height: 10px;
+  width: 10px;
+}
+
+.mark_two {
+  position: absolute;
+  border-radius: 50%;
+  border: 1px solid rgb(108, 105, 255);
+  height: 10px;
+  width: 10px;
+  pointer-events: none;
+}
+
+.mark_three {
+  position: absolute;
+  /* border-radius: 50%; */
+  border: 1px solid rgb(12, 224, 23);
+  height: 10px;
+  width: 10px;
+  pointer-events: none;
+}
 
 /* .cell.grid_hide { border: 0 !important; } */
