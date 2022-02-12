@@ -100,31 +100,35 @@ function init() {
   // const handle = window.getComputedStyle(
   //   document.querySelector('.sample_wrapper'), ':before'
   // )
+  
+  const rotatePos = {
+    centerX: 0,
+    centerY: 0,
+  }
 
-
-  const getDragAngle = (e, mark) => {
+  const getDragAngle = e => {
     // const element = e.target
     // console.log(e.target.dataset.angle)
     const startAngle = parseFloat(handle.dataset.angle) || 0
 
-    const { left, top, width, height } = mark.getBoundingClientRect()
-    console.log('test 2', left, top)
-    const center = {
-      x: parseFloat(left + width / 2) || 0,
-      y: parseFloat(top + height / 2) || 0,
-    }
+    // const { left, top, width, height } = mark.getBoundingClientRect()
+    // console.log('test 2', left, top)
+    // const center = {
+    //   x: parseFloat(left + width / 2) || 0,
+    //   y: parseFloat(top + height / 2) || 0,
+    // }
 
     const testMark = document.createElement('div')
     testMark.classList.add('mark_two')
     Object.assign(testMark.style, {
-      left: `${left}px`, 
-      top: `${top}px`
+      left: `${rotatePos.centerX}px`, 
+      top: `${rotatePos.centerY}px`
     })
 
     // const { left:l2, top:t2 } = handleSquare.getBoundingClientRect()
     
     body.append(testMark)
-    const angle = Math.atan2(center.y - e.clientY, center.x - e.clientX) //TODO e.clientY and e.cientX isn't right
+    const angle = Math.atan2((rotatePos.centerY || 0) - e.clientY, (rotatePos.centerX || 0) - e.clientX) //TODO e.clientY and e.cientX isn't right
     console.log('test Client', e.clientX)
 
     const testMarkClient = document.createElement('div')
@@ -141,45 +145,46 @@ function init() {
 
   
   const addRotate = target =>{
+    // const pos = { start: 0, end: 0 }
+
     const mark = document.createElement('div')
     mark.classList.add('mark')
     target.append(mark)
-    const { left, top, width, height } = target.getBoundingClientRect()
-    console.log(left, top, width, height)
+    const { width, height } = target.getBoundingClientRect()
+    // console.log(left, top, width, height)
+    rotatePos.centerX = (width / 2) - (mark.clientWidth / 2)
+    rotatePos.centerY = (height / 2) - (mark.clientHeight / 2)
     Object.assign(mark.style, {
-      left: `${(width / 2) - (mark.clientWidth / 2)}px`, 
-      top: `${(height / 2) - (mark.clientHeight / 2)}px`
+      left: `${rotatePos.centerX}px`, 
+      top: `${rotatePos.centerY}px`
     })
 
-    const rotateOff = () =>{
-      handle.removeEventListener('mousemove', rotateOn)
-      handle.removeEventListener('mouseup', rotateOff)
+    const startRotate = () =>{
+      // pos.start = e.dataset.angle
+      document.addEventListener('mousemove', rotateOn)
+      document.addEventListener('mouseup', rotateOff)
     }
 
     const rotateOn = e =>{
       if (!handleActive) return
-
       const newAngle = getDragAngle(e, mark)
 
-      // target.childNodes[3].style.transform = `rotate(${newAngle}deg)`
-      target.childNodes[3].style.transform = 'rotate(' + newAngle + 'rad' + ')'
-  
-      // handle.style.transform = `rotate(${newAngle}deg)`
-      handle.style.transform = 'rotate(' + newAngle + 'rad' + ')'
+      target.childNodes[3].style.transform = `rotate(${newAngle}rad)`  
+      handle.style.transform = `rotate(${newAngle}rad)`
       handle.dataset.angle = newAngle
     }
 
-    const startRotate = () =>{
-      handle.addEventListener('mousemove', rotateOn)
-      handle.addEventListener('mouseup', rotateOff)
+    const rotateOff = () =>{
+      document.removeEventListener('mousemove', rotateOn)
+      document.removeEventListener('mouseup', rotateOff)
     }
-
+  
     handle.addEventListener('mousedown', startRotate)
-
   }
   
   addRotate(sampleImgWrapper)
-  
+
+
 }
 
 window.addEventListener('DOMContentLoaded', init)
