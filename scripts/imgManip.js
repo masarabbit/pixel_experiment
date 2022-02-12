@@ -1,27 +1,26 @@
 function init() {
 
- 
   
-  const svg = `<path fill="#4d8da3" d="M 4 1 h 1 v 1 h 1 v 2 h 4 v -2 h 1 v -1 h 1 v 3 h 1 v 1 h 1 v 3 h -1 v 1 h -3 v 3 h 1 v 2 h -6 v -2 h 1 v -3 h -3 v -1 h -1 v -3 h 1 v -1 h 1 v -3"/> <path fill="#4d8da3" d="M 20 2 h 1 v 1 h 1 v 2 h 4 v -2 h 1 v -1 h 1 v 3 h 1 v 1 h 1 v 3 h -1 v 1 h -2 v 1 h 1 v 2 h -1 v 1 h -6 v -1 h -1 v -2 h 1 v -1 h -2 v -1 h -1 v -3 h 1 v -1 h 1 v -3"/> <path fill="#9edbf0" d="M 5 5 h 1 v 2 h -1 v -2"/> <path fill="#9edbf0" d="M 10 5 h 1 v 2 h -1 v -2"/> <path fill="#9edbf0" d="M 21 6 h 1 v 2 h -1 v -2"/> <path fill="#9edbf0" d="M 26 6 h 1 v 2 h -1 v -2"/>`
+  const svg = '<path fill="#4d8da3" d="M 4 1 h 1 v 1 h 1 v 2 h 4 v -2 h 1 v -1 h 1 v 3 h 1 v 1 h 1 v 3 h -1 v 1 h -3 v 3 h 1 v 2 h -6 v -2 h 1 v -3 h -3 v -1 h -1 v -3 h 1 v -1 h 1 v -3"/> <path fill="#4d8da3" d="M 20 2 h 1 v 1 h 1 v 2 h 4 v -2 h 1 v -1 h 1 v 3 h 1 v 1 h 1 v 3 h -1 v 1 h -2 v 1 h 1 v 2 h -1 v 1 h -6 v -1 h -1 v -2 h 1 v -1 h -2 v -1 h -1 v -3 h 1 v -1 h 1 v -3"/> <path fill="#9edbf0" d="M 5 5 h 1 v 2 h -1 v -2"/> <path fill="#9edbf0" d="M 10 5 h 1 v 2 h -1 v -2"/> <path fill="#9edbf0" d="M 21 6 h 1 v 2 h -1 v -2"/> <path fill="#9edbf0" d="M 26 6 h 1 v 2 h -1 v -2"/>'
   
   const sampleImg = document.querySelector('.sample')
   const sampleImgWrapper = document.querySelector('.sample_wrapper')
   const handle = document.querySelector('.handle')
   const handleSquare = document.querySelector('.handle_square')
   const body = document.querySelector('body')
-  const indicator = document.querySelector('.indicator')
-  const indicatorTwo = document.querySelector('.indicator_two')
+  // const indicator = document.querySelector('.indicator')
+  // const indicatorTwo = document.querySelector('.indicator_two')
   let handleActive = false
-  let windowPos = {
-    newX: 0,
-    newY: 0,
-  }
+  // let windowPos = {
+  //   newX: 0,
+  //   newY: 0,
+  // }
   // let newAngle = 0
   // let handlePos = 'rightup'
   // let oldX
   // let oldY
 
-  const svgWrapper = ({ content, color, w, h} ) =>{
+  const svgWrapper = ({ content, color, w, h } ) =>{
     return `
       <div class="sprite">
         <svg x="0px" y="0px" width="100%" height="100%" viewBox="0 0 ${w || 16} ${h || 16}" fill="${color || 'black'}">${content}</svg>
@@ -29,7 +28,7 @@ function init() {
       `
   }
   
-  const animateSvg = ({target, start, end, speed, frameSize}) => {
+  const animateSvg = ({ target, start, end, speed, frameSize }) => {
     const startFrame = start || 0
     let i = startFrame
     setInterval(()=> {
@@ -42,74 +41,61 @@ function init() {
   
 
   const animateSprite = () =>{
-    sampleImg.innerHTML = svgWrapper({content: svg, className:'cat', w:32})
+    sampleImg.innerHTML = svgWrapper({ content: svg, className: 'cat', w: 32 })
     const sprite = sampleImg.childNodes[1]
     Object.assign(sprite.style, {
       width: '160px', 
       height: '80px'
     })
-    animateSvg({target:sprite, end: 1, frameSize: 80})
+    animateSvg({ target: sprite, end: 1, frameSize: 80 })
   }
 
   animateSprite()
 
   const setTargetPos = (target, x, y) =>{
-    Object.assign(target.style, { left: `${x}px`, top: `${y}px`})
+    Object.assign(target.style, { left: `${x}px`, top: `${y}px` })
   }
 
   handleSquare.addEventListener('mouseenter', ()=>handleActive = true)
   handleSquare.addEventListener('mouseleave', ()=>handleActive = false)
 
+ 
 
-
-  const makeSpriteDraggable = sprite =>{
-    let newX, newY
-
+  const makeSpriteDraggable = target => {
+    const pos = { a: 0, b: 0, c: 0, d: 0 }
+    // const pos = {}
+    //   ['a', 'b', 'c', 'd'].forEach( x => {
+    //     pos[x] = 0
+    //   })
+    const onGrab = e => {
+      pos.c = e.clientX
+      pos.d = e.clientY
+      document.addEventListener('mouseup', onLetGo)
+      document.addEventListener('mousemove', onDrag)
+    }
+    
     const onDrag = e => {
-      // if (handleActive) return
-      // const { x: offSetX, y: offSetY } = sprite.getBoundingClientRect()
-  
-      // newX = offSetX + e.movementX
-      // newY = offSetY + e.movementY
-      console.log(e)
-
-      console.log(
-        'current',
-        windowPos
+      pos.a = pos.c - e.clientX
+      pos.b = pos.d - e.clientY
+      pos.c = e.clientX
+      pos.d = e.clientY
+      if (!handleActive) setTargetPos(
+        target, 
+        target.offsetLeft - pos.a, 
+        target.offsetTop - pos.b
       )
-
-      newX = (windowPos.x - windowPos.clickX) + windowPos.newX
-      newY = (windowPos.y - windowPos.clickY) + windowPos.newY
-
-      if (!handleActive) setTargetPos(sprite, newX, newY)
     }
 
     const onLetGo = () => {
-      // console.log('h', handleActive)
-      // ? below didn't work
-      // [['mousemove', handleOnDrag],['mouseup', handleOnLetGo]].forEach(evt => document.addEventListener(evt[0], evt[1]))
-
-      document.removeEventListener('mousemove', onDrag)
       document.removeEventListener('mouseup', onLetGo)
-      if (!handleActive) setTargetPos(sprite, newX, newY)
+      document.removeEventListener('mousemove', onDrag)
     }
-    
-    const onGrab = () => {
-      document.addEventListener('mousemove', onDrag)
-      document.addEventListener('mouseup', onLetGo)
-    }  
 
-    sprite.addEventListener('mousedown', onGrab)
-  }  
+    target.addEventListener('mousedown', onGrab)
+  }
 
   makeSpriteDraggable(sampleImgWrapper)
 
-  sampleImg.addEventListener('click', ()=>{
-    console.log('test')
-  })
-
-
-  // TODO how to make handle that is visible despite overflow hidden?
 
   // const handle = window.getComputedStyle(
   //   document.querySelector('.sample_wrapper'), ':before'
@@ -126,7 +112,7 @@ function init() {
     const center = {
       x: parseFloat(left + width / 2) || 0,
       y: parseFloat(top + height / 2) || 0,
-    };
+    }
 
     const testMark = document.createElement('div')
     testMark.classList.add('mark_two')
@@ -193,93 +179,59 @@ function init() {
   }
   
   addRotate(sampleImgWrapper)
-
-
-  // sampleImgWrapper.addEventListener('mousemove', (e)=>{
-  //   console.log('e',e)
-  //   const { offsetX:x, offsetY:y } = e
-  //   indicatorTwo.innerHTML = `x:${x} y:${y}`
-  // })
-
-  window.addEventListener('mousemove', (e)=>{
-    indicator.innerHTML = `x:${e.pageX} y:${e.pageY}`
-    Object.assign(windowPos, {
-      x: e.pageX,
-      y: e.pageY,
-    })
-  })
-
-  sampleImgWrapper.addEventListener('mousedown', ()=>{
-    // indicator.innerHTML = `x:${e.pageX} y:${e.pageY}`
-    const { left, top, } = sampleImgWrapper.getBoundingClientRect()
-    Object.assign(windowPos, {
-      clickX: left,
-      clickY: top,
-    })
-    console.log(windowPos)
-  })
-  sampleImgWrapper.addEventListener('mouseup', ()=>{
-    // indicator.innerHTML = `x:${e.pageX} y:${e.pageY}`
-    const { left, top, } = sampleImgWrapper.getBoundingClientRect()
-    windowPos = {
-      newX: left,
-      newY: top,
-    }
-    console.log(windowPos)
-  })
   
 }
 
 window.addEventListener('DOMContentLoaded', init)
 
 
-      // const prevPos = pos
-      // let direction
-      // const { left, top } = mark.getBoundingClientRect()
-      // const { left:hLeft, top:hTop } = handleSquare.getBoundingClientRect()
+// const prevPos = pos
+// let direction
+// const { left, top } = mark.getBoundingClientRect()
+// const { left:hLeft, top:hTop } = handleSquare.getBoundingClientRect()
       
-      // const dirX = e.pageX < oldX ? 'left' : 'right'
-      // const dirY = e.pageY < oldY ? 'up' : 'down'
+// const dirX = e.pageX < oldX ? 'left' : 'right'
+// const dirY = e.pageY < oldY ? 'up' : 'down'
 
-      // const handleX = hLeft  < left ? 'left' : 'right'
-      // const handleY = hTop < top ? 'up' : 'down'
-      // oldX = e.pageX
-      // oldY = e.pageY
+// const handleX = hLeft  < left ? 'left' : 'right'
+// const handleY = hTop < top ? 'up' : 'down'
+// oldX = e.pageX
+// oldY = e.pageY
 
-      // console.log('dirX',dirX, 'dirY',dirY)
+// console.log('dirX',dirX, 'dirY',dirY)
 
-      // // const motion = dirX + dirY
-      // const handlePos = handleX + handleY
-      // // console.log(handlePos)
+// // const motion = dirX + dirY
+// const handlePos = handleX + handleY
+// // console.log(handlePos)
 
-      // if (handlePos === 'rightup'){
-      //   if (dirX === 'right') newAngle += 5
-      //   if (dirX === 'left') newAngle -= 5
-      // }
+// if (handlePos === 'rightup'){
+//   if (dirX === 'right') newAngle += 5
+//   if (dirX === 'left') newAngle -= 5
+// }
 
-      // if (handlePos === 'rightdown'){
-      //   if (dirX === 'left') newAngle += 5
-      //   if (dirX === 'right') newAngle -= 5
-      // }
+// if (handlePos === 'rightdown'){
+//   if (dirX === 'left') newAngle += 5
+//   if (dirX === 'right') newAngle -= 5
+// }
 
-      // if (handlePos === 'leftdown'){
-      //   if (dirX === 'right') newAngle += 10
-      //   if (dirX === 'left') newAngle -= 10
-      // }
+// if (handlePos === 'leftdown'){
+//   if (dirX === 'right') newAngle += 10
+//   if (dirX === 'left') newAngle -= 10
+// }
 
-      // if (handlePos === 'leftup'){
-      //   if (dirX === 'left') newAngle += 10
-      //   if (dirX === 'right') newAngle -= 10
-      // }
-      // if (prevPos === 'rightup' && (pos === 'rightup' || )
+// if (handlePos === 'leftup'){
+//   if (dirX === 'left') newAngle += 10
+//   if (dirX === 'right') newAngle -= 10
+// }
+// if (prevPos === 'rightup' && (pos === 'rightup' || )
 
 
-      // console.log(dirX, dirY)
-      // if (dirX + dirY === 'leftup' || dirX + dirY === 'rightdown') newAngle -= 5
-      // if (dirX + dirY === 'rightup' || dirX + dirY === 'leftdown') newAngle += 5
-      // if (dirX === 'right') newAngle += 5
-      // if (dirX === 'left') newAngle -= 5
+// console.log(dirX, dirY)
+// if (dirX + dirY === 'leftup' || dirX + dirY === 'rightdown') newAngle -= 5
+// if (dirX + dirY === 'rightup' || dirX + dirY === 'leftdown') newAngle += 5
+// if (dirX === 'right') newAngle += 5
+// if (dirX === 'left') newAngle -= 5
 
-      // } else {
-      //   newAngle = dirX === 'left' ? newAngle + 1 : newAngle - 1
-      // }
+// } else {
+//   newAngle = dirX === 'left' ? newAngle + 1 : newAngle - 1
+// }
