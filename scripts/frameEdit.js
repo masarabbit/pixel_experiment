@@ -1,5 +1,9 @@
 function init() {
 
+  //TODO reflect background colour when uploading multiple background
+  //TODO buggy when creating gifs multiple times (old data doesn't get erased?)
+  //TODO frames don't reposition when resizing (it does, but not when resizing with console window)
+
   const canvas = document.querySelectorAll('.canvas')
   const canvasOutput = document.querySelector('.canvas_output')
   const cursor = document.querySelector('.cursor')
@@ -244,16 +248,23 @@ function init() {
 
   // drag
   const addFramePositionActions = frame =>{
-    let newX
-    let newY
+    const pos = { a: 0, b: 0, c: 0, d: 0 }
     const thumbId = +frame.dataset.thumb_id
+
+    const onGrab = e => {
+      pos.c = e.clientX
+      pos.d = e.clientY
+      document.addEventListener('mousemove', onDrag)
+      document.addEventListener('mouseup', onLetGo)
+    }
 
     const onDrag = e => {
       frame.style.transtion = '0s'
-      const { x: offSetX, y: offSetY } = frame.getBoundingClientRect()
-      newX = offSetX + e.movementX
-      newY = offSetY + e.movementY
-      setTargetPos(frame, newX, newY)
+      pos.a = frame.offsetLeft - (pos.c - e.clientX)
+      pos.b = frame.offsetTop - (pos.d - e.clientY)
+      pos.c = e.clientX
+      pos.d = e.clientY
+      setTargetPos( frame, pos.a, pos.b)
     }
     
     const onLetGo = () => {
@@ -271,17 +282,17 @@ function init() {
 
       slotInfo.forEach((info,i)=>{      
         const frameInsideSlot = frames[currentSequence[i]]  
-        const newXC = newX + 50
-        const newYC = newY + 55
+        const newX = pos.a + 50
+        const newY = pos.b + 55
 
-        if ((newXC > info.x && newXC < info.x + 70) &&
-            (newYC > info.y && newYC < info.y + 110)){
+        if ((newX > info.x && newX < info.x + 70) &&
+            (newY > info.y && newY < info.y + 110)){
 
           if (!thumbData[thumbId].draggable) return 
           thumbData[thumbId].draggable = false    
           frame.style.transition = '0.3s'
-          newX = info.x
-          newY = info.y
+          pos.a = info.x
+          pos.b = info.y
           matchSlot = true   
 
           if (frameInsideSlot) {
@@ -306,7 +317,7 @@ function init() {
           }
           sequence[i] = frameInsideSlot ? currentSequence[currentSelection] : thumbId
           frames[thumbId].style.backgroundColor = 'grey'
-        } else if (!matchSlot && (newX || newY)){
+        } else if (!matchSlot && (pos.a || pos.b)){
           thumbData[thumbId].draggable = true
           tidySequence(thumbId)
           slots[i].style.backgroundColor = 'transparent'
@@ -314,14 +325,11 @@ function init() {
       })
       updateSequence()
       thumbOutput.value = sequence.join(' ')
-      setTargetPos(frame, newX, newY)
+      setTargetPos(frame, pos.a, pos.b)
       setTimeout(()=> frames.forEach(frame => frame.style.transition = '0s'), 0)
       setTimeout(()=> thumbData[thumbId].draggable = true, 300)
     }
-    const onGrab = () => {
-      document.addEventListener('mousemove', onDrag)
-      document.addEventListener('mouseup', onLetGo)
-    }
+
     frame.addEventListener('mousedown', onGrab)
   }  
 
