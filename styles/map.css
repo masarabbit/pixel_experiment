@@ -562,6 +562,13 @@ button.icon:hover {
   margin: 100px 0 0 0;
 }
 
+.svg_anim {
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  /* border: blue 1px solid; */
+}
+
 .svg_anim_wrap {
   transform-origin: center;
   width: 100%;
@@ -571,6 +578,14 @@ button.icon:hover {
   animation: blink infinite 1.5s;
   margin-right: -100%;
   z-index: 50;
+}
+
+.anim_wrapper {
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+  /* border: pink 1px solid; */
+  pointer-events: none;
 }
 
 .palette_cell .svg_anim_wrap {
