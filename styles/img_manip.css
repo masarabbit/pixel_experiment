@@ -442,9 +442,12 @@ button.icon:hover {
   height: 110px;
   top: -15px;
   left: -15px;
-  /* transform-origin: center center;
-  transform: rotate(0); */
+  
+  transform-origin: center center;
+  transform: rotate(0);
   pointer-events: none;
+  user-select: none;
+  touch-action: none;
 }
 
 .handle_square {
@@ -457,6 +460,8 @@ button.icon:hover {
   height: 110px; */
   top: 0px;
   right: 0px;
+  /* left: 0px; */
+  /* bottom: 0px; */
   content: '';
   pointer-events: auto;
 }

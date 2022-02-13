@@ -8,8 +8,8 @@ function init() {
   const handle = document.querySelector('.handle')
   const handleSquare = document.querySelector('.handle_square')
   const body = document.querySelector('body')
-  // const indicator = document.querySelector('.indicator')
-  // const indicatorTwo = document.querySelector('.indicator_two')
+  const indicator = document.querySelector('.indicator')
+  const indicatorTwo = document.querySelector('.indicator_two')
   let handleActive = false
   // let windowPos = {
   //   newX: 0,
@@ -19,6 +19,7 @@ function init() {
   // let handlePos = 'rightup'
   // let oldX
   // let oldY
+  let newAngle = 0
 
   const svgWrapper = ({ content, color, w, h } ) =>{
     return `
@@ -56,10 +57,8 @@ function init() {
     Object.assign(target.style, { left: `${x}px`, top: `${y}px` })
   }
 
-  handleSquare.addEventListener('mouseenter', ()=>handleActive = true)
-  handleSquare.addEventListener('mouseleave', ()=>handleActive = false)
-
- 
+  // handleSquare.addEventListener('mouseenter', ()=>handleActive = true)
+  // handleSquare.addEventListener('mouseleave', ()=>handleActive = false)
 
   const makeSpriteDraggable = target => {
     const pos = { a: 0, b: 0, c: 0, d: 0 }
@@ -97,94 +96,131 @@ function init() {
   makeSpriteDraggable(sampleImgWrapper)
 
 
-  // const handle = window.getComputedStyle(
-  //   document.querySelector('.sample_wrapper'), ':before'
-  // )
+  makeSpriteRotatable = target =>{
+
+    const handlePos = {
+      startX: 0,
+      startY: 0,
+      // endX: 0,
+      // endY: 0,
+      prevPos: null,
+    }
+
+    const onGrab = e =>{
+      indicatorTwo.innerHTML = `pageX:${e.pageX} pageY:${e.pageY}`
+      handlePos.startX = e.pageX
+      handlePos.startY = e.pageY
+      handleActive = true
+      document.addEventListener('mouseup', onLetGo)
+      document.addEventListener('mousemove', onDrag)
+    }
+
+    const onDrag = e =>{
+      indicatorTwo.innerHTML = `pageX:${e.pageX} pageY:${e.pageY}`
+      // const dirX = e.pageX < handlePos.startX ? 'left' : 'right'
+      // const dirY = e.pageY < handlePos.startY ? 'up' : 'down'
   
-  const rotatePos = {
-    centerX: 0,
-    centerY: 0,
-  }
+      // TODO not correct, needs correction
+      const mark = document.querySelector('.mark')
+      const { left, top, width, height } = mark.getBoundingClientRect()
+      const center = {
+        x: left + width / 2 || 0,
+        y: top + height / 2 || 0,
+      }
+      // console.log(center)
 
-  const getDragAngle = e => {
-    // const element = e.target
-    // console.log(e.target.dataset.angle)
-    const startAngle = parseFloat(handle.dataset.angle) || 0
+      const testMark = document.createElement('div')
+      testMark.classList.add('mark_two')
+      Object.assign(testMark.style, {
+        left: `${center.x}px`, 
+        top: `${center.y}px`
+      })      
+      body.append(testMark)
 
-    // const { left, top, width, height } = mark.getBoundingClientRect()
-    // console.log('test 2', left, top)
-    // const center = {
-    //   x: parseFloat(left + width / 2) || 0,
-    //   y: parseFloat(top + height / 2) || 0,
-    // }
+      const testMarkClient = document.createElement('div')
+      testMarkClient.classList.add('mark_three')
+      Object.assign(testMarkClient.style, {
+        left: `${e.pageX}px`, 
+        top: `${e.pageY}px`
+      })
+      body.append(testMarkClient)
 
-    const testMark = document.createElement('div')
-    testMark.classList.add('mark_two')
-    Object.assign(testMark.style, {
-      left: `${rotatePos.centerX}px`, 
-      top: `${rotatePos.centerY}px`
-    })
+      // const { left:x, top:y } = handleSquare.getBoundingClientRect()
+      // const handleDirX = x < left ? 'left' : 'right'
+      // const handleDirY = y < top ? 'up' : 'down'
+      console.log('e', e)
+      console.log('measurement',`${center.y}-${e.pageY}-${center.x}-${e.pageX}`)
 
-    // const { left:l2, top:t2 } = handleSquare.getBoundingClientRect()
-    
-    body.append(testMark)
-    const angle = Math.atan2((rotatePos.centerY || 0) - e.clientY, (rotatePos.centerX || 0) - e.clientX) //TODO e.clientY and e.cientX isn't right
-    console.log('test Client', e.clientX)
+      // const angle = Math.atan2(center.y - e.pageY, center.x - e.pageX) * 180 / Math.PI
+      const angle = Math.atan2(center.y - e.pageY, center.x - e.pageX)
 
-    const testMarkClient = document.createElement('div')
-    testMarkClient.classList.add('mark_three')
-    Object.assign(testMarkClient.style, {
-      left: `${e.pageX}px`, 
-      top: `${e.pageY}px`
-    })
-    
-    body.append(testMarkClient)
+      indicator.innerHTML = `${angle} - ${newAngle}`
+      
+      // const newPos = `${dirX}-${dirY}`
+      // const newHandlePos = `${handleDirX}-${handleDirY}`
+      
+      // if (newHandlePos === 'right-up'){
+      //   if (dirX === 'right' || dirY === 'down') newAngle += 0.1
+      //   if (dirX === 'left' || dirY === 'up') newAngle -= 0.1
+      // }
+      // if (newHandlePos === 'right-down'){
+      //   if (dirX === 'left' || dirY === 'down') newAngle += 0.1
+      //   if (dirX === 'right' || dirY === 'up') newAngle -= 0.1
+      // }
+      // if (newHandlePos === 'left-down'){
+      //   if (dirX === 'left' || dirY === 'up') newAngle += 0.1
+      //   if (dirX === 'right' || dirY === 'down') newAngle -= 0.1
+      // }
+      // if (newHandlePos === 'left-up'){
+      //   if (dirX === 'right' || dirY === 'up') newAngle += 0.1
+      //   if (dirX === 'left' || dirY === 'down') newAngle -= 0.1
+      // }
 
-    return angle - startAngle
-  }
+      const currentAngle = newAngle || 0
 
+      newAngle = angle - currentAngle
+      // newAngle = newAngle - 0.1
+      console.log(angle)
   
-  const addRotate = target =>{
-    // const pos = { start: 0, end: 0 }
+      sampleImgWrapper.childNodes[3].style.transform = `rotate(${newAngle}rad)`  
+      target.style.transform = `rotate(${newAngle}rad)`
+  
+      // indicator.innerHTML = `${dirX} - ${dirY} / ${handleDirX} - ${handleDirY}`
+      // handlePos.prevPos = newPos
+    }
 
+    const onLetGo = () => {
+      document.removeEventListener('mouseup', onLetGo)
+      document.removeEventListener('mousemove', onDrag)
+    }
+
+    target.addEventListener('mousedown', onGrab)
+
+    handle.addEventListener('mouseleave', ()=>handleActive = false)
+  }
+  
+  
+  makeSpriteRotatable(handle)
+
+
+
+  const createMark = target =>{
     const mark = document.createElement('div')
     mark.classList.add('mark')
     target.append(mark)
     const { width, height } = target.getBoundingClientRect()
-    // console.log(left, top, width, height)
-    rotatePos.centerX = (width / 2) - (mark.clientWidth / 2)
-    rotatePos.centerY = (height / 2) - (mark.clientHeight / 2)
     Object.assign(mark.style, {
-      left: `${rotatePos.centerX}px`, 
-      top: `${rotatePos.centerY}px`
+      left: `${(width / 2) - (mark.clientWidth / 2)}px`, 
+      top: `${(height / 2) - (mark.clientHeight / 2)}px`
     })
-
-    const startRotate = () =>{
-      // pos.start = e.dataset.angle
-      document.addEventListener('mousemove', rotateOn)
-      document.addEventListener('mouseup', rotateOff)
-    }
-
-    const rotateOn = e =>{
-      if (!handleActive) return
-      const newAngle = getDragAngle(e, mark)
-
-      target.childNodes[3].style.transform = `rotate(${newAngle}rad)`  
-      handle.style.transform = `rotate(${newAngle}rad)`
-      handle.dataset.angle = newAngle
-    }
-
-    const rotateOff = () =>{
-      document.removeEventListener('mousemove', rotateOn)
-      document.removeEventListener('mouseup', rotateOff)
-    }
-  
-    handle.addEventListener('mousedown', startRotate)
   }
+
+  createMark(sampleImgWrapper)
+
+  // window.addEventListener('mousemove',(e)=>{
+  //   indicator.innerHTML = `pageX:${e.pageX} - pageY${e.pageY}`
+  // })
   
-  addRotate(sampleImgWrapper)
-
-
 }
 
 window.addEventListener('DOMContentLoaded', init)
@@ -240,3 +276,161 @@ window.addEventListener('DOMContentLoaded', init)
 // } else {
 //   newAngle = dirX === 'left' ? newAngle + 1 : newAngle - 1
 // }
+
+
+// ++++++++
+
+
+  // // const handle = window.getComputedStyle(
+  // //   document.querySelector('.sample_wrapper'), ':before'
+  // // )
+  
+  // const rotatePos = {
+  //   centerX: 0,
+  //   centerY: 0,
+  // }
+
+  // const getDragAngle = (e, mark) => {
+  //   // const element = e.target
+  //   // console.log(e.target.dataset.angle)
+  //   const startAngle = parseFloat(handle.dataset.angle) || 0
+
+  //   const { left, top, width, height } = mark.getBoundingClientRect()
+  //   console.log('test 2', left, top)
+  //   const center = {
+  //     x: parseFloat(left + width / 2) || 0,
+  //     y: parseFloat(top + height / 2) || 0,
+  //   }
+
+  //   const testMark = document.createElement('div')
+  //   testMark.classList.add('mark_two')
+  //   Object.assign(testMark.style, {
+  //     left: `${rotatePos.centerX}px`, 
+  //     top: `${rotatePos.centerY}px`
+  //   })
+
+  //   // const { left:l2, top:t2 } = handleSquare.getBoundingClientRect()
+    
+  //   body.append(testMark)
+  //   const angle = Math.atan2(center.y - e.clientY, center.x - e.clientX) //TODO e.clientY and e.cientX isn't right
+  //   console.log('test Client', e.clientX)
+
+  //   const testMarkClient = document.createElement('div')
+  //   testMarkClient.classList.add('mark_three')
+  //   Object.assign(testMarkClient.style, {
+  //     left: `${e.pageX}px`, 
+  //     top: `${e.pageY}px`
+  //   })
+    
+  //   body.append(testMarkClient)
+
+  //   return angle - startAngle
+  // }
+
+
+
+
+    // handle.addEventListener('mousedown', (e)=>{
+  //   indicatorTwo.innerHTML = `pageX:${e.pageX} pageY:${e.pageY}`
+  //   handlePos.startX = e.pageX
+  //   handlePos.startY = e.pageY
+  //   handleActive = true
+  // })
+  // handle.addEventListener('mousemove',(e)=>{
+  //   indicatorTwo.innerHTML = `pageX:${e.pageX} pageY:${e.pageY}`
+  //   const dirX = e.pageX < handlePos.startX ? 'left' : 'right'
+  //   const dirY = e.pageY < handlePos.startY ? 'up' : 'down'
+
+  //   // if (handlePos.prevPos === '')
+
+  //   // TODO not correct, needs correction
+  //   const mark = document.querySelector('.mark')
+  //   const { left, top } = mark.getBoundingClientRect()
+  //   const { left:x, top:y } = handleSquare.getBoundingClientRect()
+  //   const handleDirX = x < left ? 'left' : 'right'
+  //   const handleDirY = y < top ? 'up' : 'down'
+    
+  //   const newPos = `${dirX}-${dirY}`
+  //   const newHandlePos = `${handleDirX}-${handleDirY}`
+    
+  //   if (newHandlePos === 'right-up'){
+  //     // if (newPos === 'right-down') newAngle += 1
+  //     // if (newPos === 'left-up') newAngle -= 1
+  //     if (dirX === 'right' || dirY === 'down') newAngle += 1
+  //     if (dirX === 'left' || dirY === 'up') newAngle -= 1
+  //   }
+  //   if (newHandlePos === 'right-down'){
+  //     // if (newPos === 'left-down') newAngle += 1
+  //     // if (newPos === 'right-up') newAngle -= 1
+  //     if (dirX === 'left' || dirY === 'down') newAngle += 1
+  //     if (dirX === 'right' || dirY === 'up') newAngle -= 1
+  //   }
+  //   if (newHandlePos === 'left-down'){
+  //     // if (newPos === 'left-up') newAngle += 1
+  //     // if (newPos === 'right-down') newAngle -= 1
+  //     if (dirX === 'left' || dirY === 'up') newAngle += 1
+  //     if (dirX === 'right' || dirY === 'down') newAngle -= 1
+  //   }
+  //   if (newHandlePos === 'left-up'){
+  //     // if (newPos === 'right-up') newAngle += 1
+  //     // if (newPos === 'left-down') newAngle -= 1
+  //     if (dirX === 'right' || dirY === 'up') newAngle += 1
+  //     if (dirX === 'left' || dirY === 'down') newAngle -= 1
+  //   }
+
+  //   sampleImgWrapper.childNodes[3].style.transform = `rotate(${newAngle}deg)`  
+  //   handle.style.transform = `rotate(${newAngle}deg)`
+
+  //   indicator.innerHTML = `${dirX} - ${dirY} / ${handleDirX} - ${handleDirY}`
+
+  //   handlePos.prevPos = newPos
+  // })
+
+  // handle.addEventListener('mouseup', (e)=>{
+  //   indicatorTwo.innerHTML = `pageX:${e.pageX} pageY:${e.pageY}`
+  //   handlePos.endX = e.pageX
+  //   handlePos.endY = e.pageY
+  //   // handleActive = false
+  // })
+  // handleSquare.addEventListener('mouseleave', ()=>handleActive = false)
+
+
+    // const addRotate = target =>{
+  //   // const pos = { start: 0, end: 0 }
+
+  //   const mark = document.createElement('div')
+  //   mark.classList.add('mark')
+  //   target.append(mark)
+  //   const { width, height } = target.getBoundingClientRect()
+  //   // console.log(left, top, width, height)
+  //   // rotatePos.centerX = 
+  //   // rotatePos.centerY = 
+  //   Object.assign(mark.style, {
+  //     left: `${(width / 2) - (mark.clientWidth / 2)}px`, 
+  //     top: `${(height / 2) - (mark.clientHeight / 2)}px`
+  //   })
+
+  //   const startRotate = () =>{
+  //     // pos.start = e.dataset.angle
+  //     document.addEventListener('mousemove', rotateOn)
+  //     document.addEventListener('mouseup', rotateOff)
+  //   }
+
+  //   const rotateOn = e =>{
+  //     if (!handleActive) return
+  //     const newAngle = getDragAngle(e, mark)
+
+  //     target.childNodes[3].style.transform = `rotate(${newAngle}rad)`  
+  //     handle.style.transform = `rotate(${newAngle}rad)`
+  //     handle.dataset.angle = newAngle
+  //   }
+
+  //   const rotateOff = () =>{
+  //     document.removeEventListener('mousemove', rotateOn)
+  //     document.removeEventListener('mouseup', rotateOff)
+  //   }
+  
+  //   handle.addEventListener('mousedown', startRotate)
+  // }
+  
+  // addRotate(sampleImgWrapper)
