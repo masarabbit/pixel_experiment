@@ -19,7 +19,7 @@ function init() {
   // let handlePos = 'rightup'
   // let oldX
   // let oldY
-  let newAngle = 0
+  // let newAngle = 0
 
   const svgWrapper = ({ content, color, w, h } ) =>{
     return `
@@ -99,20 +99,40 @@ function init() {
   makeSpriteRotatable = target =>{
 
     const handlePos = {
-      startX: 0,
-      startY: 0,
-      // endX: 0,
-      // endY: 0,
-      prevPos: null,
+      // startX: 0,
+      // startY: 0,
+      // // endX: 0,
+      // // endY: 0,
+      // prevPos: null,
+      startAngle: 0,
     }
 
     const onGrab = e =>{
-      indicatorTwo.innerHTML = `pageX:${e.pageX} pageY:${e.pageY}`
-      handlePos.startX = e.pageX
-      handlePos.startY = e.pageY
+      // indicatorTwo.innerHTML = `pageX:${e.pageX} pageY:${e.pageY}`
+      // handlePos.startX = e.pageX
+      // handlePos.startY = e.pageY
+      handlePos.startAngle = getAngle(e)
       handleActive = true
       document.addEventListener('mouseup', onLetGo)
       document.addEventListener('mousemove', onDrag)
+    }
+
+    const getAngle = e =>{
+      const mark = document.querySelector('.mark')
+      const { left, top, width, height } = mark.getBoundingClientRect()
+      const center = {
+        x: left + width / 2 || 0,
+        y: top + height / 2 || 0,
+      }
+      const testMark = document.createElement('div')
+      testMark.classList.add('mark_two')
+      Object.assign(testMark.style, {
+        left: `${center.x}px`, 
+        top: `${center.y}px`
+      })   
+      body.append(testMark)
+      const angle = Math.atan2(center.y - e.pageY, center.x - e.pageX)
+      return angle - handlePos.startAngle
     }
 
     const onDrag = e =>{
@@ -120,23 +140,6 @@ function init() {
       // const dirX = e.pageX < handlePos.startX ? 'left' : 'right'
       // const dirY = e.pageY < handlePos.startY ? 'up' : 'down'
   
-      // TODO not correct, needs correction
-      const mark = document.querySelector('.mark')
-      const { left, top, width, height } = mark.getBoundingClientRect()
-      const center = {
-        x: left + width / 2 || 0,
-        y: top + height / 2 || 0,
-      }
-      // console.log(center)
-
-      const testMark = document.createElement('div')
-      testMark.classList.add('mark_two')
-      Object.assign(testMark.style, {
-        left: `${center.x}px`, 
-        top: `${center.y}px`
-      })      
-      body.append(testMark)
-
       const testMarkClient = document.createElement('div')
       testMarkClient.classList.add('mark_three')
       Object.assign(testMarkClient.style, {
@@ -149,12 +152,12 @@ function init() {
       // const handleDirX = x < left ? 'left' : 'right'
       // const handleDirY = y < top ? 'up' : 'down'
       console.log('e', e)
-      console.log('measurement',`${center.y}-${e.pageY}-${center.x}-${e.pageX}`)
+      // console.log('measurement',`${center.y}-${e.pageY}-${center.x}-${e.pageX}`)
 
       // const angle = Math.atan2(center.y - e.pageY, center.x - e.pageX) * 180 / Math.PI
-      const angle = Math.atan2(center.y - e.pageY, center.x - e.pageX)
+      
 
-      indicator.innerHTML = `${angle} - ${newAngle}`
+      // indicator.innerHTML = `${getAngle(e)} - ${handlePos.startAngle}`
       
       // const newPos = `${dirX}-${dirY}`
       // const newHandlePos = `${handleDirX}-${handleDirY}`
@@ -175,13 +178,10 @@ function init() {
       //   if (dirX === 'right' || dirY === 'up') newAngle += 0.1
       //   if (dirX === 'left' || dirY === 'down') newAngle -= 0.1
       // }
-
-      const currentAngle = newAngle || 0
-
-      newAngle = angle - currentAngle
+      const newAngle = getAngle(e)
       // newAngle = newAngle - 0.1
-      console.log(angle)
-  
+      // console.log(angle)
+      
       sampleImgWrapper.childNodes[3].style.transform = `rotate(${newAngle}rad)`  
       target.style.transform = `rotate(${newAngle}rad)`
   
@@ -196,7 +196,7 @@ function init() {
 
     target.addEventListener('mousedown', onGrab)
 
-    handle.addEventListener('mouseleave', ()=>handleActive = false)
+    handle.addEventListener('mouseup', ()=>handleActive = false)
   }
   
   
