@@ -220,13 +220,22 @@ img {
   max-width: 700px;
   display: flex;
   flex-wrap: wrap;
+  background-color: rgba(255, 105, 180, 0.171);
 }
 
 .palette_cell {
   position: relative;
-  height: 30px;
-  width: 30px;
+  height: 40px;
+  width: 40px;
   margin: 0 5px 0 0;
+  overflow: hidden;
+}
+
+.palette_cell_inner {
+  position: absolute;
+  pointer-events: none;
+  top: 0px;
+  left: 0px;
 }
 
 .palette_cell:hover {
@@ -446,7 +455,7 @@ button.icon:hover {
 
 .sample {
   position: absolute;
-  background: rgba(22, 22, 94, 0.308);
+  /* background: rgba(22, 22, 94, 0.308); */
   height: 80px;
   width: 80px;
   overflow: hidden;

@@ -1,10 +1,37 @@
 function init() {
 
-  const svg = '<path fill="#4d8da3" d="M 4 1 h 1 v 1 h 1 v 2 h 4 v -2 h 1 v -1 h 1 v 3 h 1 v 1 h 1 v 3 h -1 v 1 h -3 v 3 h 1 v 2 h -6 v -2 h 1 v -3 h -3 v -1 h -1 v -3 h 1 v -1 h 1 v -3"/> <path fill="#4d8da3" d="M 20 2 h 1 v 1 h 1 v 2 h 4 v -2 h 1 v -1 h 1 v 3 h 1 v 1 h 1 v 3 h -1 v 1 h -2 v 1 h 1 v 2 h -1 v 1 h -6 v -1 h -1 v -2 h 1 v -1 h -2 v -1 h -1 v -3 h 1 v -1 h 1 v -3"/> <path fill="#9edbf0" d="M 5 5 h 1 v 2 h -1 v -2"/> <path fill="#9edbf0" d="M 10 5 h 1 v 2 h -1 v -2"/> <path fill="#9edbf0" d="M 21 6 h 1 v 2 h -1 v -2"/> <path fill="#9edbf0" d="M 26 6 h 1 v 2 h -1 v -2"/>'
+  const svg = (main, sub) =>{
+    const one = main || '#4d8da3'
+    const two = sub || '#9edbf0'
+    return `<path fill="${one}" d="M 4 1 h 1 v 1 h 1 v 2 h 4 v -2 h 1 v -1 h 1 v 3 h 1 v 1 h 1 v 3 h -1 v 1 h -3 v 3 h 1 v 2 h -6 v -2 h 1 v -3 h -3 v -1 h -1 v -3 h 1 v -1 h 1 v -3"/> <path fill="${one}" d="M 20 2 h 1 v 1 h 1 v 2 h 4 v -2 h 1 v -1 h 1 v 3 h 1 v 1 h 1 v 3 h -1 v 1 h -2 v 1 h 1 v 2 h -1 v 1 h -6 v -1 h -1 v -2 h 1 v -1 h -2 v -1 h -1 v -3 h 1 v -1 h 1 v -3"/> <path fill="${two}" d="M 5 5 h 1 v 2 h -1 v -2"/> <path fill="${two}" d="M 10 5 h 1 v 2 h -1 v -2"/> <path fill="${two}" d="M 21 6 h 1 v 2 h -1 v -2"/> <path fill="${two}" d="M 26 6 h 1 v 2 h -1 v -2"/>`
+  } 
+
+  const svgData = [
+    {
+      svg: svg,
+      main: '#ff7788',
+      frameNo: 2,
+    },
+    {
+      svg: svg,
+      // color: '#ff0088',
+      sub: '#8800ff',
+      main: '#ff0088',
+      frameNo: 2,
+    },
+  ]
+
+  const spriteData = [
+    {
+      startAngle: 0
+    }
+  ]
   
   const sampleImg = document.querySelector('.sample')
   const sampleImgWrapper = document.querySelector('.sample_wrapper')
-  const handle = document.querySelector('.handle')
+  // const handle = document.querySelector('.handle')
+  const palette = document.querySelector('.palette')
+  const playground = document.querySelector('.playground')
   // const handleSquare = document.querySelector('.handle_square')
   // const body = document.querySelector('body')
   // const indicator = document.querySelector('.indicator')
@@ -30,14 +57,19 @@ function init() {
     }, speed || 200)
   }
   
-  const animateSprite = () =>{
-    sampleImg.innerHTML = svgWrapper({ content: svg, className: 'cat', w: 32 })
-    const sprite = sampleImg.childNodes[1]
+  const animateSprite = ({target, content, w, h, frameNo, frameSize, color}) =>{
+    target.innerHTML = `
+      <div class="sprite">
+        ${svgWrapper({ content, w, h, color })}
+      </div>
+    `
+      
+    const sprite = target.childNodes[1]
     Object.assign(sprite.style, {
-      width: '160px', 
+      width: `${80 * frameNo}px`, 
       height: '80px'
     })
-    animateSvg({ target: sprite, end: 1, frameSize: 80 })
+    animateSvg({ target: sprite, end: frameNo - 1, frameSize })
   }
 
   const setTargetPos = (target, x, y) =>{
@@ -73,8 +105,9 @@ function init() {
   }
 
 
-  let startAngle = 0
-  makeSpriteRotatable = target =>{
+  // let startAngle = 0
+  makeSpriteRotatable = (target, startAngle) =>{
+    const handle = target.childNodes[1]
     
     const onGrab = e =>{
       startAngle = getAngle(e)
@@ -94,8 +127,8 @@ function init() {
     }
     const onDrag = e =>{
       const newAngle = getAngle(e)
-      sampleImg.style.transform = `rotate(${newAngle}rad)`  
-      target.style.transform = `rotate(${newAngle}rad)`
+      target.childNodes[3].style.transform = `rotate(${newAngle}rad)`  
+      handle.style.transform = `rotate(${newAngle}rad)`
     }
     const onLetGo = e => {
       document.removeEventListener('mouseup', onLetGo)
@@ -103,13 +136,79 @@ function init() {
       startAngle = getAngle(e)
       handleActive = false
     }
-    target.addEventListener('mousedown', onGrab)
+    handle.addEventListener('mousedown', onGrab)
   }
   
   makeSpriteDraggable(sampleImgWrapper)
-  animateSprite()
-  makeSpriteRotatable(handle)
+  animateSprite({
+    target: sampleImg,
+    content: svgData[0].svg(),
+    w: 32,
+    frameNo: 2,
+    frameSize: 80
+  })
+  makeSpriteRotatable(sampleImgWrapper, spriteData[0].startAngle)
+
+  // console.log(sampleImgWrapper.childNodes[3])
+
+  const createPalette = (target, svgData) =>{
+    target.innerHTML = svgData.map(data=>{
+      const { svg, color, main, sub, frameNo } = data
+      return `
+        <div class="palette_cell">
+          <div class="palette_cell_inner" data-frame_no="${frameNo}">
+            ${svgWrapper({
+              content: svg(main, sub),
+              color,
+              w: 16 * frameNo
+            })}
+          </div>
+        </div>
+      `
+    }).join('')
   
+    document.querySelectorAll('.palette_cell_inner').forEach(cell=>{
+      const frameNo = cell.dataset.frame_no
+      Object.assign(cell.style, {
+        width: `${100 * frameNo}%`, 
+        height: '100%'
+      })
+      animateSvg({ target: cell, end: frameNo - 1, frameSize: 40 })
+    })
+
+    document.querySelectorAll('.palette_cell').forEach((cell, i) =>{
+      cell.addEventListener('click', ()=>{
+        spriteData.push({ startAngle: 0}) //TODO need some way to keep track of this
+
+        const newSprite = document.createElement('div')
+        newSprite.classList.add('sample_wrapper')
+        newSprite.innerHTML = `
+          <div class="handle">
+            <div class="handle_square"></div>
+          </div>
+          <div class="sample"></div>`
+        playground.append(newSprite)
+        // newSprite.innerHTML = 
+        const { svg, frameNo, main, sub, color } = svgData[i]
+        animateSprite({
+          target: newSprite.childNodes[3],
+          content: svg(main, sub),
+          w: 16 * frameNo,
+          frameNo,
+          frameSize: 80,
+          color
+        })
+
+        makeSpriteDraggable(newSprite)
+        // console.log(newSprite.childNodes[1])
+        makeSpriteRotatable(newSprite, spriteData[spriteData.length - 1].startAngle)
+      })
+    })
+  }
+
+  createPalette(palette, svgData)
+
+
 }
 
 window.addEventListener('DOMContentLoaded', init)
