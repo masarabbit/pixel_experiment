@@ -541,7 +541,7 @@ function init() {
   
   const populateWithSvg = (key,target) =>{
     if (svgData[key]){
-      const { svg, color, subColor, rotate, flip, animation, frameNo } = svgData[key]
+      const { svg, color, subColor, rotate, flip, animation, frameNo, speed } = svgData[key]
       let colorAction = ''
       colorAction = typeof(color) === 'function' ? color() : color
 
@@ -571,7 +571,8 @@ function init() {
           rotate: rotate || 0,
           flip,
           wrapper: frameNo ? 'anim_wrapper' : 'svg_wrap',
-          frameNo
+          frameNo,
+          speed
         })}`
 
       target.innerHTML = svgContent
@@ -696,7 +697,7 @@ function init() {
         frameNo: cell.dataset.frame_no, 
         speed: cell.dataset.speed
       })
-      console.log(cell.dataset.frame_no)
+      // console.log(cell.dataset.frame_no)
     })
 
     if (clear) updateCodesDisplay(codesBox[0],codes[0])  
