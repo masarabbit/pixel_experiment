@@ -45,8 +45,10 @@ p, h1, h2, h3, h4 {
 }
 
 canvas {
-  margin: 0 5px;
+  margin: 40px 5px;
   background-color: #ffffff;
+  /* height: 600px;
+  width: calc(100% - 40px); */
 }
 
 .display_none {
@@ -144,10 +146,10 @@ textarea {
   overflow-y: scroll;
 }
 
-img {
+/* img {
   height: 100%;
   width: 100%;
-}
+} */
 
 
 .input {
@@ -423,7 +425,11 @@ button.icon:hover {
   margin: 20px;
   height: 600px;
   width: calc(100% - 40px);
+  /* width: 300px;
+  height: 200px; */
 }
+
+
 
 .sample_wrapper {
   position: absolute;
@@ -491,5 +497,11 @@ button.icon:hover {
   width: 10px;
   pointer-events: none;
 }
+
+/* .test_img {
+  border: 1px hotpink solid;
+  width: 200px;
+  height: 200px;
+} */
 
 /* .cell.grid_hide { border: 0 !important; } */

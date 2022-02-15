@@ -452,7 +452,7 @@ function init() {
     // console.log('update canvas', frameMode)
     const dividedImages = document.querySelectorAll('.divided_img')
     if (dividedImages.length) {
-      const { w, h } = canvasData
+      // const { w, h } = canvasData
       const scale = +scaleInput.value
 
       dividedImages.forEach((canvas, index)=>{

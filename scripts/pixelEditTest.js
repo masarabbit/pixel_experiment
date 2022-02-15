@@ -177,6 +177,7 @@ function init() {
   }
 
   const resizeCanvas = (canvas, w, h) =>{
+    // console.log('w','h', w, h)
     canvas.setAttribute('width', w)
     canvas.setAttribute('height', h)
   }
