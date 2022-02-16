@@ -3,38 +3,39 @@ function init() {
   const svg = (main, sub) =>{
     const one = main || '#4d8da3'
     const two = sub || '#9edbf0'
-    return `<path fill="${one}" d="M 4 1 h 1 v 1 h 1 v 2 h 4 v -2 h 1 v -1 h 1 v 3 h 1 v 1 h 1 v 3 h -1 v 1 h -3 v 3 h 1 v 2 h -6 v -2 h 1 v -3 h -3 v -1 h -1 v -3 h 1 v -1 h 1 v -3"/> <path fill="${one}" d="M 20 2 h 1 v 1 h 1 v 2 h 4 v -2 h 1 v -1 h 1 v 3 h 1 v 1 h 1 v 3 h -1 v 1 h -2 v 1 h 1 v 2 h -1 v 1 h -6 v -1 h -1 v -2 h 1 v -1 h -2 v -1 h -1 v -3 h 1 v -1 h 1 v -3"/> <path fill="${two}" d="M 5 5 h 1 v 2 h -1 v -2"/> <path fill="${two}" d="M 10 5 h 1 v 2 h -1 v -2"/> <path fill="${two}" d="M 21 6 h 1 v 2 h -1 v -2"/> <path fill="${two}" d="M 26 6 h 1 v 2 h -1 v -2"/>`
+    // return `<path fill="${one}" d="M 4 1 h 1 v 1 h 1 v 2 h 4 v -2 h 1 v -1 h 1 v 3 h 1 v 1 h 1 v 3 h -1 v 1 h -3 v 3 h 1 v 2 h -6 v -2 h 1 v -3 h -3 v -1 h -1 v -3 h 1 v -1 h 1 v -3"/> <path fill="${one}" d="M 20 2 h 1 v 1 h 1 v 2 h 4 v -2 h 1 v -1 h 1 v 3 h 1 v 1 h 1 v 3 h -1 v 1 h -2 v 1 h 1 v 2 h -1 v 1 h -6 v -1 h -1 v -2 h 1 v -1 h -2 v -1 h -1 v -3 h 1 v -1 h 1 v -3"/> <path fill="${two}" d="M 5 5 h 1 v 2 h -1 v -2"/> <path fill="${two}" d="M 10 5 h 1 v 2 h -1 v -2"/> <path fill="${two}" d="M 21 6 h 1 v 2 h -1 v -2"/> <path fill="${two}" d="M 26 6 h 1 v 2 h -1 v -2"/>`
     // return `<path fill="#9ef202" d="M 0 0 h 32 v 16 h -32 v -16"/> <path fill="#4d8da3" d="M 4 1 h 1 v 1 h 1 v 2 h 4 v -2 h 1 v -1 h 1 v 3 h 1 v 1 h 1 v 3 h -1 v 1 h -3 v 3 h 1 v 2 h -6 v -2 h 1 v -3 h -3 v -1 h -1 v -3 h 1 v -1 h 1 v -3"/> <path fill="#4d8da3" d="M 20 2 h 1 v 1 h 1 v 2 h 4 v -2 h 1 v -1 h 1 v 3 h 1 v 1 h 1 v 3 h -1 v 1 h -2 v 1 h 1 v 2 h -1 v 1 h -6 v -1 h -1 v -2 h 1 v -1 h -2 v -1 h -1 v -3 h 1 v -1 h 1 v -3"/> <path fill="#9edbf0" d="M 5 5 h 1 v 2 h -1 v -2"/> <path fill="#9edbf0" d="M 10 5 h 1 v 2 h -1 v -2"/> <path fill="#9edbf0" d="M 21 6 h 1 v 2 h -1 v -2"/> <path fill="#9edbf0" d="M 26 6 h 1 v 2 h -1 v -2"/>`
+    return `<path fill="#4d8da3" d="M 4 2 h 1 v 1 h 1 v 2 h 4 v -2 h 1 v -1 h 1 v 3 h 1 v 1 h 1 v 3 h -1 v 1 h -2 v 3 h 5 v 3 h -16 v -2 h 5 v -4 h -2 v -1 h -1 v -3 h 1 v -1 h 1 v -3"/> <path fill="#9edbf0" d="M 5 6 h 1 v 2 h -1 v -2"/> <path fill="#9edbf0" d="M 10 6 h 1 v 2 h -1 v -2"/>`
   } 
 
   const svgData = [
     {
       svg: svg,
       main: '#ff7788',
-      frameNo: 2,
+      frameNo: 1,
     },
     {
       svg: svg,
       // color: '#ff0088',
       sub: '#8800ff',
       main: '#ff0088',
-      frameNo: 2,
+      frameNo: 1,
     },
   ]
 
   const spriteData = [
-    {
-      angle: 0,
-      svgIndex: 1,
-      w: 80,
-      h: 80, 
-      x: 0,
-      y: 0
-    }
+    // {
+    //   angle: 0,
+    //   svgIndex: 1,
+    //   w: 80,
+    //   h: 80, 
+    //   x: 0,
+    //   y: 0
+    // }
   ]
   
-  const sampleImg = document.querySelector('.sample')
-  const sampleImgWrapper = document.querySelector('.sample_wrapper')
+  // const sampleImg = document.querySelector('.sample')
+  // const sampleImgWrapper = document.querySelector('.sample_wrapper')
   // const handle = document.querySelector('.handle')
   const palette = document.querySelector('.palette')
   const playground = document.querySelector('.playground')
@@ -94,7 +95,7 @@ function init() {
   }
 
 
-  const makeSpriteDraggable = target => {
+  const makeSpriteDraggable = (target, targetSpriteData) => {
     const pos = { a: 0, b: 0, c: 0, d: 0 }
 
     const onGrab = e => {
@@ -108,7 +109,6 @@ function init() {
       pos.b = pos.d - e.clientY
       pos.c = e.clientX
       pos.d = e.clientY
-      console.log(target)
       if (!handleActive) setTargetPos(
         target, 
         target.offsetLeft - pos.a, 
@@ -118,17 +118,23 @@ function init() {
     const onLetGo = () => {
       document.removeEventListener('mouseup', onLetGo)
       document.removeEventListener('mousemove', onDrag)
+      if (!handleActive) {
+        Object.assign(targetSpriteData, { 
+          x: target.offsetLeft - pos.a, 
+          y: target.offsetTop - pos.b
+        })
+      }
     }
     target.addEventListener('mousedown', onGrab)
   }
 
 
   // let angle = 0
-  makeSpriteRotatable = (target, angle) =>{
+  makeSpriteRotatable = (target, targetSpriteData) =>{
     const handle = target.childNodes[1]
     
     const onGrab = e =>{
-      angle = getAngle(e)
+      targetSpriteData.angle = getAngle(e)
       handleActive = true
       document.addEventListener('mouseup', onLetGo)
       document.addEventListener('mousemove', onDrag)
@@ -141,7 +147,7 @@ function init() {
         y: top + height / 2 || 0,
       }
       const newAngle = Math.atan2(center.y - e.pageY, center.x - e.pageX)
-      return newAngle - angle
+      return newAngle - targetSpriteData.angle
     }
     const onDrag = e =>{
       const newAngle = getAngle(e)
@@ -151,21 +157,23 @@ function init() {
     const onLetGo = e => {
       document.removeEventListener('mouseup', onLetGo)
       document.removeEventListener('mousemove', onDrag)
-      angle = getAngle(e)
+      targetSpriteData.angle = getAngle(e)
       handleActive = false
     }
     handle.addEventListener('mousedown', onGrab)
   }
   
-  makeSpriteDraggable(sampleImgWrapper)
-  animateSprite({
-    target: sampleImg,
-    content: svgData[0].svg(),
-    w: 32,
-    frameNo: 2,
-    frameSize: 80
-  })
-  makeSpriteRotatable(sampleImgWrapper, spriteData[0].angle)
+
+  // ? sample
+  // makeSpriteDraggable(sampleImgWrapper)
+  // animateSprite({
+  //   target: sampleImg,
+  //   content: svgData[0].svg(),
+  //   w: 32,
+  //   frameNo: 2,
+  //   frameSize: 80
+  // })
+  // makeSpriteRotatable(sampleImgWrapper, spriteData[0].angle)
 
   // console.log(sampleImgWrapper.childNodes[3])
 
@@ -223,10 +231,11 @@ function init() {
           frameSize: 80,
           color
         })
-
-        makeSpriteDraggable(newSprite)
+        
+        const targetSpriteData = spriteData[spriteData.length - 1]
+        makeSpriteDraggable(newSprite, targetSpriteData)
         // console.log(newSprite.childNodes[1])
-        makeSpriteRotatable(newSprite, spriteData[spriteData.length - 1].angle)
+        makeSpriteRotatable(newSprite, targetSpriteData)
       })
     })
   }
@@ -234,55 +243,64 @@ function init() {
   createPalette(palette, svgData)
 
 
-  const downloadImage = index =>{
-    const link = document.createElement('a')
-    link.download = `test_${new Date().getTime()}.png`
-    link.href = canvas[index || 0].toDataURL()
-    link.click()
-  }
+  // const downloadImage = index =>{
+  //   const link = document.createElement('a')
+  //   link.download = `test_${new Date().getTime()}.png`
+  //   link.href = canvas[index || 0].toDataURL()
+  //   link.click()
+  // }
 
 
-  // ? bit to output image
+  //* +++++++++++++++++++++++++++++++
+  //* +++++++ output image ++++++++++
+  //* +++++++++++++++++++++++++++++++
 
-  const output = ({ content, ctx, w, h, frameNo, currentFrame}) =>{
+  const output = ({ content, ctx, w, h, frameNo, currentFrame, x, y, angle}) =>{
     const data = new Blob([content], { type: 'image/svg+xml;charset=utf-8' })
     const url = window.URL.createObjectURL(data)
     const imageTarget = new Image()
     
     canvas[1].setAttribute('width', w * frameNo)
     canvas[1].setAttribute('height', h)
-    const ctx2 = canvas[1].getContext('2d')
 
-    console.log(w, h)
+    const ctx2 = canvas[1].getContext('2d')
+    // console.log(angle)
+    // ctx2.rotate(angle * Math.PI / 180)
+    // ctx2.translate(w * currentFrame, 0)
+    ctx2.translate(w / 2 , h / 2)  //TODO need to investigate how rotation works
+    ctx2.rotate(angle)
+   
     
     imageTarget.onload = () => {
-      console.log('trigger')
-
       ctx2.drawImage(imageTarget, 0, 0)
-      ctx.drawImage(canvas[1], w * currentFrame, 0, w, h, 0, 0, w, h)
+      ctx.drawImage(
+        canvas[1], 
+        w * currentFrame, 0,  // where to get the frame from
+        w, h,                 // how much of the frame to copy
+        x, y,                 // position within canvas / image
+        w, h)                 // how much of the frame to paste
     }
     imageTarget.src = url
   }
   
 
- 
-
 
   const createGif = () =>{
-
+    // set up target canvas
     const ctx = canvas[0].getContext('2d')
     const { width, height } = playground.getBoundingClientRect()
     canvas[0].setAttribute('width', width)
     canvas[0].setAttribute('height', height)
 
     spriteData.forEach(data =>{
-      console.log(data, svgData[data.svgIndex])
+      // console.log(data, svgData[data.svgIndex])
       const { svg, main, sub, frameNo } = svgData[data.svgIndex]
+      const { x, y, angle } = data
       // canvas.style.backgroundColor = 'red'
       output({
         content: svgWrapper({
           content: svg(main, sub),
-          w: 32,
+          w: 16 * frameNo,
           h: 16,
           frameNo
         }),
@@ -290,10 +308,12 @@ function init() {
         w: 80,
         h: 80,
         frameNo,
-        currentFrame: 0
+        currentFrame: 0,
+        x,
+        y,
+        angle
       })
     })
-    console.log('create !')
   }
 
   buttons.forEach(b =>{
