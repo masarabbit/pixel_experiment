@@ -69,6 +69,11 @@ function init() {
     1: []
   }
 
+  const setTargetPos = (target, x, y) =>{
+    target.style.left = `${x}px`
+    target.style.top = `${y}px`
+  }
+
   const rgbToHex = (r, g, b) => {
     if (r > 255 || g > 255 || b > 255)
       throw 'Invalid color component'
@@ -509,6 +514,8 @@ function init() {
     updateCode()
   }
 
+  
+
 
   //TODO move
   const moveSelection = () =>{
@@ -517,36 +524,38 @@ function init() {
     cursorType = 'motion_cursor'
     copyBox.classList.toggle('move')
     copyGrid.classList.toggle('fix')
-    let newX
-    let newY
+    const pos = { a: 0, b: 0, c: 0, d: 0 }
+
     const onDrag = e => {
       copyBox.style.transtion = '0s'
-      newX = copyBox.offsetLeft + e.movementX
-      newY = copyBox.offsetTop + e.movementY
-      copyBox.style.left = `${newX}px`
-      copyBox.style.top = `${newY}px`
+      pos.a = copyBox.offsetLeft - (pos.c - e.clientX)
+      pos.b = copyBox.offsetTop - (pos.d - e.clientY)
+      pos.c = e.clientX
+      pos.d = e.clientY
+      setTargetPos(copyBox, pos.a, pos.b)
     }
 
     const onLetGo = () => {
       // adjustments made here to ensure 'firstcell' is within selection.
       // this needs to be done because numbers continue to next row.
-      const roundedY = rounded(newY) > 0 ? rounded(newY) : 0
-      const roundedX = rounded(newX) > 0 ? rounded(newX) : 0
+      const roundedX = rounded(pos.a) > 0 ? rounded(pos.a) : 0
+      const roundedY = rounded(pos.b) > 0 ? rounded(pos.b) : 0
   
-      copyData.width = copyBox.style.width.replace('px','') / cellSize,
-      copyData.height = copyBox.style.height.replace('px','') / cellSize,
-      copyData.index = returnSelectedCells((roundedY * column) + roundedX, rounded(newX), rounded(newY))
-
+      Object.assign(copyData,{
+        width: copyBox.style.width.replace('px','') / cellSize,
+        height: copyBox.style.height.replace('px','') / cellSize,
+        index: returnSelectedCells((roundedY * column) + roundedX, rounded(pos.a), rounded(pos.b))
+      })
       // codesBox[1].value = copyData.index.join(',')
       // if (copyData.data.length) codesBox[1].value = copyData.index.join(',') + '-' + copyData.data.join(',')
-
-      copyBox.style.left = `${rounded(newX) * cellSize}px`
-      copyBox.style.top = `${rounded(newY) * cellSize}px`
+      setTargetPos(copyBox, rounded(pos.a) * cellSize, rounded(pos.b) * cellSize )
 
       document.removeEventListener('mousemove', onDrag)
       document.removeEventListener('mouseup', onLetGo)
     }
-    const onGrab = () => {
+    const onGrab = e => {
+      pos.c = e.clientX
+      pos.d = e.clientY
       document.addEventListener('mousemove', onDrag)
       document.addEventListener('mouseup', onLetGo)
     }
