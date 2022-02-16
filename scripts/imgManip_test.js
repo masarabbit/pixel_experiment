@@ -277,6 +277,7 @@ function init() {
     )
   
     const ctx2 = canvas[1].getContext('2d')
+    ctx2.imageSmoothingEnabled = false
     ctx2.scale(ratio * dpr, ratio * dpr)
     //* ++++++++++++++++
 
@@ -305,6 +306,7 @@ function init() {
     )
   
     const ctx3 = canvas[2].getContext('2d')
+    ctx3.imageSmoothingEnabled = false
     ctx3.scale(ratio2 * dpr, ratio2 * dpr)
 
 
@@ -371,6 +373,7 @@ function init() {
     )
   
     const ctx = canvas[0].getContext('2d')
+    ctx.imageSmoothingEnabled = false
     ctx.scale(ratio * dpr, ratio * dpr)
 
 

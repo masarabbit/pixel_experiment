@@ -1,5 +1,7 @@
 function init() {
 
+  // TODO imageSmoothing might not be mixable.
+
   const svg = (main, sub) =>{
     const one = main || '#4d8da3'
     const two = sub || '#9edbf0'
@@ -37,6 +39,8 @@ function init() {
   // const body = document.querySelector('body')
   // const indicator = document.querySelector('.indicator')
   // const indicatorTwo = document.querySelector('.indicator_two')
+  // const imageSmoothing = false
+  const imageQuality = 'high'
   let handleActive = false
 
   const buttons = document.querySelectorAll('.button')
@@ -238,15 +242,21 @@ function init() {
     const url = window.URL.createObjectURL(data)
     const imageTarget = new Image()
 
+    const imageSmoothing = angle === 0 ? false : true
+
     // * set up canvas
     canvas[1].width = w
     canvas[1].height = h
     const ctx2 = canvas[1].getContext('2d')
+    ctx2.imageSmoothingEnabled = imageSmoothing
+    ctx2.imageSmoothingQuality = imageQuality
 
     const hyp = Math.sqrt(Math.pow(w, 2) + Math.pow(h, 2))
     canvas[2].width = hyp
     canvas[2].height = hyp
     const ctx3 = canvas[2].getContext('2d')
+    ctx3.imageSmoothingEnabled = imageSmoothing
+    ctx3.imageSmoothingQuality = imageQuality 
 
     imageTarget.onload = () => {
 
@@ -266,7 +276,8 @@ function init() {
       const offsetW = (hyp - w) / 2
       const offsetY = (hyp - h) / 2
       ctx3.drawImage(canvas[1], offsetW, offsetY)
-
+      
+      ctx.imageSmoothingEnabled = imageSmoothing
       ctx.drawImage(
         canvas[2], 
         0, 0,                     // where to get the frame from
@@ -292,6 +303,8 @@ function init() {
     canvas[0].height = height
   
     const ctx = canvas[0].getContext('2d')
+    // ctx.imageSmoothingEnabled = imageSmoothing
+    ctx.imageSmoothingQuality = imageQuality 
     // ctx.scale(ratio * dpr, ratio * dpr)
 
     spriteData.forEach(data =>{
