@@ -4,6 +4,10 @@ function init() {
     const one = main || '#4d8da3'
     const two = sub || '#9edbf0'
     return `<path fill="${one}" d="M 4 1 h 1 v 1 h 1 v 2 h 4 v -2 h 1 v -1 h 1 v 3 h 1 v 1 h 1 v 3 h -1 v 1 h -3 v 3 h 1 v 2 h -6 v -2 h 1 v -3 h -3 v -1 h -1 v -3 h 1 v -1 h 1 v -3"/> <path fill="${one}" d="M 20 2 h 1 v 1 h 1 v 2 h 4 v -2 h 1 v -1 h 1 v 3 h 1 v 1 h 1 v 3 h -1 v 1 h -2 v 1 h 1 v 2 h -1 v 1 h -6 v -1 h -1 v -2 h 1 v -1 h -2 v -1 h -1 v -3 h 1 v -1 h 1 v -3"/> <path fill="${two}" d="M 5 5 h 1 v 2 h -1 v -2"/> <path fill="${two}" d="M 10 5 h 1 v 2 h -1 v -2"/> <path fill="${two}" d="M 21 6 h 1 v 2 h -1 v -2"/> <path fill="${two}" d="M 26 6 h 1 v 2 h -1 v -2"/>`
+
+    // return `<path fill="#fd4626" d="M 0 0 h 8 v 8 h -8 v -8"/> <path fill="#fff714" d="M 8 0 h 8 v 8 h -8 v -8"/> <path fill="#6181ff" d="M 3 3 h 2 v 2 h -2 v -2"/> <path fill="#fd4626" d="M 11 3 h 2 v 2 h -2 v -2"/> <path fill="#1fa328" d="M 0 8 h 8 v 8 h -8 v -8"/> <path fill="#6181ff" d="M 8 8 h 8 v 8 h -8 v -8"/> <path fill="#fff714" d="M 3 11 h 2 v 2 h -2 v -2"/> <path fill="#1fa328" d="M 11 11 h 2 v 2 h -2 v -2"/>`
+
+    // return `<path fill="#fd4626" d="M 0 0 h 8 v 8 h -8 v -8"/> <path fill="#fff714" d="M 8 0 h 8 v 8 h -8 v -8"/> <path fill="#000" d="M 16 0 h 8 v 8 h -8 v -8"/> <path fill="#ff66cf" d="M 24 0 h 8 v 8 h -8 v -8"/> <path fill="#6181ff" d="M 3 3 h 2 v 2 h -2 v -2"/> <path fill="#fd4626" d="M 11 3 h 2 v 2 h -2 v -2"/> <path fill="#6181ff" d="M 19 3 h 2 v 2 h -2 v -2"/> <path fill="#000" d="M 27 3 h 2 v 2 h -2 v -2"/> <path fill="#1fa328" d="M 0 8 h 8 v 8 h -8 v -8"/> <path fill="#6181ff" d="M 8 8 h 8 v 8 h -8 v -8"/> <path fill="#ff66cf" d="M 16 8 h 8 v 8 h -8 v -8"/> <path fill="#000" d="M 24 8 h 8 v 8 h -8 v -8"/> <path fill="#fff714" d="M 3 11 h 2 v 2 h -2 v -2"/> <path fill="#1fa328" d="M 11 11 h 2 v 2 h -2 v -2"/> <path fill="#000" d="M 19 11 h 2 v 2 h -2 v -2"/> <path fill="#1fa328" d="M 27 11 h 2 v 2 h -2 v -2"/>`
   } 
 
   const svgData = [
@@ -25,7 +29,16 @@ function init() {
     },
   ]
 
-  const spriteData = []
+  const spriteData = [
+    // {
+    //   angle: 0,
+    //   svgIndex: 1,
+    //   w: 80,
+    //   h: 80, 
+    //   x: 0,
+    //   y: 0
+    // }
+  ]
   
   // const sampleImg = document.querySelector('.sample')
   // const sampleImgWrapper = document.querySelector('.sample_wrapper')
@@ -231,7 +244,7 @@ function init() {
   //* +++++++ output image ++++++++++
   //* +++++++++++++++++++++++++++++++
 
-  // const dpr = window.devicePixelRatio || 1
+  const dpr = window.devicePixelRatio || 1
 
   const output = ({ content, ctx, w, h, frameNo, currentFrame, x, y, angle}) =>{
     const data = new Blob([content], { type: 'image/svg+xml;charset=utf-8' })
@@ -239,14 +252,62 @@ function init() {
     const imageTarget = new Image()
 
     // * set up canvas
+    // canvas[1].setAttribute('width', w * dpr)
+    // canvas[1].setAttribute('height', h * dpr)
+    // const ctx2 = canvas[1].getContext('2d')
+    
+
+    //* ++++++++++++++++
     canvas[1].width = w
     canvas[1].height = h
-    const ctx2 = canvas[1].getContext('2d')
 
+    const dimensions2 = getObjectFitSize(
+      true,
+      canvas[1].clientWidth,
+      canvas[1].clientHeight,
+      canvas[1].width,
+      canvas[1].height
+    )
+    canvas[1].width = dimensions2.width * dpr
+    canvas[1].height = dimensions2.height * dpr
+
+    const ratio = Math.min(
+      canvas[1].clientWidth / w,
+      canvas[1].clientHeight / h
+    )
+  
+    const ctx2 = canvas[1].getContext('2d')
+    ctx2.scale(ratio * dpr, ratio * dpr)
+    //* ++++++++++++++++
+
+    
     const hyp = Math.sqrt(Math.pow(w, 2) + Math.pow(h, 2))
+    // canvas[2].setAttribute('width', hyp * dpr)
+    // canvas[2].setAttribute('height', hyp * dpr)
+    // const ctx3 = canvas[2].getContext('2d')
+
     canvas[2].width = hyp
     canvas[2].height = hyp
+
+    const dimensions3 = getObjectFitSize(
+      true,
+      canvas[2].clientWidth,
+      canvas[2].clientHeight,
+      canvas[2].width,
+      canvas[2].height
+    )
+    canvas[2].width = dimensions3.width * dpr
+    canvas[2].height = dimensions3.height * dpr
+
+    const ratio2 = Math.min(
+      canvas[2].clientWidth / hyp,
+      canvas[2].clientHeight / hyp
+    )
+  
     const ctx3 = canvas[2].getContext('2d')
+    ctx3.scale(ratio2 * dpr, ratio2 * dpr)
+
+
 
     imageTarget.onload = () => {
 
@@ -288,11 +349,30 @@ function init() {
     //* set up target canvas
   
     const { width, height } = playground.getBoundingClientRect()
+
+    // canvas[0].setAttribute('width', width)
+    // canvas[0].setAttribute('height', height)
     canvas[0].width = width
     canvas[0].height = height
+
+    const dimensions = getObjectFitSize(
+      true,
+      canvas[0].clientWidth,
+      canvas[0].clientHeight,
+      canvas[0].width,
+      canvas[0].height
+    )
+    canvas[0].width = dimensions.width * dpr
+    canvas[0].height = dimensions.height * dpr
+
+    const ratio = Math.min(
+      canvas[0].clientWidth / width,
+      canvas[0].clientHeight / height
+    )
   
     const ctx = canvas[0].getContext('2d')
-    // ctx.scale(ratio * dpr, ratio * dpr)
+    ctx.scale(ratio * dpr, ratio * dpr)
+
 
     spriteData.forEach(data =>{
       const { svg, main, sub, frameNo, w, h } = svgData[data.svgIndex]
@@ -321,6 +401,36 @@ function init() {
     }
     addClickEvent('create_gif', createGif)
   })
+
+  function getObjectFitSize(
+    contains /* true = contain, false = cover */,
+    containerWidth,
+    containerHeight,
+    width,
+    height
+  ) {
+    const doRatio = width / height
+    const cRatio = containerWidth / containerHeight
+    let targetWidth = 0
+    let targetHeight = 0
+    const test = contains ? doRatio > cRatio : doRatio < cRatio
+  
+    if (test) {
+      targetWidth = containerWidth
+      targetHeight = targetWidth / doRatio
+    } else {
+      targetHeight = containerHeight
+      targetWidth = targetHeight * doRatio
+    }
+  
+    return {
+      width: targetWidth,
+      height: targetHeight,
+      x: (containerWidth - targetWidth) / 2,
+      y: (containerHeight - targetHeight) / 2
+    };
+  }
+
 
 }
 

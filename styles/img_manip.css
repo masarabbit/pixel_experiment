@@ -423,7 +423,8 @@ button.icon:hover {
   /* position: absolute; */
   border: pink 1px solid;
   margin: 20px;
-  height: 600px;
+  height: 300px;
+  /* width: 600px; */
   width: calc(100% - 40px);
   /* width: 300px;
   height: 200px; */
@@ -436,6 +437,7 @@ button.icon:hover {
   pointer-events: auto;
   height: 80px;
   width: 80px;
+  /* border: 1px solid red; */
 }
 
 .handle {
