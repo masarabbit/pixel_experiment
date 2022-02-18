@@ -1,6 +1,7 @@
 function init() {
 
   // TODO imageSmoothing might not be mixable.
+  // TODO addResize
 
   const svg = (main, sub) =>{
     const one = main || '#4d8da3'
@@ -35,15 +36,38 @@ function init() {
   const palette = document.querySelector('.palette')
   const playground = document.querySelector('.playground')
   const canvas = document.querySelectorAll('canvas')
-  // const handleSquare = document.querySelector('.handle_square')
-  // const body = document.querySelector('body')
+  const renderCanvas = document.querySelectorAll('.render_canvas')
   // const indicator = document.querySelector('.indicator')
   // const indicatorTwo = document.querySelector('.indicator_two')
   // const imageSmoothing = false
   const imageQuality = 'high'
   let handleActive = false
+  const seq = [1, 2, 3, 4]
+  // const seq = [0, 1, 2, 3]
+  const gif = document.querySelector('.gif')
+  const colorInput = document.querySelector('#color')
+  const colorLabel = document.querySelector('.color_label')
+  const hexInput = document.querySelector('.hex')
 
   const buttons = document.querySelectorAll('.button')
+  let count = 0
+  let speed = 300
+
+  hexInput.addEventListener('change',()=>{
+    backgroundColor = hexInput.value
+    colorLabel.style.backgroundColor = backgroundColor
+    playground.style.backgroundColor = backgroundColor
+    createSign(svgWrapper(signSvg, invertHex(backgroundColor), signDim.w, signDim.h), hideBox)
+  })
+
+  colorInput.addEventListener('change',()=>{
+    backgroundColor = colorInput.value
+    hexInput.value = backgroundColor
+    playground.style.backgroundColor = backgroundColor
+    colorLabel.style.backgroundColor = backgroundColor
+    // createSign(svgWrapper(signSvg, invertHex(backgroundColor), signDim.w, signDim.h), hideBox)
+  })
+
 
   const svgContentWrapper = ({ content, color, w, h } ) =>{
     return `
@@ -59,10 +83,12 @@ function init() {
     >${content}</svg>`
   }
   
-  const animateSvg = ({ target, start, end, speed, frameSize }) => {
+  const animateSvg = ({ target, start, end, frameSize, spriteIndex }) => {
     const startFrame = start || 0
     let i = startFrame
-    setInterval(()=> {
+    const spriteObj = spriteData[spriteIndex] || { interval: null }
+    clearInterval(spriteObj.interval)
+    spriteObj.interval = setInterval(()=> {
       target.style.marginLeft = `${-(i * (frameSize || 16))}px`
       i = i >= end
         ? startFrame
@@ -70,7 +96,7 @@ function init() {
     }, speed || 200)
   }
   
-  const animateSprite = ({ target, content, w, h, frameNo, frameSize, color }) =>{
+  const animateSprite = ({ target, content, w, h, frameNo, frameSize, color, spriteIndex }) =>{
     target.innerHTML = `
       <div class="sprite">
         ${svgContentWrapper({ content, w, h, color })}
@@ -82,7 +108,7 @@ function init() {
       width: `${80 * frameNo}px`, 
       height: '80px'
     })
-    animateSvg({ target: sprite, end: frameNo - 1, frameSize })
+    animateSvg({ target: sprite, end: frameNo - 1, frameSize, spriteIndex })
   }
 
   const setTargetPos = (target, x, y) =>{
@@ -156,6 +182,43 @@ function init() {
     handle.addEventListener('mousedown', onGrab)
   }
   
+  const createSprite = index =>{
+    spriteData.push({ 
+      angle: 0,
+      svgIndex: index,
+      w: 80, h: 80,
+      x: 0, y: 0,
+      interval: null,
+    }) //TODO need some way to keep track of this
+
+    const newSprite = document.createElement('div')
+    newSprite.classList.add('sample_wrapper')
+    newSprite.innerHTML = `
+      <div class="handle">
+        <div class="handle_square"></div>
+      </div>
+      <div class="sample"></div>`
+    playground.append(newSprite)
+    
+    const sprites = document.querySelectorAll('.sample_wrapper')
+    spriteData.forEach((data, i)=>{
+      const { svg, frameNo, main, sub, color} = svgData[data.svgIndex]
+      animateSprite({
+        target: sprites[i].childNodes[3],
+        content: svg(main, sub),
+        w: 16 * frameNo,
+        frameNo,
+        frameSize: 80,
+        color,
+        spriteIndex: i,
+      })
+    })
+    
+    const targetSpriteData = spriteData[spriteData.length - 1]
+    makeSpriteDraggable(newSprite, targetSpriteData)
+    // console.log(newSprite.childNodes[1])
+    makeSpriteRotatable(newSprite, targetSpriteData)
+  }
 
   const createPalette = (target, svgData) =>{
     target.innerHTML = svgData.map(data=>{
@@ -183,52 +246,12 @@ function init() {
     })
 
     document.querySelectorAll('.palette_cell').forEach((cell, i) =>{
-      cell.addEventListener('click', ()=>{
-        spriteData.push({ 
-          angle: 0,
-          svgIndex: i,
-          w: 80,
-          h: 80,
-          x: 0,
-          y: 0
-        }) //TODO need some way to keep track of this
-
-        const newSprite = document.createElement('div')
-        newSprite.classList.add('sample_wrapper')
-        newSprite.innerHTML = `
-          <div class="handle">
-            <div class="handle_square"></div>
-          </div>
-          <div class="sample"></div>`
-        playground.append(newSprite)
-
-        const { svg, frameNo, main, sub, color } = svgData[i]
-        animateSprite({
-          target: newSprite.childNodes[3],
-          content: svg(main, sub),
-          w: 16 * frameNo,
-          frameNo,
-          frameSize: 80,
-          color
-        })
-        
-        const targetSpriteData = spriteData[spriteData.length - 1]
-        makeSpriteDraggable(newSprite, targetSpriteData)
-        // console.log(newSprite.childNodes[1])
-        makeSpriteRotatable(newSprite, targetSpriteData)
-      })
+      cell.addEventListener('click', ()=>createSprite(i))
     })
   }
 
   createPalette(palette, svgData)
 
-
-  // const downloadImage = index =>{
-  //   const link = document.createElement('a')
-  //   link.download = `test_${new Date().getTime()}.png`
-  //   link.href = canvas[index || 0].toDataURL()
-  //   link.click()
-  // }
 
 
   //* +++++++++++++++++++++++++++++++
@@ -236,6 +259,7 @@ function init() {
   //* +++++++++++++++++++++++++++++++
 
   // const dpr = window.devicePixelRatio || 1
+  // console.log('dpr', dpr)
 
   const output = ({ content, ctx, w, h, frameNo, currentFrame, x, y, angle}) =>{
     const data = new Blob([content], { type: 'image/svg+xml;charset=utf-8' })
@@ -245,68 +269,69 @@ function init() {
     const imageSmoothing = angle === 0 ? false : true
 
     // * set up canvas
-    canvas[1].width = w
-    canvas[1].height = h
-    const ctx2 = canvas[1].getContext('2d')
-    ctx2.imageSmoothingEnabled = imageSmoothing
-    ctx2.imageSmoothingQuality = imageQuality
+    renderCanvas[0].width = w
+    renderCanvas[0].height = h
+    const ctxA = renderCanvas[0].getContext('2d')
+    ctxA.imageSmoothingEnabled = imageSmoothing
+    ctxA.imageSmoothingQuality = imageQuality
 
     const hyp = Math.sqrt(Math.pow(w, 2) + Math.pow(h, 2))
-    canvas[2].width = hyp
-    canvas[2].height = hyp
-    const ctx3 = canvas[2].getContext('2d')
-    ctx3.imageSmoothingEnabled = imageSmoothing
-    ctx3.imageSmoothingQuality = imageQuality 
+    renderCanvas[1].width = hyp
+    renderCanvas[1].height = hyp
+    const ctxB = renderCanvas[1].getContext('2d')
+    ctxB.imageSmoothingEnabled = imageSmoothing
+    ctxB.imageSmoothingQuality = imageQuality 
 
     imageTarget.onload = () => {
 
-      ctx2.drawImage(
+      ctxA.drawImage(
         imageTarget, 
-        (w / frameNo) * currentFrame, 0,  
+        (w / frameNo) * (currentFrame - 1), 0,  
         w, h,
         0, 0,
         w * frameNo, h * frameNo
       )
       
-      ctx3.save()
-      // ctx3.clearRect(0, 0, hyp, hyp)
-      ctx3.translate(hyp / 2 , hyp / 2)  //TODO need to investigate how rotation works
-      ctx3.rotate(angle)
-      ctx3.translate(-hyp / 2 ,-hyp / 2) 
+      ctxB.save()
+      // ctxB.clearRect(0, 0, hyp, hyp)
+      ctxB.translate(hyp / 2 , hyp / 2)  //TODO need to investigate how rotation works
+      ctxB.rotate(angle)
+      ctxB.translate(-hyp / 2 ,-hyp / 2) 
       const offsetW = (hyp - w) / 2
       const offsetY = (hyp - h) / 2
-      ctx3.drawImage(canvas[1], offsetW, offsetY)
+      ctxB.drawImage(renderCanvas[0], offsetW, offsetY)
       
       ctx.imageSmoothingEnabled = imageSmoothing
       ctx.drawImage(
-        canvas[2], 
+        renderCanvas[1], 
         0, 0,                     // where to get the frame from
         hyp, hyp,                 // how much of the frame to copy
         x - offsetW, y - offsetY, // position within canvas / image
         hyp, hyp                  // how much of the frame to paste
       )
       
-      ctx2.clearRect(0, 0, w, h)   
-      ctx3.restore()
-      ctx3.clearRect(0, 0, hyp, hyp)
+      ctxA.clearRect(0, 0, w, h)   
+      ctxB.restore()
+      ctxB.clearRect(0, 0, hyp, hyp)
+      count++
+      if (count === 4) {
+        // console.log('trigger', count)
+        compileGif()
+        count = 0
+      }  
     }
     imageTarget.src = url
   }
   
-
-
-  const createGif = () =>{
-    //* set up target canvas
+  const animationPattern = (arr, num) => {
+    return arr.map(item=>{
+      const rem = item % num
+      return rem === 0 ? num : rem
+    })
+  }
   
-    const { width, height } = playground.getBoundingClientRect()
-    canvas[0].width = width
-    canvas[0].height = height
   
-    const ctx = canvas[0].getContext('2d')
-    // ctx.imageSmoothingEnabled = imageSmoothing
-    ctx.imageSmoothingQuality = imageQuality 
-    // ctx.scale(ratio * dpr, ratio * dpr)
-
+  const outputSpriteData = (ctx, index) =>{
     spriteData.forEach(data =>{
       const { svg, main, sub, frameNo, w, h } = svgData[data.svgIndex]
       const { x, y, angle } = data
@@ -323,16 +348,79 @@ function init() {
         x, y,
         angle,
         frameNo,
-        currentFrame: frameNo - 1, // TODO this will be looped through
+        currentFrame: animationPattern(seq, frameNo)[index]
       })
     })
   }
+
+
+  const createGif = () =>{
+    const encoder = new GIFEncoder()
+    encoder.setRepeat(0) //auto-loop
+    encoder.start()
+
+    //* set up target canvas
+    seq.forEach( (_n, i) =>{
+      // if (i === 0) canvas[i].classList.remove('display_none')
+      const { width, height } = playground.getBoundingClientRect()
+      canvas[i].width = width
+      canvas[i].height = height
+      const ctx = canvas[i].getContext('2d')
+      ctx.imageSmoothingQuality = imageQuality 
+      ctx.fillStyle = colorInput.value
+      ctx.fillRect(0, 0, width, height)
+
+      outputSpriteData(ctx, i)
+    })
+  }
+  
+  const compileGif = () =>{
+    //* start encoder
+    const encoder = new GIFEncoder()
+    encoder.setRepeat(0) //auto-loop
+    encoder.start()
+    
+    seq.forEach( (_n, i) =>{
+      const ctx = canvas[i].getContext('2d')
+      encoder.setDelay(speed) // TODO set this value somewhere?
+      encoder.addFrame(ctx)
+    })
+    encoder.finish()
+
+    const { width, height } = playground.getBoundingClientRect()
+    Object.assign(gif.style, {
+      width: `${width}px`, 
+      height: `${height}px`, 
+    })
+    gif.src = 'data:image/gif;base64,' + encode64(encoder.stream().getData())
+  }
+
+  let imgName
+  const downloadGif = () =>{
+    console.log('test', gif.src)
+    if (!gif.src) return
+
+    const link = document.createElement('a')
+    link.download = `${imgName || 'gif'}_${new Date().getTime()}.gif`
+    link.href = gif.src
+    link.click()
+  }
+
+  // const stopAnimation = () =>{
+  //   console.log(spriteData)
+  //   spriteData.forEach(data =>{
+  //     clearInterval(data.interval)
+  //   })
+  // }
 
   buttons.forEach(b =>{
     const addClickEvent = (className, event) =>{
       if (b.classList.contains(className)) b.addEventListener('click', event)
     }
     addClickEvent('create_gif', createGif)
+    // addClickEvent('compile', compileGif)
+    addClickEvent('download_file', downloadGif)
+    // addClickEvent('test', stopAnimation)
   })
 
 }

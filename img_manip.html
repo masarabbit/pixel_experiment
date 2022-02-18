@@ -3,6 +3,11 @@
 
 <head>
   <link rel="stylesheet" type="text/css" href="./styles/img_manip.css" />
+  <script src="./jsgif/b64.js"></script>
+　<script src="./jsgif/LZWEncoder.js"></script>
+　<script src="./jsgif/NeuQuant.js"></script>
+　<script src="./jsgif/GIFEncoder.js"></script>
+
   <script src ="./scripts/imgManip.js" charset="utf-8"></script>
 
   <title>img_manip</title>
@@ -27,20 +32,24 @@
     </div>
 
     <label for="color" class="color_label"></label>
-    <input id="color" type="color">
+    <input id="color" type="color" value="#ffffff">
 
     <div class="input_wrap">
       <label>hex</label>
-      <input class="hex input" placeholder="#000000" />
+      <input class="hex input" placeholder="#ffffff" />
     </div>
     
     <button class="button create_gif icon alt" data-alt="create gif">+</button> 
+    <!-- <button class="button icon compile alt" data-alt="compile gif">c</button> -->
+    <button class="button download icon download_file alt" data-alt="download gif"></button>
+
+    <button class="button test icon alt" data-alt="test">test</button> 
 
     <!-- <input id="upload" type="file" single/>
     <label for="upload" data-alt="upload image file" class="upload icon alt"></label>
     <div class="file_name"></div>
     <button class="button draw icon display_none alt" data-alt="pixelise"></button>
-    <button class="download icon download_file alt" data-alt="download pixel art"></button>
+   
     <button class="button create_grid create icon alt" data-index="0" data-grid_class="cell" data-alt="create grid"></button> 
     <button class="button undo icon alt" data-alt="undo"><</button> 
 
@@ -68,10 +77,18 @@
 
 
   <div class="img_wrap">
-    <canvas class="canvas"></canvas>
+    <img class="gif">
   </div> 
-  <canvas class="canvas"></canvas>
-  <canvas class="canvas"></canvas>
+
+  <canvas class="canvas display_none"></canvas>
+  <canvas class="canvas display_none"></canvas>
+  <canvas class="canvas display_none"></canvas>
+  <canvas class="canvas display_none"></canvas>
+  
+  <canvas class="render_canvas display_none"></canvas>
+  <canvas class="render_canvas display_none"></canvas>
+
+
 
 
   <div class="cursor" data-text="test"><div></div></div>

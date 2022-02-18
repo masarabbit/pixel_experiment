@@ -45,10 +45,14 @@ p, h1, h2, h3, h4 {
 }
 
 canvas {
-  margin: 40px 5px;
+  /* margin: 40px 5px; */
   background-color: #ffffff;
   /* height: 600px;
   width: calc(100% - 40px); */
+}
+
+.gif {
+  margin: 40px 5px;
 }
 
 .display_none {
@@ -177,7 +181,7 @@ textarea {
   height: 32px;
   width: 32px;
   border: 0;
-  background-color: black;
+  background-color: #ffffff;
   transition: 0.3s;
   border: 1px solid white;
 }
@@ -303,7 +307,7 @@ button.icon:hover {
 
 .bucket { background: url(/icon/bucket.svg); }
 
-.download_file { background: url(/icon/download.svg); }
+
 
 .eraser { background: url(/icon/eraser.svg); }
 
@@ -318,6 +322,8 @@ button.icon:hover {
 .copy { background: url(/icon/copy.svg); }
 
 .draw { background: url(/icon/pixelise.svg); } */
+
+.download_file { background: url(/icon/download.svg); }
 
 .cursor {
   height: 32px;
