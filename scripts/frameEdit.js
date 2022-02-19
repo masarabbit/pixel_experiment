@@ -23,8 +23,8 @@ function init() {
   const upload = document.querySelector('#upload')
   const colorInput = document.querySelector('#color')
   const colorLabel = document.querySelector('.color_label')
-  const uploadSizeInput = document.querySelector('.upload_size')
   const hexInput = document.querySelector('.hex')
+  const uploadSizeInput = document.querySelector('.upload_size')
   const transitionInput = document.querySelector('.transition_input')
   let uploadFiles
   let backgroundColor = 'transparent'
