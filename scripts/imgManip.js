@@ -52,7 +52,7 @@ function init() {
   const playground = document.querySelector('.playground')
   const canvas = document.querySelectorAll('canvas')
   const renderCanvas = document.querySelectorAll('.render_canvas')
-  // const indicator = document.querySelector('.indicator')
+  const indicator = document.querySelector('.indicator')
   // const indicatorTwo = document.querySelector('.indicator_two')
   const imageSmoothing = false
   const imageQuality = 'high'
@@ -68,6 +68,11 @@ function init() {
   const buttons = document.querySelectorAll('.button')
   let count = 0
   let speed = 300
+  const stampData = { 
+    interval: null,
+    active: false,
+    index: null 
+  }
 
   hexInput.addEventListener('change',()=>{
     backgroundColor = hexInput.value
@@ -97,10 +102,12 @@ function init() {
     >${content}</svg>`
   }
   
-  const animateSvg = ({ target, start, end, frameSize, spriteIndex }) => {
+  const animateSvg = ({ target, start, end, frameSize, spriteIndex, stamp }) => {
     const startFrame = start || 0
     let i = startFrame
-    const spriteObj = spriteData[spriteIndex] || { interval: null }
+    const spriteObj = stamp 
+      ? stampData
+      : spriteData[spriteIndex] || { interval: null }
     clearInterval(spriteObj.interval)
     spriteObj.interval = setInterval(()=> {
       target.style.marginLeft = `${-(i * (frameSize || 16))}px`
@@ -196,12 +203,12 @@ function init() {
     handle.addEventListener('mousedown', onGrab)
   }
   
-  const createSprite = index =>{
+  const createSprite = (index, stampX, stampY, x, y) =>{
     spriteData.push({ 
       angle: 0,
       svgIndex: index,
       w: 80, h: 80,
-      x: 0, y: 0,
+      x, y,
       interval: null,
     }) //TODO need some way to keep track of this
 
@@ -213,8 +220,8 @@ function init() {
       </div>
       <div class="sample"></div>`
     playground.append(newSprite)
+    setTargetPos(newSprite, stampX, stampY)
 
-    
     const sprites = document.querySelectorAll('.sample_wrapper')
     spriteData.forEach((data, i)=>{
       const { svg, frameNo, main, sub, color} = svgData[data.svgIndex]
@@ -267,11 +274,14 @@ function init() {
         paletteCells.forEach(cell=>{
           cell.classList.remove('selected')
         })
-        cell.classList.add('selected')
-        selectedInput.value = i
+        if (stampData.index !== i) {
+          cell.classList.add('selected')
+          selectedInput.value = i
+        }  
       })
       
-      cell.addEventListener('click', ()=>createSprite(i))
+      // cell.addEventListener('click', ()=>createSprite(i))
+      cell.addEventListener('click', ()=>createStamp(i))
     })
   }
 
@@ -292,8 +302,6 @@ function init() {
     const imageTarget = new Image()
 
     // const imageSmoothing = angle === 0 ? false : true
-    
-
     // * set up canvas
     renderCanvas[0].width = w
     renderCanvas[0].height = h
@@ -364,7 +372,6 @@ function init() {
 
       const rem = index % frameNo
       // console.log('test', rem === 0 ? frameNo : rem)
-
       output({
         content: svgWrapper({
           content: svg(main, sub),
@@ -403,6 +410,7 @@ function init() {
       outputSpriteData(ctx, i)
     })
   }
+
   
   const compileGif = () =>{
     //* start encoder
@@ -443,6 +451,70 @@ function init() {
   //   })
   // }
 
+  // const handleCursor = e =>{
+  //   cursor.style.top = `${e.pageY}px`
+  //   cursor.style.left = `${e.pageX}px`
+  // }
+  // window.addEventListener('mousemove', handleCursor)
+
+  const stamp = document.querySelector('.stamp')
+
+  const stampPos = e =>{
+    const { width: w, height: h } = stamp.getBoundingClientRect()
+    return {
+      x: (e.pageX - w / 2),
+      y: (e.pageY - h / 2)
+    }
+  }
+
+  playground.addEventListener('mouseenter', ()=> {
+    console.log(stampData)
+    if (stampData.active) {
+      stamp.classList.remove('display_none') 
+      playground.classList.add('stamp_active')
+    }
+  })
+  playground.addEventListener('mouseleave', ()=> {
+    stamp.classList.add('display_none')
+    playground.classList.remove('stamp_active')
+  })
+  playground.addEventListener('mousemove', e =>{
+    // indicator.innerHTML = `left:${playground.offsetLeft} - X:${e.pageX} - top:${playground.offsetTop} - Y:${e.pageY}`
+    indicator.innerHTML = `${e.pageX - playground.offsetLeft} - ${e.pageY - playground.offsetTop}`
+    if (stampData.active) setTargetPos(stamp, stampPos(e).x, stampPos(e).y)
+  })
+  playground.addEventListener('click', e =>{
+    if (stampData.active) {
+      const { w, h } = svgData[stampData.index]
+      createSprite(
+        stampData.index, 
+        stampPos(e).x, stampPos(e).y, 
+        e.pageX - playground.offsetLeft - (w / 2), e.pageY - playground.offsetTop - (h / 2)
+      )
+    }
+  })
+
+  const createStamp = i =>{
+    // stamp.classList.toggle('display_none')
+    console.log(stampData)
+    stampData.active = stampData.index !== i ? true : false
+    stampData.index = i
+    if (stampData.active) {
+      console.log(i)
+      const { svg, frameNo, main, sub, color} = svgData[i]
+        animateSprite({
+          target: stamp,
+          content: svg(main, sub),
+          w: 16 * frameNo,
+          frameNo,
+          frameSize: 80,
+          color,
+          spriteIndex: i,
+          stamp: true
+        })
+    }
+  }
+
   buttons.forEach(b =>{
     const addClickEvent = (className, event) =>{
       if (b.classList.contains(className)) b.addEventListener('click', event)
@@ -452,6 +524,9 @@ function init() {
     addClickEvent('download_file', downloadGif)
     // addClickEvent('test', stopAnimation)
   })
+
+
+  
 
 }
 

@@ -459,6 +459,9 @@ button.icon:hover {
   background-color: #fff;
 }
 
+.playground.stamp_active {
+  cursor: none;
+} 
 
 
 .sample_wrapper {
@@ -505,6 +508,12 @@ button.icon:hover {
   height: 80px;
   width: 80px;
   overflow: hidden;
+  animation: stamped forwards 1s ease;
+}
+
+@keyframes stamped {
+  0% { background: hotpink; }
+  100% { background: transparent; }
 }
 
 .sprite {
@@ -537,6 +546,18 @@ button.icon:hover {
   width: 10px;
   pointer-events: none;
 }
+
+.stamp {
+  position: absolute;
+  /* border: 1px solid hotpink; */
+  width: 80px;
+  height: 80px;
+  pointer-events: none;
+  cursor: grab;
+  overflow: hidden;
+}
+
+
 
 /* .test_img {
   border: 1px hotpink solid;
