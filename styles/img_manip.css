@@ -423,7 +423,7 @@ button.icon:hover {
 .copy_grid.grid_hide div{ border: 0 !important; }
 .grid.grid_hide div{ border: 0 !important; }
 
-.playground_wrapper {
+.artboard_wrapper {
   /* position: absolute; */
   position: relative;
   /* border: pink 1px solid; */
@@ -435,7 +435,7 @@ button.icon:hover {
   height: 200px; */
 }
 
-.playground {
+.artboard {
   position: absolute;
   /* position: relative; */
   /* border: pink 1px solid; */
@@ -448,7 +448,7 @@ button.icon:hover {
   background-color: #fff;
 }
 
-.playground.stamp_active {
+.artboard.stamp_active {
   cursor: none;
 } 
 
@@ -486,38 +486,41 @@ button.icon:hover {
 
 
 
-.playground.resize_active .resize_square,
-.playground.rotate_active .handle_square{
+.artboard.resize_active .resize_square,
+.artboard.rotate_active .handle_square{
   display: block;
 }
 
-.playground.resize_active::before {
+.artboard.resize_active::before {
   position: absolute;
-  width: 16px;
-  height: 16px;
+  width: 32px;
+  height: 32px;
   content: '';
   bottom: 0px;
   right: 0px;
-  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAFtJREFUOE+l09sKABAQBFD7/x9NPEiZW61XzcE2ajRXNfPjBabB4GEpQG+aAPKZDrAzUoAK73mdfQa48M0iIAlTIA1DQNUAdeSbAQNYwSJAtdMCUbVtUdxnawML/1gQEfCFy/kAAAAASUVORK5CYII=) repeat 0 0;
+  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAFtJREFUOE+l09sKABAQBFD7/x9NPEiZW61XzcE2ajRXNfPjBabB4GEpQG+aAPKZDrAzUoAK73mdfQa48M0iIAlTIA1DQNUAdeSbAQNYwSJAtdMCUbVtUdxnawML/1gQEfCFy/kAAAAASUVORK5CYII=);
+  background-repeat: no-repeat, repeat;
+  background-size: cover; 
   opacity: 0.3;
+  image-rendering: pixelated;
 }
 
 
-.playground.resize_active:hover::before {
+.artboard.resize_active:hover::before {
   opacity: 0.6;
 }
 
 .handle_square {
   /* border-radius: 50%; */
   /* background-color: hotpink; */
-  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAGdJREFUOE/Fk9EOABAIRfP/H8201dJ0V3ngieWcEgY9jgH4SUQozmi0YcMornlvAoFbAgtHpzuS2kUGFqlyMqnAh6RbgfbHN7FSCbPZW7iJQ8EW+3dQFogENRlW4N9AqwIr+S8IP+0CL/8REbaB6RMAAAAASUVORK5CYII=) repeat 0 0;
+  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAGdJREFUOE/Fk9EOABAIRfP/H8201dJ0V3ngieWcEgY9jgH4SUQozmi0YcMornlvAoFbAgtHpzuS2kUGFqlyMqnAh6RbgfbHN7FSCbPZW7iJQ8EW+3dQFogENRlW4N9AqwIr+S8IP+0CL/8REbaB6RMAAAAASUVORK5CYII=);
   top: 0px;
   right: 0px;
 }
 
 .rotate {
   image-rendering: pixelated;
-  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAGdJREFUOE/Fk9EOABAIRfP/H8201dJ0V3ngieWcEgY9jgH4SUQozmi0YcMornlvAoFbAgtHpzuS2kUGFqlyMqnAh6RbgfbHN7FSCbPZW7iJQ8EW+3dQFogENRlW4N9AqwIr+S8IP+0CL/8REbaB6RMAAAAASUVORK5CYII=) repeat 0 0;
+  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAGdJREFUOE/Fk9EOABAIRfP/H8201dJ0V3ngieWcEgY9jgH4SUQozmi0YcMornlvAoFbAgtHpzuS2kUGFqlyMqnAh6RbgfbHN7FSCbPZW7iJQ8EW+3dQFogENRlW4N9AqwIr+S8IP+0CL/8REbaB6RMAAAAASUVORK5CYII=);
 }
 
 .resize_square:hover,
@@ -527,14 +530,14 @@ button.icon:hover {
 
 .resize_square {
   /* background-color: cyan; */
-  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAFtJREFUOE+l09sKABAQBFD7/x9NPEiZW61XzcE2ajRXNfPjBabB4GEpQG+aAPKZDrAzUoAK73mdfQa48M0iIAlTIA1DQNUAdeSbAQNYwSJAtdMCUbVtUdxnawML/1gQEfCFy/kAAAAASUVORK5CYII=) repeat 0 0;
+  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAFtJREFUOE+l09sKABAQBFD7/x9NPEiZW61XzcE2ajRXNfPjBabB4GEpQG+aAPKZDrAzUoAK73mdfQa48M0iIAlTIA1DQNUAdeSbAQNYwSJAtdMCUbVtUdxnawML/1gQEfCFy/kAAAAASUVORK5CYII=);
   bottom: 0px;
   right: 0px;
 }
 
 .resize {
   image-rendering: pixelated;
-  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAFtJREFUOE+l09sKABAQBFD7/x9NPEiZW61XzcE2ajRXNfPjBabB4GEpQG+aAPKZDrAzUoAK73mdfQa48M0iIAlTIA1DQNUAdeSbAQNYwSJAtdMCUbVtUdxnawML/1gQEfCFy/kAAAAASUVORK5CYII=) repeat 0 0;
+  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAFtJREFUOE+l09sKABAQBFD7/x9NPEiZW61XzcE2ajRXNfPjBabB4GEpQG+aAPKZDrAzUoAK73mdfQa48M0iIAlTIA1DQNUAdeSbAQNYwSJAtdMCUbVtUdxnawML/1gQEfCFy/kAAAAASUVORK5CYII=);
 }
 
 .sprite_container {

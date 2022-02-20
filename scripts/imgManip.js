@@ -2,7 +2,7 @@ function init() {
 
   // TODO imageSmoothing might not be mixable.
 
-  // TODO add playground resize
+  // TODO add artboard resize
 
   // TODO z-index
 
@@ -46,7 +46,7 @@ function init() {
 
   const spriteData = []
   const palette = document.querySelector('.palette')
-  const playground = document.querySelector('.playground')
+  const artboard = document.querySelector('.artboard')
   const canvas = document.querySelectorAll('canvas')
   const renderCanvas = document.querySelectorAll('.render_canvas')
   const stamp = document.querySelector('.stamp')
@@ -143,8 +143,8 @@ function init() {
         const newY = target.offsetTop - pos.b
 
         Object.assign(targetSpriteData, { 
-          x: newX - playground.offsetLeft, 
-          y: newY - playground.offsetTop
+          x: newX - artboard.offsetLeft, 
+          y: newY - artboard.offsetTop
         })
         setTargetPos(target, newX, newY)
       }
@@ -158,18 +158,18 @@ function init() {
 
   
   // TODO logic for handleActive not needed here?
-  // TODO another state to control drawData.playgroundResize
-  makeSpriteResizable = (target, targetSpriteData) =>{
+  // TODO another state to control drawData.artboardResize
+  makeResizable = (target, spriteData) =>{
     const pos = { a: 0, b: 0, c: 0, d: 0 }
     const handle = target.childNodes[1]
-    const isPlayground = target === playground
+    const isArtboard = target === artboard
     
     const onGrab = e =>{
       if (!drawData.resize) return
+      if (!isArtboard) drawData.handleActive = true
       console.log('test', drawData)
       pos.c = e.clientX
-      pos.d = e.clientY
-      // drawData.handleActive = true
+      pos.d = e.clientY    
       document.addEventListener('mouseup', onLetGo)
       document.addEventListener('mousemove', onDrag)
     }
@@ -178,18 +178,15 @@ function init() {
       pos.b = e.clientY - pos.d
       pos.c = e.clientX
       pos.d = e.clientY
-      if (isPlayground && drawData.playgroundResize) {
-        const { width, height } = playground.getBoundingClientRect()
-        setTargetSize(playground, width + pos.a, height + pos.b)
-      } else if (targetSpriteData) {
-      const newW = targetSpriteData.w + pos.a
-      const newH = targetSpriteData.h + pos.b
+      if (isArtboard && !drawData.handleActive) {
+        const { width, height } = artboard.getBoundingClientRect()
+        setTargetSize(artboard, width + pos.a, height + pos.b)
+      } else if (spriteData) {
+      const newW = spriteData.w + pos.a
+      const newH = spriteData.h + pos.a
 
-      Object.assign(targetSpriteData, { 
-        w: newW, 
-        h: newH
-      })
-      const { frameNo } = svgData[targetSpriteData.svgIndex]
+      Object.assign(spriteData, { w: newW, h: newH })
+      const { frameNo } = svgData[spriteData.svgIndex]
       setTargetSize(handle, newW + handleOffset, newH + handleOffset)
       setTargetSize(target.childNodes[3], newW, newH)
       setTargetSize(target.childNodes[3].childNodes[1], newW * frameNo, newH)
@@ -198,22 +195,22 @@ function init() {
     const onLetGo = () => {
       document.removeEventListener('mouseup', onLetGo)
       document.removeEventListener('mousemove', onDrag)
-      // drawData.handleActive = false
+      drawData.handleActive = false
     }
-    isPlayground 
-      ? playground.addEventListener('mousedown', onGrab)
+    isArtboard 
+      ? artboard.addEventListener('mousedown', onGrab)
       : handle.addEventListener('mousedown', onGrab)
   }
 
-  makeSpriteResizable(playground)
+  makeResizable(artboard)
 
 
-  makeSpriteRotatable = (target, targetSpriteData) =>{
+  makeSpriteRotatable = (target, spriteData) =>{
     const handle = target.childNodes[1]
     
     const onGrab = e =>{
       if (!drawData.rotate) return
-      targetSpriteData.angle = getAngle(e)
+      spriteData.angle = getAngle(e)
       drawData.handleActive = true
       document.addEventListener('mouseup', onLetGo)
       document.addEventListener('mousemove', onDrag)
@@ -225,7 +222,7 @@ function init() {
         y: top + height / 2 || 0,
       }
       const newAngle = Math.atan2(center.y - e.pageY, center.x - e.pageX)
-      return newAngle - targetSpriteData.angle
+      return newAngle - spriteData.angle
     }
     const onDrag = e =>{
       const newAngle = getAngle(e)
@@ -235,7 +232,7 @@ function init() {
     const onLetGo = e => {
       document.removeEventListener('mouseup', onLetGo)
       document.removeEventListener('mousemove', onDrag)
-      targetSpriteData.angle = getAngle(e)
+      spriteData.angle = getAngle(e)
       drawData.handleActive = false
     }
     handle.addEventListener('mousedown', onGrab)
@@ -258,7 +255,7 @@ function init() {
         <div class="resize_square"></div>
       </div>
       <div class="sprite_container" style="--color: ${svgData[index].color || svgData[index].main};"></div>`
-    playground.append(newSprite)
+    artboard.append(newSprite)
     setTargetPos(newSprite, stampX, stampY)
 
     const sprites = document.querySelectorAll('.sprite_wrapper')
@@ -277,7 +274,7 @@ function init() {
     const targetSpriteData = spriteData[spriteData.length - 1]
     makeSpriteDraggable(newSprite, targetSpriteData)
     makeSpriteRotatable(newSprite, targetSpriteData)
-    makeSpriteResizable(newSprite, targetSpriteData)
+    makeResizable(newSprite, targetSpriteData)
   }
 
   const createPalette = (target, svgData) =>{
@@ -313,7 +310,7 @@ function init() {
           cell.classList.add('selected')
           selectedInput.value = i
           Object.assign(drawData, { resize: false, rotate: false,})
-          playground.className = 'playground'
+          artboard.className = 'artboard'
         } 
       })
       cell.addEventListener('click', ()=>createStamp(i))
@@ -415,7 +412,7 @@ function init() {
   const createGif = () =>{
     seq.forEach(i=>{
       // if (i === 0) canvas[i].classList.remove('display_none')
-      const { width, height } = playground.getBoundingClientRect()
+      const { width, height } = artboard.getBoundingClientRect()
       canvas[i].width = width
       canvas[i].height = height
       const ctx = canvas[i].getContext('2d')
@@ -440,7 +437,7 @@ function init() {
     })
     encoder.finish()
 
-    const { width, height } = playground.getBoundingClientRect()
+    const { width, height } = artboard.getBoundingClientRect()
     Object.assign(gif.style, {
       width: `${width}px`, 
       height: `${height}px`, 
@@ -469,13 +466,13 @@ function init() {
   const activateStamp = () =>{
     if (stampData.active) {
       stamp.classList.remove('display_none') 
-      playground.classList.add('stamp_active')
+      artboard.classList.add('stamp_active')
     }
   }
 
   const deactivateStamp = () =>{
     stamp.classList.add('display_none')
-    playground.classList.remove('stamp_active')
+    artboard.classList.remove('stamp_active')
   }
 
   const positionStamp = e =>{
@@ -485,9 +482,9 @@ function init() {
   const stampAction = e =>{
     if (stampData.active) {
       const { w, h } = svgData[stampData.index]
-      const { left, top } = playground.getBoundingClientRect()
+      const { left, top } = artboard.getBoundingClientRect()
 
-      console.log(playground.parentNode.offsetLeft)
+      console.log(artboard.parentNode.offsetLeft)
       createSprite(
         stampData.index, 
         stampPos(e).x - left, stampPos(e).y - top, 
@@ -522,7 +519,7 @@ function init() {
         ? drawData[m] = !drawData[m]
         : drawData[m] = false
     })
-    playground.className = drawData[mode] ? `playground ${mode}_active` : 'playground'
+    artboard.className = drawData[mode] ? `artboard ${mode}_active` : 'artboard'
   }
 
   buttons.forEach(b =>{
@@ -538,26 +535,26 @@ function init() {
   hexInput.addEventListener('change',()=>{
     backgroundColor = hexInput.value
     colorLabel.style.backgroundColor = backgroundColor
-    playground.style.backgroundColor = backgroundColor
+    artboard.style.backgroundColor = backgroundColor
     createSign(svgWrapper(signSvg, invertHex(backgroundColor), signDim.w, signDim.h), hideBox)
   })
 
   colorInput.addEventListener('change',()=>{
     backgroundColor = colorInput.value
     hexInput.value = backgroundColor
-    playground.style.backgroundColor = backgroundColor
+    artboard.style.backgroundColor = backgroundColor
     colorLabel.style.backgroundColor = backgroundColor
     // createSign(svgWrapper(signSvg, invertHex(backgroundColor), signDim.w, signDim.h), hideBox)
   })
 
-  playground.addEventListener('mouseenter', activateStamp)
-  playground.addEventListener('mouseleave', deactivateStamp)
-  playground.addEventListener('mousemove', positionStamp)
-  playground.addEventListener('click', stampAction)
+  artboard.addEventListener('mouseenter', activateStamp)
+  artboard.addEventListener('mouseleave', deactivateStamp)
+  artboard.addEventListener('mousemove', positionStamp)
+  artboard.addEventListener('click', stampAction)
 
 
   window.addEventListener('mousemove', (e)=>{
-    const { left, top } = playground.getBoundingClientRect()
+    const { left, top } = artboard.getBoundingClientRect()
     indicator.innerHTML = `${e.pageX - 40 - left}-${e.pageY - 40 - top}`
   })
   
