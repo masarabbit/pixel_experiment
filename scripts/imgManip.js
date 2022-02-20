@@ -54,7 +54,13 @@ function init() {
   const indicator = document.querySelector('.indicator')
   const imageSmoothing = false
   const imageQuality = 'high'
-  let handleActive = false
+  const drawData = {
+    handleActive: false,
+    rotate: false,
+    resize: false,
+  }
+  // let handleActive = false
+
   // const seq = [1, 2, 3, 4]
   const seq = [0, 1, 2, 3]
   const gif = document.querySelector('.gif')
@@ -151,7 +157,7 @@ function init() {
       pos.b = pos.d - e.clientY
       pos.c = e.clientX
       pos.d = e.clientY
-      if (!handleActive) {
+      if (!drawData.handleActive) {
         const newX = target.offsetLeft - pos.a
         const newY = target.offsetTop - pos.b
 
@@ -178,7 +184,7 @@ function init() {
     const handle = target.childNodes[1]
     
     const onGrab = e =>{
-      if (!targetSpriteData.resize) return
+      if (!drawData.resize) return
       pos.new = e.clientX
       document.addEventListener('mouseup', onLetGo)
       document.addEventListener('mousemove', onDrag)
@@ -186,7 +192,7 @@ function init() {
     const onDrag = e =>{
       pos.old = e.clientX - pos.new
       pos.new = e.clientX
-      if (!handleActive) {
+      if (!drawData.handleActive) {
         const newW = targetSpriteData.w + pos.old
         const newH = targetSpriteData.h + pos.old
 
@@ -203,7 +209,7 @@ function init() {
     const onLetGo = () => {
       document.removeEventListener('mouseup', onLetGo)
       document.removeEventListener('mousemove', onDrag)
-      handleActive = false
+      drawData.handleActive = false
     }
     handle.addEventListener('mousedown', onGrab)
   }
@@ -213,9 +219,9 @@ function init() {
     const handle = target.childNodes[1]
     
     const onGrab = e =>{
-      if (!targetSpriteData.rotate) return
+      if (!drawData.rotate) return
       targetSpriteData.angle = getAngle(e)
-      handleActive = true
+      drawData.handleActive = true
       document.addEventListener('mouseup', onLetGo)
       document.addEventListener('mousemove', onDrag)
     }
@@ -238,7 +244,7 @@ function init() {
       document.removeEventListener('mouseup', onLetGo)
       document.removeEventListener('mousemove', onDrag)
       targetSpriteData.angle = getAngle(e)
-      handleActive = false
+      drawData.handleActive = false
     }
     handle.addEventListener('mousedown', onGrab)
   }
@@ -250,17 +256,13 @@ function init() {
       w: 80, h: 80,
       x, y,
       interval: null,
-      resize: true,
-      rotate: false
-      // resize: false,
-      // rotate: true
     }) //TODO need some way to keep track of this
 
     const newSprite = document.createElement('div')
     newSprite.classList.add('sprite_wrapper')
     newSprite.innerHTML = `
       <div class="handle">
-        <div class="handle_square display_none"></div>
+        <div class="handle_square"></div>
         <div class="resize_square"></div>
       </div>
       <div class="sprite_container" style="--color: ${svgData[index].color || svgData[index].main};"></div>`
@@ -317,21 +319,23 @@ function init() {
 
     paletteCells.forEach((cell, i) =>{
       cell.addEventListener('click', ()=>{
-        paletteCells.forEach(cell=>{
-          cell.classList.remove('selected')
-        })
-        if (stampData.index !== i) {
+        stampData.index = stampData.index === i ? null : i   
+        paletteCells.forEach(c => c.classList.remove('selected'))
+        if (stampData.index === i) {
           cell.classList.add('selected')
           selectedInput.value = i
-        }  
+          Object.assign(drawData, { resize: false, rotate: false,})
+          playground.className = 'playground'
+        } 
       })
       
-      // cell.addEventListener('click', ()=>createSprite(i))
       cell.addEventListener('click', ()=>createStamp(i))
     })
   }
 
   createPalette(palette, svgData)
+
+
 
 
 
@@ -551,8 +555,8 @@ function init() {
   const createStamp = i =>{
     // stamp.classList.toggle('display_none')
     // console.log(stampData)
-    stampData.active = stampData.index !== i ? true : false
-    stampData.index = i
+    stampData.active = stampData.index === i ? true : false
+    // stampData.index = i
     if (stampData.active) {
       // console.log(i)
       const { svg, frameNo, main, sub, color} = svgData[i]
@@ -569,6 +573,30 @@ function init() {
     }
   }
 
+  
+  // TODO make this one function ?
+  const toggleRotate = () =>{
+    stampData.active = false
+    document.querySelectorAll('.palette_cell').forEach(cell => cell.classList.remove('selected'))
+
+    Object.assign(drawData, {
+      rotate: !drawData.rotate,
+      resize: false,
+    })
+    playground.className = drawData.rotate ? 'playground rotate_active' : 'playground'
+  }
+
+  const toggleResize = () =>{
+    stampData.active = false
+    document.querySelectorAll('.palette_cell').forEach(cell => cell.classList.remove('selected'))
+
+    Object.assign(drawData, {
+      resize: !drawData.resize,
+      rotate: false,
+    })
+    playground.className = drawData.resize ? 'playground resize_active' : 'playground'
+  }
+
   buttons.forEach(b =>{
     const addClickEvent = (className, event) =>{
       if (b.classList.contains(className)) b.addEventListener('click', event)
@@ -576,6 +604,8 @@ function init() {
     addClickEvent('create_gif', createGif)
     // addClickEvent('compile', compileGif)
     addClickEvent('download_file', downloadGif)
+    addClickEvent('rotate', toggleRotate)
+    addClickEvent('resize', toggleResize)
     // addClickEvent('test', stopAnimation)
   })
 

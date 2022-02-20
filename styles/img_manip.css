@@ -493,6 +493,14 @@ button.icon:hover {
   pointer-events: auto;
   opacity: 0.2;
   cursor: pointer;
+  display: none;
+}
+
+
+
+.playground.resize_active .resize_square,
+.playground.rotate_active .handle_square{
+  display: block;
 }
 
 .handle_square {
@@ -501,6 +509,11 @@ button.icon:hover {
   background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAGdJREFUOE/Fk9EOABAIRfP/H8201dJ0V3ngieWcEgY9jgH4SUQozmi0YcMornlvAoFbAgtHpzuS2kUGFqlyMqnAh6RbgfbHN7FSCbPZW7iJQ8EW+3dQFogENRlW4N9AqwIr+S8IP+0CL/8REbaB6RMAAAAASUVORK5CYII=) repeat 0 0;
   top: 0px;
   right: 0px;
+}
+
+.rotate {
+  image-rendering: pixelated;
+  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAGdJREFUOE/Fk9EOABAIRfP/H8201dJ0V3ngieWcEgY9jgH4SUQozmi0YcMornlvAoFbAgtHpzuS2kUGFqlyMqnAh6RbgfbHN7FSCbPZW7iJQ8EW+3dQFogENRlW4N9AqwIr+S8IP+0CL/8REbaB6RMAAAAASUVORK5CYII=) repeat 0 0;
 }
 
 .resize_square:hover,
@@ -513,6 +526,11 @@ button.icon:hover {
   background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAFtJREFUOE+l09sKABAQBFD7/x9NPEiZW61XzcE2ajRXNfPjBabB4GEpQG+aAPKZDrAzUoAK73mdfQa48M0iIAlTIA1DQNUAdeSbAQNYwSJAtdMCUbVtUdxnawML/1gQEfCFy/kAAAAASUVORK5CYII=) repeat 0 0;
   bottom: 0px;
   right: 0px;
+}
+
+.resize {
+  image-rendering: pixelated;
+  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAFtJREFUOE+l09sKABAQBFD7/x9NPEiZW61XzcE2ajRXNfPjBabB4GEpQG+aAPKZDrAzUoAK73mdfQa48M0iIAlTIA1DQNUAdeSbAQNYwSJAtdMCUbVtUdxnawML/1gQEfCFy/kAAAAASUVORK5CYII=) repeat 0 0;
 }
 
 .sprite_container {
