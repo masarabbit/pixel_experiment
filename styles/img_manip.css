@@ -465,7 +465,7 @@ button.icon:hover {
 } 
 
 
-.sample_wrapper {
+.sprite_wrapper {
   position: absolute;
   pointer-events: auto;
   height: 80px;
@@ -515,7 +515,7 @@ button.icon:hover {
   right: 0px;
 }
 
-.sample {
+.sprite_container {
   position: absolute;
   /* background: rgba(22, 22, 94, 0.308); */
   height: 80px;
@@ -525,7 +525,7 @@ button.icon:hover {
 }
 
 @keyframes stamped {
-  0% { background: hotpink; }
+  0% { background: var(--color); }
   100% { background: transparent; }
 }
 
@@ -579,3 +579,15 @@ button.icon:hover {
 } */
 
 /* .cell.grid_hide { border: 0 !important; } */
+
+/* .color-test {
+  height: 100px;
+  width: 100px;
+  border: hotpink 1px solid;
+  animation: color_blink infinite 1s;
+}
+
+@keyframes color_blink {
+  0% {background-color: var(--color);}
+  100% {background-color: transparent;}
+} */

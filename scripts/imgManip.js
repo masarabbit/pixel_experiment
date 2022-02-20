@@ -46,16 +46,12 @@ function init() {
 
   const spriteData = []
   
-  // const sampleImg = document.querySelector('.sample')
-  // const sampleImgWrapper = document.querySelector('.sample_wrapper')
-  // const handle = document.querySelector('.handle')
   const palette = document.querySelector('.palette')
   const playground = document.querySelector('.playground')
   const canvas = document.querySelectorAll('canvas')
   const renderCanvas = document.querySelectorAll('.render_canvas')
   const stamp = document.querySelector('.stamp')
   const indicator = document.querySelector('.indicator')
-  // const indicatorTwo = document.querySelector('.indicator_two')
   const imageSmoothing = false
   const imageQuality = 'high'
   let handleActive = false
@@ -261,17 +257,17 @@ function init() {
     }) //TODO need some way to keep track of this
 
     const newSprite = document.createElement('div')
-    newSprite.classList.add('sample_wrapper')
+    newSprite.classList.add('sprite_wrapper')
     newSprite.innerHTML = `
       <div class="handle">
         <div class="handle_square display_none"></div>
         <div class="resize_square"></div>
       </div>
-      <div class="sample"></div>`
+      <div class="sprite_container" style="--color: ${svgData[index].color || svgData[index].main};"></div>`
     playground.append(newSprite)
     setTargetPos(newSprite, stampX, stampY)
 
-    const sprites = document.querySelectorAll('.sample_wrapper')
+    const sprites = document.querySelectorAll('.sprite_wrapper')
     spriteData.forEach((data, i)=>{
       const { svg, frameNo, main, sub, color} = svgData[data.svgIndex]
       const { w, h } = data
