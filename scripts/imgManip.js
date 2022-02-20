@@ -2,9 +2,9 @@ function init() {
 
   // TODO imageSmoothing might not be mixable.
 
-  // TODO add artboard resize
+  // TODO add image flip
 
-  // TODO z-index
+
 
   const svg = (main, sub) =>{
     const one = main || '#4d8da3'
@@ -55,12 +55,10 @@ function init() {
   const imageQuality = 'high'
   const seq = [0, 1, 2, 3]
   const gif = document.querySelector('.gif')
-  const colorInput = document.querySelector('#color')
-  const colorLabel = document.querySelector('.color_label')
-  const hexInput = document.querySelector('.hex')
-  const selectedInput = document.querySelector('.selected')
   const buttons = document.querySelectorAll('.button')
   const handleOffset = 32
+  const alts = document.querySelectorAll('.alt')
+  const cursor = document.querySelector('.cursor')
   let count = 0
   let speed = 300
   let imgName
@@ -71,9 +69,17 @@ function init() {
   }
   const drawData = {
     handleActive: false,
-    'rotate': false,
-    'resize': false,
+    rotate: false,
+    resize: false,
+    resize_artboard: false,
   } 
+
+  const rowInput = document.querySelector('.row')
+  const columnInput = document.querySelector('.column')
+  const colorInput = document.querySelector('#color')
+  const colorLabel = document.querySelector('.color_label')
+  const hexInput = document.querySelector('.hex')
+  const selectedInput = document.querySelector('.selected')
 
   const svgContentWrapper = ({ content, color, w, h } ) =>{
     return `
@@ -157,30 +163,33 @@ function init() {
   }
 
   
-  // TODO logic for handleActive not needed here?
-  // TODO another state to control drawData.artboardResize
+
   makeResizable = (target, spriteData) =>{
     const pos = { a: 0, b: 0, c: 0, d: 0 }
     const handle = target.childNodes[1]
     const isArtboard = target === artboard
     
     const onGrab = e =>{
-      if (!drawData.resize) return
-      if (!isArtboard) drawData.handleActive = true
-      console.log('test', drawData)
-      pos.c = e.clientX
-      pos.d = e.clientY    
-      document.addEventListener('mouseup', onLetGo)
-      document.addEventListener('mousemove', onDrag)
+      if (drawData.resize || drawData.resize_artboard ) {
+        if (!isArtboard) drawData.handleActive = true
+        console.log('test', drawData)
+        pos.c = e.clientX
+        pos.d = e.clientY    
+        document.addEventListener('mouseup', onLetGo)
+        document.addEventListener('mousemove', onDrag)
+      }
     }
     const onDrag = e =>{
       pos.a = e.clientX - pos.c
       pos.b = e.clientY - pos.d
       pos.c = e.clientX
       pos.d = e.clientY
-      if (isArtboard && !drawData.handleActive) {
+      if (isArtboard && drawData.resize_artboard) {
         const { width, height } = artboard.getBoundingClientRect()
-        setTargetSize(artboard, width + pos.a, height + pos.b)
+        columnInput.value = width + pos.a
+        rowInput.value = height + pos.b
+        setTargetSize(artboard, columnInput.value, rowInput.value)
+
       } else if (spriteData) {
       const newW = spriteData.w + pos.a
       const newH = spriteData.h + pos.a
@@ -530,6 +539,7 @@ function init() {
     addClickEvent('download_file', downloadGif)
     addClickEvent('rotate', ()=> toggleMode('rotate'))
     addClickEvent('resize', ()=> toggleMode('resize'))
+    addClickEvent('resize_artboard', ()=> toggleMode('resize_artboard'))
   })
 
   hexInput.addEventListener('change',()=>{
@@ -547,6 +557,18 @@ function init() {
     // createSign(svgWrapper(signSvg, invertHex(backgroundColor), signDim.w, signDim.h), hideBox)
   })
 
+  columnInput.addEventListener('change',()=> artboard.style.width = `${columnInput.value}px`)
+  rowInput.addEventListener('change',()=> artboard.style.height = `${rowInput.value}px` )
+  
+  const updateColumnRow = () =>{
+    const { width, height } = artboard.getBoundingClientRect()
+    columnInput.value = width
+    rowInput.value = height
+  }
+
+  updateColumnRow()
+  
+
   artboard.addEventListener('mouseenter', activateStamp)
   artboard.addEventListener('mouseleave', deactivateStamp)
   artboard.addEventListener('mousemove', positionStamp)
@@ -556,6 +578,22 @@ function init() {
   window.addEventListener('mousemove', (e)=>{
     const { left, top } = artboard.getBoundingClientRect()
     indicator.innerHTML = `${e.pageX - 40 - left}-${e.pageY - 40 - top}`
+  })
+
+  const handleCursor = e =>{
+    cursor.style.top = `${e.pageY}px`
+    cursor.style.left = `${e.pageX}px`
+  }
+  window.addEventListener('mousemove', handleCursor)
+
+
+  alts.forEach(button=>{
+    button.addEventListener('mouseover',(e)=>{
+      cursor.childNodes[0].innerHTML = e.target.dataset.alt
+    })
+    button.addEventListener('mouseleave',()=>{
+      cursor.childNodes[0].innerHTML = ''
+    })
   })
   
 
