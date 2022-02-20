@@ -1,7 +1,8 @@
 function init() {
 
   // TODO imageSmoothing might not be mixable.
-  // TODO addResize
+
+  // TODO add playground resize
 
   // TODO z-index
 
@@ -52,6 +53,7 @@ function init() {
   const playground = document.querySelector('.playground')
   const canvas = document.querySelectorAll('canvas')
   const renderCanvas = document.querySelectorAll('.render_canvas')
+  const stamp = document.querySelector('.stamp')
   const indicator = document.querySelector('.indicator')
   // const indicatorTwo = document.querySelector('.indicator_two')
   const imageSmoothing = false
@@ -68,11 +70,14 @@ function init() {
   const buttons = document.querySelectorAll('.button')
   let count = 0
   let speed = 300
+  let imgName
   const stampData = { 
     interval: null,
     active: false,
     index: null 
   }
+
+  const handleOffset = 32
 
   hexInput.addEventListener('change',()=>{
     backgroundColor = hexInput.value
@@ -102,7 +107,7 @@ function init() {
     >${content}</svg>`
   }
   
-  const animateSvg = ({ target, start, end, frameSize, spriteIndex, stamp }) => {
+  const animateSvg = ({ target, start, end, spriteIndex, stamp }) => {
     const startFrame = start || 0
     let i = startFrame
     const spriteObj = stamp 
@@ -110,26 +115,25 @@ function init() {
       : spriteData[spriteIndex] || { interval: null }
     clearInterval(spriteObj.interval)
     spriteObj.interval = setInterval(()=> {
-      target.style.marginLeft = `${-(i * (frameSize || 16))}px`
+      target.style.marginLeft = `${-(i * 100)}%`
       i = i >= end
         ? startFrame
         : i + 1
     }, speed || 200)
   }
   
-  const animateSprite = ({ target, content, w, h, frameNo, frameSize, color, spriteIndex }) =>{
+  const animateSprite = ({ target, content, w, h, frameNo, color, spriteIndex }) =>{
     target.innerHTML = `
       <div class="sprite">
-        ${svgContentWrapper({ content, w, h, color })}
+        ${svgContentWrapper({ content, w:16 * frameNo, color })}
       </div>
     `
-      
     const sprite = target.childNodes[1]
     Object.assign(sprite.style, {
-      width: `${80 * frameNo}px`, 
-      height: '80px'
+      width: `${w * frameNo}px`, 
+      height: `${h}px`
     })
-    animateSvg({ target: sprite, end: frameNo - 1, frameSize, spriteIndex })
+    animateSvg({ target: sprite, end: frameNo - 1, spriteIndex })
   }
 
   const setTargetPos = (target, x, y) =>{
@@ -169,11 +173,51 @@ function init() {
     target.addEventListener('mousedown', onGrab)
   }
 
+  const setTargetSize = (target, w, h) =>{
+    Object.assign(target.style, { width: `${w}px`, height: `${h}px` })
+  }
+
+  makeSpriteResizable = (target, targetSpriteData) =>{
+    const pos = { old: 0, new: 0 }
+    const handle = target.childNodes[1]
+    
+    const onGrab = e =>{
+      if (!targetSpriteData.resize) return
+      pos.new = e.clientX
+      document.addEventListener('mouseup', onLetGo)
+      document.addEventListener('mousemove', onDrag)
+    }
+    const onDrag = e =>{
+      pos.old = e.clientX - pos.new
+      pos.new = e.clientX
+      if (!handleActive) {
+        const newW = targetSpriteData.w + pos.old
+        const newH = targetSpriteData.h + pos.old
+
+        Object.assign(targetSpriteData, { 
+          w: newW, 
+          h: newH
+        })
+        const { frameNo } = svgData[targetSpriteData.svgIndex]
+        setTargetSize(handle, newW + handleOffset, newH + handleOffset)
+        setTargetSize(target.childNodes[3], newW, newH)
+        setTargetSize(target.childNodes[3].childNodes[1], newW * frameNo, newH)
+      }
+    }
+    const onLetGo = () => {
+      document.removeEventListener('mouseup', onLetGo)
+      document.removeEventListener('mousemove', onDrag)
+      handleActive = false
+    }
+    handle.addEventListener('mousedown', onGrab)
+  }
+
 
   makeSpriteRotatable = (target, targetSpriteData) =>{
     const handle = target.childNodes[1]
     
     const onGrab = e =>{
+      if (!targetSpriteData.rotate) return
       targetSpriteData.angle = getAngle(e)
       handleActive = true
       document.addEventListener('mouseup', onLetGo)
@@ -210,13 +254,18 @@ function init() {
       w: 80, h: 80,
       x, y,
       interval: null,
+      resize: true,
+      rotate: false
+      // resize: false,
+      // rotate: true
     }) //TODO need some way to keep track of this
 
     const newSprite = document.createElement('div')
     newSprite.classList.add('sample_wrapper')
     newSprite.innerHTML = `
       <div class="handle">
-        <div class="handle_square"></div>
+        <div class="handle_square display_none"></div>
+        <div class="resize_square"></div>
       </div>
       <div class="sample"></div>`
     playground.append(newSprite)
@@ -225,12 +274,12 @@ function init() {
     const sprites = document.querySelectorAll('.sample_wrapper')
     spriteData.forEach((data, i)=>{
       const { svg, frameNo, main, sub, color} = svgData[data.svgIndex]
+      const { w, h } = data
       animateSprite({
         target: sprites[i].childNodes[3],
         content: svg(main, sub),
-        w: 16 * frameNo,
+        w, h,
         frameNo,
-        frameSize: 80,
         color,
         spriteIndex: i,
       })
@@ -240,6 +289,7 @@ function init() {
     makeSpriteDraggable(newSprite, targetSpriteData)
     // console.log(newSprite.childNodes[1])
     makeSpriteRotatable(newSprite, targetSpriteData)
+    makeSpriteResizable(newSprite, targetSpriteData)
   }
 
   const createPalette = (target, svgData) =>{
@@ -301,22 +351,20 @@ function init() {
     const url = window.URL.createObjectURL(data)
     const imageTarget = new Image()
 
-    // const imageSmoothing = angle === 0 ? false : true
-    // * set up canvas
-    renderCanvas[0].width = w
-    renderCanvas[0].height = h
-    const ctxA = renderCanvas[0].getContext('2d')
-    ctxA.imageSmoothingEnabled = imageSmoothing
-    ctxA.imageSmoothingQuality = imageQuality
-
-    const hyp = Math.sqrt(Math.pow(w, 2) + Math.pow(h, 2))
-    renderCanvas[1].width = hyp
-    renderCanvas[1].height = hyp
-    const ctxB = renderCanvas[1].getContext('2d')
-    ctxB.imageSmoothingEnabled = imageSmoothing
-    ctxB.imageSmoothingQuality = imageQuality 
-
     imageTarget.onload = () => {
+      // * set up canvas
+      renderCanvas[0].width = w
+      renderCanvas[0].height = h
+      const ctxA = renderCanvas[0].getContext('2d')
+      ctxA.imageSmoothingEnabled = imageSmoothing
+      ctxA.imageSmoothingQuality = imageQuality
+
+      const hyp = Math.sqrt(Math.pow(w, 2) + Math.pow(h, 2))
+      renderCanvas[1].width = hyp
+      renderCanvas[1].height = hyp
+      const ctxB = renderCanvas[1].getContext('2d')
+      ctxB.imageSmoothingEnabled = imageSmoothing
+      ctxB.imageSmoothingQuality = imageQuality 
 
       ctxA.drawImage(
         imageTarget, 
@@ -363,15 +411,18 @@ function init() {
   //     return rem === 0 ? num : rem
   //   })
   // }
+
+  const animationFrame = (i, frameNo) =>{
+    const rem = i % frameNo
+    return rem === 0 ? frameNo : rem
+  }
   
   
   const outputSpriteData = (ctx, index) =>{
     spriteData.forEach(data =>{
-      const { svg, main, sub, color, frameNo, w, h } = svgData[data.svgIndex]
-      const { x, y, angle } = data
+      const { svg, main, sub, color, frameNo, } = svgData[data.svgIndex]
+      const { x, y, w, h, angle } = data
 
-      const rem = index % frameNo
-      // console.log('test', rem === 0 ? frameNo : rem)
       output({
         content: svgWrapper({
           content: svg(main, sub),
@@ -385,13 +436,14 @@ function init() {
         x, y,
         angle,
         frameNo,
-        currentFrame: rem === 0 ? frameNo : rem
+        currentFrame: animationFrame(index, frameNo)
       })
     })
   }
 
 
   const createGif = () =>{
+    console.log(spriteData)
     const encoder = new GIFEncoder()
     encoder.setRepeat(0) //auto-loop
     encoder.start()
@@ -433,7 +485,7 @@ function init() {
     gif.src = 'data:image/gif;base64,' + encode64(encoder.stream().getData())
   }
 
-  let imgName
+  
   const downloadGif = () =>{
     console.log('test', gif.src)
     if (!gif.src) return
@@ -457,7 +509,7 @@ function init() {
   // }
   // window.addEventListener('mousemove', handleCursor)
 
-  const stamp = document.querySelector('.stamp')
+  
 
   const stampPos = e =>{
     const { width: w, height: h } = stamp.getBoundingClientRect()
@@ -467,23 +519,23 @@ function init() {
     }
   }
 
-  playground.addEventListener('mouseenter', ()=> {
-    console.log(stampData)
+  const activateStamp = () =>{
     if (stampData.active) {
       stamp.classList.remove('display_none') 
       playground.classList.add('stamp_active')
     }
-  })
-  playground.addEventListener('mouseleave', ()=> {
+  }
+
+  const deactivateStamp = () =>{
     stamp.classList.add('display_none')
     playground.classList.remove('stamp_active')
-  })
-  playground.addEventListener('mousemove', e =>{
-    // indicator.innerHTML = `left:${playground.offsetLeft} - X:${e.pageX} - top:${playground.offsetTop} - Y:${e.pageY}`
-    indicator.innerHTML = `${e.pageX - playground.offsetLeft} - ${e.pageY - playground.offsetTop}`
+  }
+
+  const positionStamp = e =>{
     if (stampData.active) setTargetPos(stamp, stampPos(e).x, stampPos(e).y)
-  })
-  playground.addEventListener('click', e =>{
+  }
+
+  const stampAction = e =>{
     if (stampData.active) {
       const { w, h } = svgData[stampData.index]
       createSprite(
@@ -492,22 +544,28 @@ function init() {
         e.pageX - playground.offsetLeft - (w / 2), e.pageY - playground.offsetTop - (h / 2)
       )
     }
-  })
+  }
+
+  playground.addEventListener('mouseenter', activateStamp)
+  playground.addEventListener('mouseleave', deactivateStamp)
+  playground.addEventListener('mousemove', positionStamp)
+  playground.addEventListener('click', stampAction)
+
 
   const createStamp = i =>{
     // stamp.classList.toggle('display_none')
-    console.log(stampData)
+    // console.log(stampData)
     stampData.active = stampData.index !== i ? true : false
     stampData.index = i
     if (stampData.active) {
-      console.log(i)
+      // console.log(i)
       const { svg, frameNo, main, sub, color} = svgData[i]
         animateSprite({
           target: stamp,
           content: svg(main, sub),
-          w: 16 * frameNo,
+          w: 80,
+          h: 80,
           frameNo,
-          frameSize: 80,
           color,
           spriteIndex: i,
           stamp: true
@@ -532,35 +590,4 @@ function init() {
 
 window.addEventListener('DOMContentLoaded', init)
 
-
-  // const createMark = target =>{
-  //   const mark = document.createElement('div')
-  //   mark.classList.add('mark')
-  //   target.append(mark)
-  //   const { width, height } = target.getBoundingClientRect()
-  //   Object.assign(mark.style, {
-  //     left: `${(width / 2) - (mark.clientWidth / 2)}px`, 
-  //     top: `${(height / 2) - (mark.clientHeight / 2)}px`
-  //   })
-  // }
-  // createMark(sampleImgWrapper)
-
-  // window.addEventListener('mousemove',(e)=>{
-  //   indicator.innerHTML = `pageX:${e.pageX} - pageY${e.pageY}`
-  // })
-
-
-
-   // ? sample
-  // makeSpriteDraggable(sampleImgWrapper)
-  // animateSprite({
-  //   target: sampleImg,
-  //   content: svgData[0].svg(),
-  //   w: 32,
-  //   frameNo: 2,
-  //   frameSize: 80
-  // })
-  // makeSpriteRotatable(sampleImgWrapper, spriteData[0].angle)
-
-  // console.log(sampleImgWrapper.childNodes[3])
 
