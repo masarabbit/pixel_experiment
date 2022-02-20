@@ -45,7 +45,6 @@ function init() {
   ]
 
   const spriteData = []
-  
   const palette = document.querySelector('.palette')
   const playground = document.querySelector('.playground')
   const canvas = document.querySelectorAll('canvas')
@@ -54,22 +53,14 @@ function init() {
   const indicator = document.querySelector('.indicator')
   const imageSmoothing = false
   const imageQuality = 'high'
-  const drawData = {
-    handleActive: false,
-    rotate: false,
-    resize: false,
-  }
-  // let handleActive = false
-
-  // const seq = [1, 2, 3, 4]
   const seq = [0, 1, 2, 3]
   const gif = document.querySelector('.gif')
   const colorInput = document.querySelector('#color')
   const colorLabel = document.querySelector('.color_label')
   const hexInput = document.querySelector('.hex')
   const selectedInput = document.querySelector('.selected')
-
   const buttons = document.querySelectorAll('.button')
+  const handleOffset = 32
   let count = 0
   let speed = 300
   let imgName
@@ -78,24 +69,11 @@ function init() {
     active: false,
     index: null 
   }
-
-  const handleOffset = 32
-
-  hexInput.addEventListener('change',()=>{
-    backgroundColor = hexInput.value
-    colorLabel.style.backgroundColor = backgroundColor
-    playground.style.backgroundColor = backgroundColor
-    createSign(svgWrapper(signSvg, invertHex(backgroundColor), signDim.w, signDim.h), hideBox)
-  })
-
-  colorInput.addEventListener('change',()=>{
-    backgroundColor = colorInput.value
-    hexInput.value = backgroundColor
-    playground.style.backgroundColor = backgroundColor
-    colorLabel.style.backgroundColor = backgroundColor
-    // createSign(svgWrapper(signSvg, invertHex(backgroundColor), signDim.w, signDim.h), hideBox)
-  })
-
+  const drawData = {
+    handleActive: false,
+    'rotate': false,
+    'resize': false,
+  } 
 
   const svgContentWrapper = ({ content, color, w, h } ) =>{
     return `
@@ -141,7 +119,10 @@ function init() {
   const setTargetPos = (target, x, y) =>{
     Object.assign(target.style, { left: `${x}px`, top: `${y}px` })
   }
-
+  
+  const setTargetSize = (target, w, h) =>{
+    Object.assign(target.style, { width: `${w}px`, height: `${h}px` })
+  }
 
   const makeSpriteDraggable = (target, targetSpriteData) => {
     const pos = { a: 0, b: 0, c: 0, d: 0 }
@@ -175,10 +156,8 @@ function init() {
     target.addEventListener('mousedown', onGrab)
   }
 
-  const setTargetSize = (target, w, h) =>{
-    Object.assign(target.style, { width: `${w}px`, height: `${h}px` })
-  }
-
+  
+  // TODO logic for handleActive not needed here?
   makeSpriteResizable = (target, targetSpriteData) =>{
     const pos = { old: 0, new: 0 }
     const handle = target.childNodes[1]
@@ -186,6 +165,7 @@ function init() {
     const onGrab = e =>{
       if (!drawData.resize) return
       pos.new = e.clientX
+      // drawData.handleActive = true
       document.addEventListener('mouseup', onLetGo)
       document.addEventListener('mousemove', onDrag)
     }
@@ -226,7 +206,6 @@ function init() {
       document.addEventListener('mousemove', onDrag)
     }
     const getAngle = e =>{
-      // const mark = document.querySelector('.mark')
       const { left, top, width, height } = handle.getBoundingClientRect()
       const center = {
         x: left + width / 2 || 0,
@@ -256,7 +235,7 @@ function init() {
       w: 80, h: 80,
       x, y,
       interval: null,
-    }) //TODO need some way to keep track of this
+    })
 
     const newSprite = document.createElement('div')
     newSprite.classList.add('sprite_wrapper')
@@ -282,10 +261,8 @@ function init() {
         spriteIndex: i,
       })
     })
-    
     const targetSpriteData = spriteData[spriteData.length - 1]
     makeSpriteDraggable(newSprite, targetSpriteData)
-    // console.log(newSprite.childNodes[1])
     makeSpriteRotatable(newSprite, targetSpriteData)
     makeSpriteResizable(newSprite, targetSpriteData)
   }
@@ -314,9 +291,7 @@ function init() {
       })
       animateSvg({ target: cell, end: frameNo - 1, frameSize: 40 })
     })
-
     const paletteCells = document.querySelectorAll('.palette_cell')
-
     paletteCells.forEach((cell, i) =>{
       cell.addEventListener('click', ()=>{
         stampData.index = stampData.index === i ? null : i   
@@ -328,7 +303,6 @@ function init() {
           playground.className = 'playground'
         } 
       })
-      
       cell.addEventListener('click', ()=>createStamp(i))
     })
   }
@@ -336,15 +310,9 @@ function init() {
   createPalette(palette, svgData)
 
 
-
-
-
   //* +++++++++++++++++++++++++++++++
   //* +++++++ output image ++++++++++
   //* +++++++++++++++++++++++++++++++
-
-  // const dpr = window.devicePixelRatio || 1
-  // console.log('dpr', dpr)
 
   const output = ({ content, ctx, w, h, frameNo, currentFrame, x, y, angle}) =>{
     const data = new Blob([content], { type: 'image/svg+xml;charset=utf-8' })
@@ -373,9 +341,7 @@ function init() {
         0, 0,
         w * frameNo, h * frameNo
       )
-      
       ctxB.save()
-      // ctxB.clearRect(0, 0, hyp, hyp)
       ctxB.translate(hyp / 2 , hyp / 2)  //TODO need to investigate how rotation works
       ctxB.rotate(angle)
       ctxB.translate(-hyp / 2 ,-hyp / 2) 
@@ -397,29 +363,20 @@ function init() {
       ctxB.clearRect(0, 0, hyp, hyp)
       count++
       if (count === 4) {
-        // console.log('trigger', count)
         compileGif()
         count = 0
       }  
     }
     imageTarget.src = url
   }
-  
-  // const animationPattern = (arr, num) => {
-  //   return arr.map(item=>{
-  //     const rem = item % num
-  //     return rem === 0 ? num : rem
-  //   })
-  // }
 
   const animationFrame = (i, frameNo) =>{
     const rem = i % frameNo
     return rem === 0 ? frameNo : rem
   }
   
-  
   const outputSpriteData = (ctx, index) =>{
-    spriteData.forEach(data =>{
+    spriteData.forEach(data => {
       const { svg, main, sub, color, frameNo, } = svgData[data.svgIndex]
       const { x, y, w, h, angle } = data
 
@@ -443,12 +400,6 @@ function init() {
 
 
   const createGif = () =>{
-    console.log(spriteData)
-    const encoder = new GIFEncoder()
-    encoder.setRepeat(0) //auto-loop
-    encoder.start()
-
-    //* set up target canvas
     seq.forEach(i=>{
       // if (i === 0) canvas[i].classList.remove('display_none')
       const { width, height } = playground.getBoundingClientRect()
@@ -465,14 +416,13 @@ function init() {
 
   
   const compileGif = () =>{
-    //* start encoder
     const encoder = new GIFEncoder()
     encoder.setRepeat(0) //auto-loop
     encoder.start()
     
     seq.forEach(i=>{
       const ctx = canvas[i].getContext('2d')
-      encoder.setDelay(speed) // TODO set this value somewhere?
+      encoder.setDelay(speed)
       encoder.addFrame(ctx)
     })
     encoder.finish()
@@ -487,7 +437,6 @@ function init() {
 
   
   const downloadGif = () =>{
-    console.log('test', gif.src)
     if (!gif.src) return
 
     const link = document.createElement('a')
@@ -495,22 +444,7 @@ function init() {
     link.href = gif.src
     link.click()
   }
-
-  // const stopAnimation = () =>{
-  //   console.log(spriteData)
-  //   spriteData.forEach(data =>{
-  //     clearInterval(data.interval)
-  //   })
-  // }
-
-  // const handleCursor = e =>{
-  //   cursor.style.top = `${e.pageY}px`
-  //   cursor.style.left = `${e.pageX}px`
-  // }
-  // window.addEventListener('mousemove', handleCursor)
-
   
-
   const stampPos = e =>{
     const { width: w, height: h } = stamp.getBoundingClientRect()
     return {
@@ -546,25 +480,15 @@ function init() {
     }
   }
 
-  playground.addEventListener('mouseenter', activateStamp)
-  playground.addEventListener('mouseleave', deactivateStamp)
-  playground.addEventListener('mousemove', positionStamp)
-  playground.addEventListener('click', stampAction)
-
 
   const createStamp = i =>{
-    // stamp.classList.toggle('display_none')
-    // console.log(stampData)
     stampData.active = stampData.index === i ? true : false
-    // stampData.index = i
     if (stampData.active) {
-      // console.log(i)
       const { svg, frameNo, main, sub, color} = svgData[i]
         animateSprite({
           target: stamp,
           content: svg(main, sub),
-          w: 80,
-          h: 80,
+          w: 80, h: 80,
           frameNo,
           color,
           spriteIndex: i,
@@ -573,28 +497,16 @@ function init() {
     }
   }
 
-  
-  // TODO make this one function ?
-  const toggleRotate = () =>{
+  const toggleMode = mode =>{
     stampData.active = false
     document.querySelectorAll('.palette_cell').forEach(cell => cell.classList.remove('selected'))
 
-    Object.assign(drawData, {
-      rotate: !drawData.rotate,
-      resize: false,
+    Array.from(Object.keys(drawData)).forEach(m =>{
+      m === mode
+        ? drawData[m] = !drawData[m]
+        : drawData[m] = false
     })
-    playground.className = drawData.rotate ? 'playground rotate_active' : 'playground'
-  }
-
-  const toggleResize = () =>{
-    stampData.active = false
-    document.querySelectorAll('.palette_cell').forEach(cell => cell.classList.remove('selected'))
-
-    Object.assign(drawData, {
-      resize: !drawData.resize,
-      rotate: false,
-    })
-    playground.className = drawData.resize ? 'playground resize_active' : 'playground'
+    playground.className = drawData[mode] ? `playground ${mode}_active` : 'playground'
   }
 
   buttons.forEach(b =>{
@@ -602,18 +514,47 @@ function init() {
       if (b.classList.contains(className)) b.addEventListener('click', event)
     }
     addClickEvent('create_gif', createGif)
-    // addClickEvent('compile', compileGif)
     addClickEvent('download_file', downloadGif)
-    addClickEvent('rotate', toggleRotate)
-    addClickEvent('resize', toggleResize)
-    // addClickEvent('test', stopAnimation)
+    addClickEvent('rotate', ()=> toggleMode('rotate'))
+    addClickEvent('resize', ()=> toggleMode('resize'))
   })
 
+  hexInput.addEventListener('change',()=>{
+    backgroundColor = hexInput.value
+    colorLabel.style.backgroundColor = backgroundColor
+    playground.style.backgroundColor = backgroundColor
+    createSign(svgWrapper(signSvg, invertHex(backgroundColor), signDim.w, signDim.h), hideBox)
+  })
 
+  colorInput.addEventListener('change',()=>{
+    backgroundColor = colorInput.value
+    hexInput.value = backgroundColor
+    playground.style.backgroundColor = backgroundColor
+    colorLabel.style.backgroundColor = backgroundColor
+    // createSign(svgWrapper(signSvg, invertHex(backgroundColor), signDim.w, signDim.h), hideBox)
+  })
+
+  playground.addEventListener('mouseenter', activateStamp)
+  playground.addEventListener('mouseleave', deactivateStamp)
+  playground.addEventListener('mousemove', positionStamp)
+  playground.addEventListener('click', stampAction)
   
 
 }
 
 window.addEventListener('DOMContentLoaded', init)
 
+
+// const stopAnimation = () =>{
+  //   console.log(spriteData)
+  //   spriteData.forEach(data =>{
+  //     clearInterval(data.interval)
+  //   })
+  // }
+
+  // const handleCursor = e =>{
+  //   cursor.style.top = `${e.pageY}px`
+  //   cursor.style.left = `${e.pageX}px`
+  // }
+  // window.addEventListener('mousemove', handleCursor)
 
