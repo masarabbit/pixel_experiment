@@ -158,41 +158,54 @@ function init() {
 
   
   // TODO logic for handleActive not needed here?
+  // TODO another state to control drawData.playgroundResize
   makeSpriteResizable = (target, targetSpriteData) =>{
-    const pos = { old: 0, new: 0 }
+    const pos = { a: 0, b: 0, c: 0, d: 0 }
     const handle = target.childNodes[1]
+    const isPlayground = target === playground
     
     const onGrab = e =>{
       if (!drawData.resize) return
-      pos.new = e.clientX
+      console.log('test', drawData)
+      pos.c = e.clientX
+      pos.d = e.clientY
       // drawData.handleActive = true
       document.addEventListener('mouseup', onLetGo)
       document.addEventListener('mousemove', onDrag)
     }
     const onDrag = e =>{
-      pos.old = e.clientX - pos.new
-      pos.new = e.clientX
-      if (!drawData.handleActive) {
-        const newW = targetSpriteData.w + pos.old
-        const newH = targetSpriteData.h + pos.old
+      pos.a = e.clientX - pos.c
+      pos.b = e.clientY - pos.d
+      pos.c = e.clientX
+      pos.d = e.clientY
+      if (isPlayground && drawData.playgroundResize) {
+        const { width, height } = playground.getBoundingClientRect()
+        setTargetSize(playground, width + pos.a, height + pos.b)
+      } else if (targetSpriteData) {
+      const newW = targetSpriteData.w + pos.a
+      const newH = targetSpriteData.h + pos.b
 
-        Object.assign(targetSpriteData, { 
-          w: newW, 
-          h: newH
-        })
-        const { frameNo } = svgData[targetSpriteData.svgIndex]
-        setTargetSize(handle, newW + handleOffset, newH + handleOffset)
-        setTargetSize(target.childNodes[3], newW, newH)
-        setTargetSize(target.childNodes[3].childNodes[1], newW * frameNo, newH)
+      Object.assign(targetSpriteData, { 
+        w: newW, 
+        h: newH
+      })
+      const { frameNo } = svgData[targetSpriteData.svgIndex]
+      setTargetSize(handle, newW + handleOffset, newH + handleOffset)
+      setTargetSize(target.childNodes[3], newW, newH)
+      setTargetSize(target.childNodes[3].childNodes[1], newW * frameNo, newH)
       }
     }
     const onLetGo = () => {
       document.removeEventListener('mouseup', onLetGo)
       document.removeEventListener('mousemove', onDrag)
-      drawData.handleActive = false
+      // drawData.handleActive = false
     }
-    handle.addEventListener('mousedown', onGrab)
+    isPlayground 
+      ? playground.addEventListener('mousedown', onGrab)
+      : handle.addEventListener('mousedown', onGrab)
   }
+
+  makeSpriteResizable(playground)
 
 
   makeSpriteRotatable = (target, targetSpriteData) =>{
@@ -472,10 +485,13 @@ function init() {
   const stampAction = e =>{
     if (stampData.active) {
       const { w, h } = svgData[stampData.index]
+      const { left, top } = playground.getBoundingClientRect()
+
+      console.log(playground.parentNode.offsetLeft)
       createSprite(
         stampData.index, 
-        stampPos(e).x, stampPos(e).y, 
-        e.pageX - playground.offsetLeft - (w / 2), e.pageY - playground.offsetTop - (h / 2)
+        stampPos(e).x - left, stampPos(e).y - top, 
+        e.pageX - (w / 2) - left, e.pageY - (h / 2) - top
       )
     }
   }
@@ -538,6 +554,12 @@ function init() {
   playground.addEventListener('mouseleave', deactivateStamp)
   playground.addEventListener('mousemove', positionStamp)
   playground.addEventListener('click', stampAction)
+
+
+  window.addEventListener('mousemove', (e)=>{
+    const { left, top } = playground.getBoundingClientRect()
+    indicator.innerHTML = `${e.pageX - 40 - left}-${e.pageY - 40 - top}`
+  })
   
 
 }
@@ -552,9 +574,10 @@ window.addEventListener('DOMContentLoaded', init)
   //   })
   // }
 
-  // const handleCursor = e =>{
+    // const handleCursor = e =>{
   //   cursor.style.top = `${e.pageY}px`
   //   cursor.style.left = `${e.pageX}px`
   // }
-  // window.addEventListener('mousemove', handleCursor)
+
+  
 

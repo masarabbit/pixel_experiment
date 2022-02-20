@@ -10,14 +10,6 @@ body {
 }
 
 
-/* .trace_output {
-  color: white;
-  position: fixed;
-  z-index: 300;
-  top: 50px;
-  left: 10px;
-  font-size: 10px;
-} */
 
 nav {
   position: fixed;
@@ -399,23 +391,6 @@ button.icon:hover {
   pointer-events: none;
 }
 
-.copy_box {
-  position: absolute;
-  /* border: yellow 1px solid; */
-  background-color: #fc8a2770;
-  pointer-events: none;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-  align-items: flex-end;
-  /* border: dashed 4px #000;
-  animation: dash-border infinite 2s; */
-}
-
-
-.copy_box.move { pointer-events: auto; }
-
-.copy_grid.fix { pointer-events: none; }
 
 
 .indicator {
@@ -448,13 +423,26 @@ button.icon:hover {
 .copy_grid.grid_hide div{ border: 0 !important; }
 .grid.grid_hide div{ border: 0 !important; }
 
-.playground {
+.playground_wrapper {
   /* position: absolute; */
+  position: relative;
   /* border: pink 1px solid; */
   margin: 20px;
   height: 300px;
   /* width: 600px; */
   width: calc(100% - 40px);
+  /* width: 300px;
+  height: 200px; */
+}
+
+.playground {
+  position: absolute;
+  /* position: relative; */
+  /* border: pink 1px solid; */
+  height: 300px;
+  /* width: 600px; */
+  width: calc(100% - 40px);
+  margin-left: 20px;
   /* width: 300px;
   height: 200px; */
   background-color: #fff;
@@ -501,6 +489,22 @@ button.icon:hover {
 .playground.resize_active .resize_square,
 .playground.rotate_active .handle_square{
   display: block;
+}
+
+.playground.resize_active::before {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  content: '';
+  bottom: 0px;
+  right: 0px;
+  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAFtJREFUOE+l09sKABAQBFD7/x9NPEiZW61XzcE2ajRXNfPjBabB4GEpQG+aAPKZDrAzUoAK73mdfQa48M0iIAlTIA1DQNUAdeSbAQNYwSJAtdMCUbVtUdxnawML/1gQEfCFy/kAAAAASUVORK5CYII=) repeat 0 0;
+  opacity: 0.3;
+}
+
+
+.playground.resize_active:hover::before {
+  opacity: 0.6;
 }
 
 .handle_square {
