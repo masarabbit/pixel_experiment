@@ -658,6 +658,7 @@ function init() {
     const fillValue = erase ? 'transparent' : colorInput.value  //! '' instead of transparent
     const areaToFillBucket = []
     const valueToSwap = codes[0][index]
+    // console.log(codes[0], areaToFillBucket)
     
     checkAreaToFill(codes[0], +index, valueToSwap, areaToFillBucket)
 
@@ -874,13 +875,16 @@ function init() {
 
 
   rowInput.addEventListener('change',()=>{
+    codes[0] = codesBox.value || Array(row * column).fill('transparent')
     const newRow = +rowInput.value
     const diff = Math.abs(newRow - row) 
+    // console.log('diff', diff)
     codesBox[0].value = newRow > row
       ?  [...codes[0], ...Array(diff * column).fill('transparent')]
       :  codes[0].slice(0, codes[0].length - (diff * column))
     row = newRow
     codes[0] = codesBox[0].value
+    // console.log('codes[0]', codes[0].split(',').length)
     paintCanvas()
     generateFromColorCode()
     // console.log('row', row)
@@ -888,6 +892,7 @@ function init() {
 
 
   columnInput.addEventListener('change',()=>{
+    codes[0] = codesBox.value || Array(row * column).fill('transparent')
     const newColumn = +columnInput.value
     const updatedCodes = [[]]
     let count = 0
@@ -904,6 +909,7 @@ function init() {
 
     codesBox[0].value = updatedCodes.map(codes=>{
       const diff = Math.abs(newColumn - column) //TODO adjust arrays
+      // console.log('diff', diff)
       if (newColumn > column){
         return [...codes, ...Array(diff).fill('transparent')]
       } else {
@@ -914,6 +920,7 @@ function init() {
     // prev[0].column = column
     column = newColumn
     codes[0] = codesBox[0].value
+    // console.log('codes[0]', codes[0].split(',').length)
     paintCanvas()
     generateFromColorCode()
     // console.log('column',column)
