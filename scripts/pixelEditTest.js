@@ -875,7 +875,7 @@ function init() {
 
 
   rowInput.addEventListener('change',()=>{
-    codes[0] = codesBox.value || Array(row * column).fill('transparent')
+    codes[0] = codesBox[0].value.split(',').length < 1 || Array(row * column).fill('transparent')
     const newRow = +rowInput.value
     const diff = Math.abs(newRow - row) 
     // console.log('diff', diff)
@@ -892,7 +892,7 @@ function init() {
 
 
   columnInput.addEventListener('change',()=>{
-    codes[0] = codesBox.value || Array(row * column).fill('transparent')
+    codes[0] = codesBox[0].value.split(',').length < 1 || Array(row * column).fill('transparent')
     const newColumn = +columnInput.value
     const updatedCodes = [[]]
     let count = 0
