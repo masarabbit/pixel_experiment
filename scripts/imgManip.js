@@ -4,6 +4,8 @@ function init() {
 
   // TODO add image flip
 
+  // TODO make it draggable on the phone, and make the ui responsive
+
 
 
   const svg = (main, sub) =>{
@@ -134,16 +136,21 @@ function init() {
     const pos = { a: 0, b: 0, c: 0, d: 0 }
 
     const onGrab = e => {
-      pos.c = e.clientX
-      pos.d = e.clientY
+      pos.c = e.type === 'mousedown' ? e.clientX : e.touches[0].clientX
+      pos.d = e.type === 'mousedown' ? e.clientY : e.touches[0].clientY
       document.addEventListener('mouseup', onLetGo)
       document.addEventListener('mousemove', onDrag)
+
+      document.addEventListener('touchend', onLetGo)
+      document.addEventListener('touchmove', onDrag)
     }
     const onDrag = e => {
-      pos.a = pos.c - e.clientX
-      pos.b = pos.d - e.clientY
-      pos.c = e.clientX
-      pos.d = e.clientY
+      const x = e.type === 'mousemove' ? e.clientX : e.touches[0].clientX
+      const y = e.type === 'mousemove' ? e.clientY : e.touches[0].clientY
+      pos.a = pos.c - x
+      pos.b = pos.d - y
+      pos.c = x
+      pos.d = y
       if (!drawData.handleActive) {
         const newX = target.offsetLeft - pos.a
         const newY = target.offsetTop - pos.b
@@ -158,8 +165,12 @@ function init() {
     const onLetGo = () => {
       document.removeEventListener('mouseup', onLetGo)
       document.removeEventListener('mousemove', onDrag)
+
+      document.removeEventListener('touchend', onLetGo)
+      document.removeEventListener('touchmove', onDrag)
     }
     target.addEventListener('mousedown', onGrab)
+    target.addEventListener('touchstart', onGrab)
   }
 
   
