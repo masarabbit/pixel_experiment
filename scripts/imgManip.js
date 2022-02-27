@@ -132,17 +132,37 @@ function init() {
     Object.assign(target.style, { width: `${w}px`, height: `${h}px` })
   }
 
+  const mouseUp = (target, action, event) =>{
+    ['mouseup', 'touchend'].forEach(a => {
+      event === 'remove' ? target.removeEventListener(a, action) : target.addEventListener(a, action)
+    })
+  }
+
+  const mouseMove = (target, action, event) =>{
+    ['mousemove', 'touchmove'].forEach(a => {
+      event === 'remove' ? target.removeEventListener(a, action) : target.addEventListener(a, action)
+    })
+  }
+
+  const mouseDown = (target, action, event) =>{
+    ['mousedown', 'touchstart'].forEach(a =>{
+      event === 'remove' ? target.removeEventListener(a, action) : target.addEventListener(a, action)
+    })
+  }
+
   const makeSpriteDraggable = (target, targetSpriteData) => {
     const pos = { a: 0, b: 0, c: 0, d: 0 }
 
     const onGrab = e => {
       pos.c = e.type === 'mousedown' ? e.clientX : e.touches[0].clientX
       pos.d = e.type === 'mousedown' ? e.clientY : e.touches[0].clientY
-      document.addEventListener('mouseup', onLetGo)
-      document.addEventListener('mousemove', onDrag)
+      mouseUp(document, onLetGo, 'add')
+      mouseMove(document, onDrag, 'add')
+      // document.addEventListener('mouseup', onLetGo)
+      // document.addEventListener('mousemove', onDrag)
 
-      document.addEventListener('touchend', onLetGo)
-      document.addEventListener('touchmove', onDrag)
+      // document.addEventListener('touchend', onLetGo)
+      // document.addEventListener('touchmove', onDrag)
     }
     const onDrag = e => {
       const x = e.type === 'mousemove' ? e.clientX : e.touches[0].clientX
@@ -163,19 +183,22 @@ function init() {
       }
     }
     const onLetGo = () => {
-      document.removeEventListener('mouseup', onLetGo)
-      document.removeEventListener('mousemove', onDrag)
+      mouseUp(document, onLetGo, 'remove')
+      mouseMove(document, onDrag, 'remove')
+      // document.removeEventListener('mouseup', onLetGo)
+      // document.removeEventListener('mousemove', onDrag)
 
-      document.removeEventListener('touchend', onLetGo)
-      document.removeEventListener('touchmove', onDrag)
+      // document.removeEventListener('touchend', onLetGo)
+      // document.removeEventListener('touchmove', onDrag)
     }
-    target.addEventListener('mousedown', onGrab)
-    target.addEventListener('touchstart', onGrab)
+    mouseDown(target, onGrab, 'add')
+    // target.addEventListener('mousedown', onGrab)
+    // target.addEventListener('touchstart', onGrab)
   }
 
   
 
-  makeResizable = (target, spriteData) =>{
+  const makeResizable = (target, spriteData) =>{
     const pos = { a: 0, b: 0, c: 0, d: 0 }
     const handle = target.childNodes[1]
     const isArtboard = target === artboard
@@ -186,11 +209,13 @@ function init() {
         console.log('test', drawData)
         pos.c = e.type === 'mousedown' ? e.clientX : e.touches[0].clientX
         pos.d = e.type === 'mousedown' ? e.clientY : e.touches[0].clientY   
-        document.addEventListener('mouseup', onLetGo)
-        document.addEventListener('mousemove', onDrag)
+        mouseUp(document, onLetGo, 'add')
+        mouseMove(document, onDrag, 'add')
+        // document.addEventListener('mouseup', onLetGo)
+        // document.addEventListener('mousemove', onDrag)
 
-        document.addEventListener('touchend', onLetGo)
-        document.addEventListener('touchmove', onDrag)
+        // document.addEventListener('touchend', onLetGo)
+        // document.addEventListener('touchmove', onDrag)
       }
     }
     const onDrag = e =>{
@@ -207,48 +232,55 @@ function init() {
         setTargetSize(artboard, columnInput.value, rowInput.value)
 
       } else if (spriteData) {
-      const newW = spriteData.w + pos.a
-      const newH = spriteData.h + pos.a
+        const newW = spriteData.w + pos.a
+        const newH = spriteData.h + pos.a
 
-      Object.assign(spriteData, { w: newW, h: newH })
-      const { frameNo } = svgData[spriteData.svgIndex]
-      setTargetSize(handle, newW + handleOffset, newH + handleOffset)
-      setTargetSize(target.childNodes[3], newW, newH)
-      setTargetSize(target.childNodes[3].childNodes[1], newW * frameNo, newH)
+        Object.assign(spriteData, { w: newW, h: newH })
+        const { frameNo } = svgData[spriteData.svgIndex]
+        setTargetSize(handle, newW + handleOffset, newH + handleOffset)
+        setTargetSize(target.childNodes[3], newW, newH)
+        setTargetSize(target.childNodes[3].childNodes[1], newW * frameNo, newH)
       }
     }
     const onLetGo = () => {
-      document.removeEventListener('mouseup', onLetGo)
-      document.removeEventListener('mousemove', onDrag)
+      // document.removeEventListener('mouseup', onLetGo)
+      // document.removeEventListener('mousemove', onDrag)
 
-      document.removeEventListener('touchend', onLetGo)
-      document.removeEventListener('touchmove', onDrag)
+      // document.removeEventListener('touchend', onLetGo)
+      // document.removeEventListener('touchmove', onDrag)
+      mouseUp(document, onLetGo, 'remove')
+      mouseMove(document, onDrag, 'remove')
       drawData.handleActive = false
     }
-    if (isArtboard){
-      artboard.addEventListener('mousedown', onGrab)
-      artboard.addEventListener('touchstart', onGrab)
-    } else {
-      handle.addEventListener('mousedown', onGrab)
-      handle.addEventListener('touchstart', onGrab)
-    }
+    isArtboard 
+      ? mouseDown(artboard, onGrab, 'add')
+      : mouseDown(handle, onGrab, 'add')
+    // if (isArtboard){
+    //   artboard.addEventListener('mousedown', onGrab)
+    //   artboard.addEventListener('touchstart', onGrab)
+    // } else {
+    //   handle.addEventListener('mousedown', onGrab)
+    //   handle.addEventListener('touchstart', onGrab)
+    // }
   }
 
   makeResizable(artboard)
 
 
-  makeSpriteRotatable = (target, spriteData) =>{
+  const makeSpriteRotatable = (target, spriteData) =>{
     const handle = target.childNodes[1]
     
     const onGrab = e =>{
       if (!drawData.rotate) return
       spriteData.angle = getAngle(e)
       drawData.handleActive = true
-      document.addEventListener('mouseup', onLetGo)
-      document.addEventListener('mousemove', onDrag)
+      mouseUp(document, onLetGo, 'add')
+      mouseMove(document, onDrag, 'add')
+      // document.addEventListener('mouseup', onLetGo)
+      // document.addEventListener('mousemove', onDrag)
 
-      document.addEventListener('touchend', onLetGo)
-      document.addEventListener('touchmove', onDrag)
+      // document.addEventListener('touchend', onLetGo)
+      // document.addEventListener('touchmove', onDrag)
     }
     const getAngle = e =>{
       const { left, top, width, height } = handle.getBoundingClientRect()
@@ -256,8 +288,8 @@ function init() {
         x: left + width / 2 || 0,
         y: top + height / 2 || 0,
       }
-      const x = e.type === 'mousemove' ? e.pageX : e.touches[0].pageX
-      const y = e.type === 'mousemove' ? e.pageY : e.touches[0].pageY
+      const x = e.type[0] === 'm' ? e.pageX : e.touches[0].pageX
+      const y = e.type[0] === 'm' ? e.pageY : e.touches[0].pageY
 
       const newAngle = Math.atan2(center.y - y, center.x - x)
       return newAngle - spriteData.angle
@@ -268,16 +300,19 @@ function init() {
       handle.style.transform = `rotate(${newAngle}rad)`
     }
     const onLetGo = e => {
-      document.removeEventListener('mouseup', onLetGo)
-      document.removeEventListener('mousemove', onDrag)
+      mouseUp(document, onLetGo, 'remove')
+      mouseMove(document, onDrag, 'remove')
+      // document.removeEventListener('mouseup', onLetGo)
+      // document.removeEventListener('mousemove', onDrag)
 
-      document.removeEventListener('touchend', onLetGo)
-      document.removeEventListener('touchmove', onDrag)
+      // document.removeEventListener('touchend', onLetGo)
+      // document.removeEventListener('touchmove', onDrag)
       spriteData.angle = getAngle(e)
       drawData.handleActive = false
     }
-    handle.addEventListener('mousedown', onGrab)
-    handle.addEventListener('touchstart', onGrab)
+    mouseDown(handle, onGrab, 'add')
+    // handle.addEventListener('mousedown', onGrab)
+    // handle.addEventListener('touchstart', onGrab)
   }
   
   const createSprite = (index, stampX, stampY, x, y) =>{
@@ -576,14 +611,14 @@ function init() {
   })
 
   hexInput.addEventListener('change',()=>{
-    backgroundColor = hexInput.value
+    const backgroundColor = hexInput.value
     colorLabel.style.backgroundColor = backgroundColor
     artboard.style.backgroundColor = backgroundColor
-    createSign(svgWrapper(signSvg, invertHex(backgroundColor), signDim.w, signDim.h), hideBox)
+    // createSign(svgWrapper(signSvg, invertHex(backgroundColor), signDim.w, signDim.h), hideBox)
   })
 
   colorInput.addEventListener('change',()=>{
-    backgroundColor = colorInput.value
+    const backgroundColor = colorInput.value
     hexInput.value = backgroundColor
     artboard.style.backgroundColor = backgroundColor
     colorLabel.style.backgroundColor = backgroundColor
