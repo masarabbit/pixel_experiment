@@ -5,7 +5,9 @@ function init() {
   // TODO add image flip
 
   // TODO make it draggable on the phone, and make the ui responsive
+  // partly done, but not fully...
 
+  // TODO use setTargetPos and setTargetSize where possible
 
 
   const svg = (main, sub) =>{
