@@ -620,6 +620,12 @@ button.icon:hover {
   overflow: hidden;
 }
 
+.output {
+  position: relative;
+  color: white;
+  width: 100%;
+}
+
 
 
 /* .test_img {

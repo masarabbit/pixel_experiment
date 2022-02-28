@@ -48,7 +48,7 @@ function init() {
     },
   ]
 
-  const spriteData = []
+  const spriteDatas = []
   const palette = document.querySelector('.palette')
   const artboard = document.querySelector('.artboard')
   const canvas = document.querySelectorAll('canvas')
@@ -84,6 +84,7 @@ function init() {
   const colorLabel = document.querySelector('.color_label')
   const hexInput = document.querySelector('.hex')
   const selectedInput = document.querySelector('.selected')
+  const outputBox = document.querySelector('.output')
 
   const svgContentWrapper = ({ content, color, w, h } ) =>{
     return `
@@ -102,7 +103,7 @@ function init() {
     let i = startFrame
     const spriteObj = stamp 
       ? stampData
-      : spriteData[spriteIndex] || { interval: null }
+      : spriteDatas[spriteIndex] || { interval: null }
     clearInterval(spriteObj.interval)
     spriteObj.interval = setInterval(()=> {
       target.style.marginLeft = `${-(i * 100)}%`
@@ -160,11 +161,6 @@ function init() {
       pos.d = e.type === 'mousedown' ? e.clientY : e.touches[0].clientY
       mouseUp(document, onLetGo, 'add')
       mouseMove(document, onDrag, 'add')
-      // document.addEventListener('mouseup', onLetGo)
-      // document.addEventListener('mousemove', onDrag)
-
-      // document.addEventListener('touchend', onLetGo)
-      // document.addEventListener('touchmove', onDrag)
     }
     const onDrag = e => {
       const x = e.type === 'mousemove' ? e.clientX : e.touches[0].clientX
@@ -187,15 +183,8 @@ function init() {
     const onLetGo = () => {
       mouseUp(document, onLetGo, 'remove')
       mouseMove(document, onDrag, 'remove')
-      // document.removeEventListener('mouseup', onLetGo)
-      // document.removeEventListener('mousemove', onDrag)
-
-      // document.removeEventListener('touchend', onLetGo)
-      // document.removeEventListener('touchmove', onDrag)
     }
     mouseDown(target, onGrab, 'add')
-    // target.addEventListener('mousedown', onGrab)
-    // target.addEventListener('touchstart', onGrab)
   }
 
   
@@ -213,11 +202,6 @@ function init() {
         pos.d = e.type === 'mousedown' ? e.clientY : e.touches[0].clientY   
         mouseUp(document, onLetGo, 'add')
         mouseMove(document, onDrag, 'add')
-        // document.addEventListener('mouseup', onLetGo)
-        // document.addEventListener('mousemove', onDrag)
-
-        // document.addEventListener('touchend', onLetGo)
-        // document.addEventListener('touchmove', onDrag)
       }
     }
     const onDrag = e =>{
@@ -245,11 +229,6 @@ function init() {
       }
     }
     const onLetGo = () => {
-      // document.removeEventListener('mouseup', onLetGo)
-      // document.removeEventListener('mousemove', onDrag)
-
-      // document.removeEventListener('touchend', onLetGo)
-      // document.removeEventListener('touchmove', onDrag)
       mouseUp(document, onLetGo, 'remove')
       mouseMove(document, onDrag, 'remove')
       drawData.handleActive = false
@@ -257,13 +236,6 @@ function init() {
     isArtboard 
       ? mouseDown(artboard, onGrab, 'add')
       : mouseDown(handle, onGrab, 'add')
-    // if (isArtboard){
-    //   artboard.addEventListener('mousedown', onGrab)
-    //   artboard.addEventListener('touchstart', onGrab)
-    // } else {
-    //   handle.addEventListener('mousedown', onGrab)
-    //   handle.addEventListener('touchstart', onGrab)
-    // }
   }
 
   makeResizable(artboard)
@@ -278,11 +250,6 @@ function init() {
       drawData.handleActive = true
       mouseUp(document, onLetGo, 'add')
       mouseMove(document, onDrag, 'add')
-      // document.addEventListener('mouseup', onLetGo)
-      // document.addEventListener('mousemove', onDrag)
-
-      // document.addEventListener('touchend', onLetGo)
-      // document.addEventListener('touchmove', onDrag)
     }
     const getAngle = e =>{
       const { left, top, width, height } = handle.getBoundingClientRect()
@@ -304,21 +271,17 @@ function init() {
     const onLetGo = e => {
       mouseUp(document, onLetGo, 'remove')
       mouseMove(document, onDrag, 'remove')
-      // document.removeEventListener('mouseup', onLetGo)
-      // document.removeEventListener('mousemove', onDrag)
-
-      // document.removeEventListener('touchend', onLetGo)
-      // document.removeEventListener('touchmove', onDrag)
       spriteData.angle = getAngle(e)
+
+      spriteData.degree = Math.round(spriteData.angle * (180 / Math.PI))
+      outputBox.innerHTML = JSON.stringify(spriteDatas)
       drawData.handleActive = false
     }
     mouseDown(handle, onGrab, 'add')
-    // handle.addEventListener('mousedown', onGrab)
-    // handle.addEventListener('touchstart', onGrab)
   }
   
-  const createSprite = (index, stampX, stampY, x, y) =>{
-    spriteData.push({ 
+  const createSprite = ({index, stampX, stampY, x, y}) =>{
+    spriteDatas.push({ 
       angle: 0,
       svgIndex: index,
       w: 80, h: 80,
@@ -338,7 +301,7 @@ function init() {
     setTargetPos(newSprite, stampX, stampY)
 
     const sprites = document.querySelectorAll('.sprite_wrapper')
-    spriteData.forEach((data, i)=>{
+    spriteDatas.forEach((data, i)=>{
       const { svg, frameNo, main, sub, color} = svgData[data.svgIndex]
       const { w, h } = data
       animateSprite({
@@ -350,7 +313,7 @@ function init() {
         spriteIndex: i,
       })
     })
-    const targetSpriteData = spriteData[spriteData.length - 1]
+    const targetSpriteData = spriteDatas[spriteDatas.length - 1]
     makeSpriteDraggable(newSprite, targetSpriteData)
     makeSpriteRotatable(newSprite, targetSpriteData)
     makeResizable(newSprite, targetSpriteData)
@@ -465,7 +428,7 @@ function init() {
   }
   
   const outputSpriteData = (ctx, index) =>{
-    spriteData.forEach(data => {
+    spriteDatas.forEach(data => {
       const { svg, main, sub, color, frameNo, } = svgData[data.svgIndex]
       const { x, y, w, h, angle } = data
 
@@ -542,15 +505,19 @@ function init() {
     }
   }
 
+  const isTouchDevice = () => {
+    return ( 'ontouchstart' in window ) || ( navigator.maxTouchPoints > 0 ) || ( navigator.msMaxTouchPoints > 0 )
+  }
+
   const activateStamp = () =>{
     if (stampData.active) {
-      stamp.classList.remove('display_none') 
+      if (!isTouchDevice()) stamp.classList.remove('display_none') 
       artboard.classList.add('stamp_active')
     }
   }
 
   const deactivateStamp = () =>{
-    stamp.classList.add('display_none')
+    if (!isTouchDevice()) stamp.classList.add('display_none')
     artboard.classList.remove('stamp_active')
   }
 
@@ -562,15 +529,18 @@ function init() {
     if (stampData.active) {
       const { w, h } = svgData[stampData.index]
       const { left, top } = artboard.getBoundingClientRect()
+      const adjustedLeft = left + window.pageXOffset
+      const adjustedTop = top + window.pageYOffset
 
-      console.log(artboard.parentNode.offsetLeft)
-      createSprite(
-        stampData.index, 
-        stampPos(e).x - left, stampPos(e).y - top, 
-        e.pageX - (w / 2) - left, e.pageY - (h / 2) - top
-      )
+      // console.log(artboard.parentNode.offsetLeft)
+      createSprite({
+        index: stampData.index, 
+        stampX: stampPos(e).x - adjustedLeft, stampY: stampPos(e).y - adjustedTop, 
+        x: e.pageX - (w / 2) - adjustedLeft, y: e.pageY - (h / 2) - adjustedTop
+      })
     }
   }
+
 
 
   const createStamp = i =>{
