@@ -24,9 +24,6 @@ nav {
   z-index: 100;
 }
 
-/* nav.two {
-  top: 45px;
-} */
 
 p, h1, h2, h3, h4 {
   display: inline-block;
@@ -38,10 +35,7 @@ p, h1, h2, h3, h4 {
 }
 
 canvas {
-  /* margin: 40px 5px; */
   background-color: #ffffff;
-  /* height: 600px;
-  width: calc(100% - 40px); */
 }
 
 .gif {
@@ -116,12 +110,6 @@ button:hover {
 
 .mini_wrap.no_margin {margin: -20px 0 20px 0; }
 
-/* .grid {
-  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAHklEQVQYV2NkgILF/9/+BzEZMQRgMrGMwmBJRnQBAA1GDyEZnkKiAAAAAElFTkSuQmCC) repeat 0 0;
-  margin: 20px 0 10px 0;
-} */
-
-/* .grid.extra_margin{ margin: 100px 0 10px 0; } */
 
 .img_wrap {
   display: flex;
@@ -142,11 +130,6 @@ textarea {
   height: 100px;
   overflow-y: scroll;
 }
-
-/* img {
-  height: 100%;
-  width: 100%;
-} */
 
 
 .input {
@@ -316,29 +299,6 @@ button.icon:hover {
 
 }
 
-
-/* .flip_h { background: url(/icon/flip_h.svg); }
-
-.flip_v { background: url(/icon/flip_v.svg); }
-
-.bucket { background: url(/icon/bucket.svg); }
-
-
-
-.eraser { background: url(/icon/eraser.svg); }
-
-.generate { background: url(/icon/generate.svg); }
-
-.hide { background: url(/icon/hide_grid.svg); }
-
-.upload { background: url(/icon/upload.svg); }
-
-.create { background: url(/icon/create_grid.svg); }
-
-.copy { background: url(/icon/copy.svg); }
-
-.draw { background: url(/icon/pixelise.svg); } */
-
 .download_file { 
   background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAFhJREFUOE9jZKAQMOLR/x9NDqvaUQMYGJDDAD3QCMUPWC96IBJrCFwftlggZAiKHlzRiMsQDPU0TQegMIK5BKdF+FxAKBbA8jADCAUcLsMYqWYAUc7FpggAOdQNEb6DQuoAAAAASUVORK5CYII=);
 }
@@ -435,27 +395,17 @@ button.icon:hover {
 .grid.grid_hide div{ border: 0 !important; }
 
 .artboard_wrapper {
-  /* position: absolute; */
   position: relative;
-  /* border: pink 1px solid; */
   margin: 20px;
   height: 300px;
-  /* width: 600px; */
   width: calc(100% - 40px);
-  /* width: 300px;
-  height: 200px; */
 }
 
 .artboard {
   position: absolute;
-  /* position: relative; */
-  /* border: pink 1px solid; */
   height: 300px;
-  /* width: 600px; */
   width: calc(100% - 40px);
   margin-left: 20px;
-  /* width: 300px;
-  height: 200px; */
   background-color: #fff;
 }
 
@@ -469,14 +419,11 @@ button.icon:hover {
   pointer-events: auto;
   height: 80px;
   width: 80px;
-  /* overflow: hidden; */
-  /* border: 1px solid red; */
   cursor: grab;
 }
 
 .handle {
   position: absolute;
-  /* background-color: rgba(255, 105, 180, 0.253); */
   width: 112px;
   height: 112px;
   top: -16px;
