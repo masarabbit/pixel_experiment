@@ -1,12 +1,18 @@
-import { 
-  setTargetPos, calcX, calcY, rounded, 
-  resizeCanvas, setTargetSize, cellWidthAndHeight,
-  sortByFreqRemoveBlankAndDuplicates 
-} from '../scripts/utils.js'
+
 import { rgbToHex, hex, updateColor } from '../scripts/colours.js'
 import { continuousDraw } from '../scripts/draw.js'
-
 import { artData, drawData, copyData } from '../scripts/state.js'
+import traceSvg from '../scripts/traceSvg.js'
+import { 
+  setTargetPos, 
+  calcX, 
+  calcY, 
+  rounded, 
+  resizeCanvas, 
+  setTargetSize, 
+  cellWidthAndHeight,
+  sortByFreqRemoveBlankAndDuplicates 
+} from '../scripts/utils.js'
 
 
 function init() {
@@ -34,7 +40,7 @@ function init() {
 
   // input
   const input = {
-    cellSize: document.querySelector('.cell_size'),
+    cellD: document.querySelector('.cell_size'),
     row: document.querySelector('.row'),
     column: document.querySelector('.column'),
     codes: document.querySelectorAll('.codes'),
@@ -46,7 +52,7 @@ function init() {
 
 
   const updateCode = () =>{
-    const { row, column, cellSize } = input 
+    const { row, column, cellD } = input 
     const lastPrev = artData.prev.length && artData.prev[artData.prev.length - 1]
 
     if (lastPrev &&
@@ -59,7 +65,7 @@ function init() {
       data: input.codes[0].value,
       row: +row.value,
       column: +column.value,
-      cellSize: +cellSize.value,
+      cellD: +cellD.value,
     })
 
     // keep artData.prev under 10 steps
@@ -68,11 +74,10 @@ function init() {
     })
   }
 
-  
 
   const updateGrid = () =>{
     grids[0].innerHTML = artData.codes[0].map((dot, i) => {
-      return `<div class="cell" index="${i}" data-cell=${i} style="background-color:${dot}; ${cellWidthAndHeight(artData.cellSize)}"></div>`
+      return `<div class="cell" index="${i}" data-cell=${i} style="background-color:${dot}; ${cellWidthAndHeight(artData.cellD)}"></div>`
     }).join('')
   }
 
@@ -92,7 +97,6 @@ function init() {
     const paletteColors = document.querySelectorAll('.palette_color')
     paletteColors.forEach((cell, i)=>{
       cell.addEventListener('click',()=>{
-        // console.log('color3', filteredData[i] === 'transparent')
         updateColor(input, filteredData[i])
       })
     })
@@ -124,64 +128,71 @@ function init() {
 
   
   const paintCanvasTwo = () =>{
-    const { cellSize, row, column, calcWidth, calcHeight } = artData 
+    const { cellD, row, column, calcWidth, calcHeight } = artData 
     const arr = new Array(row * column).fill('')
     
     calcWidth && calcHeight
-      ? resizeCanvas(canvas[1], calcWidth / cellSize,  calcHeight - (calcHeight % cellSize) / cellSize)
-      : resizeCanvas(canvas[1], column, row)
+      ? resizeCanvas({
+        canvas: canvas[1], 
+        w: calcWidth / cellD,  h: calcHeight - (calcHeight % cellD) / cellD
+      })
+      : resizeCanvas({
+        canvas: canvas[1], 
+        w: column, h: row
+      })
     
     arr.forEach((_ele,i)=>{
-      const x = i % column
-      const y = Math.floor(i / column)
       ctxTwo.fillStyle = artData.codes[0][i] === '' ? 'transparent' : artData.codes[0][i]
-      ctxTwo.fillRect(x, y, 1, 1)
+      ctxTwo.fillRect(calcX(i, column), calcX(i, column), 1, 1)
     })
   }
 
   const paintCanvas = () =>{
-    const { row, column, cellSize } = artData 
+    const { row, column, cellD } = artData 
     const arr = new Array(row * column).fill('')
     
-    
-    resizeCanvas(canvas[0], column * cellSize, row * cellSize)
+    resizeCanvas({
+      canvas: canvas[0], 
+      w: column * cellD, h: row * cellD
+    })
   
     arr.forEach((_ele,i)=>{
-      const x = calcX(i, column) * cellSize
-      const y = calcY(i, column) * cellSize
+      const x = calcX(i, column) * cellD
+      const y = calcY(i, column) * cellD
       ctx.fillStyle = artData.codes[0][i] === '' ? 'transparent' : artData.codes[0][i]
-      ctx.fillRect(x, y, cellSize, cellSize)
+      ctx.fillRect(x, y, cellD, cellD)
     })
   }
 
   const output = ()=>{
-    const { cellSize, row, column, calcWidth, calcHeight, uploadedFile } = artData 
+    const { cellD, row, column, calcWidth, calcHeight, uploadedFile } = artData 
     if (!uploadedFile) return
     const blobURL = window.URL.createObjectURL(uploadedFile)
     const imageTarget = new Image()
     
-
     imageTarget.onload = () => {
-      const maxWidth = column * cellSize 
       const { naturalWidth: w, naturalHeight: h } = imageTarget
-      calcHeight = maxWidth * (h / w)
+      calcHeight = (column * cellD) * (h / w)
       calcWidth = calcHeight * (w / h)
-      resizeCanvas(canvas[0], calcWidth, calcHeight - (calcHeight % cellSize))
+      resizeCanvas({
+        canvas: canvas[0], 
+        w: calcWidth, h: calcHeight - (calcHeight % cellD)
+      })
       
       setTargetSize({
         target: grids[0],
-        w: column * cellSize, h: row * cellSize
+        w: column * cellD, h: row * cellD
       })
 
       artData.codes[0].length = 0
 
       ctx.drawImage(imageTarget, 0, 0, calcWidth, calcHeight)
 
-      const offset = Math.floor(cellSize / 2)
+      const offset = Math.floor(cellD / 2)
 
       for (let i = 0; i < row * column; i++) {
-        const x = i % column * cellSize
-        const y = Math.floor(i / column) * cellSize
+        const x = i % column * cellD
+        const y = Math.floor(i / column) * cellD
         const c = ctx.getImageData(x + offset, y + offset, 1, 1).data //!offset
 
         // this thing included here to prevent rendering black instead of transparent
@@ -194,7 +205,6 @@ function init() {
       // populate grid and make it reactive
       updateGrid()
       updateCodesDisplay(input.codes[0], artData.codes[0])
-      // updateCode()
       paintCanvasTwo()
       generateFromColorCode()
     }
@@ -202,22 +212,14 @@ function init() {
   }
 
   const generateFromColorCode = () =>{
-    const { cellSize, row, column } = artData 
+    const { row, column } = artData 
 
     createGridCells({
-      row,
-      column,
-      cellSize,
       index: 0,
       cellStyle: 'cell'
     })
 
-    createCopyGrids({
-      row,
-      column,
-      cellSize,
-      cellStyle: 'copy_cell'
-    })
+    createCopyGrids({ copyGrid, drawData, cellStyle: 'copy_cell' })
 
     if (!input.codes[0].value) {
       artData.codes[0] = new Array(row * column).fill('transparent')
@@ -250,15 +252,18 @@ function init() {
     document.execCommand('copy')
   }
 
-  const createGridCells = ({ row, column, cellSize, index, cellStyle }) =>{
+  const createGridCells = ({ index, cellStyle }) =>{
+    const { cellD, row, column } = artData 
     const arr = new Array(row * column).fill('')
-    grids[index].style.width = `${column * cellSize}px`
-    grids[index].style.height = `${row * cellSize}px`
-    grids[index].innerHTML = arr.map((_ele,i)=>{
+    setTargetSize({
+      target: grids[index],
+      w: column * cellD, h: row * cellD
+    })
+    grids[index].innerHTML = arr.map((_ele, i)=>{
       return `
         <div 
           class="${cellStyle}"
-          style="${cellWidthAndHeight(cellSize)}"
+          style="${cellWidthAndHeight(cellD)}"
           index="${i}"
           data-cell=${i}
         >
@@ -271,18 +276,19 @@ function init() {
   }
 
 
-  const createCopyGrids = ({ row, column, cellSize, cellStyle }) =>{
+  const createCopyGrids = ({ copyGrid, drawData, cellStyle }) =>{
+    const { row, column, cellD } = artData
     const arr = new Array(row * column).fill('')
 
     setTargetSize({
       target: copyGrid,
-      w: column * cellSize, h: row * cellSize
+      w: column * cellD, h: row * cellD
     })
 
     copyGrid.style.marginTop = '100px'
-    copyGrid.style.marginBottom = `-${(row * cellSize) + 100}px`
+    copyGrid.style.marginBottom = `-${(row * cellD) + 100}px`
     copyGrid.innerHTML = arr.map((_ele,i)=>{
-      return `<div class="${cellStyle}" style="${cellWidthAndHeight(cellSize)}" data-cell=${i}></div>`
+      return `<div class="${cellStyle}" style="${cellWidthAndHeight(cellD)}" data-cell=${i}></div>`
     }).join('')
 
     copyGrid.addEventListener('click', e =>{
@@ -291,17 +297,19 @@ function init() {
         drawData.copyBox.classList.add('copy_box')
         copyGrid.append(drawData.copyBox)
         drawData.copyBoxCreated = true
+
         setTargetSize({
           target: drawData.copyBox,
-          w: cellSize, h: cellSize
+          w: cellD, h: cellD
         })
+
         const i = e.target.dataset.cell
         Object.assign(drawData.defaultPos,{
           top: e.target.offsetTop,
           left: e.target.offsetLeft,
           defPos: i
         })
-        drawData.prevX = i % column * cellSize
+        drawData.prevX = i % column * cellD
         drawData.prevY = Math.floor(i / column)
 
         setTargetPos({
@@ -316,66 +324,73 @@ function init() {
   copyGrid.addEventListener('mouseup', ()=> {
     drawData.copyState = false
     if (drawData.copyBox){
-      drawData.defaultPos.top = drawData.copyBox.offsetTop
-      drawData.defaultPos.left = drawData.copyBox.offsetLeft
+      Object.assign(drawData.defaultPos, {
+        top: drawData.copyBox.offsetTop,
+        left: drawData.copyBox.offsetLeft
+      })
     }
   })
 
-  copyGrid.addEventListener('mousemove',(e)=>{     
-    const { column } = artData 
+  copyGrid.addEventListener('mousemove',(e)=>{       
     if (drawData.copyState && !drawData.moveState) {
+      const { defPos, top, left } = drawData.defaultPos
+      const { column, cellD } = artData 
+
       const next = e.target.dataset.cell
       const newX = calcX(next, column)
       const newY = calcY(next, column)
-      const { defPos, top, left } = drawData.defaultPos
-      const { cellSize } = artData 
+      const defPosX = calcX(defPos, column)
+      const defPosY = calcY(defPos, column)
       
       if (!drawData.copyBox) return
       if (newX !== drawData.prevX && newY === drawData.prevY) {
-        if (calcX(defPos, column) > newX){
-          const newLeft = left - ((calcX(defPos, column) - newX) * cellSize)
-          drawData.copyBox.style.left = `${newLeft}px`
-          const newWidth = (calcX(defPos, column) - newX + 1) 
-          drawData.copyBox.style.width = `${newWidth * cellSize}px`
+        if (defPosX > newX){
+          Object.assign(drawData.copyBox.style, {
+            left: `${left - (defPosX - newX) * cellD}px`,
+            width: `${(defPosX - newX + 1) * cellD}px`
+          })
         } else {
-          const newWidth = (newX - calcX(defPos, column) + 1)
-          copyData.width = newWidth
-          drawData.copyBox.style.width = `${newWidth * cellSize}px`
-          drawData.copyBox.style.left = `${left}px`
+          copyData.width = newX - defPosX + 1
+          Object.assign(drawData.copyBox.style, {
+            left: `${left}px`,
+            width: `${copyData.width * cellD}px`
+          })
         }
         drawData.prevX = newX
       } else if (newY !== drawData.prevY) {
-        if (calcY(defPos, column) > newY){ 
-          const newTop = top - ((calcY(defPos, column) - newY) * cellSize)
-          drawData.copyBox.style.top = `${newTop}px`
-          const newHeight = (calcY(defPos, column) - newY + 1)
-          drawData.copyBox.style.height = `${newHeight * cellSize}px`
+        if (defPosY > newY){ 
+          Object.assign(drawData.copyBox.style, {
+            top: `${top - (defPosY - newY) * cellD}px`,
+            height: `${(defPosY - newY + 1) * cellD}px`
+          })
         } else {
-          const newHeight = (newY - calcY(defPos, column) + 1)
-          copyData.height = newHeight
-          drawData.copyBox.style.height = `${newHeight * cellSize}px`
-          drawData.copyBox.style.top = `${top}px`
+          copyData.height = newY - defPosY + 1
+          Object.assign(drawData.copyBox.style, {
+            top: `${top}px`,
+            height: `${copyData.height * cellD}px`
+          })
         }
         drawData.prevY = newY
       } 
       
       // copy selected area
-      const x = drawData.copyBox.offsetLeft / cellSize
-      const y = drawData.copyBox.offsetTop / cellSize
-      copyData.index = returnSelectedCells((y * column) + x)
-
+      const { offsetTop, offsetLeft } = drawData.copyBox
+      copyData.index = returnSelectedCells({
+        firstCell: (offsetTop / cellD * column) + (offsetLeft / cellD)
+      })
     }     
   })
 
 
-  const returnSelectedCells = (firstCell, roundedX, roundedY) =>{
-    const { cellSize, row, column } = artData 
+  const returnSelectedCells = ({ firstCell, roundedX, roundedY }) =>{
+    const { cellD, row, column } = artData 
     if (drawData.copyBox && !drawData.copied){
-      drawData.copyBox.style.justifyContent = 'flex-end'
-      drawData.copyBox.style.alignItems = 'flex-end'
+      Object.assign(drawData.copyBox.style, { 
+        justifyContent: 'flex-end', alignItems: 'flex-end' 
+      })
     }
-    let w = drawData.copyBox ? drawData.copyBox.style.width.replace('px','') / cellSize : ''
-    let h = drawData.copyBox ? drawData.copyBox.style.height.replace('px','') / cellSize : ''
+    let w = drawData?.copyBox.style.width.replace('px','') / cellD || ''
+    let h = drawData?.copyBox.style.height.replace('px','') / cellD || ''
     const selection = []
 
     if (roundedX < 0) w += roundedX // adjusts width if selection is beyond left edge of copyBox
@@ -392,7 +407,7 @@ function init() {
       h -= Math.abs((roundedY + h) - row) 
     }
 
-    for (let a = firstCell; a < firstCell + (h * column); a += +column){
+    for (let a = firstCell; a < firstCell + (h * column); a += column){
       for (let b = a; b < (a + w); b++){
         selection.push(b) 
       }
@@ -401,16 +416,14 @@ function init() {
     if (!drawData.copied){
       const activeArea = document.querySelector('.active_area')
       if (!activeArea) {
-        drawData.copyBox.innerHTML = `<div class="active_area" style="width:${w * cellSize}px; height:${h * cellSize}px;"></div>`
+        drawData.copyBox.innerHTML = `<div class="active_area" style="width:${w * cellD}px; height:${h * cellD}px;"></div>`
       } else {
         setTargetSize({
           target: activeArea,
-          w: w * cellSize, h: h * cellSize
+          w: w * cellD, h: h * cellD
         })
       }
-      // copyData.activeArea = selection
     }
-    
     return selection
   }
 
@@ -418,10 +431,10 @@ function init() {
     if (copyData.data.length) return
     const activeArea = document.querySelector('.active_area')
     if (!activeArea) return
-    const { cellSize } = artData 
+    const { cellD } = artData 
 
     activeArea.innerHTML = copyData.index.map(index=>{
-      return `<div style="${cellWidthAndHeight(cellSize)} background-color:${artData.codes[0][index]};"></div>`
+      return `<div style="${cellWidthAndHeight(cellD)} background-color:${artData.codes[0][index]};"></div>`
     }).join('')
 
     copyData.index.forEach((index,i)=>{
@@ -430,7 +443,9 @@ function init() {
     
     if (cut){
       //* delete original
-      artData.codes[0] = input.codes[0].value.split(',').map((grid, i)=> copyData.index.some(data => data === i) ? 'transparent' : grid)
+      artData.codes[0] = input.codes[0].value.split(',').map((grid, i) => {
+        return copyData.index.some(data => data === i) ? 'transparent' : grid
+      })
       input.codes[0].value = artData.codes[0]
       drawData.isCut = true
     } 
@@ -440,11 +455,15 @@ function init() {
     document.querySelectorAll('.cell').forEach((cell,i)=>{
       cell.style.backgroundColor = artData.codes[0][i]
     })
-    
-    drawData.copyBox.style.top = `${drawData.copyBox.offsetTop + activeArea.offsetTop}px`
-    drawData.copyBox.style.left = `${drawData.copyBox.offsetLeft + activeArea.offsetLeft}px`
-    drawData.copyBox.style.width = activeArea.style.width
-    drawData.copyBox.style.height = activeArea.style.height
+    setTargetPos({
+      target: drawData.copyBox,
+      x: drawData.copyBox.offsetLeft + activeArea.offsetTop, 
+      y: drawData.copyBox.offsetTop + activeArea.offsetLeft
+    })
+    setTargetSize({
+      target: drawData.copyBox,
+      w: activeArea.style.width, h: activeArea.style.height
+    })
     updateCode()
 
     moveSelection()
@@ -465,8 +484,6 @@ function init() {
     if (drawData.isCut) handleSelect()
     updateCode()
   }
-
-  
 
 
   //TODO move
@@ -491,22 +508,26 @@ function init() {
     }
 
     const onLetGo = () => {
-      const { cellSize, column } = artData 
+      const { cellD, column } = artData 
       // adjustments made here to ensure 'firstcell' is within selection.
       // this needs to be done because numbers continue to next row.
-      const roundedX = rounded(pos.a, cellSize) > 0 ? rounded(pos.a, cellSize) : 0
-      const roundedY = rounded(pos.b, cellSize) > 0 ? rounded(pos.b, cellSize) : 0
+      const roundedX = rounded(pos.a, cellD) > 0 ? rounded(pos.a, cellD) : 0
+      const roundedY = rounded(pos.b, cellD) > 0 ? rounded(pos.b, cellD) : 0
   
       Object.assign(copyData,{
-        width: drawData.copyBox.style.width.replace('px','') / cellSize,
-        height: drawData.copyBox.style.height.replace('px','') / cellSize,
-        index: returnSelectedCells((roundedY * column) + roundedX, rounded(pos.a, cellSize), rounded(pos.b, cellSize))
+        width: drawData.copyBox.style.width.replace('px','') / cellD,
+        height: drawData.copyBox.style.height.replace('px','') / cellD,
+        index: returnSelectedCells({
+          firstCell: (roundedY * column) + roundedX, 
+          roundedX: rounded(pos.a, cellD), 
+          roundedY: rounded(pos.b, cellD)
+        })
       })
       // codesBox[1].value = copyData.index.join(',')
       // if (copyData.data.length) codesBox[1].value = copyData.index.join(',') + '-' + copyData.data.join(',')
       setTargetPos({
         target: drawData.copyBox, 
-        x: rounded(pos.a, cellSize) * cellSize, y:rounded(pos.b, cellSize) * cellSize 
+        x: rounded(pos.a, cellD) * cellD, y:rounded(pos.b, cellD) * cellD 
       })
 
       document.removeEventListener('mousemove', onDrag)
@@ -521,10 +542,9 @@ function init() {
     drawData.copyBox.addEventListener('mousedown', onGrab)
   }
 
-  const createGrid = (index,cellStyle) =>{
-    const { cellSize, row, column } = artData 
-   
-    createGridCells({row, column, cellSize, index, cellStyle})
+  const createGrid = (index, cellStyle) =>{
+    const { row, column } = artData 
+    createGridCells({ index, cellStyle })
     artData.codes[0] = new Array(row * column).fill('transparent')
     input.codes[0].value = artData.codes[0]
 
@@ -594,7 +614,7 @@ function init() {
   }
 
 
-  const checkAreaToFill = (codeRef, i, valueToCheck, areaToFill) =>{
+  const checkAreaToFill = ({ codeRef, i, valueToCheck, areaToFill }) =>{
     const fillStack = []
     // const column = +columnInput.value
     const { column } = artData 
@@ -612,17 +632,19 @@ function init() {
       fillStack.push(cellToCheck + column) // check up
       fillStack.push(cellToCheck - column) // check down
     }
-    // console.log('fillStack last',fillStack)
-    // console.log('areaToFill',areaToFill)
   }
 
   const fillBucket = index =>{
     const fillValue = drawData.erase ? 'transparent' : input.color.value  //! '' instead of transparent
     const areaToFillBucket = []
     const valueToSwap = artData.codes[0][index]
-    // console.log(codes[0], areaToFillBucket)
-    
-    checkAreaToFill(artData.codes[0], +index, valueToSwap, areaToFillBucket)
+
+    checkAreaToFill({
+      codeRef: artData.codes[0], 
+      i: +index, 
+      valueToCheck: valueToSwap, 
+      areaToFill: areaToFillBucket
+    })
 
     input.codes[0].value = input.codes[0].value.split(',').map((c,i)=>{
       if (areaToFillBucket.indexOf(i) === -1) return c
@@ -636,127 +658,7 @@ function init() {
   // trace perimeter
   const periButton = document.querySelector('.perimeter')
 
-  periButton.addEventListener('click',()=>{
-    const pathData = []
-    const areaToTrace = []
-    // const column = columnInput.value
-    const { column } = artData 
-    // const w = 100 / column
-    const w = 1
-    const direction = [ 1, +column, -1, -column ] // move right, down, left, up
-    const checkDirection = [ -column, +1, +column, -1 ] // check up, left, down, left of current cell
-
-    // switches distance to move depending on which way the line is going.
-    // corresponds to right, down, left, up
-    const directionFactor = [ 1, 1, -1, -1 ] 
-    const indexPattern = [0, 1, 2, 3, 0, 1, 2, 3]
-
-    //? values which needs reset for each trace
-    let arr
-    let first
-    let x
-    let y
-    let d
-    let letter
-    let dirIndex
-    const checkedIndex = []
-    let initialX
-    let initialY
-    let stop
-
-    const recordTraceData = (dirIndexToCheck, index) =>{
-      //TODO since transparent is converted to '', perhaps no longer need to check for it.
-      if (stop) return 
-      if (dirIndex === dirIndexToCheck && 
-        (arr[index + checkDirection[dirIndex]] === 'transparent' || // cell in the  check direction is not filled
-        !arr[index + checkDirection[dirIndex]] || // cell in the check direction is the edge
-
-        // below added to ensure trace don't continue on from right edge to left edge
-        ((dirIndex === 1) && arr[index + 1] !== 'transparent' && index % column === column - 1) || 
-        ((dirIndex === 3) && arr[index - 1] !== 'transparent' && index % column === 0)
-        )){
-
-        // prevents same direction being checked twice.
-        if (checkedIndex.filter(d=>d === dirIndexToCheck).length) return
-        checkedIndex.push(dirIndexToCheck)
-
-        const distance = 1
-        const distanceToMove = distance * directionFactor[dirIndex]
-        if (d[d.length - 1].split(' ')[0] === letter){
-          //* this increases distance to move if previous letter was the same (ie combines 'h1 h1' to 'h2')
-          d[d.length - 1] = `${letter} ${+d[d.length - 1].split(' ')[1] + distanceToMove}`
-        } else {
-          d.push(`${letter} ${distanceToMove}`)
-        }
-        
-        if (letter === 'h') initialX += distanceToMove
-        if (letter === 'v') initialY += distanceToMove
-        if (initialX === x * w && initialY === y * w) stop = true
-        dirIndex = dirIndex === 3 ? 0 : dirIndex + 1
-        letter = letter === 'h' ? 'v' : 'h'
-      }
-    }
-
-    const trace = index =>{
-      let traceIndex = index
-      
-      while (!stop){
-        indexPattern.forEach(i => recordTraceData(i, traceIndex))
-
-        checkedIndex.length = 0
-        dirIndex = dirIndex === 0 ? 3 : dirIndex - 1
-        letter = letter === 'h' ? 'v' : 'h'
-        traceIndex = traceIndex += direction[dirIndex] // moves to next cell to trace
-      }
-    }
-
-    const convertToSvg = (processedCodes) =>{  
-
-      //* changed this to while loop to avoid exceeding maximum call limit
-      while (processedCodes.filter(code => code !== '').length) {
-        //first index
-        const currentColor = processedCodes.find(cell => cell !== '')
-        first = processedCodes.indexOf(currentColor) 
-
-        //* isolating area to trace (area with same color, but connected)
-        areaToTrace.length = 0
-        checkAreaToFill(processedCodes, first, currentColor, areaToTrace)
-        arr = processedCodes.map((code, i) => areaToTrace.some(a => a === i) ? code : '')
-
-        x = first % column
-        y = Math.floor(first / column)
-        d = [`M ${x * w} ${y * w}`]   
-        initialX = x * w
-        initialY = y * w
-        letter = 'h'
-        dirIndex = 0
-        checkedIndex.length = 0
-        stop = false
-        trace(first)
-        //* recording traced area
-
-        pathData.push(`<path fill="${currentColor}" d="${d.join(' ')}"/>`)
-
-        //* removing traced area
-        // when only one square is being traced, area to be traced doesn't get overwritten, so needed to reset it to [], and check below if it has been updated
-        //TODO may not need this workaround when the areaToTrace/fill bucket logic is changed
-        processedCodes = areaToTrace.length 
-          ? processedCodes.map((code,i)=> areaToTrace.indexOf(i) === -1 ? code : '')
-          : processedCodes.map((code,i)=> i === first ? '' : code )
-      }
-    }
-
-    const processedCodes = input.codes[0].value.split(',').map(code =>{
-      return code === 'transparent' ? '' : code
-    })
-    // console.log('processedCodes',processedCodes)
-    convertToSvg(processedCodes)
-
-    // put in to compress
-    // codesBox[1].value = pathData.join(' ').replaceAll('<path d="M','D').replaceAll('<path fill="#ffffff" d="M','F').replaceAll('/>','/').replaceAll('-1','N').replaceAll('-2','T').replaceAll(' v ','v').replaceAll(' h ','h').replaceAll('<path fill="#000000" d="M','D')
-
-    input.codes[1].value = pathData.join(' ').replaceAll('ffffff','fff').replaceAll('000000','000')
-  })
+  periButton.addEventListener('click', ()=> traceSvg(artData, input, checkAreaToFill))
 
   const dataUrlButton = document.querySelector('.url')
   dataUrlButton.addEventListener('click',()=>{
@@ -764,28 +666,19 @@ function init() {
     console.log(canvas[0].toDataURL())
   })
 
-
   // reads from url
   const query = window.location.hash
   if (query){
     const queryArray = query.split('#')
     input.column.value = queryArray[1] || 10
     input.row.value = queryArray[2] || 10
-    input.cellSize.value = queryArray[3] || 20
-    artData.column = +input.column.value
-    artData.row = +input.row.value
-    artData.cellSize = +input.cellSize.value
+    input.cellD.value = queryArray[3] || 20
 
-    const { cellSize, row, column } = artData 
-
-    createGrid(0,'cell')
-    createCopyGrids({
-      row,
-      column,
-      cellSize,
-      cellStyle: 'copy_cell'
+    Object.assign(artData, {
+      column: +input.column.value, row: +input.row.value, cellD: +input.cellD.value
     })
-
+    createGrid(0, 'cell')
+    createCopyGrids({ copyGrid, drawData, cellStyle: 'copy_cell' })
   }
 
   const triggerFill = e =>{
@@ -813,35 +706,25 @@ function init() {
     copyData.data.length = 0
     if (drawData.copyBox) drawData.copyBox.classList.remove('move')
 
-    const { cellSize, row, column } = artData
-
-    createCopyGrids({
-      row,
-      column,
-      cellSize,
-      cellStyle: 'copy_cell'
-    })
+    createCopyGrids({ copyGrid, drawData, cellStyle: 'copy_cell' })
     copyGrid.classList.toggle('active')
     copyGrid.classList.remove('fix')
-    // copyBox = null
-    drawData.copyBoxCreated = false
-    drawData.moveState = false
-    drawData.copied = false
-    drawData.isCut = false
-    drawData.cursorType = 'pen_cursor'
+    Object.assign(drawData, { 
+      copyBoxCreated: false, moveState: false, copied: false, isCut: false, cursorType: 'pen_cursor'
+    })
     // document.querySelector('.move_selection').classList.remove('display_none')
   }
   
   // eventlistener
-  input.cellSize.addEventListener('change',()=>{
-    // prev[0].cellSize = cellSize
-    artData.cellSize = +input.cellSize.value
+  input.cellD.addEventListener('change',()=>{
+    // prev[0].cellD = cellD
+    artData.cellD = +input.cellD.value
   })
 
 
   input.row.addEventListener('change',()=>{
     const { row, column } = artData
-    artData.codes[0] = input.codes[0].value.split(',').length < 1 || Array(row * column).fill('transparent')
+    artData.codes[0] = input.codes[0].value.split(',') || Array(row * column).fill('transparent')
     const newRow = +input.row.value
     const diff = Math.abs(newRow - row) 
 
@@ -853,13 +736,12 @@ function init() {
 
     paintCanvas()
     generateFromColorCode()
-
   })
 
 
   input.column.addEventListener('change',()=>{
     const { row, column } = artData 
-    artData.codes[0] = input.codes[0].value.split(',').length < 1 || Array(row * column).fill('transparent')
+    artData.codes[0] = input.codes[0].value.split(',') || Array(row * column).fill('transparent')
     const newColumn = +input.column.value
     const updatedCodes = [[]]
     let count = 0
@@ -875,29 +757,23 @@ function init() {
     })
 
     input.codes[0].value = updatedCodes.map(codes=>{
-      const diff = Math.abs(newColumn - column) //TODO adjust arrays
-      // console.log('diff', diff)
-      if (newColumn > column){
-        return [...codes, ...Array(diff).fill('transparent')]
-      } else {
-        return codes.slice(0, codes.length - diff)
-      }
+      const diff = Math.abs(newColumn - column)
+      return newColumn > column
+        ? [...codes, ...Array(diff).fill('transparent')]
+        : codes.slice(0, codes.length - diff)
     }).join(',')
 
-    // prev[0].column = column
-    column = newColumn
+    artData.column = newColumn
     artData.codes[0] = input.codes[0].value
-    // console.log('codes[0]', codes[0].split(',').length)
     paintCanvas()
     generateFromColorCode()
-    // console.log('column',column)
   })
   
-  downloadButtons[0].addEventListener('click',()=>{
+  downloadButtons[0].addEventListener('click',()=> {
     paintCanvas()
     downloadImage(canvas[0],'cell')
   })
-  downloadButtons[1].addEventListener('click',()=>{
+  downloadButtons[1].addEventListener('click',()=> {
     paintCanvasTwo()
     downloadImage(canvas[1],'small_cell')
   })
@@ -907,22 +783,22 @@ function init() {
     button.addEventListener('click',()=>copyText(input.codes[i]))
   })
   
-  gridToggleButtons.forEach(button=>button.addEventListener('click',toggleGrid))
+  gridToggleButtons.forEach(button => button.addEventListener('click',toggleGrid))
   
-  grids.forEach(grid=>{
+  grids.forEach(grid => {
     grid.addEventListener('mousedown',()=> drawData.canDraw = true)
     grid.addEventListener('mouseup',()=> drawData.canDraw = false)
     grid.addEventListener('mouseleave',()=> drawData.canDraw = false)
   
-    grid.addEventListener('mouseenter',()=>cursor.classList.add(drawData.cursorType))
-    grid.addEventListener('mouseleave',()=>cursor.classList.remove(drawData.cursorType))
+    grid.addEventListener('mouseenter',()=> cursor.classList.add(drawData.cursorType))
+    grid.addEventListener('mouseleave',()=> cursor.classList.remove(drawData.cursorType))
   })
   
-  copyGrid.addEventListener('mouseenter',()=>cursor.classList.add(drawData.cursorType))
-  copyGrid.addEventListener('mouseleave',()=>cursor.classList.remove(drawData.cursorType))
+  copyGrid.addEventListener('mouseenter',()=> cursor.classList.add(drawData.cursorType))
+  copyGrid.addEventListener('mouseleave',()=> cursor.classList.remove(drawData.cursorType))
 
-  input.color.addEventListener('change',()=>updateColor(input, input.color.value))
-  input.hex.addEventListener('change', ()=>updateColor(input, input.hex.value))
+  input.color.addEventListener('change',()=> updateColor(input, input.color.value))
+  input.hex.addEventListener('change', ()=> updateColor(input, input.hex.value))
   
   // display filename and pixelise button
   input.upload.addEventListener('change',()=>{
@@ -936,17 +812,17 @@ function init() {
   const undo = () =>{
     // console.log('prev check', prev[prev.length - 1])
     if (!artData.prev[artData.prev.length - 1]) return
-    const { data: newData, row: newRow, column: newColumn,  cellSize: newCellSize } = artData.prev[artData.prev.length - 1]
+    const { data: newData, row: newRow, column: newColumn,  cellD: newcellD } = artData.prev[artData.prev.length - 1]
     // console.log('newData', newData)
     
-    artData.codes[0] = newData
-    artData.column = newColumn
-    artData.row = newRow
-    artData.cellSize = newCellSize
     input.codes[0].value = newData
     input.row.value = newRow
     input.column.value = newColumn
-    input.cellSize.value = newCellSize
+    input.cellD.value = newcellD
+    artData.codes[0] = newData
+    Object.assign(artData, { 
+      column: newColumn, row: newRow, cellD: newcellD 
+    })
 
     paintCanvas()
     generateFromColorCode()
@@ -966,7 +842,7 @@ function init() {
     addClickEvent('select', handleSelect)
     addClickEvent('copy_selection', ()=>copySelectionToCopyBox(false))
     addClickEvent('cut_selection', ()=>copySelectionToCopyBox(true))
-    addClickEvent('move_selection', moveSelection)
+    // addClickEvent('move_selection', moveSelection)
     addClickEvent('crop_selection', crop)
     addClickEvent('paste_selection', paste)
     addClickEvent('delete_selection', deleteSelection)

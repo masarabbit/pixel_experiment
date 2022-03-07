@@ -24,7 +24,7 @@ const sortByFreqRemoveBlankAndDuplicates = arr =>{
   return [...new Set(orderedByFrequency.map(ele => ele[0]))]
 }
 
-const resizeCanvas = (canvas, w, h) =>{
+const resizeCanvas = ({ canvas, w, h }) =>{
   canvas.setAttribute('width', w)
   canvas.setAttribute('height', h)
 }

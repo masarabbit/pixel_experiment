@@ -1,6 +1,6 @@
 const artData = {
   prev: [],
-  cellSize: 20,
+  cellD: 20,
   row: 10,
   column: 10,
   calcWidth: 0,
