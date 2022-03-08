@@ -1,4 +1,10 @@
-const traceSvg = (artData, input, checkAreaToFill) =>{
+
+import { artData, input } from '../scripts/state.js'
+import { checkAreaToFill } from '../scripts/draw.js'
+
+//TODO import states?
+
+const traceSvg = () =>{
   const pathData = []
   const areaToTrace = []
   const { column } = artData 
@@ -85,7 +91,8 @@ const traceSvg = (artData, input, checkAreaToFill) =>{
         codeRef: processedCodes, 
         i: first, 
         valueToCheck: currentColor, 
-        areaToFill: areaToTrace
+        areaToFill: areaToTrace,
+        artData
       })
       arr = processedCodes.map((code, i) => areaToTrace.some(a => a === i) ? code : '')
 

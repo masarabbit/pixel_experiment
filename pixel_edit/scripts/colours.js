@@ -1,3 +1,5 @@
+import { input } from '../scripts/state.js'
+
 const rgbToHex = (r, g, b) => {
   if (r > 255 || g > 255 || b > 255)
     throw 'Invalid color component'
@@ -11,7 +13,7 @@ const hexToRgb = hex => {
   return result ? `rgb(${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)})` : null
 }
 
-const updateColor = (input, color) =>{
+const updateColor = (color) =>{
   input.colorLabel.style.backgroundColor = color
   input.hex.value = color
   input.color.value = color

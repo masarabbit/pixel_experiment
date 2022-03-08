@@ -37,9 +37,22 @@ const copyData = {
   height: null,
 }
 
+  // input
+  const input = {
+    cellD: document.querySelector('.cell_size'),
+    row: document.querySelector('.row'),
+    column: document.querySelector('.column'),
+    codes: document.querySelectorAll('.codes'),
+    upload: document.querySelector('#upload'),
+    color: document.querySelector('#color'),
+    colorLabel: document.querySelector('.color_label'),
+    hex: document.querySelector('.hex')
+  }
+
 
 export {
   artData,
   drawData,
-  copyData
+  copyData,
+  input
 }
