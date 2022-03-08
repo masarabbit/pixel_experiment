@@ -1,4 +1,4 @@
-import { input } from '../scripts/state.js'
+import { input } from '../elements.js'
 
 const rgbToHex = (r, g, b) => {
   if (r > 255 || g > 255 || b > 255)

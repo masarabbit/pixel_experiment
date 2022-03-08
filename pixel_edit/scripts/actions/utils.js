@@ -1,20 +1,23 @@
-const setTargetPos = ({target, x, y}) =>{
+
+import { artData } from '../state.js'
+
+const setTargetPos = ({ target, x, y }) =>{
   target.style.left = `${x}px`
   target.style.top = `${y}px`
 }
 
-const setTargetSize = ({target, w, h}) =>{
+const setTargetSize = ({ target, w, h }) =>{
   target.style.width = `${w}px`
   target.style.height = `${h}px`
 }
 
-const calcX = (cell, column) => cell % column
+const calcX = cell => cell % artData.column
   
-const calcY = (cell, column) => Math.floor(cell / column)
+const calcY = cell => Math.floor(cell / artData.column)
 
-const rounded = (i, cellD) => ~~(i / cellD) 
+const rounded = i => ~~(i / artData.cellD) 
 
-const cellWidthAndHeight = cellD => `width:${cellD}px; height:${cellD}px;`
+const cellWidthAndHeight = () => `width:${artData.cellD}px; height:${artData.cellD}px;`
 
 const blankRemoved = arr => arr.filter(dot => dot)
 

@@ -1,8 +1,10 @@
 
-import { artData, input } from '../scripts/state.js'
-import { checkAreaToFill } from '../scripts/draw.js'
+import { checkAreaToFill } from '../actions/draw.js'
 
-//TODO import states?
+import { artData } from '../state.js'
+import { input } from '../elements.js'
+
+
 
 const traceSvg = () =>{
   const pathData = []
@@ -43,7 +45,7 @@ const traceSvg = () =>{
       )){
 
       // prevents same direction being checked twice.
-      if (checkedIndex.filter(d=>d === dirIndexToCheck).length) return
+      if (checkedIndex.filter(d => d === dirIndexToCheck).length) return
       checkedIndex.push(dirIndexToCheck)
 
       const distance = 1
@@ -76,7 +78,7 @@ const traceSvg = () =>{
     }
   }
 
-  const convertToSvg = (processedCodes) =>{  
+  const convertToSvg = processedCodes =>{  
 
     //* changed this to while loop to avoid exceeding maximum call limit
     while (processedCodes.filter(code => code !== '').length) {
@@ -92,7 +94,6 @@ const traceSvg = () =>{
         i: first, 
         valueToCheck: currentColor, 
         areaToFill: areaToTrace,
-        artData
       })
       arr = processedCodes.map((code, i) => areaToTrace.some(a => a === i) ? code : '')
 
