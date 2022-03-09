@@ -36,8 +36,8 @@ function init() {
     
     imageTarget.onload = () => {
       const { naturalWidth: w, naturalHeight: h } = imageTarget
-      calcHeight = (column * cellD) * (h / w)
-      calcWidth = calcHeight * (w / h)
+      artData.calcHeight = (column * cellD) * (h / w)
+      artData.calcWidth = calcHeight * (w / h)
       resizeCanvas({
         canvas: canvas[0], 
         w: calcWidth, h: calcHeight - (calcHeight % cellD)
@@ -332,12 +332,12 @@ function init() {
 
   downloadButtons[0].addEventListener('click',()=> {
     paintCanvas()
-    downloadImage(canvas[0],'cell')
+    downloadImage('cell')
   })
-  downloadButtons[1].addEventListener('click',()=> {
-    paintCanvasTwo()
-    downloadImage(canvas[1],'small_cell')
-  })
+  // downloadButtons[1].addEventListener('click',()=> {
+  //   paintCanvasTwo()
+  //   downloadImage(canvas[1],'small_cell')
+  // })
   
   copyButtons.forEach((button, i) =>{
     button.addEventListener('click',()=>copyText(input.codes[i]))

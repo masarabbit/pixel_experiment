@@ -2,6 +2,7 @@
 import { cellWidthAndHeight, setTargetSize, sortByFreqRemoveBlankAndDuplicates } from '../actions/utils.js'
 import { continuousDraw, updateCode, checkAreaToFill } from '../actions/draw.js'
 import { createCopyGrids } from '../actions/copy.js'
+import { populateDetailedPalette } from '../actions/colours.js'
 
 import { artData, drawData } from '../state.js'
 import { grids, input, palettes } from '../elements.js'
@@ -18,7 +19,8 @@ import { grids, input, palettes } from '../elements.js'
   const updateCodesDisplay = (box, arr) =>{
     box.value = `${arr.map(ele => ele).join(',')}`
     // const index = box === codesBox[0] ? 0 : 1 
-    populatePalette(0, arr)
+    // populatePalette(0, arr)
+    populateDetailedPalette(0, arr)
   }
 
 
@@ -83,6 +85,7 @@ import { grids, input, palettes } from '../elements.js'
     })
   }
 
+
   const generateFromColorCode = () =>{
     const { row, column } = artData 
 
@@ -101,7 +104,8 @@ import { grids, input, palettes } from '../elements.js'
     input.codes[0].value.split(',').forEach((ele, i)=>{
       if (cells[i]) cells[i].style.backgroundColor = ele
     })
-    populatePalette(0, artData.codes[0])
+    // populatePalette(0, artData.codes[0])
+    populateDetailedPalette(0, artData.codes[0])
     updateCode()
   }
 
