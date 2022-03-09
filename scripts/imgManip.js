@@ -78,6 +78,11 @@ function init() {
     resize_artboard: false,
   } 
 
+
+  // TODO change to:
+  // const input = {
+  //   row
+  // }
   const rowInput = document.querySelector('.row')
   const columnInput = document.querySelector('.column')
   const colorInput = document.querySelector('#color')
@@ -135,23 +140,16 @@ function init() {
     Object.assign(target.style, { width: `${w}px`, height: `${h}px` })
   }
 
-  const mouseUp = (target, action, event) =>{
-    ['mouseup', 'touchend'].forEach(a => {
-      event === 'remove' ? target.removeEventListener(a, action) : target.addEventListener(a, action)
-    })
-  }
 
-  const mouseMove = (target, action, event) =>{
-    ['mousemove', 'touchmove'].forEach(a => {
+  const addEvents = (target, action, event, array) =>{
+    array.forEach(a => {
       event === 'remove' ? target.removeEventListener(a, action) : target.addEventListener(a, action)
     })
   }
+  const mouseUp = (t, a, e) => addEvents(t, a, e, ['mouseup', 'touchend'])
+  const mouseMove = (t, a, e) => addEvents(t, a, e, ['mousemove', 'touchmove'])
+  const mouseDown = (t, a, e) => addEvents(t, a, e, ['mousedown', 'touchstart'])
 
-  const mouseDown = (target, action, event) =>{
-    ['mousedown', 'touchstart'].forEach(a =>{
-      event === 'remove' ? target.removeEventListener(a, action) : target.addEventListener(a, action)
-    })
-  }
 
   const makeSpriteDraggable = (target, targetSpriteData) => {
     const pos = { a: 0, b: 0, c: 0, d: 0 }
@@ -301,8 +299,8 @@ function init() {
     setTargetPos(newSprite, stampX, stampY)
 
     const sprites = document.querySelectorAll('.sprite_wrapper')
-    spriteDatas.forEach((data, i)=>{
-      const { svg, frameNo, main, sub, color} = svgData[data.svgIndex]
+    spriteDatas.forEach((data, i) =>{
+      const { svg, frameNo, main, sub, color } = svgData[data.svgIndex]
       const { w, h } = data
       animateSprite({
         target: sprites[i].childNodes[3],
@@ -320,7 +318,7 @@ function init() {
   }
 
   const createPalette = (target, svgData) =>{
-    target.innerHTML = svgData.map(data=>{
+    target.innerHTML = svgData.map( data =>{
       const { svg, color, main, sub, frameNo } = data
       return `
         <div class="palette_cell">
@@ -335,7 +333,7 @@ function init() {
       `
     }).join('')
   
-    document.querySelectorAll('.palette_cell_inner').forEach(cell=>{
+    document.querySelectorAll('.palette_cell_inner').forEach( cell =>{
       const frameNo = cell.dataset.frame_no
       Object.assign(cell.style, {
         width: `${100 * frameNo}%`, 
@@ -344,14 +342,14 @@ function init() {
       animateSvg({ target: cell, end: frameNo - 1, frameSize: 40 })
     })
     const paletteCells = document.querySelectorAll('.palette_cell')
-    paletteCells.forEach((cell, i) =>{
-      cell.addEventListener('click', ()=>{
+    paletteCells.forEach((cell, i) => {
+      cell.addEventListener('click', ()=> {
         stampData.index = stampData.index === i ? null : i   
         paletteCells.forEach(c => c.classList.remove('selected'))
         if (stampData.index === i) {
           cell.classList.add('selected')
           selectedInput.value = i
-          Object.assign(drawData, { resize: false, rotate: false,})
+          Object.assign(drawData, { resize: false, rotate: false })
           artboard.className = 'artboard'
         } 
       })
@@ -366,7 +364,7 @@ function init() {
   //* +++++++ output image ++++++++++
   //* +++++++++++++++++++++++++++++++
 
-  const output = ({ content, ctx, w, h, frameNo, currentFrame, x, y, angle}) =>{
+  const output = ({ content, ctx, w, h, frameNo, currentFrame, x, y, angle }) =>{
     const data = new Blob([content], { type: 'image/svg+xml;charset=utf-8' })
     const url = window.URL.createObjectURL(data)
     const imageTarget = new Image()
@@ -441,8 +439,7 @@ function init() {
           color,
         }),
         ctx,
-        w, h,
-        x, y,
+        w, h, x, y,
         angle,
         frameNo,
         currentFrame: animationFrame(index, frameNo)
@@ -583,17 +580,17 @@ function init() {
   })
 
   hexInput.addEventListener('change',()=>{
-    const backgroundColor = hexInput.value
-    colorLabel.style.backgroundColor = backgroundColor
-    artboard.style.backgroundColor = backgroundColor
+    const bgColor = hexInput.value
+    colorLabel.style.backgroundColor = bgColor
+    artboard.style.backgroundColor = bgColor
     // createSign(svgWrapper(signSvg, invertHex(backgroundColor), signDim.w, signDim.h), hideBox)
   })
 
   colorInput.addEventListener('change',()=>{
-    const backgroundColor = colorInput.value
-    hexInput.value = backgroundColor
-    artboard.style.backgroundColor = backgroundColor
-    colorLabel.style.backgroundColor = backgroundColor
+    const bgColor = colorInput.value
+    hexInput.value = bgColor
+    artboard.style.backgroundColor = bgColor
+    colorLabel.style.backgroundColor = bgColor
     // createSign(svgWrapper(signSvg, invertHex(backgroundColor), signDim.w, signDim.h), hideBox)
   })
 
