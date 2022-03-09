@@ -3,6 +3,8 @@ function init() {
   // TODO imageSmoothing might not be mixable.
 
   // TODO add image flip
+  // TODO simplify rotate?
+  // TODO edit nav bar (and hide palette)
 
   // TODO make it draggable on the phone, and make the ui responsive
   // partly done, but not fully...
@@ -63,7 +65,11 @@ function init() {
   const handleOffset = 32
   const alts = document.querySelectorAll('.alt')
   const cursor = document.querySelector('.cursor')
-  let count = 0
+  // let count = 0
+  const count = {
+    sprite: 0,
+    frame: 0
+  }
   let speed = 300
   let imgName
   const stampData = { 
@@ -137,7 +143,8 @@ function init() {
   }
   
   const setTargetSize = (target, w, h) =>{
-    Object.assign(target.style, { width: `${w}px`, height: `${h}px` })
+    const unit = w * 0 === 0 ? 'px' : ''
+    Object.assign(target.style, { width: `${w}${unit}`, height: `${h}${unit}` })
   }
 
 
@@ -149,6 +156,8 @@ function init() {
   const mouseUp = (t, a, e) => addEvents(t, a, e, ['mouseup', 'touchend'])
   const mouseMove = (t, a, e) => addEvents(t, a, e, ['mousemove', 'touchmove'])
   const mouseDown = (t, a, e) => addEvents(t, a, e, ['mousedown', 'touchstart'])
+  const mouseEnter = (t, a, e) => addEvents(t, a, e, ['mouseenter', 'touchstart'])
+  const mouseLeave = (t, a, e) => addEvents(t, a, e, ['mouseleave', 'touchmove'])
 
 
   const makeSpriteDraggable = (target, targetSpriteData) => {
@@ -335,10 +344,11 @@ function init() {
   
     document.querySelectorAll('.palette_cell_inner').forEach( cell =>{
       const frameNo = cell.dataset.frame_no
-      Object.assign(cell.style, {
-        width: `${100 * frameNo}%`, 
-        height: '100%'
-      })
+      // Object.assign(cell.style, {
+      //   width: `${100 * frameNo}%`, 
+      //   height: '100%'
+      // })
+      setTargetSize(cell, `${100 * frameNo}%`, '100%')
       animateSvg({ target: cell, end: frameNo - 1, frameSize: 40 })
     })
     const paletteCells = document.querySelectorAll('.palette_cell')
@@ -360,11 +370,13 @@ function init() {
   createPalette(palette, svgData)
 
 
+  const check = []
+
   //* +++++++++++++++++++++++++++++++
   //* +++++++ output image ++++++++++
   //* +++++++++++++++++++++++++++++++
 
-  const output = ({ content, ctx, w, h, frameNo, currentFrame, x, y, angle }) =>{
+  const output = ({ content, ctx, w, h, frameNo, currentFrame, x, y, angle, id }) =>{
     const data = new Blob([content], { type: 'image/svg+xml;charset=utf-8' })
     const url = window.URL.createObjectURL(data)
     const imageTarget = new Image()
@@ -411,11 +423,26 @@ function init() {
       ctxA.clearRect(0, 0, w, h)   
       ctxB.restore()
       ctxB.clearRect(0, 0, hyp, hyp)
-      count++
-      if (count === 4) {
+  
+      check.push(id)
+      count.sprite++
+
+      // console.log(id, check)
+
+      if (count.sprite < spriteDatas.length) {
+        outputSpriteData(ctx, count.sprite, count.frame)
+      } else if (count.frame < 4) {
+        count.frame++
+        count.sprite = 0
+        createGif(count.sprite, count.frame)
+      } else if (count.frame === 4 && count.sprite === spriteDatas.length) {
         compileGif()
-        count = 0
-      }  
+        count.frame = 0
+        count.sprite = 0
+        check.length = 0
+      } else {
+        console.log('nothing')
+      }
     }
     imageTarget.src = url
   }
@@ -425,43 +452,43 @@ function init() {
     return rem === 0 ? frameNo : rem
   }
   
-  const outputSpriteData = (ctx, index) =>{
-    spriteDatas.forEach(data => {
-      const { svg, main, sub, color, frameNo, } = svgData[data.svgIndex]
-      const { x, y, w, h, angle } = data
 
-      output({
-        content: svgWrapper({
-          content: svg(main, sub),
-          w: 16 * frameNo,
-          h: 16,
-          frameNo,
-          color,
-        }),
-        ctx,
-        w, h, x, y,
-        angle,
+  const outputSpriteData = (ctx, spriteIndex, frameIndex) =>{
+    // spriteDatas
+    // console.log(spriteDatas[spriteIndex], spriteIndex, frameIndex)
+    const { svg, main, sub, color, frameNo, } = svgData[spriteDatas[spriteIndex].svgIndex]
+    const { x, y, w, h, angle } = spriteDatas[spriteIndex]
+
+    output({
+      content: svgWrapper({
+        content: svg(main, sub),
+        w: 16 * frameNo,
+        h: 16,
         frameNo,
-        currentFrame: animationFrame(index, frameNo)
-      })
+        color,
+      }),
+      ctx,
+      w, h, x, y,
+      angle,
+      frameNo,
+      currentFrame: animationFrame(frameIndex, frameNo),
+      id: `sprite-${spriteIndex}/frame-${frameIndex}`
     })
   }
 
+  const createGif = (spriteIndex, frameIndex) =>{
+    const { width, height } = artboard.getBoundingClientRect()
+    canvas[frameIndex].width = width
+    canvas[frameIndex].height = height
+    const ctx = canvas[frameIndex].getContext('2d')
+    ctx.imageSmoothingQuality = imageQuality 
 
-  const createGif = () =>{
-    seq.forEach(i=>{
-      // if (i === 0) canvas[i].classList.remove('display_none')
-      const { width, height } = artboard.getBoundingClientRect()
-      canvas[i].width = width
-      canvas[i].height = height
-      const ctx = canvas[i].getContext('2d')
-      ctx.imageSmoothingQuality = imageQuality 
-      ctx.fillStyle = colorInput.value
-      ctx.fillRect(0, 0, width, height)
+    ctx.fillStyle = colorInput.value
+    ctx.fillRect(0, 0, width, height)
 
-      outputSpriteData(ctx, i)
-    })
+    outputSpriteData(ctx, spriteIndex, frameIndex)
   }
+
 
   
   const compileGif = () =>{
@@ -477,10 +504,7 @@ function init() {
     encoder.finish()
 
     const { width, height } = artboard.getBoundingClientRect()
-    Object.assign(gif.style, {
-      width: `${width}px`, 
-      height: `${height}px`, 
-    })
+    setTargetSize(gif, width, height)
     gif.src = 'data:image/gif;base64,' + encode64(encoder.stream().getData())
   }
 
@@ -572,7 +596,7 @@ function init() {
     const addClickEvent = (className, event) =>{
       if (b.classList.contains(className)) b.addEventListener('click', event)
     }
-    addClickEvent('create_gif', createGif)
+    addClickEvent('create_gif', ()=> createGif(0, 0))
     addClickEvent('download_file', downloadGif)
     addClickEvent('rotate', ()=> toggleMode('rotate'))
     addClickEvent('resize', ()=> toggleMode('resize'))
@@ -606,8 +630,8 @@ function init() {
   updateColumnRow()
   
 
-  artboard.addEventListener('mouseenter', activateStamp)
-  artboard.addEventListener('mouseleave', deactivateStamp)
+  mouseEnter(artboard, activateStamp, 'add')
+  mouseLeave(artboard, deactivateStamp, 'add')
   artboard.addEventListener('mousemove', positionStamp)
   artboard.addEventListener('click', stampAction)
 
@@ -617,20 +641,20 @@ function init() {
     indicator.innerHTML = `${e.pageX - 40 - left}-${e.pageY - 40 - top}`
   })
 
-  const handleCursor = e =>{
-    cursor.style.top = `${e.pageY}px`
-    cursor.style.left = `${e.pageX}px`
-  }
+  const handleCursor = e => setTargetPos(cursor, e.pageX, e.pageY)
+
   window.addEventListener('mousemove', handleCursor)
 
 
-  alts.forEach(button=>{
-    button.addEventListener('mouseover',(e)=>{
-      cursor.childNodes[0].innerHTML = e.target.dataset.alt
-    })
-    button.addEventListener('mouseleave',()=>{
-      cursor.childNodes[0].innerHTML = ''
-    })
+  alts.forEach(button => {
+    mouseEnter(button,
+      e => cursor.childNodes[0].innerHTML = e.target.dataset.alt,
+      'add'
+      )
+    mouseLeave(button,
+      () => cursor.childNodes[0].innerHTML = '' ,
+      'add'
+      )
   })
   
 

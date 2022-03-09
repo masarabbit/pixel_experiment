@@ -4,8 +4,8 @@ body {
   margin: 0;
   padding: 0;
   font-family: sans-serif;
-  color: white;
-  background-color: rgb(226, 47, 15);
+  color: rgb(31, 31, 31);
+  background-color: rgb(224, 224, 224);
   /* background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAADCAYAAABWKLW/AAAAHklEQVQYV2N8/erVfwYoYARxHj56xCAvJ8cA5sBkAEKRDj5s0SGPAAAAAElFTkSuQmCC) repeat 0 0; */
 }
 
@@ -509,7 +509,8 @@ button.icon:hover {
 
 .icon {
   image-rendering: pixelated;
-  filter: invert();
+  opacity: 0.8;
+  /* filter: invert(); */
 }
 
 .sprite_container {
