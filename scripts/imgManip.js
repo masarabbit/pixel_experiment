@@ -560,16 +560,18 @@ function init() {
     if (stampData.active) {
       const { w, h } = svgData[stampData.index]
       const { left, top } = artboard.getBoundingClientRect()
-      const adjustedLeft = left + window.pageXOffset
+      const adjustedLeft = left + window.pageXOffset //TODO this is not working on mobile
       const adjustedTop = top + window.pageYOffset
-      // const pageX = e.type[0] === 'm' ? e.pageX : e.touches[0].pageX
-      // const pageY = e.type[0] === 'm' ? e.pageY : e.touches[0].pageY
+
+
+      // indicator.innerHTML = `${e.pageX - left}-${e.pageY - top}`
 
       // console.log(artboard.parentNode.offsetLeft)
       createSprite({
         index: stampData.index, 
         stampX: stampPos(e).x - adjustedLeft, stampY: stampPos(e).y - adjustedTop, 
-        x: e.pageX - (w / 2) - adjustedLeft, y: e.pageY - (h / 2) - adjustedTop
+        // x: e.pageX - (w / 2) - adjustedLeft, y: e.pageY - (h / 2) - adjustedTop
+        x: e.pageX - (w / 2) - left, y: e.pageY - (h / 2) - top
       })
     }
   }
@@ -650,7 +652,7 @@ function init() {
 
   window.addEventListener('mousemove', (e)=>{
     const { left, top } = artboard.getBoundingClientRect()
-    indicator.innerHTML = `${e.pageX - 40 - left}-${e.pageY - 40 - top}`
+    indicator.innerHTML = `${e.pageX - left}-${e.pageY - top}`
   })
 
   const handleCursor = e => setTargetPos(cursor, e.pageX, e.pageY)
@@ -669,16 +671,16 @@ function init() {
       )
   })
   
-  const setUpArtBoard = () =>{
-    const { width, height } = artboard.getBoundingClientRect()
-    setTargetSize(artboard, width, height)  
-  }
+  // const setUpArtBoard = () =>{
+  //   const { width, height } = artboard.getBoundingClientRect()
+  //   setTargetSize(artboard, width, height)  
+  // }
 
-  setUpArtBoard()
-  window.addEventListener('resize', () =>{
-    const { height } = artboard.getBoundingClientRect()
-    setTargetSize(artboard, window.innerWidth - 40, height)  
-  })
+  // setUpArtBoard()
+  // window.addEventListener('resize', () =>{
+  //   const { height } = artboard.getBoundingClientRect()
+  //   setTargetSize(artboard, window.innerWidth - 40, height)  
+  // })
 
 
 
