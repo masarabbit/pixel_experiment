@@ -260,12 +260,12 @@ function init() {
     }
     const getAngle = e =>{
       const { left, top, width, height } = handle.getBoundingClientRect()
-      const adjustedLeft = left + window.pageXOffset
-      const adjustedTop = top + window.pageYOffset
+      // const adjustedLeft = left + window.pageXOffset
+      // const adjustedTop = top + window.pageYOffset
 
       const center = {
-        x: adjustedLeft + width / 2 || 0,
-        y: adjustedTop + height / 2 || 0,
+        x: left + width / 2 || 0,
+        y: top + height / 2 || 0,
       }
       const x = e.type[0] === 'm' ? e.pageX : e.touches[0].pageX
       const y = e.type[0] === 'm' ? e.pageY : e.touches[0].pageY
@@ -462,9 +462,9 @@ function init() {
     const { svg, main, sub, color, frameNo, } = svgData[spriteDatas[spriteIndex].svgIndex]
     const { x, y, w, h, angle } = spriteDatas[spriteIndex]
 
-    const { left, top } = artboard.getBoundingClientRect() //TODO moved the adjustedment here, but need to test it.
-    const adjustedLeft = left + window.pageXOffset
-    const adjustedTop = top + window.pageYOffset
+    // const { left, top } = artboard.getBoundingClientRect() //TODO moved the adjustedment here, but need to test it.
+    // const adjustedLeft = left + window.pageXOffset
+    // const adjustedTop = top + window.pageYOffset
 
     output({
       content: svgWrapper({
@@ -475,8 +475,7 @@ function init() {
         color,
       }),
       ctx,
-      w, h, 
-      x: x - adjustedLeft, y: y - adjustedTop,
+      w, h, x, y,
       angle,
       frameNo,
       currentFrame: animationFrame(frameIndex, frameNo),
@@ -570,7 +569,7 @@ function init() {
       createSprite({
         index: stampData.index, 
         stampX: stampPos(e).x - adjustedLeft, stampY: stampPos(e).y - adjustedTop, 
-        x: e.pageX - (w / 2), y: e.pageY - (h / 2)
+        x: e.pageX - (w / 2) - adjustedLeft, y: e.pageY - (h / 2) - adjustedTop
       })
     }
   }
@@ -670,6 +669,18 @@ function init() {
       )
   })
   
+  const setUpArtBoard = () =>{
+    const { width, height } = artboard.getBoundingClientRect()
+    setTargetSize(artboard, width, height)  
+  }
+
+  setUpArtBoard()
+  window.addEventListener('resize', () =>{
+    const { height } = artboard.getBoundingClientRect()
+    setTargetSize(artboard, window.innerWidth - 40, height)  
+  })
+
+
 
 }
 

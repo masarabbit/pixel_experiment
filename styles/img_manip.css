@@ -396,16 +396,18 @@ button.icon:hover {
 
 .artboard_wrapper {
   position: relative;
-  margin: 20px;
+  margin: 40px 0;
   height: 300px;
-  width: calc(100% - 40px);
+  /* width: calc(100% - 40px); */
+  width: 300px;
 }
 
 .artboard {
   position: absolute;
   height: 300px;
-  width: calc(100% - 40px);
-  margin-left: 20px;
+  width: 300px;
+  /* width: calc(100% - 40px); */
+  /* margin-left: 20px; */
   background-color: #fff;
 }
 
