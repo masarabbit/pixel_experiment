@@ -267,6 +267,7 @@ function init() {
         x: left + width / 2 || 0,
         y: top + height / 2 || 0,
       }
+      console.log('center x', center.x, 'center  y', center.y)
       const x = e.type[0] === 'm' ? e.pageX : e.touches[0].pageX
       const y = e.type[0] === 'm' ? e.pageY : e.touches[0].pageY
 
