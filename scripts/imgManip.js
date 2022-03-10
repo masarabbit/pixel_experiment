@@ -57,6 +57,7 @@ function init() {
   const renderCanvas = document.querySelectorAll('.render_canvas')
   const stamp = document.querySelector('.stamp')
   const indicator = document.querySelector('.indicator')
+  const indicatorTwo = document.querySelector('.indicator_two')
   const imageSmoothing = false
   const imageQuality = 'high'
   const seq = [0, 1, 2, 3]
@@ -531,8 +532,8 @@ function init() {
     // const pageX = e.type[0] === 'm' ? e.pageX : e.touches[0].pageX
     // const pageY = e.type[0] === 'm' ? e.pageY : e.touches[0].pageY
     return {
-      x: (e.pageX - w / 2),
-      y: (e.pageY - h / 2)
+      x: e.pageX - w / 2,
+      y: e.pageY - h / 2
     }
     
   }
@@ -561,8 +562,8 @@ function init() {
     if (stampData.active) {
       const { w, h } = svgData[stampData.index]
       const { left, top } = artboard.getBoundingClientRect()
-      const adjustedLeft = left + window.pageXOffset //TODO this is not working on mobile
-      const adjustedTop = top + window.pageYOffset
+      const adjustedLeft = left + window.scrollX //TODO this is not working on mobile
+      const adjustedTop = top + window.scrollY
 
 
       // indicator.innerHTML = `${e.pageX - left}-${e.pageY - top}`
@@ -572,7 +573,7 @@ function init() {
         index: stampData.index, 
         stampX: stampPos(e).x - adjustedLeft, stampY: stampPos(e).y - adjustedTop, 
         // x: e.pageX - (w / 2) - adjustedLeft, y: e.pageY - (h / 2) - adjustedTop
-        x: e.pageX - (w / 2) - left, y: e.pageY - (h / 2) - top
+        x: e.pageX - (w / 2) - adjustedLeft, y: e.pageY - (h / 2) - adjustedTop
       })
     }
   }
@@ -682,7 +683,9 @@ function init() {
   //   const { height } = artboard.getBoundingClientRect()
   //   setTargetSize(artboard, window.innerWidth - 40, height)  
   // })
-
+  document.addEventListener('scroll', ()=>{
+    indicatorTwo.innerHTML = `x: ${window.scrollX} / y: ${window.scrollY}`
+  })
 
 
 }
