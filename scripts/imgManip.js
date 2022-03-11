@@ -571,7 +571,9 @@ function init() {
       // console.log(artboard.parentNode.offsetLeft)
       createSprite({
         index: stampData.index, 
-        stampX: stampPos(e).x - adjustedLeft, stampY: stampPos(e).y - adjustedTop, 
+        // stampX: stampPos(e).x - adjustedLeft, stampY: stampPos(e).y - adjustedTop, 
+        stampX: e.pageX - (w / 2) - adjustedLeft, stampY: e.pageY - (h / 2) - adjustedTop, 
+
         // x: e.pageX - (w / 2) - adjustedLeft, y: e.pageY - (h / 2) - adjustedTop
         x: e.pageX - (w / 2) - adjustedLeft, y: e.pageY - (h / 2) - adjustedTop
       })
