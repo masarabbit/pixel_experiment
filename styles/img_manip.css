@@ -570,6 +570,10 @@ button.icon:hover {
   overflow: hidden;
 }
 
+.stamp.transparent {
+  opacity: 0;
+}
+
 .output {
   position: relative;
   color: white;

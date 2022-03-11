@@ -292,7 +292,7 @@ function init() {
     mouseDown(handle, onGrab, 'add')
   }
   
-  const createSprite = ({index, stampX, stampY, x, y}) =>{
+  const createSprite = ({index, x, y}) =>{
     spriteDatas.push({ 
       angle: 0,
       svgIndex: index,
@@ -310,7 +310,7 @@ function init() {
       </div>
       <div class="sprite_container" style="--color: ${svgData[index].color || svgData[index].main};"></div>`
     artboard.append(newSprite)
-    setTargetPos(newSprite, stampX, stampY)
+    setTargetPos(newSprite, x, y)
 
     const sprites = document.querySelectorAll('.sprite_wrapper')
     spriteDatas.forEach((data, i) =>{
@@ -542,13 +542,13 @@ function init() {
 
   const activateStamp = () =>{
     if (stampData.active) {
-      if (!isTouchDevice()) stamp.classList.remove('display_none') 
+      if (!isTouchDevice()) stamp.classList.remove('transparent') 
       artboard.classList.add('stamp_active')
     }
   }
 
   const deactivateStamp = () =>{
-    if (!isTouchDevice()) stamp.classList.add('display_none')
+    if (!isTouchDevice()) stamp.classList.add('transparent')
     artboard.classList.remove('stamp_active')
   }
 
@@ -558,21 +558,13 @@ function init() {
 
   const stampAction = e =>{
     if (stampData.active) {
-      const { w, h } = svgData[stampData.index]
       const { left, top } = artboard.getBoundingClientRect()
-      const adjustedLeft = left + window.scrollX //TODO this is not working on mobile
+      const adjustedLeft = left + window.scrollX
       const adjustedTop = top + window.scrollY
 
-      // indicator.innerHTML = `${e.pageX - left}-${e.pageY - top}`
-
-      // console.log(artboard.parentNode.offsetLeft)
       createSprite({
         index: stampData.index, 
-        // stampX: stampPos(e).x - adjustedLeft, stampY: stampPos(e).y - adjustedTop, 
-        stampX: e.pageX - 40 - adjustedLeft, stampY: e.pageY - 40 - adjustedTop, 
-
-        // x: e.pageX - (w / 2) - adjustedLeft, y: e.pageY - (h / 2) - adjustedTop
-        x: e.pageX - 40 - adjustedLeft, y: e.pageY - 40 - adjustedTop
+        x: stampPos(e).x - adjustedLeft, y: stampPos(e).y - adjustedTop,
       })
     }
   }
