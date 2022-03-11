@@ -529,8 +529,6 @@ function init() {
   
   const stampPos = e =>{
     const { width: w, height: h } = stamp.getBoundingClientRect()
-    // const pageX = e.type[0] === 'm' ? e.pageX : e.touches[0].pageX
-    // const pageY = e.type[0] === 'm' ? e.pageY : e.touches[0].pageY
     return {
       x: e.pageX - w / 2,
       y: e.pageY - h / 2
@@ -565,17 +563,16 @@ function init() {
       const adjustedLeft = left + window.scrollX //TODO this is not working on mobile
       const adjustedTop = top + window.scrollY
 
-
       // indicator.innerHTML = `${e.pageX - left}-${e.pageY - top}`
 
       // console.log(artboard.parentNode.offsetLeft)
       createSprite({
         index: stampData.index, 
         // stampX: stampPos(e).x - adjustedLeft, stampY: stampPos(e).y - adjustedTop, 
-        stampX: e.pageX - (w / 2) - adjustedLeft, stampY: e.pageY - (h / 2) - adjustedTop, 
+        stampX: e.pageX - 40 - adjustedLeft, stampY: e.pageY - 40 - adjustedTop, 
 
         // x: e.pageX - (w / 2) - adjustedLeft, y: e.pageY - (h / 2) - adjustedTop
-        x: e.pageX - (w / 2) - adjustedLeft, y: e.pageY - (h / 2) - adjustedTop
+        x: e.pageX - 40 - adjustedLeft, y: e.pageY - 40 - adjustedTop
       })
     }
   }
