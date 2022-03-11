@@ -261,14 +261,13 @@ function init() {
     }
     const getAngle = e =>{
       const { left, top, width, height } = handle.getBoundingClientRect()
-      // const adjustedLeft = left + window.pageXOffset
-      // const adjustedTop = top + window.pageYOffset
 
       const center = {
         x: left + width / 2 || 0,
         y: top + height / 2 || 0,
       }
-      console.log('center x', center.x, 'center  y', center.y)
+      indicatorTwo.innerHTML = `${e.type[0]} center x: ${Math.round(center.x)} y: ${Math.round(center.y)}`
+      // console.log('center x', center.x, 'center  y', center.y)
       const x = e.type[0] === 'm' ? e.pageX : e.touches[0].pageX
       const y = e.type[0] === 'm' ? e.pageY : e.touches[0].pageY
 
@@ -349,10 +348,6 @@ function init() {
   
     document.querySelectorAll('.palette_cell_inner').forEach( cell =>{
       const frameNo = cell.dataset.frame_no
-      // Object.assign(cell.style, {
-      //   width: `${100 * frameNo}%`, 
-      //   height: '100%'
-      // })
       setTargetSize(cell, `${100 * frameNo}%`, '100%')
       animateSvg({ target: cell, end: frameNo - 1, frameSize: 40 })
     })
@@ -374,8 +369,6 @@ function init() {
 
   createPalette(palette, svgData)
 
-
-  const check = []
 
   //* +++++++++++++++++++++++++++++++
   //* +++++++ output image ++++++++++
@@ -424,15 +417,10 @@ function init() {
         x - offsetW, y - offsetY, // position within canvas / image
         hyp, hyp                  // how much of the frame to paste
       )
-      
       ctxA.clearRect(0, 0, w, h)   
       ctxB.restore()
       ctxB.clearRect(0, 0, hyp, hyp)
-  
-      check.push(id)
       count.sprite++
-
-      // console.log(id, check)
 
       if (count.sprite < spriteDatas.length) {
         outputSpriteData(ctx, count.sprite, count.frame)
@@ -444,9 +432,8 @@ function init() {
         compileGif()
         count.frame = 0
         count.sprite = 0
-        check.length = 0
       } else {
-        console.log('nothing')
+        console.log('error')
       }
     }
     imageTarget.src = url
@@ -459,14 +446,8 @@ function init() {
   
 
   const outputSpriteData = (ctx, spriteIndex, frameIndex) =>{
-    // spriteDatas
-    // console.log(spriteDatas[spriteIndex], spriteIndex, frameIndex)
     const { svg, main, sub, color, frameNo, } = svgData[spriteDatas[spriteIndex].svgIndex]
     const { x, y, w, h, angle } = spriteDatas[spriteIndex]
-
-    // const { left, top } = artboard.getBoundingClientRect() //TODO moved the adjustedment here, but need to test it.
-    // const adjustedLeft = left + window.pageXOffset
-    // const adjustedTop = top + window.pageYOffset
 
     output({
       content: svgWrapper({
@@ -664,19 +645,9 @@ function init() {
       )
   })
   
-  // const setUpArtBoard = () =>{
-  //   const { width, height } = artboard.getBoundingClientRect()
-  //   setTargetSize(artboard, width, height)  
-  // }
-
-  // setUpArtBoard()
-  // window.addEventListener('resize', () =>{
-  //   const { height } = artboard.getBoundingClientRect()
-  //   setTargetSize(artboard, window.innerWidth - 40, height)  
+  // document.addEventListener('scroll', ()=>{
+  //   indicatorTwo.innerHTML = `x: ${window.scrollX} / y: ${window.scrollY}`
   // })
-  document.addEventListener('scroll', ()=>{
-    indicatorTwo.innerHTML = `x: ${window.scrollX} / y: ${window.scrollY}`
-  })
 
 
 }
