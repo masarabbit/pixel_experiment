@@ -259,7 +259,7 @@ function init() {
       mouseUp(document, onLetGo, 'add')
       mouseMove(document, onDrag, 'add')
     }
-    const getAngle = e =>{
+    const getAngle = (e, end) =>{
       const { left, top, width, height } = handle.getBoundingClientRect()
 
       const center = {
@@ -268,8 +268,16 @@ function init() {
       }
       indicatorTwo.innerHTML = `${e.type[0]} center x: ${Math.round(center.x)} y: ${Math.round(center.y)}`
       // console.log('center x', center.x, 'center  y', center.y)
-      const x = e.type[0] === 'm' ? e.pageX : e.touches[0].pageX
-      const y = e.type[0] === 'm' ? e.pageY : e.touches[0].pageY
+      const x = e.type[0] === 'm' 
+        ? e.pageX 
+        : end 
+          ? e.changedTouches[0].pageX
+          : e.touches[0].pageX
+      const y = e.type[0] === 'm' 
+        ? e.pageY 
+        : end 
+          ? e.changedTouches[0].pageY
+          : e.touches[0].pageY
 
       const newAngle = Math.atan2(center.y - y, center.x - x)
       return newAngle - spriteData.angle
@@ -282,7 +290,7 @@ function init() {
     const onLetGo = e => {
       mouseUp(document, onLetGo, 'remove')
       mouseMove(document, onDrag, 'remove')
-      spriteData.angle = getAngle(e)
+      spriteData.angle = getAngle(e, true)
 
       spriteData.degree = Math.round(spriteData.angle * (180 / Math.PI))
       outputBox.innerHTML = JSON.stringify(spriteDatas)
