@@ -66,6 +66,7 @@ function init() {
   const handleOffset = 32
   const alts = document.querySelectorAll('.alt')
   const cursor = document.querySelector('.cursor')
+  const rad = 360 / (180 / Math.PI)
   // let count = 0
   const count = {
     sprite: 0,
@@ -83,6 +84,8 @@ function init() {
     rotate: false,
     resize: false,
     resize_artboard: false,
+    flip_h: false,
+    flip_v: false,
   } 
 
 
@@ -96,7 +99,7 @@ function init() {
   const colorLabel = document.querySelector('.color_label')
   const hexInput = document.querySelector('.hex')
   const selectedInput = document.querySelector('.selected')
-  const outputBox = document.querySelector('.output')
+  // const outputBox = document.querySelector('.output')
 
   const svgContentWrapper = ({ content, color, w, h } ) =>{
     return `
@@ -206,15 +209,15 @@ function init() {
       if (drawData.resize || drawData.resize_artboard ) {
         if (!isArtboard) drawData.handleActive = true
         console.log('test', drawData)
-        pos.c = e.type === 'mousedown' ? e.clientX : e.touches[0].clientX
-        pos.d = e.type === 'mousedown' ? e.clientY : e.touches[0].clientY   
+        pos.c = e.type[0] === 'm' ? e.clientX : e.touches[0].clientX
+        pos.d = e.type[0] === 'm' ? e.clientY : e.touches[0].clientY   
         mouseUp(document, onLetGo, 'add')
         mouseMove(document, onDrag, 'add')
       }
     }
     const onDrag = e =>{
-      const x = e.type === 'mousemove' ? e.clientX : e.touches[0].clientX
-      const y = e.type === 'mousemove' ? e.clientY : e.touches[0].clientY
+      const x = e.type[0] === 'm' ? e.clientX : e.touches[0].clientX
+      const y = e.type[0] === 'm' ? e.clientY : e.touches[0].clientY
       pos.a = x - pos.c
       pos.b = y - pos.d
       pos.c = x
@@ -248,6 +251,21 @@ function init() {
 
   makeResizable(artboard)
 
+  const makeSpriteFlippable = (target, spriteData) =>{
+    // add event to handle
+    target.childNodes[1].addEventListener('click', ()=>{
+      if (drawData.flip_h) spriteData.flip_h = !spriteData.flip_h
+      if (drawData.flip_v) spriteData.flip_v = !spriteData.flip_v
+      const { flip_h, flip_v, angle } = spriteData
+      const sprite = target.childNodes[3]
+      sprite.style.transition = '0.4s'
+      sprite.style.transform = `rotate(${angle}rad) scale(${ flip_h ? -1 : 1 }, ${ flip_v ? -1 : 1 })` 
+      setTimeout(()=>{
+        sprite.style.transition = '0s'
+      }, 400)
+    })
+  }
+
 
   const makeSpriteRotatable = (target, spriteData) =>{
     const handle = target.childNodes[1]
@@ -280,20 +298,27 @@ function init() {
           : e.touches[0].pageY
 
       const newAngle = Math.atan2(center.y - y, center.x - x)
-      return newAngle - spriteData.angle
+      const adjustedNewAngle = newAngle < 0 ? rad + newAngle : newAngle
+      // console.log(adjustedNewAngle)
+      return adjustedNewAngle - spriteData.angle
     }
     const onDrag = e =>{
       const newAngle = getAngle(e)
-      target.childNodes[3].style.transform = `rotate(${newAngle}rad)`  
-      handle.style.transform = `rotate(${newAngle}rad)`
+      const { flip_h, flip_v, offsetAngle } = spriteData
+      target.childNodes[3].style.transform = `rotate(${newAngle}rad) scale(${ flip_h ? -1 : 1 }, ${ flip_v ? -1 : 1 })`  
+      handle.style.transform = `rotate(${newAngle - offsetAngle}rad)`
     }
     const onLetGo = e => {
       mouseUp(document, onLetGo, 'remove')
       mouseMove(document, onDrag, 'remove')
       spriteData.angle = getAngle(e, true)
-
+      spriteData.offsetAngle = spriteData.angle
+      handle.style.transition = '0.2s'
+      handle.style.transform = `rotate(0rad)`
+      setTimeout(()=>{
+        handle.style.transition = '0s'
+      }, 200)
       spriteData.degree = Math.round(spriteData.angle * (180 / Math.PI))
-      outputBox.innerHTML = JSON.stringify(spriteDatas)
       drawData.handleActive = false
     }
     mouseDown(handle, onGrab, 'add')
@@ -302,6 +327,7 @@ function init() {
   const createSprite = ({index, x, y}) =>{
     spriteDatas.push({ 
       angle: 0,
+      offsetAngle: 0,
       svgIndex: index,
       w: 80, h: 80,
       x, y,
@@ -313,7 +339,7 @@ function init() {
     newSprite.innerHTML = `
       <div class="handle">
         <div class="handle_square"></div>
-        <div class="resize_square"></div>
+        <div class="lower_handle_square"></div>
       </div>
       <div class="sprite_container" style="--color: ${svgData[index].color || svgData[index].main};"></div>`
     artboard.append(newSprite)
@@ -335,6 +361,7 @@ function init() {
     const targetSpriteData = spriteDatas[spriteDatas.length - 1]
     makeSpriteDraggable(newSprite, targetSpriteData)
     makeSpriteRotatable(newSprite, targetSpriteData)
+    makeSpriteFlippable(newSprite, targetSpriteData)
     makeResizable(newSprite, targetSpriteData)
   }
 
@@ -382,7 +409,7 @@ function init() {
   //* +++++++ output image ++++++++++
   //* +++++++++++++++++++++++++++++++
 
-  const output = ({ content, ctx, w, h, frameNo, currentFrame, x, y, angle, id }) =>{
+  const output = ({ content, ctx, w, h, frameNo, currentFrame, x, y, angle, flip_h, flip_v, id }) =>{
     const data = new Blob([content], { type: 'image/svg+xml;charset=utf-8' })
     const url = window.URL.createObjectURL(data)
     const imageTarget = new Image()
@@ -412,6 +439,7 @@ function init() {
       ctxB.save()
       ctxB.translate(hyp / 2 , hyp / 2)  //TODO need to investigate how rotation works
       ctxB.rotate(angle)
+      ctxB.scale(flip_h ? -1 : 1, flip_v ? -1 : 1)
       ctxB.translate(-hyp / 2 ,-hyp / 2) 
       const offsetW = (hyp - w) / 2
       const offsetY = (hyp - h) / 2
@@ -455,7 +483,7 @@ function init() {
 
   const outputSpriteData = (ctx, spriteIndex, frameIndex) =>{
     const { svg, main, sub, color, frameNo, } = svgData[spriteDatas[spriteIndex].svgIndex]
-    const { x, y, w, h, angle } = spriteDatas[spriteIndex]
+    const { x, y, w, h, angle, flip_h, flip_v } = spriteDatas[spriteIndex]
 
     output({
       content: svgWrapper({
@@ -468,6 +496,7 @@ function init() {
       ctx,
       w, h, x, y,
       angle,
+      flip_h, flip_v,
       frameNo,
       currentFrame: animationFrame(frameIndex, frameNo),
       id: `sprite-${spriteIndex}/frame-${frameIndex}`
@@ -576,16 +605,16 @@ function init() {
     }
   }
 
-  const toggleMode = mode =>{
+  const toggleMode = (mode, handle) =>{
     stampData.active = false
     document.querySelectorAll('.palette_cell').forEach(cell => cell.classList.remove('selected'))
 
     Array.from(Object.keys(drawData)).forEach(m =>{
-      m === mode
-        ? drawData[m] = !drawData[m]
-        : drawData[m] = false
+      drawData[m] = m === mode
+        ? !drawData[m]
+        : false
     })
-    artboard.className = drawData[mode] ? `artboard ${mode}_active` : 'artboard'
+    artboard.className = drawData[mode] ? `artboard ${mode}_active ${handle || ''}` : 'artboard'
   }
 
   buttons.forEach(b =>{
@@ -594,8 +623,10 @@ function init() {
     }
     addClickEvent('create_gif', ()=> createGif(0, 0))
     addClickEvent('download_file', downloadGif)
-    addClickEvent('rotate', ()=> toggleMode('rotate'))
-    addClickEvent('resize', ()=> toggleMode('resize'))
+    addClickEvent('rotate', ()=> toggleMode('rotate', 'upper'))
+    addClickEvent('resize', ()=> toggleMode('resize', 'lower'))
+    addClickEvent('flip_h', ()=> toggleMode('flip_h', 'lower'))
+    addClickEvent('flip_v', ()=> toggleMode('flip_v', 'lower'))
     addClickEvent('resize_artboard', ()=> toggleMode('resize_artboard'))
   })
 

@@ -16,7 +16,7 @@
 </head>
 
 <body>
-  <nav>
+  <nav class="top">
     img manip v6
     <div class="input_wrap">
       <label>column</label>
@@ -63,13 +63,14 @@
     <img class="gif">
   </div> 
 
-  <canvas class="canvas display_none"></canvas>
-  <canvas class="canvas display_none"></canvas>
-  <canvas class="canvas display_none"></canvas>
-  <canvas class="canvas display_none"></canvas>
-  
-  <canvas class="render_canvas display_none"></canvas>
-  <canvas class="render_canvas display_none"></canvas>
+  <div class="display_none">
+    <canvas class="canvas"></canvas>
+    <canvas class="canvas"></canvas>
+    <canvas class="canvas"></canvas>
+    <canvas class="canvas"></canvas>
+    <canvas class="render_canvas"></canvas>
+    <canvas class="render_canvas"></canvas>
+  </div>
 
   <div class="stamp transparent"></div>
 
@@ -78,7 +79,8 @@
   <div class="indicator"></div>
   <div class="indicator_two"></div>
   <div class="output"></div>
-
+  
+  <nav class="bottom"></nav>
   <!-- <div class="color-test" style="--color: cyan;"></div> -->
 </body>
 
