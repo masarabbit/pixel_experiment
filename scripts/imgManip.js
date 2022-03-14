@@ -2,14 +2,9 @@ function init() {
 
   // TODO imageSmoothing might not be mixable.
 
-  // TODO add image flip
-  // TODO simplify rotate?
   // TODO edit nav bar (and hide palette)
 
-  // TODO make it draggable on the phone, and make the ui responsive
-  // partly done, but not fully...
 
-  // TODO use setTargetPos and setTargetSize where possible
 
 
   const svg = (main, sub) =>{
@@ -50,6 +45,16 @@ function init() {
     },
   ]
 
+  
+
+  const nearestN = (n, denom) =>{
+    return n === 0 ? 0 : (n - 1) + Math.abs(((n - 1) % denom) - denom)
+  }
+
+  const radToDeg = rad => Math.round(rad * (180 / Math.PI))
+  const degToRad = deg => deg / (180 / Math.PI)
+
+
   const spriteDatas = []
   const palette = document.querySelector('.palette')
   const artboard = document.querySelector('.artboard')
@@ -66,7 +71,7 @@ function init() {
   const handleOffset = 32
   const alts = document.querySelectorAll('.alt')
   const cursor = document.querySelector('.cursor')
-  const rad = 360 / (180 / Math.PI)
+  const rad = degToRad(360)
   // let count = 0
   const count = {
     sprite: 0,
@@ -89,17 +94,14 @@ function init() {
   } 
 
 
-  // TODO change to:
-  // const input = {
-  //   row
-  // }
-  const rowInput = document.querySelector('.row')
-  const columnInput = document.querySelector('.column')
-  const colorInput = document.querySelector('#color')
-  const colorLabel = document.querySelector('.color_label')
-  const hexInput = document.querySelector('.hex')
-  const selectedInput = document.querySelector('.selected')
-  // const outputBox = document.querySelector('.output')
+  const input = {
+    row: document.querySelector('.row'),
+    column: document.querySelector('.column'),
+    color: document.querySelector('#color'),
+    colorLabel: document.querySelector('.color_label'),
+    hex: document.querySelector('.hex'),
+    selected: document.querySelector('.selected'),
+  }
 
   const svgContentWrapper = ({ content, color, w, h } ) =>{
     return `
@@ -224,9 +226,9 @@ function init() {
       pos.d = y
       if (isArtboard && drawData.resize_artboard) {
         const { width, height } = artboard.getBoundingClientRect()
-        columnInput.value = width + pos.a
-        rowInput.value = height + pos.b
-        setTargetSize(artboard, columnInput.value, rowInput.value)
+        input.column.value = width + pos.a
+        input.row.value = height + pos.b
+        setTargetSize(artboard, input.column.value, input.row.value)
 
       } else if (spriteData) {
         const newW = spriteData.w + pos.a
@@ -259,7 +261,7 @@ function init() {
       const { flip_h, flip_v, angle } = spriteData
       const sprite = target.childNodes[3]
       sprite.style.transition = '0.4s'
-      sprite.style.transform = `rotate(${angle}rad) scale(${ flip_h ? -1 : 1 }, ${ flip_v ? -1 : 1 })` 
+      sprite.style.transform = `rotate(${angle}deg) scale(${ flip_h ? -1 : 1 }, ${ flip_v ? -1 : 1 })` 
       setTimeout(()=>{
         sprite.style.transition = '0s'
       }, 400)
@@ -279,7 +281,6 @@ function init() {
     }
     const getAngle = (e, end) =>{
       const { left, top, width, height } = handle.getBoundingClientRect()
-
       const center = {
         x: left + width / 2 || 0,
         y: top + height / 2 || 0,
@@ -299,26 +300,30 @@ function init() {
 
       const newAngle = Math.atan2(center.y - y, center.x - x)
       const adjustedNewAngle = newAngle < 0 ? rad + newAngle : newAngle
-      // console.log(adjustedNewAngle)
-      return adjustedNewAngle - spriteData.angle
+      
+      return end 
+        ? nearestN(radToDeg(adjustedNewAngle) - spriteData.angle, 90) 
+        : radToDeg(adjustedNewAngle) - spriteData.angle
     }
     const onDrag = e =>{
       const newAngle = getAngle(e)
       const { flip_h, flip_v, offsetAngle } = spriteData
-      target.childNodes[3].style.transform = `rotate(${newAngle}rad) scale(${ flip_h ? -1 : 1 }, ${ flip_v ? -1 : 1 })`  
-      handle.style.transform = `rotate(${newAngle - offsetAngle}rad)`
+      target.childNodes[3].style.transform = `rotate(${newAngle}deg) scale(${ flip_h ? -1 : 1 }, ${ flip_v ? -1 : 1 })`  
+      handle.style.transform = `rotate(${newAngle - offsetAngle}deg)`
     }
     const onLetGo = e => {
       mouseUp(document, onLetGo, 'remove')
       mouseMove(document, onDrag, 'remove')
       spriteData.angle = getAngle(e, true)
       spriteData.offsetAngle = spriteData.angle
+      const { flip_h, flip_v, angle } = spriteData
+      target.childNodes[3].style.transform = `rotate(${angle}deg) scale(${ flip_h ? -1 : 1 }, ${ flip_v ? -1 : 1 })`  
       handle.style.transition = '0.2s'
-      handle.style.transform = `rotate(0rad)`
+      handle.style.transform = `rotate(0deg)`
       setTimeout(()=>{
         handle.style.transition = '0s'
       }, 200)
-      spriteData.degree = Math.round(spriteData.angle * (180 / Math.PI))
+      // spriteData.degree = Math.round(spriteData.angle * (180 / Math.PI))
       drawData.handleActive = false
     }
     mouseDown(handle, onGrab, 'add')
@@ -393,7 +398,7 @@ function init() {
         paletteCells.forEach(c => c.classList.remove('selected'))
         if (stampData.index === i) {
           cell.classList.add('selected')
-          selectedInput.value = i
+          input.selected.value = i
           Object.assign(drawData, { resize: false, rotate: false })
           artboard.className = 'artboard'
         } 
@@ -438,7 +443,7 @@ function init() {
       )
       ctxB.save()
       ctxB.translate(hyp / 2 , hyp / 2)  //TODO need to investigate how rotation works
-      ctxB.rotate(angle)
+      ctxB.rotate(degToRad(angle))
       ctxB.scale(flip_h ? -1 : 1, flip_v ? -1 : 1)
       ctxB.translate(-hyp / 2 ,-hyp / 2) 
       const offsetW = (hyp - w) / 2
@@ -510,7 +515,7 @@ function init() {
     const ctx = canvas[frameIndex].getContext('2d')
     ctx.imageSmoothingQuality = imageQuality 
 
-    ctx.fillStyle = colorInput.value
+    ctx.fillStyle = input.color.value
     ctx.fillRect(0, 0, width, height)
 
     outputSpriteData(ctx, spriteIndex, frameIndex)
@@ -630,28 +635,28 @@ function init() {
     addClickEvent('resize_artboard', ()=> toggleMode('resize_artboard'))
   })
 
-  hexInput.addEventListener('change',()=>{
-    const bgColor = hexInput.value
-    colorLabel.style.backgroundColor = bgColor
+  input.hex.addEventListener('change',()=>{
+    const bgColor = input.hex.value
+    input.colorLabel.style.backgroundColor = bgColor
     artboard.style.backgroundColor = bgColor
     // createSign(svgWrapper(signSvg, invertHex(backgroundColor), signDim.w, signDim.h), hideBox)
   })
 
-  colorInput.addEventListener('change',()=>{
-    const bgColor = colorInput.value
-    hexInput.value = bgColor
+  input.color.addEventListener('change',()=>{
+    const bgColor = input.color.value
+    input.hex.value = bgColor
     artboard.style.backgroundColor = bgColor
-    colorLabel.style.backgroundColor = bgColor
+    input.colorLabel.style.backgroundColor = bgColor
     // createSign(svgWrapper(signSvg, invertHex(backgroundColor), signDim.w, signDim.h), hideBox)
   })
 
-  columnInput.addEventListener('change',()=> artboard.style.width = `${columnInput.value}px`)
-  rowInput.addEventListener('change',()=> artboard.style.height = `${rowInput.value}px` )
+  input.column.addEventListener('change',()=> artboard.style.width = `${input.column.value}px`)
+  input.row.addEventListener('change',()=> artboard.style.height = `${input.row.value}px` )
   
   const updateColumnRow = () =>{
     const { width, height } = artboard.getBoundingClientRect()
-    columnInput.value = width
-    rowInput.value = height
+    input.column.value = width
+    input.row.value = height
   }
 
   updateColumnRow()
