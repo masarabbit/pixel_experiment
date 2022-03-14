@@ -55,7 +55,7 @@ function init() {
   const degToRad = deg => deg / (180 / Math.PI)
 
 
-  const spriteDatas = []
+  let spriteDatas = []
   const palette = document.querySelector('.palette')
   const artboard = document.querySelector('.artboard')
   const canvas = document.querySelectorAll('canvas')
@@ -67,7 +67,7 @@ function init() {
   const imageQuality = 'high'
   const seq = [0, 1, 2, 3]
   const gif = document.querySelector('.gif')
-  const buttons = document.querySelectorAll('.button')
+  const buttons = document.querySelectorAll('.btn')
   const handleOffset = 32
   const alts = document.querySelectorAll('.alt')
   const cursor = document.querySelector('.cursor')
@@ -91,6 +91,7 @@ function init() {
     resize_artboard: false,
     flip_h: false,
     flip_v: false,
+    delete: false,
   } 
 
 
@@ -166,7 +167,7 @@ function init() {
   const mouseLeave = (t, a, e) => addEvents(t, a, e, ['mouseleave', 'touchmove'])
 
 
-  const makeSpriteDraggable = (target, targetSpriteData) => {
+  const makeDraggable = (target, targetSpriteData) => {
     const pos = { a: 0, b: 0, c: 0, d: 0 }
 
     const onGrab = e => {
@@ -253,7 +254,7 @@ function init() {
 
   makeResizable(artboard)
 
-  const makeSpriteFlippable = (target, spriteData) =>{
+  const makeFlippable = (target, spriteData) =>{
     // add event to handle
     target.childNodes[1].addEventListener('click', ()=>{
       if (drawData.flip_h) spriteData.flip_h = !spriteData.flip_h
@@ -268,8 +269,17 @@ function init() {
     })
   }
 
+  const makeDeletable = (target, spriteData) =>{
+    target.childNodes[1].addEventListener('click', ()=>{
+      if (drawData.delete) {
+        spriteDatas = spriteDatas.filter(d => spriteData !== d)
+        artboard.removeChild(target)
+      }
+    })
+  }
 
-  const makeSpriteRotatable = (target, spriteData) =>{
+
+  const makeRotatable = (target, spriteData) =>{
     const handle = target.childNodes[1]
     
     const onGrab = e =>{
@@ -364,10 +374,8 @@ function init() {
       })
     })
     const targetSpriteData = spriteDatas[spriteDatas.length - 1]
-    makeSpriteDraggable(newSprite, targetSpriteData)
-    makeSpriteRotatable(newSprite, targetSpriteData)
-    makeSpriteFlippable(newSprite, targetSpriteData)
-    makeResizable(newSprite, targetSpriteData)
+    const actions = [makeDraggable, makeRotatable, makeFlippable, makeResizable, makeDeletable]
+    actions.forEach(f => f(newSprite, targetSpriteData))
   }
 
   const createPalette = (target, svgData) =>{
@@ -633,6 +641,7 @@ function init() {
     addClickEvent('flip_h', ()=> toggleMode('flip_h', 'lower'))
     addClickEvent('flip_v', ()=> toggleMode('flip_v', 'lower'))
     addClickEvent('resize_artboard', ()=> toggleMode('resize_artboard'))
+    addClickEvent('delete', ()=> toggleMode('delete', 'upper'))
   })
 
   input.hex.addEventListener('change',()=>{

@@ -524,6 +524,15 @@ button.icon:hover {
   background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAGJJREFUOE+10ksKwCAMBFBz/0MrCpEk5qvYXSHzoJ2B9vgAyfeitbIUmO9ZZOckkEFYRgM85Li3AA1Rbz2AIuZdBITFfAew1qtPkJso/URrUKkaozW6Q4rC2Io65WyYIc81DgS/DBGvb+GRAAAAAElFTkSuQmCC);
 }
 
+.artboard.delete_active .handle_square,
+.delete {
+  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAGNJREFUOE+1U0kOABAM5P+PJkSlatpKJlxEZtG1FvLUpW/rlndmu/nWYAgzExFPriYfgBPCxbG/RSYQQ+Eiomvs5asFOpuLHxXMmkDuNwMqBaqIVBupQXoRSzvhKNPLlG2fi3csRxgRO/A0ngAAAABJRU5ErkJggg==);
+}
+
+.menu {
+  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAC9JREFUOE9jZKAQMEL1/0czByROlNgwMoDsoBxGYUBUnGNLG7AwGA1EIjMOTQIRAOqfJBEIx63HAAAAAElFTkSuQmCC);
+}
+
 
 .sprite_container {
   position: absolute;
