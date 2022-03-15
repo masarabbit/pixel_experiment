@@ -273,7 +273,10 @@ function init() {
     target.childNodes[1].addEventListener('click', ()=>{
       if (drawData.delete) {
         spriteDatas = spriteDatas.filter(d => spriteData !== d)
-        artboard.removeChild(target)
+        target.classList.add('fade')
+        setTimeout(()=>{
+          artboard.removeChild(target)
+        }, 1500)
       }
     })
   }
@@ -402,6 +405,7 @@ function init() {
     const paletteCells = document.querySelectorAll('.palette_cell')
     paletteCells.forEach((cell, i) => {
       cell.addEventListener('click', ()=> {
+        displayPalette()
         stampData.index = stampData.index === i ? null : i   
         paletteCells.forEach(c => c.classList.remove('selected'))
         if (stampData.index === i) {
@@ -630,6 +634,10 @@ function init() {
     artboard.className = drawData[mode] ? `artboard ${mode}_active ${handle || ''}` : 'artboard'
   }
 
+  const displayPalette = () =>{
+    palette.parentNode.classList.toggle('display')
+  }
+
   buttons.forEach(b =>{
     const addClickEvent = (className, event) =>{
       if (b.classList.contains(className)) b.addEventListener('click', event)
@@ -642,6 +650,8 @@ function init() {
     addClickEvent('flip_v', ()=> toggleMode('flip_v', 'lower'))
     addClickEvent('resize_artboard', ()=> toggleMode('resize_artboard'))
     addClickEvent('delete', ()=> toggleMode('delete', 'upper'))
+    addClickEvent('stamp_btn', displayPalette)
+    addClickEvent('close', displayPalette)
   })
 
   input.hex.addEventListener('change',()=>{

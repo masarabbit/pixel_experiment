@@ -227,9 +227,41 @@ textarea {
   border: transparent;
 }
 
+.palette_container {
+  position: fixed;
+  top: 42px;
+  background-color: rgba(0, 0, 0, 0.5);
+  background-color: #2f02449c;
+  height: calc(100% - 42px);
+  width: 100%;
+  z-index: 2;
+  transition: 0.3s;
+  left: -100%;
+}
+
+.palette_container.display {
+  left: 0;
+}
+
+.close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 16px;
+  height: 16px;
+  /* background-repeat: no-repeat !important; */
+  /* background-size: cover;  */
+  /* border: 1px solid white; */
+  filter: invert(100%);
+  color: black;
+  image-rendering: pixelated;
+  /* background-size: 16px !important;  */
+  padding: 0;
+}
+
 .palette {
   position: relative;
-  margin: 20px auto 0;
+  margin: 56px auto 0;
   width: 100%;
   max-width: 700px;
   display: flex;
@@ -525,12 +557,17 @@ button.icon:hover {
 }
 
 .artboard.delete_active .handle_square,
-.delete {
+.delete,
+.close {
   background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAGNJREFUOE+1U0kOABAM5P+PJkSlatpKJlxEZtG1FvLUpW/rlndmu/nWYAgzExFPriYfgBPCxbG/RSYQQ+Eiomvs5asFOpuLHxXMmkDuNwMqBaqIVBupQXoRSzvhKNPLlG2fi3csRxgRO/A0ngAAAABJRU5ErkJggg==);
 }
 
 .menu {
   background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAC9JREFUOE9jZKAQMEL1/0czByROlNgwMoDsoBxGYUBUnGNLG7AwGA1EIjMOTQIRAOqfJBEIx63HAAAAAElFTkSuQmCC);
+}
+
+.stamp_btn {
+  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAFhJREFUOE9jZKAQMOLR/x9NDqtaXAaga4aZhaF+8BoAcjJFYQDzM8wQnIGNLxaQXTEwBpAVBrjiHz29wb2E7DeQZkJhghy4YLVUN4CUrIXVBRQZQIpmuFoA+zIQEZb3+tgAAAAASUVORK5CYII=);
 }
 
 
@@ -546,6 +583,15 @@ button.icon:hover {
 @keyframes stamped {
   0% { background: var(--color); }
   100% { background: transparent; }
+}
+
+.fade {
+  animation: fade_away forwards 1s;
+}
+
+@keyframes fade_away {
+  0% {transform: rotate(0deg) scale(1); opacity: 1;}
+  100% {transform: rotate(360deg) scale(0.5); opacity: 0;}
 }
 
 .sprite {
