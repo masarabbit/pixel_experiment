@@ -18,37 +18,19 @@
 <body>
   <nav class="top">
     img manip v6
-    <div class="input_wrap">
-      <label>column</label>
-      <input class="column input" placeholder="column" value="10" />
-    </div>
-    <div class="input_wrap">
-      <label>row</label>
-      <input class="row input" placeholder="row" value="10" />
-    </div>
-    <div class="input_wrap">
+
+    <!-- <div class="input_wrap">
       <label>selected</label>
       <input class="selected input" placeholder="cell size" value="20" />
-    </div>
+    </div> -->
 
-    <label for="color" class="color_label alt" data-alt="artboard color"></label>
-    <input id="color" type="color" value="#ffffff">
-
-    <div class="input_wrap">
-      <label>hex</label>
-      <input class="hex input" placeholder="#ffffff" />
-    </div>
+  
     
     <button class="btn create_gif icon alt" data-alt="create gif"></button> 
     <!-- <button class="btn icon compile alt" data-alt="compile gif">c</button> -->
     <button class="btn download icon download_file alt" data-alt="download gif"></button>
-    <button class="btn resize icon alt" data-alt="resize"></button>
-    <button class="btn rotate icon alt" data-alt="rotate"></button>
-    <button class="btn resize_artboard icon alt" data-alt="resize artboard"></button>
-    <button class="btn flip_h icon alt" data-alt="flip sprite horizontally"></button>
-    <button class="btn flip_v icon alt" data-alt="flip sprite vertically"></button>
-    <button class="btn delete icon alt" data-alt="delete sprite"></button>
-    <button class="btn menu icon alt" data-alt="menu"></button>
+    <button class="btn menu icon alt" data-alt="edit menu" data-info="menu"></button>
+    <button class="btn resize_menu icon alt" data-alt="resize menu"></button>
     <button class="btn stamp_btn icon alt" data-alt="stamp"></button>
   </nav>
 
@@ -59,13 +41,14 @@
     
     <!-- <textarea class="codes" spellcheck="false"></textarea> -->
   </div>
-  <div class="palette_container">
+  <div class="palette_container page">
     <button class="btn close"></button>
     <div class="palette"></div>
   </div>
 
 
-  <div class="img_wrap">
+  <div class="gif_container page">
+    <button class="btn btn_close"></button>
     <img class="gif">
   </div> 
 
@@ -81,12 +64,45 @@
   <div class="stamp transparent"></div>
 
 
-  <div class="cursor" data-text="test"><div></div></div>
-  <div class="indicator"></div>
-  <div class="indicator_two"></div>
+  <!-- <div class="cursor" data-text="test"><div></div></div> -->
+  <div class="indicator display_none"></div>
+  <div class="indicator_two display_none"></div>
   <div class="output"></div>
   
-  <nav class="bottom"></nav>
+  <nav class="bottom">
+    <div class="resize_menu hide btn_menu">
+      <label for="color" class="color_label alt" data-alt="artboard color"></label>
+      <input id="color" type="color" value="#ffffff">
+  
+      <div class="input_wrap">
+        <label>hex</label>
+        <input class="hex input" placeholder="#ffffff" />
+      </div>
+
+      <button class="btn resize_artboard icon alt" data-alt="resize artboard"></button>
+
+      <div class="input_wrap">
+        <label>column</label>
+        <input class="column input" placeholder="column" value="10" />
+      </div>
+      <div class="input_wrap">
+        <label>row</label>
+        <input class="row input" placeholder="row" value="10" />
+      </div>
+      
+    </div>
+
+    <div class="edit_menu hide btn_menu">
+      <button class="btn resize icon alt" data-alt="resize"></button>
+      <button class="btn rotate icon alt" data-alt="rotate"></button>
+      <button class="btn flip_h icon alt" data-alt="flip sprite horizontally"></button>
+      <button class="btn flip_v icon alt" data-alt="flip sprite vertically"></button>
+      <button class="btn delete icon alt" data-alt="delete sprite"></button>
+    </div>
+  </nav>
+  <div class="info_container">
+    <div class="info_icon"></div><div class="info"></div>
+  </div>
   <!-- <div class="color-test" style="--color: cyan;"></div> -->
 </body>
 

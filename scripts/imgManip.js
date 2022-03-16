@@ -4,7 +4,7 @@ function init() {
 
   // TODO edit nav bar (and hide palette)
 
-
+  // TODO change z index when selecting stamp?
 
 
   const svg = (main, sub) =>{
@@ -69,8 +69,10 @@ function init() {
   const gif = document.querySelector('.gif')
   const buttons = document.querySelectorAll('.btn')
   const handleOffset = 32
-  const alts = document.querySelectorAll('.alt')
-  const cursor = document.querySelector('.cursor')
+  // const alts = document.querySelectorAll('.alt')
+  // const cursor = document.querySelector('.cursor')
+  const info = document.querySelector('.info')
+  const btnMenus = document.querySelectorAll('.btn_menu')
   const rad = degToRad(360)
   // let count = 0
   const count = {
@@ -94,6 +96,17 @@ function init() {
     delete: false,
   } 
 
+  const infoText = {
+    handleActive: 'handle active',
+    rotate: 'rotate',
+    resize: 'resize',
+    resize_artboard: 'resize artboard',
+    flip_h: 'flip horizontal',
+    flip_v: 'flip vertical',
+    delete: 'delete',
+    menu: 'edit menu'
+  }
+
 
   const input = {
     row: document.querySelector('.row'),
@@ -101,7 +114,7 @@ function init() {
     color: document.querySelector('#color'),
     colorLabel: document.querySelector('.color_label'),
     hex: document.querySelector('.hex'),
-    selected: document.querySelector('.selected'),
+    // selected: document.querySelector('.selected'),
   }
 
   const svgContentWrapper = ({ content, color, w, h } ) =>{
@@ -276,7 +289,7 @@ function init() {
         target.classList.add('fade')
         setTimeout(()=>{
           artboard.removeChild(target)
-        }, 1500)
+        }, 1000)
       }
     })
   }
@@ -410,7 +423,7 @@ function init() {
         paletteCells.forEach(c => c.classList.remove('selected'))
         if (stampData.index === i) {
           cell.classList.add('selected')
-          input.selected.value = i
+          // input.selected.value = i
           Object.assign(drawData, { resize: false, rotate: false })
           artboard.className = 'artboard'
         } 
@@ -572,7 +585,7 @@ function init() {
   }
 
   const isTouchDevice = () => {
-    return ( 'ontouchstart' in window ) || ( navigator.maxTouchPoints > 0 ) || ( navigator.msMaxTouchPoints > 0 )
+    return ('ontouchstart' in window ) || ( navigator.maxTouchPoints > 0 ) || ( navigator.msMaxTouchPoints > 0 )
   }
 
   const activateStamp = () =>{
@@ -638,11 +651,27 @@ function init() {
     palette.parentNode.classList.toggle('display')
   }
 
+  const displayBtns = i =>{
+    btnMenus.forEach((b, bI) =>{
+      if (i === bI) {
+        b.classList.remove('hide')
+        b.classList.toggle('display')
+      } else {
+        b.classList.remove('display')
+      }
+    })
+  }
+
   buttons.forEach(b =>{
     const addClickEvent = (className, event) =>{
       if (b.classList.contains(className)) b.addEventListener('click', event)
     }
-    addClickEvent('create_gif', ()=> createGif(0, 0))
+    addClickEvent('create_gif', ()=> {
+      if (spriteDatas.length) {
+        gif.parentNode.classList.add('display')
+        createGif(0, 0)
+      }
+    })
     addClickEvent('download_file', downloadGif)
     addClickEvent('rotate', ()=> toggleMode('rotate', 'upper'))
     addClickEvent('resize', ()=> toggleMode('resize', 'lower'))
@@ -652,6 +681,15 @@ function init() {
     addClickEvent('delete', ()=> toggleMode('delete', 'upper'))
     addClickEvent('stamp_btn', displayPalette)
     addClickEvent('close', displayPalette)
+    addClickEvent('btn_close', ()=> gif.parentNode.classList.remove('display'))
+    addClickEvent('menu', () => displayBtns(1))
+    addClickEvent('resize_menu', () => displayBtns(0))
+    // b.addEventListener('click', ()=>{
+    //   info.innerHTML = Object.keys(drawData).map(m => drawData[m] ? infoText[m] : '').join('')
+    // })
+
+    mouseEnter(b, ()=> info.innerHTML = infoText[b.dataset.info] || b.dataset.alt || '' , 'add')
+    mouseLeave(b, ()=> info.innerHTML = '' , 'add')
   })
 
   input.hex.addEventListener('change',()=>{
@@ -679,6 +717,18 @@ function init() {
   }
 
   updateColumnRow()
+
+  // btnMenus.forEach((b, i) =>{
+  //   mouseEnter(b, ()=>{
+  //     console.log('trigger', i)
+  //     info.innerHTML = ['edit menu','edit artboard'][i]
+  //   }, 
+  //   'add')
+  // })
+
+  // btnMenus[0].addEventListener('click', ()=>{
+  //   info.innerHTML = 'test'
+  // })
   
 
   mouseEnter(artboard, activateStamp, 'add')
@@ -692,21 +742,22 @@ function init() {
     indicator.innerHTML = `${e.pageX - left}-${e.pageY - top}`
   })
 
-  const handleCursor = e => setTargetPos(cursor, e.pageX, e.pageY)
+  // const handleCursor = e => setTargetPos(cursor, e.pageX, e.pageY)
 
-  window.addEventListener('mousemove', handleCursor)
+  // window.addEventListener('mousemove', handleCursor)
 
-
-  alts.forEach(button => {
-    mouseEnter(button,
-      e => cursor.childNodes[0].innerHTML = e.target.dataset.alt,
-      'add'
-      )
-    mouseLeave(button,
-      () => cursor.childNodes[0].innerHTML = '' ,
-      'add'
-      )
-  })
+  // alts.forEach(button => {
+  //   mouseEnter(button,
+  //     e => {
+  //       if (!isTouchDevice()) cursor.childNodes[0].innerHTML = e.target.dataset.alt
+  //     },
+  //     'add'
+  //     )
+  //   mouseLeave(button,
+  //     () => cursor.childNodes[0].innerHTML = '' ,
+  //     'add'
+  //     )
+  // })
   
   // document.addEventListener('scroll', ()=>{
   //   indicatorTwo.innerHTML = `x: ${window.scrollX} / y: ${window.scrollY}`
