@@ -37,7 +37,7 @@ nav.top {
 
 nav.bottom {
   overflow: hidden;
-  bottom: 40px;
+  bottom: 32px;
   height: 40px;
   padding: 0;
 }
@@ -66,6 +66,16 @@ nav.bottom {
   /* animation: none; */
 }
 
+.selected_sprite {
+  position: absolute;
+  width: 32px;
+  height: 32px;
+  background-color: white;
+  right: 10px;
+  overflow: hidden;
+  cursor: pointer;
+}
+
 @keyframes display_menu {
   0% { top: -40px; opacity: 1;}
   100% { top: 0px; }
@@ -90,7 +100,7 @@ nav.bottom {
 .info_container {
   position: fixed;
   bottom: 0px;
-  height: 40px;
+  height: 32px;
   width: 100%;
   background-color: black;
   color: white;
@@ -287,13 +297,27 @@ textarea {
   position: fixed;
   top: 42px;
   background-color: rgba(0, 0, 0, 0.5);
-  background-color: #2f02449c;
   height: calc(100% - 42px);
-  width: 100%;
   z-index: 2;
   transition: 0.3s;
+  width: 100%;
   left: -100%;
 }
+
+.loading_screen {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 3;
+}
+
+.loading_screen div {
+  margin-top: -100px;
+  height: 100px;
+  width: 100px;
+  background-color: white;
+}
+
 
 .page.display {
   left: 0;
@@ -384,7 +408,7 @@ button.clear.active {
   width: 16px;
   filter: invert(100%);
   image-rendering: pixelated;
-  margin: 12px 6px 12px 12px;
+  margin: 8px;
   background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAGNJREFUOE+9U9kOABAMs///aEJsGWoTl0c9lA6Fw0WGPnYY5KJNFvYY3EckK1UOlY2Eo8kNUONbaYp210CSsAE63eunaDyD2RWWE/wzGOp53YI8+tVB4tqORll3v/2ZvAFq8AS8riER0WR7ywAAAABJRU5ErkJggg==);
 }
 

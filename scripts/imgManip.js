@@ -4,7 +4,10 @@ function init() {
 
   // TODO edit nav bar (and hide palette)
 
-  // TODO change z index when selecting stamp?
+  // TODO change z index when selecting stamp? // sort SvgDatas
+  
+  // create gif trigger loading - loading image
+
 
 
   const svg = (main, sub) =>{
@@ -69,8 +72,7 @@ function init() {
   const gif = document.querySelector('.gif')
   const buttons = document.querySelectorAll('.btn')
   const handleOffset = 32
-  // const alts = document.querySelectorAll('.alt')
-  // const cursor = document.querySelector('.cursor')
+  const loadingScreen = document.querySelector('.loading_screen')
   const info = document.querySelector('.info')
   const btnMenus = document.querySelectorAll('.btn_menu')
   const rad = degToRad(360)
@@ -114,8 +116,10 @@ function init() {
     color: document.querySelector('#color'),
     colorLabel: document.querySelector('.color_label'),
     hex: document.querySelector('.hex'),
-    // selected: document.querySelector('.selected'),
+    selected: document.querySelector('.selected_sprite'),
   }
+
+
 
   const svgContentWrapper = ({ content, color, w, h } ) =>{
     return `
@@ -418,19 +422,19 @@ function init() {
     const paletteCells = document.querySelectorAll('.palette_cell')
     paletteCells.forEach((cell, i) => {
       cell.addEventListener('click', ()=> {
-        displayPalette()
         stampData.index = stampData.index === i ? null : i   
         paletteCells.forEach(c => c.classList.remove('selected'))
         if (stampData.index === i) {
           cell.classList.add('selected')
-          // input.selected.value = i
-          Object.assign(drawData, { resize: false, rotate: false })
+          displayPalette()
+          Object.keys(drawData).forEach( k => drawData[k] = false)
           artboard.className = 'artboard'
         } 
       })
       cell.addEventListener('click', ()=>createStamp(i))
     })
   }
+
 
   createPalette(palette, svgData)
 
@@ -562,6 +566,14 @@ function init() {
 
     const { width, height } = artboard.getBoundingClientRect()
     setTargetSize(gif, width, height)
+    gif.onload = () =>{
+      setTimeout(()=>{
+        gif.parentNode.classList.add('display')
+        setTimeout(()=>{
+          loadingScreen.classList.remove('display')
+        }, 300)
+      }, 500)
+    }
     gif.src = 'data:image/gif;base64,' + encode64(encoder.stream().getData())
   }
 
@@ -623,15 +635,22 @@ function init() {
     stampData.active = stampData.index === i ? true : false
     if (stampData.active) {
       const { svg, frameNo, main, sub, color} = svgData[i]
-        animateSprite({
-          target: stamp,
-          content: svg(main, sub),
-          w: 80, h: 80,
-          frameNo,
-          color,
-          spriteIndex: i,
-          stamp: true
-        })
+      animateSprite({
+        target: stamp,
+        content: svg(main, sub),
+        w: 80, h: 80,
+        frameNo,
+        color,
+        spriteIndex: i,
+      })
+      animateSprite({
+        target: input.selected,
+        content: svg(main, sub),
+        w: 32, h: 32,
+        frameNo,
+        color,
+        spriteIndex: i,
+      })
     }
   }
 
@@ -668,7 +687,7 @@ function init() {
     }
     addClickEvent('create_gif', ()=> {
       if (spriteDatas.length) {
-        gif.parentNode.classList.add('display')
+        loadingScreen.classList.add('display')
         createGif(0, 0)
       }
     })
@@ -691,6 +710,8 @@ function init() {
     mouseEnter(b, ()=> info.innerHTML = infoText[b.dataset.info] || b.dataset.alt || '' , 'add')
     mouseLeave(b, ()=> info.innerHTML = '' , 'add')
   })
+
+  input.selected.addEventListener('click', displayPalette)
 
   input.hex.addEventListener('change',()=>{
     const bgColor = input.hex.value
