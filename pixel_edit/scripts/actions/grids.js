@@ -2,7 +2,8 @@
 import { cellWidthAndHeight, setTargetSize, sortByFreqRemoveBlankAndDuplicates } from '../actions/utils.js'
 import { continuousDraw, updateCode, checkAreaToFill } from '../actions/draw.js'
 import { createCopyGrids } from '../actions/copy.js'
-import { populateDetailedPalette } from '../actions/colours.js'
+// import { populateDetailedPalette } from '../actions/colours.js'
+import { updateColor } from '../actions/colours.js'
 
 import { artData, drawData } from '../state.js'
 import { grids, input, palettes } from '../elements.js'

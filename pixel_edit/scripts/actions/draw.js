@@ -26,14 +26,14 @@ const updateCode = () =>{
     column: +column.value,
     cellD: +cellD.value,
   })
-  // keep artData.prev under 10 steps
-  if (artData.prev.length > 10) artData.prev = artData.prev.filter((d, i) =>{
+  // keep artData.prev under 5 steps
+  if (artData.prev.length > 5) artData.prev = artData.prev.filter((d, i) =>{
     if(i !== 0) return d
   })
 }
 
 const arrayGroupedForFlipping = () =>{
-  const arr = new Array(+input.column.value).fill('')
+  const arr = new Array(+input.row.value).fill('')
   const mappedArr = arr.map(()=>[])
   input.codes[0].value.split(',').forEach((d, i)=>{
     mappedArr[Math.floor(i / input.column.value)].push(d)

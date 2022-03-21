@@ -29,7 +29,7 @@ function init() {
 
 
   const output = ()=>{
-    const { cellD, row, column, calcWidth, calcHeight, uploadedFile } = artData 
+    const { cellD, row, column, uploadedFile } = artData 
     if (!uploadedFile) return
     const blobURL = window.URL.createObjectURL(uploadedFile)
     const imageTarget = new Image()
@@ -37,7 +37,8 @@ function init() {
     imageTarget.onload = () => {
       const { naturalWidth: w, naturalHeight: h } = imageTarget
       artData.calcHeight = (column * cellD) * (h / w)
-      artData.calcWidth = calcHeight * (w / h)
+      artData.calcWidth = artData.calcHeight * (w / h)
+      const { calcWidth, calcHeight } = artData 
       resizeCanvas({
         canvas: canvas[0], 
         w: calcWidth, h: calcHeight - (calcHeight % cellD)
@@ -48,7 +49,7 @@ function init() {
       })
 
       artData.codes[0].length = 0
-      ctx.drawImage(imageTarget, 0, 0, calcWidth, calcHeight)
+      ctx.drawImage(imageTarget, 0, 0, artData.calcWidth, artData.calcHeight)
       const offset = Math.floor(cellD / 2)
 
       for (let i = 0; i < row * column; i++) {

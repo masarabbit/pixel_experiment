@@ -412,7 +412,7 @@ button.clear.active {
   filter: invert(100%);
   image-rendering: pixelated;
   margin: 8px;
-  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAGNJREFUOE+9U9kOABAMs///aEJsGWoTl0c9lA6Fw0WGPnYY5KJNFvYY3EckK1UOlY2Eo8kNUONbaYp210CSsAE63eunaDyD2RWWE/wzGOp53YI8+tVB4tqORll3v/2ZvAFq8AS8riER0WR7ywAAAABJRU5ErkJggg==);
+  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAGZJREFUOE/dU9ESABAIy/9/NMddXTKS3njMNmuqUPKUA7+aO4hFRSbaO1hHIF1DpF4TjAVfvUpEIuIJ7CJaBCZbirXLo0MGhx18ICA9mdROMzHa934hJIBchAaJ3adGWUfwvEyhBW+Q2iMRENv2egAAAABJRU5ErkJggg==);
 }
 
 label.icon,

@@ -4,54 +4,54 @@ function init() {
   let row = 20
   let column = 20
 
-  const decode = arr =>{
-    return arr.split('').map(c=>{
-      if (c === 'D') return '<path d="M'
-      if (c === 'F') return '<path fill="#fff" d="M'
-      if (c === '/') return '/>'
-      if (c === 'N') return '-1' 
-      if (c === 'T') return '-2'
-      return c
-    }).join('')
-  }
-
-  // const decodeRef = {
-  //   a: ' h 1',
-  //   b: ' h 2',
-  //   e: ' h 3',
-  //   g: ' h 4',
-  //   j: ' h 5',
-  //   A: ' v 1',
-  //   B: ' v 2',
-  //   E: ' v 3',
-  //   G: ' v 4',
-  //   J: ' v 5',
-  //   n: 'h -1',
-  //   u: ' h -2',
-  //   k: ' h -3',
-  //   x: ' h -4', 
-  //   i: ' h -5',
-  //   N: ' v -1',
-  //   U: ' v -2', 
-  //   K: ' v -3',
-  //   X: ' v -4', 
-  //   I: ' v -5',
-  //   w: ' v ', 
-  //   W: ' h ',
-  //   D: '<path d="M',
-  //   d: '<path d="M',
-  //   o: '<path fill="#fcbbc3" d="M',
-  //   F: '<path fill="#fff" d="M',
-  //   f: '<path fill="#fff" d="M',
-  //   '/': '/>',
-  // }
-
   // const decode = arr =>{
   //   return arr.split('').map(c=>{
-  //     if (!decodeRef[c]) return c
-  //     return decodeRef[c]
+  //     if (c === 'D') return '<path d="M'
+  //     if (c === 'F') return '<path fill="#fff" d="M'
+  //     if (c === '/') return '/>'
+  //     if (c === 'N') return '-1' 
+  //     if (c === 'T') return '-2'
+  //     return c
   //   }).join('')
   // }
+
+  const decodeRef = {
+    a: ' h 1',
+    b: ' h 2',
+    e: ' h 3',
+    g: ' h 4',
+    j: ' h 5',
+    A: ' v 1',
+    B: ' v 2',
+    E: ' v 3',
+    G: ' v 4',
+    J: ' v 5',
+    n: 'h -1',
+    u: ' h -2',
+    k: ' h -3',
+    x: ' h -4', 
+    i: ' h -5',
+    N: ' v -1',
+    U: ' v -2', 
+    K: ' v -3',
+    X: ' v -4', 
+    I: ' v -5',
+    w: ' v ', 
+    W: ' h ',
+    D: '<path d="M',
+    d: '<path d="M',
+    o: '<path fill="#fcbbc3" d="M',
+    F: '<path fill="#fff" d="M',
+    f: '<path fill="#fff" d="M',
+    '/': '/>',
+  }
+
+  const decode = arr =>{
+    return arr.split('').map(c=>{
+      if (!decodeRef[c]) return c
+      return decodeRef[c]
+    }).join('')
+  }
 
   const svgWrapper = content =>{
     return `<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
@@ -139,39 +139,39 @@ function init() {
   })
 
   codesBox[1].addEventListener('change',()=>{   
-    codesBox[0].value = codesBox[1].value.replaceAll('<path d="M','D').replaceAll('<path fill="#ffffff" d="M','F').replaceAll('/>','/').replaceAll('-1','N').replaceAll('-2','T').replaceAll(' v ','v').replaceAll(' h ','h').replaceAll('<path fill="#000000" d="M','D').replaceAll('<path fill="#fff" d="M','F').replaceAll('<path fill="#000" d="M','D')
+    // codesBox[0].value = codesBox[1].value.replaceAll('<path d="M','D').replaceAll('<path fill="#ffffff" d="M','F').replaceAll('/>','/').replaceAll('-1','N').replaceAll('-2','T').replaceAll(' v ','v').replaceAll(' h ','h').replaceAll('<path fill="#000000" d="M','D').replaceAll('<path fill="#fff" d="M','F').replaceAll('<path fill="#000" d="M','D')
 
-  //   codesBox[0].value = codesBox[1].value
-  //     .replaceAll(' <path d="M','D')
-  //     .replaceAll(' <path fill="#ffffff" d="M','F')
-  //     .replaceAll(' <path fill="#fcbbc3" d="M', 'o')
-  //     .replaceAll(' <path fill="#000" d="M','D')
-  //     .replaceAll('<path fill="#000" d="M','d')
-  //     .replaceAll(' <path fill="#fff" d="M','F')
-  //     .replaceAll('<path fill="#fff" d="M','f')
-  //     .replaceAll('/>','/')
-  //     .replaceAll(' h 1','a')
-  //     .replaceAll(' h 2','b')
-  //     .replaceAll(' h 3','e')
-  //     .replaceAll(' h 4','g')
-  //     .replaceAll(' h 5','j')
-  //     .replaceAll(' v 1','A')
-  //     .replaceAll(' v 2','B')
-  //     .replaceAll(' v 3','E')
-  //     .replaceAll(' v 4','G')
-  //     .replaceAll(' v 5','J')
-  //     .replaceAll(' h -1','n')
-  //     .replaceAll(' h -2','u')
-  //     .replaceAll(' h -3','k')
-  //     .replaceAll(' h -4','x')
-  //     .replaceAll(' h -5','i')
-  //     .replaceAll(' v -1','N')
-  //     .replaceAll(' v -2','U')
-  //     .replaceAll(' v -3','K')
-  //     .replaceAll(' v -4','X')
-  //     .replaceAll(' v -5','I')
-  //     .replaceAll(' v ','w')
-  //     .replaceAll(' h ','W')
+    codesBox[0].value = codesBox[1].value
+      .replaceAll(' <path d="M','D')
+      .replaceAll(' <path fill="#ffffff" d="M','F')
+      .replaceAll(' <path fill="#fcbbc3" d="M', 'o')
+      .replaceAll(' <path fill="#000" d="M','D')
+      .replaceAll('<path fill="#000" d="M','d')
+      .replaceAll(' <path fill="#fff" d="M','F')
+      .replaceAll('<path fill="#fff" d="M','f')
+      .replaceAll('/>','/')
+      .replaceAll(' h 1','a')
+      .replaceAll(' h 2','b')
+      .replaceAll(' h 3','e')
+      .replaceAll(' h 4','g')
+      .replaceAll(' h 5','j')
+      .replaceAll(' v 1','A')
+      .replaceAll(' v 2','B')
+      .replaceAll(' v 3','E')
+      .replaceAll(' v 4','G')
+      .replaceAll(' v 5','J')
+      .replaceAll(' h -1','n')
+      .replaceAll(' h -2','u')
+      .replaceAll(' h -3','k')
+      .replaceAll(' h -4','x')
+      .replaceAll(' h -5','i')
+      .replaceAll(' v -1','N')
+      .replaceAll(' v -2','U')
+      .replaceAll(' v -3','K')
+      .replaceAll(' v -4','X')
+      .replaceAll(' v -5','I')
+      .replaceAll(' v ','w')
+      .replaceAll(' h ','W')
   })
 
 
