@@ -42,7 +42,7 @@ const arrayTotal = arr =>{
 }
 
 const populateDetailedPalette = (index, arr) =>{
-  const nearestNAndSorted = arr.filter(c=>c !== 'transparent').map(c=> nearestN(hexToRgbArr(c), factor)).sort((a,b)=>{
+  const nearestNAndSorted = arr.filter(c => c !== 'transparent').map(c => nearestN(hexToRgbArr(c), factor)).sort((a,b)=>{
     return arrayTotal(a) - arrayTotal(b)
   })
   const duplicateRemoved = [...new Set(nearestNAndSorted.map(a => `${a}` ))].map(a => a.split(','))

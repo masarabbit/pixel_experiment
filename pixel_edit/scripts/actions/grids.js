@@ -19,8 +19,8 @@ import { grids, input, palettes } from '../elements.js'
   const updateCodesDisplay = (box, arr) =>{
     box.value = `${arr.map(ele => ele).join(',')}`
     // const index = box === codesBox[0] ? 0 : 1 
-    // populatePalette(0, arr)
-    populateDetailedPalette(0, arr)
+    // populateDetailedPalette(0, arr)
+    populatePalette(0, arr)
   }
 
 
@@ -104,8 +104,8 @@ import { grids, input, palettes } from '../elements.js'
     input.codes[0].value.split(',').forEach((ele, i)=>{
       if (cells[i]) cells[i].style.backgroundColor = ele
     })
-    // populatePalette(0, artData.codes[0])
-    populateDetailedPalette(0, artData.codes[0])
+    populatePalette(0, artData.codes[0])
+    // populateDetailedPalette(0, artData.codes[0])
     updateCode()
   }
 
@@ -142,6 +142,7 @@ import { grids, input, palettes } from '../elements.js'
       : input.color.value  //! transparent replaced with ''
     artData.codes[0][index] = value
     e.target.style.backgroundColor = value
+    // console.log('artData', artData)
     updateCodesDisplay(input.codes[0], artData.codes[0])
     updateCode()
   }

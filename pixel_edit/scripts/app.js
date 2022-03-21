@@ -227,7 +227,8 @@ function init() {
 
   const updateRow = () =>{
     const { row, column } = artData
-    artData.codes[0] = input.codes[0].value.split(',') || Array(row * column).fill('transparent')
+    const currentContent = input.codes[0].value.split(',')
+    artData.codes[0] = currentContent.length > 1 ? currentContent : Array(row * column).fill('transparent')
     const newRow = +input.row.value
     const diff = Math.abs(newRow - row) 
 
@@ -244,7 +245,8 @@ function init() {
 
   const updateColumn = () =>{
     const { row, column } = artData 
-    artData.codes[0] = input.codes[0].value.split(',') || Array(row * column).fill('transparent')
+    const currentContent = input.codes[0].value.split(',')
+    artData.codes[0] = currentContent.length > 1 ? currentContent : Array(row * column).fill('transparent')
     const newColumn = +input.column.value
     const updatedCodes = [[]]
     let count = 0
