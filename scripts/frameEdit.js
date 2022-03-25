@@ -348,7 +348,7 @@ function init() {
     if (!sequence || !sequence.length || !slots) return
     recordSlotPos()
     sequence.forEach((frame,i)=>{
-      if (frame !== ' '){
+      if (frame !== ' ' && slotInfo[i]){
         const { x, y } = slotInfo[i] 
         setTargetPos(frames[+frame], x, y)
       }
