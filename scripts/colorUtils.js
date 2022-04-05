@@ -15,6 +15,6 @@ const hexToRgb = hex => {
 
 const invertHex = hexToInvert => {
   const rgbNo = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hexToInvert)
-  const rgb = rgbNo.map(rgb=> 255 - parseInt(rgb, 16))
+  const rgb = rgbNo.map(rgb => 255 - parseInt(rgb, 16))
   return hex(rgbToHex(rgb[1], rgb[2], rgb[3]))
 }

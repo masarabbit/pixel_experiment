@@ -1,9 +1,11 @@
 import { input, palettes } from '../elements.js'
 
+const n = 255
 const rgbToHex = (r, g, b) => {
   if (r > 255 || g > 255 || b > 255)
-    throw 'Invalid color component'
-  return ((r << 16) | (g << 8) | b).toString(16)
+    throw 'Invalid color component'  
+  // return ((r << 16) | (g << 8) | b).toString(16)
+  return ((nearestN(r, n) << 16) | (nearestN(g, n) << 8) | nearestN(b, n)).toString(16)
 }
 
 const hex = rgb => '#' + ('000000' + rgb).slice(-6)
@@ -24,8 +26,12 @@ const updateColor = (color) =>{
 // const factor = 51
 const factor = 1
 
-const nearestN = (arr, denom) =>{
-  return arr.map(n => n === 0 ? 0 : (n - 1) + Math.abs(((n - 1) % denom) - denom))
+const nearestN = (n, denom) =>{
+  return n === 0 ? 0 : (n - 1) + Math.abs(((n - 1) % denom) - denom)
+}
+
+const nearestNArr = (arr, denom) =>{
+  return arr.map(n => nearestN(n, denom))
 }
 
 const hexToRgbArr = hex =>{
@@ -42,7 +48,7 @@ const arrayTotal = arr =>{
 }
 
 const populateDetailedPalette = (index, arr) =>{
-  const nearestNAndSorted = arr.filter(c => c !== 'transparent').map(c => nearestN(hexToRgbArr(c), factor)).sort((a,b)=>{
+  const nearestNAndSorted = arr.filter(c => c !== 'transparent').map(c => nearestNArr(hexToRgbArr(c), factor)).sort((a,b)=>{
     return arrayTotal(a) - arrayTotal(b)
   })
   const duplicateRemoved = [...new Set(nearestNAndSorted.map(a => `${a}` ))].map(a => a.split(','))
