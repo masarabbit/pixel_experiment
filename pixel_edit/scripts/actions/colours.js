@@ -1,6 +1,7 @@
 import { input, palettes } from '../elements.js'
 
-const n = 255
+// const n = 255
+const n = 1
 const rgbToHex = (r, g, b) => {
   if (r > 255 || g > 255 || b > 255)
     throw 'Invalid color component'  
