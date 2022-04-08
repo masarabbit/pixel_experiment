@@ -16,7 +16,7 @@ const hexToRgb = hex => {
   return result ? `rgb(${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)})` : null
 }
 
-const updateColor = (color) =>{
+const updateColor = color =>{
   input.colorLabel.style.backgroundColor = color
   input.hex.value = color
   input.color.value = color
