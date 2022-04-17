@@ -14,6 +14,11 @@ const svgWrapper = ( {content, color, rotate, flip, wrapper, frameNo, speed, fra
     `
 }
 
+const singleSvgWrapper = ({ content, color, frameSize }) =>{
+  const size = frameSize || 16
+  return `<svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="100%" height="100%" viewBox="0 0 ${size} ${size}" fill="${color ? color : 'black'}">${content}</svg>`
+}
+
 const randomColor = () =>{
   const r = ()=> Math.ceil(Math.random() * 255)
   return `rgb(${r()},${r()},${r()})`
@@ -134,6 +139,7 @@ const exit = subColor =>{
 
 export {
   svgWrapper,
+  singleSvgWrapper, 
   randomColor,
   treeOne,
   treeTwo,
@@ -157,5 +163,5 @@ export {
   riverCurve,
   ladder,
   ladderHole,
-  exit 
+  exit,
 }

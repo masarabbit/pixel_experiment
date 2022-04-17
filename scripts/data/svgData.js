@@ -61,7 +61,7 @@ const svgData = {
   'sr': { svg: sideSquareWindow, color: main, flip: 'h' },
   'nw': { svg: noSideWindow, color: main },
   'nr': { svg: noSideWindow, color: main, flip: 'h' },
-  'at': { svg: plainEdge, color: main  },
+  'at': { svg: plainEdge, color: main },
   'ar': { svg: plainEdge, color: main, rotate: 90 },
   'ab': { svg: plainEdge, color: main, rotate: 180 },
   'al': { svg: plainEdge, color: main, rotate: 270 },

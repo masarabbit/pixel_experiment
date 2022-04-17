@@ -1,6 +1,7 @@
 import mapData from './data/mapData.js'
 import svgData from './data/svgData.js'
-import { svgWrapper } from './data/svg.js'
+import { svgWrapper, singleSvgWrapper } from './data/svg.js'
+import { resizeCanvas } from '../pixel_edit/scripts/actions/utils.js'
 
 function init() {
   
@@ -56,6 +57,9 @@ function init() {
   const palettes = document.querySelectorAll('.palette')
   const cursor = document.querySelector('.cursor')
   const copyGrid = document.querySelector('.copy_grid')
+  const canvas = document.querySelectorAll('canvas')
+  const ctx = canvas[0].getContext('2d')
+  const ctx2 = canvas[1].getContext('2d')
   
   // button
   let alts = document.querySelectorAll('.alt')
@@ -105,21 +109,14 @@ function init() {
     return output
   }
 
-  const calcX = cell =>{
-    return cell % column
-  } 
+  const calcX = cell => cell % column
+  const calcY = cell => Math.floor(cell / column)
+  const rounded = i => ~~(i / cellSize) 
+  const degToRad = deg => deg / (180 / Math.PI)
   
-  const calcY = cell =>{
-    return Math.floor(cell / column)
-  }
-
-  const rounded = i =>{
-    return ~~(i / cellSize) 
-  }
-  
-  const populateWithSvg = (key,target) =>{
+  const populateWithSvg = (key, target) =>{
     if (svgData[key]){
-      const { svg, color, subColor, rotate, flip, animation, frameNo, speed } = svgData[key]
+      const { svg, color, subColor, rotate, flip, frameNo, speed } = svgData[key]
       let colorAction = ''
       colorAction = typeof(color) === 'function' ? color() : color
 
@@ -161,7 +158,7 @@ function init() {
     const paletteCells = document.querySelectorAll('.palette_cell')
     
     keys.forEach((key,i)=>{
-      populateWithSvg(key,paletteCells[i]) 
+      populateWithSvg(key, paletteCells[i]) 
     })
 
     paletteCells.forEach(palette=>{
@@ -175,8 +172,8 @@ function init() {
   populatePalette()
 
 
-  const updateCodesDisplay = (box,arr) =>{
-    box.value = `${arr.map(ele=>ele).join(',')}`
+  const updateCodesDisplay = (box, arr) =>{
+    box.value = `${arr.map(ele => ele).join(',')}`
     window.location.hash = `${columnInputs[0].value}#${rowInputs[0].value}#${compress(codesBox[0].value).join('-')}`
   }
 
@@ -216,7 +213,7 @@ function init() {
   }
 
 
-  const continuousDraw = (e,action) =>{
+  const continuousDraw = (e, action) =>{
     if (!canDraw) return
     action(e)
   }
@@ -226,9 +223,9 @@ function init() {
 
   const addCodeDraw = clear =>{
     const mapCells = document.querySelectorAll('.map_cell')
-    mapCells.forEach(mapCell=>{
-      mapCell.addEventListener('click',(e)=>drawMap(e))
-      mapCell.addEventListener('mousemove',(e)=>continuousDraw(e,drawMap))
+    mapCells.forEach(mapCell => {
+      mapCell.addEventListener('click', e =>drawMap(e))
+      mapCell.addEventListener('mousemove', e =>continuousDraw(e, drawMap))
     })
     if (clear) updateCodesDisplay(codesBox[0],codes[0])
   }
@@ -247,11 +244,11 @@ function init() {
       if (codes[0][i] === 'v') mapGenCell.innerHTML = 'x'
       // if (codes[0][i] === 'b') mapGenCell.innerHTML = '-'
       
-      mapGenCell.addEventListener('click',e =>drawWithImage(e))
-      mapGenCell.addEventListener('mousemove',e =>continuousDraw(e,drawWithImage))
+      mapGenCell.addEventListener('click', e =>drawWithImage(e))
+      mapGenCell.addEventListener('mousemove', e =>continuousDraw(e,drawWithImage))
     })
 
-    document.querySelectorAll('.svg_anim').forEach(cell=>{
+    document.querySelectorAll('.svg_anim').forEach(cell =>{
       animateCell({
         target: cell, 
         frameNo: cell.dataset.frame_no, 
@@ -285,7 +282,7 @@ function init() {
     copyGrids = document.querySelectorAll(`.${cellStyle}`)
 
     copyGrids.forEach((grid, i)=>{
-      grid.addEventListener('click',(e)=>{
+      grid.addEventListener('click', e =>{
         if (!copyBoxCreated){
           copyBox = document.createElement('div')
           copyBox.classList.add('copy_box')
@@ -317,7 +314,7 @@ function init() {
     }
   })
 
-  copyGrid.addEventListener('mousemove',(e)=>{     
+  copyGrid.addEventListener('mousemove', e =>{     
     if (copyState && !moveState) {
       const next = e.target.dataset.cell
       const newX = calcX(next)
@@ -463,18 +460,18 @@ function init() {
   
   // eventlistener
   const toggleGrid = () =>{
-    grids.forEach(grid=>grid.classList.toggle('grid_hide'))
+    grids.forEach(grid => grid.classList.toggle('grid_hide'))
     copyGrid.classList.toggle('grid_hide')
   }
   
   const toggleIndex = () =>{
     const mapGenCells = document.querySelectorAll('.map_gen_cell')
-    mapGenCells.forEach(grid=>grid.classList.toggle('index_display'))
+    mapGenCells.forEach(grid => grid.classList.toggle('index_display'))
   }
 
-  cellSizeInputs[0].addEventListener('change',()=>cellSize = cellSizeInputs[0].value)
+  cellSizeInputs[0].addEventListener('change',()=> cellSize = cellSizeInputs[0].value)
   // rowInputs[0].addEventListener('change',()=>row = rowInputs[0].value)
-  rowInputs[0].addEventListener('change',()=>{
+  rowInputs[0].addEventListener('change',()=> {
     const newRow = +rowInputs[0].value
     const diff = Math.abs(newRow - row) 
     codesBox[0].value = newRow > row
@@ -486,7 +483,7 @@ function init() {
     // console.log('row', row)
   })
   // columnInputs[0].addEventListener('change',()=>column = columnInputs[0].value)
-  columnInputs[0].addEventListener('change',()=>{
+  columnInputs[0].addEventListener('change',()=> {
     const newColumn = +columnInputs[0].value
     const updatedCodes = [[]]
     let count = 0
@@ -501,7 +498,7 @@ function init() {
       updatedCodes[index].push(code)
     })
 
-    codesBox[0].value = updatedCodes.map(codes=>{
+    codesBox[0].value = updatedCodes.map(codes =>{
       const diff = Math.abs(newColumn - column) //TODO adjust arrays
       if (newColumn > column){
         return [...codes, ...Array(diff).fill('transparent')]
@@ -521,7 +518,7 @@ function init() {
     codesBox[1].value = compress(codesBox[0].value)
   }
 
-  copyButtons.forEach((copyButton,i)=>{
+  copyButtons.forEach((copyButton, i) =>{
     copyButton.addEventListener('click',()=>copyText(codesBox[i]))
   })
 
@@ -563,7 +560,7 @@ function init() {
 
   // reads from url
   const query = window.location.hash
-  console.log(query)
+  // console.log(query)
   if (query){
     const queryArray = query.split('#')
     row = queryArray[2]
@@ -581,7 +578,7 @@ function init() {
 
   const mapKeys = Object.keys(mapData)
   const mapLinks = document.querySelector('.map_link')
-  mapLinks.innerHTML = mapKeys.map(map=>{
+  mapLinks.innerHTML = mapKeys.map( map =>{
     return `
       <div class="map_link_cell">
         ${map}
@@ -591,7 +588,7 @@ function init() {
 
   const mapLinkCells = document.querySelectorAll('.map_link_cell')
 
-  mapLinkCells.forEach((link,i)=>{
+  mapLinkCells.forEach((link, i)=>{
     link.addEventListener('click',()=>{
       const { iWidth, iHeight, map } = mapData[mapKeys[i]]
       const url = `${iWidth}#${iHeight}#${map.replaceAll(',','-')}#${i}`
@@ -671,29 +668,29 @@ function init() {
     }).join('')
     
     const activeCells = document.querySelectorAll('.active_cell')
-    activeCells.forEach((area,i)=>{
+    activeCells.forEach((area, i)=>{
       const index = copyData.index[i]
-      if (svgData[codes[0][index]]) populateWithSvg(codes[0][index],area) 
+      if (svgData[codes[0][index]]) populateWithSvg(codes[0][index], area) 
       if (codes[0][index] === 'v') area.innerHTML = 'x'
     })
 
-    copyData.index.forEach((index,i)=>{
+    copyData.index.forEach((index, i)=>{
       copyData.data[i] = codesBox[0].value.split(',')[index]
     })
 
     if (cut){
       //* delete original
-      codes[0] = codesBox[0].value.split(',').map((grid,i)=>{ 
-        if (copyData.index.some(data=> data === i)) console.log('test',grid) 
-        return copyData.index.some(data=> data === i) ? 'x' : grid
+      codes[0] = codesBox[0].value.split(',').map((grid, i)=>{ 
+        if (copyData.index.some(data => data === i)) console.log('test', grid) 
+        return copyData.index.some(data => data === i) ? 'x' : grid
       })
       codesBox[0].value = codes[0]
       isCut = true
 
-      document.querySelectorAll('.map_gen_cell').forEach((cell,i)=>{
+      document.querySelectorAll('.map_gen_cell').forEach((cell, i)=>{
         // if (svgData[codes[0][i]]) populateWithSvg(codes[0][i],cell) 
         // if (codes[0][i] === 'v') cell.innerHTML = 'x'
-        if (copyData.index.some(data=> data === i)) cell.innerHTML = 'x'
+        if (copyData.index.some(data => data === i)) cell.innerHTML = 'x'
       })
     } 
     copied = true
@@ -712,15 +709,15 @@ function init() {
     if (!copyData.data.length) return
     console.log('copydata', copyData.data)
 
-    copyData.index.forEach((index,i)=>{
+    copyData.index.forEach((index, i)=>{
       if (copyData.data[i] === 'x') return
       codes[0][index] = copyData.data[i]
     })
     codesBox[0].value = codes[0]
 
-    document.querySelectorAll('.map_gen_cell').forEach((cell,i)=>{
+    document.querySelectorAll('.map_gen_cell').forEach((cell, i)=>{
       // cell.style.backgroundColor = codes[0][i]
-      if (svgData[codes[0][i]]) populateWithSvg(codes[0][i],cell) 
+      if (svgData[codes[0][i]]) populateWithSvg(codes[0][i], cell) 
       if (codes[0][i] === 'v') cell.innerHTML = 'x'
     })
 
@@ -801,8 +798,8 @@ function init() {
   //TODO to add by editing.
   const crop = () =>{
     if (!copyData.index) return
-    codesBox[0].value = codesBox[0].value.split(',').filter((_code,i)=>{
-      return copyData.index.find(data=> +data === i)
+    codesBox[0].value = codesBox[0].value.split(',').filter((_code, i)=>{
+      return copyData.index.find(data => +data === i)
     }).join(',')
     column = copyData.width
     row = copyData.height
@@ -814,8 +811,8 @@ function init() {
 
   const deleteSelection = () =>{
     if (!copyData.index) return
-    codesBox[0].value = codesBox[0].value.split(',').map((code,i)=>{
-      return copyData.index.find(data=> +data === i) 
+    codesBox[0].value = codesBox[0].value.split(',').map((code, i)=>{
+      return copyData.index.find(data => +data === i) 
         ? 'x'
         : code
     }).join(',')
@@ -823,32 +820,100 @@ function init() {
     handleSelect()
   }
 
+  const triggerCreateGrid = e =>{
+    const gridClass = e.target.dataset.grid_class
+    const index = +e.target.dataset.index
+    createGrid(index, gridClass)
+  }
+
+  const handleClear = e =>{
+    erase = !erase
+    e.target.classList.toggle('active')
+    cursorType = erase 
+      ? 'eraser_cursor' 
+      : moveState 
+        ? 'motion_cursor' 
+        : 'pen_cursor'
+  }
+
+  const output = ({ content, x, y, flip, rotate }) =>{
+    const data = new Blob([content], { type: 'image/svg+xml;charset=utf-8' })
+    const url = window.URL.createObjectURL(data)
+    const imageTarget = new Image()
+    let scale = [1, 1]
+    if (flip === 'h') scale = [-1, 1]
+    if (flip === 'v') scale = [1, -1]
+    
+    imageTarget.onload = () => {
+      ctx.save()
+      ctx.translate(cellSize / 2 , cellSize / 2)
+      if (rotate) ctx.rotate(degToRad(rotate))
+      ctx.scale(scale[0], scale[1])
+      ctx.translate(-cellSize / 2 , -cellSize / 2)
+
+      // TODO background color
+      ctx.fillStyle = '#a2fcf0'
+      ctx.fillRect(0, 0, cellSize, cellSize)
+
+      ctx.drawImage(imageTarget, 0, 0)
+      ctx2.drawImage(canvas[0], x, y, cellSize, cellSize)
+      ctx.restore()
+      ctx.clearRect(0, 0, cellSize, cellSize) 
+    }
+    imageTarget.src = url
+  }
+
+
+  const createMapPng = () =>{
+    // console.log(codes[0])
+    canvas[1].classList.remove('display_none')
+    resizeCanvas({canvas: canvas[0], w:cellSize, h:cellSize})
+    resizeCanvas({canvas: canvas[1], w:column * cellSize, h:row * cellSize})
+    
+    codes[0].forEach((code, i) =>{
+      if (svgData[code]){
+        const { svg, color, subColor, rotate, flip, } = svgData[code]
+        let colorAction = ''
+        colorAction = typeof(color) === 'function' ? color() : color
+
+        const svgContent = 
+        `${singleSvgWrapper({
+            content: decode(subColor ? svg(subColor) : svg()),
+            color: colorAction || '',
+          })}`
+          
+        // console.log('svgContent', svgContent)
+        const y = Math.floor(i / column) * cellSize
+        const x = i % column * cellSize
+        output({
+          content: svgContent, 
+          x, y,
+          flip, 
+          rotate
+        })
+      }
+    })
+    
+    // TODO add download
+  }
 
   buttons.forEach(b =>{
-    if (b.classList.contains('create_grid')) b.addEventListener('click', (e)=>{
-      const gridClass = e.target.dataset.grid_class
-      const index = +e.target.dataset.index
-      createGrid(index, gridClass)
-    })
-    if (b.classList.contains('generate')) b.addEventListener('click', generateFromCode)
-    if (b.classList.contains('grid_display')) b.addEventListener('click', toggleGrid)
-    if (b.classList.contains('clear')) b.addEventListener('click', (e)=>{
-      erase = !erase
-      e.target.classList.toggle('active')
-      cursorType = erase 
-        ? 'eraser_cursor' 
-        : moveState 
-          ? 'motion_cursor' 
-          : 'pen_cursor'
-    })
-    if (b.classList.contains('select')) b.addEventListener('click', handleSelect)
-    if (b.classList.contains('copy_selection')) b.addEventListener('click', ()=>copySelectionToCopyBox(false))
-    if (b.classList.contains('cut_selection')) b.addEventListener('click', ()=>copySelectionToCopyBox(true))
-    if (b.classList.contains('move_selection')) b.addEventListener('click', moveSelection)
-    if (b.classList.contains('paste_selection')) b.addEventListener('click', paste)
-    if (b.classList.contains('crop_selection')) b.addEventListener('click', crop)
-    if (b.classList.contains('delete_selection')) b.addEventListener('click', deleteSelection)
-    if (b.classList.contains('compress')) b.addEventListener('click', compressCode)
+    const addClickEvent = (className, event) =>{
+      if (b.classList.contains(className)) b.addEventListener('click', event)
+    }
+    addClickEvent('create_grid', triggerCreateGrid)
+    addClickEvent('generate', generateFromCode)
+    addClickEvent('grid_display', toggleGrid)
+    addClickEvent('clear', handleClear)
+    addClickEvent('select', handleSelect)
+    addClickEvent('copy_selection', ()=>copySelectionToCopyBox(false))
+    addClickEvent('cut_selection', ()=>copySelectionToCopyBox(true))
+    addClickEvent('move_selection', moveSelection)
+    addClickEvent('paste_selection', paste)
+    addClickEvent('crop_selection', crop)
+    addClickEvent('delete_selection', deleteSelection)
+    addClickEvent('compress', compressCode)
+    addClickEvent('compile_map', createMapPng)
   })
 
 }
