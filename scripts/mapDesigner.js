@@ -863,6 +863,14 @@ function init() {
     imageTarget.src = url
   }
 
+  const downloadImage = (canvas, name, date) =>{
+    if (!canvas.classList.contains('display_none')) {
+      const link = document.createElement('a')
+      link.download = `${name}_${date ? new Date().getTime() : ''}.png`
+      link.href = canvas.toDataURL()
+      link.click()
+    }
+  }
 
   const createMapPng = () =>{
     // console.log(codes[0])
@@ -893,8 +901,6 @@ function init() {
         })
       }
     })
-    
-    // TODO add download
   }
 
   buttons.forEach(b =>{
@@ -914,6 +920,7 @@ function init() {
     addClickEvent('delete_selection', deleteSelection)
     addClickEvent('compress', compressCode)
     addClickEvent('compile_map', createMapPng)
+    addClickEvent('download', ()=>downloadImage(canvas[1], 'map', true))
   })
 
 }
