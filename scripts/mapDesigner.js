@@ -58,7 +58,7 @@ function init() {
   const copyGrid = document.querySelector('.copy_grid')
   
   // button
-  const alts = document.querySelectorAll('.alt')
+  let alts = document.querySelectorAll('.alt')
   const copyButtons = document.querySelectorAll('.copy') 
   const indexToggleButton = document.querySelector('.display_index')
   const buttons = document.querySelectorAll('button')
@@ -236,19 +236,19 @@ function init() {
   const generateMap = clear =>{
     const mapGenCells = document.querySelectorAll('.map_gen_cell')
 
-    //TODO
     // add way to display event in the map
     if (mapData[indexIndicator.value]) console.log(mapData[indexIndicator.value].events)
 
-    mapGenCells.forEach((mapGenCell,i)=>{
+    mapGenCells.forEach((mapGenCell, i)=>{
       if (svgData[codes[0][i]]) {
-        populateWithSvg(codes[0][i],mapGenCell) 
+        populateWithSvg(codes[0][i], mapGenCell) 
+        mapGenCell.setAttribute('data-alt', codes[0][i])
       }  
       if (codes[0][i] === 'v') mapGenCell.innerHTML = 'x'
       // if (codes[0][i] === 'b') mapGenCell.innerHTML = '-'
       
-      mapGenCell.addEventListener('click',(e)=>drawWithImage(e))
-      mapGenCell.addEventListener('mousemove',(e)=>continuousDraw(e,drawWithImage))
+      mapGenCell.addEventListener('click',e =>drawWithImage(e))
+      mapGenCell.addEventListener('mousemove',e =>continuousDraw(e,drawWithImage))
     })
 
     document.querySelectorAll('.svg_anim').forEach(cell=>{
@@ -263,7 +263,7 @@ function init() {
     if (clear) updateCodesDisplay(codesBox[0],codes[0])  
   }
 
-  const createCopyGrids = (row,column,cellSize,cellStyle) =>{
+  const createCopyGrids = (row, column, cellSize, cellStyle) =>{
     const arr = new Array(row * column).fill('')
     copyGrid.style.width = `${column * cellSize}px`
     copyGrid.style.height = `${row * cellSize}px`
@@ -284,7 +284,7 @@ function init() {
     }).join('')
     copyGrids = document.querySelectorAll(`.${cellStyle}`)
 
-    copyGrids.forEach((grid,i)=>{
+    copyGrids.forEach((grid, i)=>{
       grid.addEventListener('click',(e)=>{
         if (!copyBoxCreated){
           copyBox = document.createElement('div')
@@ -363,16 +363,15 @@ function init() {
   })
 
 
-  //todo can be refactored
   const generateFromCode = () =>{
-    createGridCells(
+    createGridCells({
       row,
       column,
-      cellSizeInputs[0].value,
-      0,
-      'map_gen_cell',
-      false
-    )
+      cellSize: cellSizeInputs[0].value,
+      index: 0,
+      cellStyle: 'map_gen_cell',
+      clear: false
+    })
     // createGridCells(
     //   row,
     //   column,
@@ -404,14 +403,36 @@ function init() {
     document.execCommand('copy')
   }
 
-  const createGridCells = (row ,column, cellSize, index, cellStyle, clear) =>{
+  const displayLabel = e =>{
+    cursor.childNodes[0].innerHTML = e.target.dataset.alt
+  }
+
+  const hideLabel = () =>{
+    cursor.childNodes[0].innerHTML = ''
+  }
+
+  const addLabelDisplay = () =>{
+    alts.forEach(button => {
+      button.addEventListener('mouseover', displayLabel)
+      button.addEventListener('mouseleave', hideLabel)
+    })
+  }
+
+  const removeLabelDisplay = () =>{
+    alts.forEach(button => {
+      button.removeEventListener('mouseover', displayLabel)
+      button.removeEventListener('mouseleave', hideLabel)
+    })
+  }
+
+  const createGridCells = ({ row, column, cellSize, index, cellStyle, clear }) =>{
     const arr = new Array(row * column).fill('')
     grids[index].style.width = `${column * cellSize}px`
     grids[index].style.height = `${row * cellSize}px`
-    grids[index].innerHTML = arr.map((_ele,i)=>{
+    grids[index].innerHTML = arr.map((_ele, i)=>{
       return `
         <div 
-          class="${cellStyle}"
+          class="${cellStyle} alt"
           index="${i}"
           style="
             width:${cellSize}px;
@@ -425,6 +446,9 @@ function init() {
         `
     }).join('')
     addCodeDraw(clear)
+    removeLabelDisplay()
+    alts = document.querySelectorAll('.alt')
+    addLabelDisplay()
   }
   
 
@@ -432,7 +456,7 @@ function init() {
     row = rowInputs[index].value ? rowInputs[index].value : 50
     column = columnInputs[index].value ? columnInputs[index].value : 50
     cellSize = cellSizeInputs[index].value ? cellSizeInputs[index].value : 10
-    createGridCells(row,column,cellSize, index, cellStyle,true)
+    createGridCells({ row, column, cellSize, index, cellStyle, clear:true })
     codes[0] = new Array(row * column).fill('')
     codesBox[0].value = new Array(row * column).fill('')
   }
@@ -527,25 +551,14 @@ function init() {
 
   // enable grid creation with buttons
 
-  
-
-
-
   const handleCursor = e =>{
     cursor.style.top = `${e.pageY}px`
     cursor.style.left = `${e.pageX}px`
   }
   window.addEventListener('mousemove', handleCursor)
 
+  
 
-  alts.forEach(button=>{
-    button.addEventListener('mouseover',(e)=>{
-      cursor.childNodes[0].innerHTML = e.target.dataset.alt
-    })
-    button.addEventListener('mouseleave',()=>{
-      cursor.childNodes[0].innerHTML = ''
-    })
-  })
 
 
   // reads from url
@@ -586,14 +599,6 @@ function init() {
       location.reload(true)
     })
   })
-
-
-
-
-
-
-  //todo copy
-
 
 
   
