@@ -373,14 +373,14 @@ function init() {
       'map_gen_cell',
       false
     )
-    createGridCells(
-      row,
-      column,
-      cellSizeInputs[0].value,
-      1,
-      'map_cell',
-      false
-    ) 
+    // createGridCells(
+    //   row,
+    //   column,
+    //   cellSizeInputs[0].value,
+    //   1,
+    //   'map_cell',
+    //   false
+    // ) 
 
     codes[0] = codesBox[0].value.split(',')
     const mapCells = document.querySelectorAll('.map_cell')
@@ -428,11 +428,11 @@ function init() {
   }
   
 
-  const createGrid = (index,cellStyle) =>{
+  const createGrid = (index, cellStyle) =>{
     row = rowInputs[index].value ? rowInputs[index].value : 50
     column = columnInputs[index].value ? columnInputs[index].value : 50
     cellSize = cellSizeInputs[index].value ? cellSizeInputs[index].value : 10
-    createGridCells(row,column,cellSize,index,cellStyle,true)
+    createGridCells(row,column,cellSize, index, cellStyle,true)
     codes[0] = new Array(row * column).fill('')
     codesBox[0].value = new Array(row * column).fill('')
   }
@@ -823,7 +823,7 @@ function init() {
     if (b.classList.contains('create_grid')) b.addEventListener('click', (e)=>{
       const gridClass = e.target.dataset.grid_class
       const index = +e.target.dataset.index
-      createGrid(index,gridClass)
+      createGrid(index, gridClass)
     })
     if (b.classList.contains('generate')) b.addEventListener('click', generateFromCode)
     if (b.classList.contains('grid_display')) b.addEventListener('click', toggleGrid)
