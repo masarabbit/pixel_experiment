@@ -128,7 +128,7 @@ function init() {
   }
 
   const svgWrapper = ({ content, color, w, h }) =>{
-    return `<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" fill="${color || 'black'}"
+    return `<svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" fill="${color || 'black'}"
     width="100%" height="100%" viewBox="0 0 ${w} ${h}"
     >${content}</svg>`
   }
