@@ -45,7 +45,7 @@ const traceSvg = () =>{
       )){
 
       // prevents same direction being checked twice.
-      if (checkedIndex.filter(d => d === dirIndexToCheck).length) return
+      if (checkedIndex.some(d => d === dirIndexToCheck)) return
       checkedIndex.push(dirIndexToCheck)
 
       const distance = 1

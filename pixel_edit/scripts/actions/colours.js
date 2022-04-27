@@ -26,6 +26,7 @@ const updateColor = color =>{
 //* populateDetailedPalette
 // const factor = 51
 const factor = 1
+// const factor = 255
 
 const nearestN = (n, denom) =>{
   return n === 0 ? 0 : (n - 1) + Math.abs(((n - 1) % denom) - denom)
