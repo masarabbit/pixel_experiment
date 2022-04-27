@@ -1,0 +1,44 @@
+<!doctype html>
+<html>
+
+<head>
+  <link rel="stylesheet" type="text/css" href="./styles/main.css" />
+  <script type="module" src ="./scripts/app.js" charset="utf-8"></script>
+
+  <title>pixel edit</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+
+<body>
+  <nav>
+    pixel edit2
+    <div class="input_wrap">
+      <label>column</label>
+      <input class="column input" placeholder="column" value="10" />
+    </div>
+    <div class="input_wrap">
+      <label>row</label>
+      <input class="row input" placeholder="row" value="10" />
+    </div>
+    <div class="input_wrap">
+      <label>cell size</label>
+      <input class="cell_size input" placeholder="cell size" value="20" />
+    </div>
+
+    <button class="btn resize">resize</button>
+  </nav>
+
+  <div class="wrapper">
+    <div class="canvas_wrapper">
+      <canvas class="overlay"></canvas>
+      <canvas class="artboard"></canvas>
+    </div>
+  </div>
+
+
+  <div class="cursor" data-text="test"><div></div></div>
+  <div class="indicator"></div>
+</body>
+
+</html>

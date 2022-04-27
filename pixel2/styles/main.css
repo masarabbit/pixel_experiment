@@ -1,0 +1,137 @@
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+  color: white;
+  background-color: rgb(183, 232, 255);
+}
+
+
+/* .trace_output {
+  color: white;
+  position: fixed;
+  z-index: 300;
+  top: 50px;
+  left: 10px;
+  font-size: 10px;
+} */
+
+nav {
+  position: fixed;
+  top: 0;
+  background-color: rgb(15, 12, 48);
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 45px;
+  padding: 0 10px;
+  z-index: 100;
+}
+
+p, h1, h2, h3, h4 {
+  display: inline-block;
+  margin-block-start: 0em;
+  margin-block-end: 0em;
+  margin-inline-start: 0px;
+  margin-inline-end: 0px;
+  padding-inline-start: 0px;
+}
+
+.wrapper {
+  position: absolute;
+  width: 100%;
+  height: calc(100% - 45px);
+  top: 45px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.canvas_wrapper {
+  position: relative;
+  /* border: red 1px solid; */
+  width: 50px;
+  height: 50px;
+}
+
+canvas {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  height: 100%;
+}
+
+.overlay {
+  background-color: transparent;
+}
+
+.artboard {
+  background-color: white;
+}
+
+[type="file"] {
+  display: none;
+}
+
+label,
+button {
+  border: 1px solid white;
+  /* border: 0; */
+  background-color: transparent;
+  padding: 9.5px 15px;
+  text-align: center;
+  color: white;
+  cursor: pointer;
+  font-size: 15px;
+}
+
+input {
+  background-color: white;
+  color: black;
+  border: 0;
+  height: 20px;
+}
+
+label,
+button{
+  margin: 5px;
+}
+
+::placeholder { color: #00e8d1; }
+input:focus { outline: #00e8d1; }
+
+label:hover,
+button:hover {
+  background-color: white;
+  color: black;
+}
+
+.input_wrap {
+  display: flex;
+  flex-direction: column;
+  margin: 0 5px;
+}
+
+.input_wrap label {
+  border: 0;
+  font-size: 10px;
+  height: 11px;
+  padding: 0;
+  margin: -1px 0 1px 0;
+  text-align: left;
+  display: flex;
+  align-items: center;
+}
+
+.input_wrap label:hover {
+  background-color: transparent;
+  color: white;
+}
+
+.input {
+  width: 80px;
+  padding: 9.5px 10px;
+}
