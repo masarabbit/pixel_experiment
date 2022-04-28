@@ -1,4 +1,5 @@
 
+
 function init() {
 
   const buttons = document.querySelectorAll('.btn')
@@ -10,12 +11,15 @@ function init() {
 
   const drawData = {
     draw: false,
+    cursor: null,
+    codes: [[], []]
   }
 
   const input = {
     column: document.querySelector('.column'),
     row: document.querySelector('.row'),
-    cellD: document.querySelector('.cell_size')
+    cellD: document.querySelector('.cell_size'),
+    codes: document.querySelectorAll('.code')
   }
 
   const state = {
@@ -25,8 +29,19 @@ function init() {
     gridWidth: 0.5,
   }
 
+  const elements = {
+    cursor: document.querySelector('.cursor')
+  }
+
   Object.keys(input).forEach(key =>{
-    input[key].addEventListener('change', e =>{
+    input[key].length 
+    ? input[key].forEach(k =>{
+      k.addEventListener('change', e =>{
+        state[k] = +e.target.value
+        resize()
+      })
+    })
+    : input[key].addEventListener('change', e =>{
       state[key] = +e.target.value
       resize()
     })
@@ -39,10 +54,6 @@ function init() {
     if (y) target.style.top = `${y}px`
   }
 
-  // const setTargetPos = ({ target, x, y }) =>{
-  
-  // }
-
   const resizeCanvas = ({ canvas, w, h }) =>{
     canvas.setAttribute('width', w)
     canvas.setAttribute('height', h)
@@ -54,7 +65,7 @@ function init() {
   const mouseUp = (t, e, a) => addEvents(t, a, e, ['mouseup', 'touchend'])
   const mouseMove = (t, e, a) => addEvents(t, a, e, ['mousemove', 'touchmove'])
   const mouseDown = (t, e, a) => addEvents(t, a, e, ['mousedown', 'touchstart'])
-  // const mouseEnter = (t, e, a) => addEvents(t, a, e, ['mouseenter', 'touchstart'])
+  const mouseEnter = (t, e, a) => addEvents(t, a, e, ['mouseenter', 'touchstart'])
   const mouseLeave = (t, e, a) => addEvents(t, a, e, ['mouseleave', 'touchmove'])
 
   const nearestN = (n, denom) => n === 0 ? 0 : (n - 1) + Math.abs(((n - 1) % denom) - denom)
@@ -94,19 +105,32 @@ function init() {
     const pos = drawPos(e, cellD)
     aCtx.fillStyle = '#000000'
     aCtx.fillRect(pos.x, pos.y, cellD, cellD)
-    // TODO add way to record the drawn squares
-    //* add continuous draw
     //* add highlight state
+    
+    const index = ((pos.x / cellD + 1) * (pos.y / cellD + 1)) - 1 // TODO needs refactoring, incorrect
+    console.log(index)
+    
+    // TODO may split this out
+    drawData.codes[0][index] = '#000000'
+    input.codes[0].value = drawData.codes[0]
   }
+
+  // const updateCodesDisplay = (box, arr) =>{
+  //   box.value = `${arr.map(ele => ele).join(',')}`
+  //   populatePalette(0, arr)
+  // }
 
 
   artboard.addEventListener('click', drawSquare)
   mouseDown(artboard, 'add', ()=> drawData.draw = true)
   mouseUp(artboard, 'add', ()=> drawData.draw = false)
-  mouseLeave(artboard, 'add', ()=> drawData.draw = false)
   mouseMove(artboard, 'add', e => continuousDraw(e, drawSquare))
+  mouseLeave(artboard, 'add', ()=> {
+    drawData.draw = false
+    drawData.cursor = null
+  })
+  mouseEnter(artboard, 'add', ()=> drawData.cursor = 'artboard')
 
-  // TODO add grid using svg instead of cells
   
   const resize = () =>{
     const { column, row, cellD } = state
@@ -123,6 +147,8 @@ function init() {
       w: column * cellD,
       h: row * cellD
     })
+    drawData.codes[0] = new Array(row * column).fill('transparent')
+    input.codes[0].value = drawData.codes[0]
     drawGrid()
     // TODO add some way to re-draw what was drawn
   }
@@ -136,12 +162,22 @@ function init() {
 
 
 
-  // window.addEventListener('mousemove', e => 
-  //   styleTarget({
-  //     target: cursor,
-  //     x: e.pageX, y: e.pageY
-  //   })
-  // )
+  window.addEventListener('mousemove', e =>{
+    const { cellD } = state
+    //TODO needs adjusting
+    const pos = drawData.cursor === 'artboard' 
+      ? { x: nearestN(e.pageX, cellD) - (cellD / 2), y: nearestN(e.pageY, cellD) - (cellD / 2) } 
+      // ? drawPos(e, cellD)
+      : { x: e.pageX, y: e.pageY }
+
+    styleTarget({
+      target: elements.cursor,
+      x: pos.x, 
+      y: pos.y,
+      w: cellD,
+      h: cellD,
+    })
+  })
   resize()
 }
 
