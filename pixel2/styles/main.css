@@ -67,6 +67,7 @@ canvas {
 .overlay {
   background-color: transparent;
   pointer-events: none;
+  z-index: 1;
 }
 
 .artboard {

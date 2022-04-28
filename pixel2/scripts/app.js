@@ -5,6 +5,7 @@ function init() {
   const overlay = document.querySelector('.overlay')
   const artboard = document.querySelector('.artboard')
   const aCtx = artboard.getContext('2d')
+  const oCtx = overlay.getContext('2d')
   const canvasWrapper = document.querySelector('.canvas_wrapper')
 
   const input = {
@@ -14,10 +15,18 @@ function init() {
   }
 
   const state = {
-    column: input.column.value,
-    row: input.row.value,
-    cellD: input.cellD.value,
+    column: +input.column.value,
+    row: +input.row.value,
+    cellD: +input.cellD.value,
+    gridWidth: 0.5,
   }
+
+  Object.keys(input).forEach(key =>{
+    input[key].addEventListener('change', e =>{
+      state[key] = +e.target.value
+      resize()
+    })
+  })
 
   const setTargetSize = ({ target, w, h }) =>{
     target.style.width = `${w}px`
@@ -29,9 +38,7 @@ function init() {
     canvas.setAttribute('height', h)
   }
 
-  const nearestN = (n, denom) =>{
-    return n === 0 ? 0 : (n - 1) + Math.abs(((n - 1) % denom) - denom)
-  }
+  const nearestN = (n, denom) => n === 0 ? 0 : (n - 1) + Math.abs(((n - 1) % denom) - denom)
 
   const drawPos = (e, cellD) => {
     const { top, left } = artboard.getBoundingClientRect()
@@ -40,13 +47,33 @@ function init() {
       y: nearestN(e.pageY - top, cellD) - cellD
     }
   }
+
+  const drawGrid = () => {
+    const { width, height } = overlay.getBoundingClientRect()  
+    const { column, row, cellD, gridWidth } = state
+
+    oCtx.strokeStyle = 'lightgrey'
+    oCtx.beginPath()
+    const pos = (n, type) => n === type ? n * cellD - gridWidth : n * cellD + gridWidth
+    for (let x = 0; x <= column; x += 1) {
+      oCtx.moveTo(pos(x, column), gridWidth)
+      oCtx.lineTo(pos(x, column), height - gridWidth)
+    }
+    for (let y = 0; y <= row; y += 1) {
+      oCtx.moveTo(gridWidth, pos(y, row))
+      oCtx.lineTo(width - gridWidth, pos(y, row))
+    }
+    oCtx.stroke()
+  }
   
-  // TODO see if it's possible to draw pixels on canvas without cells - done
   const drawSquare = e => {
     const { cellD } = state
     const pos = drawPos(e, cellD)
     aCtx.fillStyle = '#000000'
     aCtx.fillRect(pos.x, pos.y, cellD, cellD)
+    // TODO add way to record the drawn squares
+    //* add continuous draw
+    //* add highlight state
   }
 
   artboard.addEventListener('click', drawSquare)
@@ -69,6 +96,8 @@ function init() {
       w: column * cellD,
       h: row * cellD
     })
+    drawGrid()
+    // TODO add some way to re-draw what was drawn
   }
 
 
