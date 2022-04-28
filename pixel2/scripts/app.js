@@ -8,6 +8,10 @@ function init() {
   const oCtx = overlay.getContext('2d')
   const canvasWrapper = document.querySelector('.canvas_wrapper')
 
+  const drawData = {
+    draw: false,
+  }
+
   const input = {
     column: document.querySelector('.column'),
     row: document.querySelector('.row'),
@@ -28,15 +32,30 @@ function init() {
     })
   })
 
-  const setTargetSize = ({ target, w, h }) =>{
-    target.style.width = `${w}px`
-    target.style.height = `${h}px`
+  const styleTarget = ({ target, w, h, x, y }) =>{
+    if (w) target.style.width = `${w}px`
+    if (h) target.style.height = `${h}px`
+    if (x) target.style.left = `${x}px`
+    if (y) target.style.top = `${y}px`
   }
+
+  // const setTargetPos = ({ target, x, y }) =>{
+  
+  // }
 
   const resizeCanvas = ({ canvas, w, h }) =>{
     canvas.setAttribute('width', w)
     canvas.setAttribute('height', h)
   }
+
+  const addEvents = (target, action, event, array) =>{
+    array.forEach(a => event === 'remove' ? target.removeEventListener(a, action) : target.addEventListener(a, action))
+  }
+  const mouseUp = (t, e, a) => addEvents(t, a, e, ['mouseup', 'touchend'])
+  const mouseMove = (t, e, a) => addEvents(t, a, e, ['mousemove', 'touchmove'])
+  const mouseDown = (t, e, a) => addEvents(t, a, e, ['mousedown', 'touchstart'])
+  // const mouseEnter = (t, e, a) => addEvents(t, a, e, ['mouseenter', 'touchstart'])
+  const mouseLeave = (t, e, a) => addEvents(t, a, e, ['mouseleave', 'touchmove'])
 
   const nearestN = (n, denom) => n === 0 ? 0 : (n - 1) + Math.abs(((n - 1) % denom) - denom)
 
@@ -65,6 +84,10 @@ function init() {
     }
     oCtx.stroke()
   }
+
+  const continuousDraw = (e, action) => {
+    if (drawData.draw) action(e) 
+  }
   
   const drawSquare = e => {
     const { cellD } = state
@@ -76,8 +99,12 @@ function init() {
     //* add highlight state
   }
 
+
   artboard.addEventListener('click', drawSquare)
-  
+  mouseDown(artboard, 'add', ()=> drawData.draw = true)
+  mouseUp(artboard, 'add', ()=> drawData.draw = false)
+  mouseLeave(artboard, 'add', ()=> drawData.draw = false)
+  mouseMove(artboard, 'add', e => continuousDraw(e, drawSquare))
 
   // TODO add grid using svg instead of cells
   
@@ -91,7 +118,7 @@ function init() {
         h: row * cellD
       })
     })
-    setTargetSize({
+    styleTarget({
       target: canvasWrapper,
       w: column * cellD,
       h: row * cellD
@@ -107,6 +134,14 @@ function init() {
     addClickEvent('resize', resize)
   })
 
+
+
+  // window.addEventListener('mousemove', e => 
+  //   styleTarget({
+  //     target: cursor,
+  //     x: e.pageX, y: e.pageY
+  //   })
+  // )
   resize()
 }
 
