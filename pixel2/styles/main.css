@@ -5,7 +5,7 @@ body {
   padding: 0;
   font-family: sans-serif;
   color: white;
-  background-color: rgb(183, 232, 255);
+  background-color: rgb(15, 12, 48);
 }
 
 
@@ -21,7 +21,7 @@ body {
 nav {
   position: fixed;
   top: 0;
-  background-color: rgb(15, 12, 48);
+  /* background-color: rgb(15, 12, 48); */
   display: flex;
   align-items: center;
   width: 100%;
@@ -55,6 +55,7 @@ p, h1, h2, h3, h4 {
   /* border: red 1px solid; */
   width: 50px;
   height: 50px;
+  background-color: white;
 }
 
 canvas {
@@ -72,7 +73,8 @@ canvas {
 }
 
 .artboard {
-  background-color: white;
+
+  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAHklEQVQYV2NkgILF/9/+BzEZMQRgMrGMwmBJRnQBAA1GDyEZnkKiAAAAAElFTkSuQmCC) repeat 0 0;
 }
 
 [type="file"] {
@@ -190,4 +192,56 @@ textarea {
   align-items: center;
   justify-content: flex-end;
   flex-wrap: wrap;
+}
+
+/** colour input **/
+.color_label {
+  height: 32px;
+  width: 32px;
+  border: 0;
+  background-color: black;
+  transition: 0.3s;
+  border: 1px solid white;
+}
+
+.color_label:hover { transform: scale(1.3); }
+
+#color { display: none; }
+
+
+/** palette **/
+
+
+.palette {
+  position: relative;
+  margin: 20px auto 0;
+  width: 100%;
+  max-width: 700px;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.palette_cell {
+  position: relative;
+  height: 30px;
+  width: 30px;
+  margin: 0 5px 0 0;
+}
+
+.palette_cell:hover {
+  transform: scale(1.2);
+  transition: 0.2s;
+  cursor: pointer;
+}
+
+.palette_cell{
+  background-repeat: no-repeat, repeat;
+  background-size: cover; 
+  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAHklEQVQYV2NkgILF/9/+BzEZMQRgMrGMwmBJRnQBAA1GDyEZnkKiAAAAAElFTkSuQmCC) repeat 0 0;
+  background-color: white;
+}
+
+.palette_cell div {
+  width: 100%;
+  height: 100%;
 }

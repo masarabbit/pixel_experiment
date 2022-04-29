@@ -29,11 +29,20 @@ const mouse = {
 
 const nearestN = (n, denom) => n === 0 ? 0 : (n - 1) + Math.abs(((n - 1) % denom) - denom)
 
+const blankRemoved = arr => arr.filter(dot => dot)
+
+const sortByFreqRemoveBlankAndDuplicates = arr =>{  
+  const countOccurrences = (arr, val) => arr.reduce((a, v) => (v === val ? a + 1 : a), 0)
+  const orderedByFrequency = blankRemoved(arr).map(ele =>[ele, countOccurrences(blankRemoved(arr), ele)]).sort((a, b) => b[1] - a[1])  
+  return [...new Set(orderedByFrequency.map(ele => ele[0]))]
+}
+
 export {
   styleTarget,
   resizeCanvas,
   mouse,
   nearestN,
   calcX,
-  calcY
+  calcY,
+  sortByFreqRemoveBlankAndDuplicates
 }

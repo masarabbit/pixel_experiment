@@ -3,6 +3,11 @@ import { styleTarget, mouse, nearestN } from './actions/utils.js'
 import { drawData } from './drawData.js'
 import { continuousDraw, drawSquare } from './actions/draw.js'
 import { resize } from './actions/grid.js'
+import { updateColor } from './actions/colours.js'
+
+
+// TODO add colour input
+// add populate palette
 
 function init() {
   
@@ -25,9 +30,13 @@ function init() {
         resize()
       })
     })
-    : input[key].addEventListener('change', e =>{
-      drawData[key] = +e.target.value
-      resize()
+    : input[key].addEventListener('change', e =>{  
+      if (['color', 'hex'].includes(key)) {
+        updateColor(input[key].value)
+      } else {
+        drawData[key] = +e.target.value
+        resize()
+      }
     })
   })
 
@@ -50,7 +59,6 @@ function init() {
   })
   mouse.enter(artboard, 'add', ()=> drawData.cursor = 'artboard')
 
-  
 
   //TODO needs adjusting - highight square
   window.addEventListener('mousemove', e =>{

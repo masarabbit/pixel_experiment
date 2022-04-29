@@ -1,6 +1,7 @@
 import { input, artboard, overlay, oCtx, aCtx }  from '../elements.js'
 import { drawData } from '../drawData.js'
 import { nearestN, resizeCanvas, calcX, calcY } from './utils.js'
+import { populatePalette } from './colours.js'
 
 
 const drawPos = (e, cellD) => {
@@ -34,16 +35,18 @@ const continuousDraw = (e, action) => {
 }
 
 const drawSquare = e => {
-  const { cellD, column } = drawData
+  const { cellD, column, hex } = drawData
   const { x, y } = drawPos(e, cellD)
-  aCtx.fillStyle = '#000000' // TODO add colour
+  aCtx.fillStyle = hex
   aCtx.fillRect(x - cellD, y - cellD, cellD, cellD)
   //* add highlight state
   
   // TODO may split this out
   const index = ((y / cellD - 1) * column) + x / cellD - 1
-  drawData.codes[0][index] = '#000000'
+  drawData.codes[0][index] = hex
   input.codes[0].value = drawData.codes[0]
+  
+  populatePalette(drawData.codes[0])
 }
 
 const paintCanvas = () =>{
