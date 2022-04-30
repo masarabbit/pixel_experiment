@@ -66,11 +66,29 @@ const paintCanvas = () =>{
   })
 }
 
+const arrayGroupedForFlipping = () =>{
+  const arr = new Array(+input.row.value).fill('')
+  const mappedArr = arr.map(()=>[])
+  input.colors.value.split(',').forEach((d, i)=>{
+    mappedArr[Math.floor(i / input.column.value)].push(d)
+  })
+  return mappedArr
+}
+
+const flipImage = orientation => {
+  input.colors.value = orientation === 'horizontal' 
+    ? arrayGroupedForFlipping().map(a => a.reverse()).join(',')
+    : arrayGroupedForFlipping().reverse().join(',')
+  artData.colors = input.colors.value.split(',')
+  paintCanvas()
+}
+
 export {
   drawPos,
   drawGrid,
   continuousDraw,
   drawSquare,
-  paintCanvas
+  paintCanvas,
+  flipImage
 }
 

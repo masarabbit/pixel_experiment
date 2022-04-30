@@ -1,7 +1,7 @@
 import { artboard, elements, input, aCtx }  from './elements.js'
 import { styleTarget, mouse, nearestN, resizeCanvas, copyText } from './actions/utils.js'
 import { artData } from './state.js'
-import { continuousDraw, drawSquare, paintCanvas } from './actions/draw.js'
+import { continuousDraw, drawSquare, paintCanvas, flipImage } from './actions/draw.js'
 import { resize } from './actions/grid.js'
 import { updateColor, hex, rgbToHex } from './actions/colours.js'
 
@@ -14,15 +14,6 @@ function init() {
   }
 
   Object.keys(input).forEach(key =>{
-    // input[key].length 
-    // ? input[key].forEach(k =>{
-    //   k.addEventListener('change', e =>{
-    //     console.log(e.target.value)
-    //     artData[k] = e.target.value.split(',')
-    //     console.log(artData)
-    //     resize()
-    //   })
-    // })
     input[key].addEventListener('change', e =>{  
       if (['color', 'hex'].includes(key)) {
         updateColor(input[key].value)
@@ -31,9 +22,10 @@ function init() {
         document.querySelector('.file_name').innerHTML = artData.uploadedFile.name
         document.querySelector('.pixelise').classList.remove('display_none')
       } else if (key === 'colors') {
-        artData[key] = e.target.value.split(',')
-        resize()
+        artData.colors = e.target.value.split(',')
       } else {
+        artData[key] = +e.target.value
+        resize()
         console.log('other')
       }
     })
@@ -88,6 +80,7 @@ function init() {
     addClickEvent('pixelise', output)
     addClickEvent('copy', () => copyText(input.colors))
     addClickEvent('generate', paintCanvas)
+    addClickEvent('flip', e => flipImage(e.target.dataset.dir))
   })
 
   artboard.addEventListener('click', drawSquare)
