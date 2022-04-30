@@ -109,6 +109,10 @@ button{
   margin: 5px;
 }
 
+button.active {
+  opacity: 0.5;
+}
+
 ::placeholder { color: #00e8d1; }
 input:focus { outline: #00e8d1; }
 

@@ -1,7 +1,7 @@
 import { artboard, elements, input, aCtx }  from './elements.js'
 import { styleTarget, mouse, nearestN, resizeCanvas, copyText } from './actions/utils.js'
 import { artData } from './state.js'
-import { continuousDraw, drawSquare, paintCanvas, flipImage } from './actions/draw.js'
+import { continuousDraw, colorCell, paintCanvas, flipImage } from './actions/draw.js'
 import { resize } from './actions/grid.js'
 import { updateColor, hex, rgbToHex } from './actions/colours.js'
 
@@ -11,6 +11,8 @@ import { updateColor, hex, rgbToHex } from './actions/colours.js'
 // TODO erase
 // TODO undo
 // TODO download
+// TODO hide / display grid (overlay)
+// TODO add alt + cursor
 // TODO represent transparent as t?
 
 function init() {
@@ -61,17 +63,31 @@ function init() {
       for (let i = 0; i < row * column; i++) {
         const x = i % column * cellD
         const y = Math.floor(i / column) * cellD
-        const c = aCtx.getImageData(x + offset, y + offset, 1, 1).data //!offset
+        const c = aCtx.getImageData(x + offset, y + offset, 1, 1).data //offset
         // this thing included here to prevent rendering black instead of transparent
         c[3] === 0
           ? artData.colors.push('transparent')
           : artData.colors.push(hex(rgbToHex(c[0], c[1], c[2])))
       }
+      // revert canvas size before painting
+      resizeCanvas({
+        canvas: artboard, 
+        w: column * cellD, h: row * cellD
+      })
       paintCanvas()
     }
     imageTarget.src = blobURL
   }
-
+  
+  const triggerFill = e =>{
+    e.target.classList.toggle('active')
+    artData.fill = !artData.fill
+    // artData.cursorType = artData.fill 
+    //   ? 'bucket_cursor' 
+    //   : drawData.moveState 
+    //     ? 'motion_cursor' 
+    //     : 'pen_cursor'
+  }
 
   elements.buttons.forEach(b =>{
     const addClickEvent = (className, event) => b.classList.contains(className) && b.addEventListener('click', event)
@@ -83,12 +99,17 @@ function init() {
     addClickEvent('copy', () => copyText(input.colors))
     addClickEvent('generate', paintCanvas)
     addClickEvent('flip', e => flipImage(e.target.dataset.dir))
+    addClickEvent('fill', e => triggerFill(e))
+    addClickEvent('clear', e => {
+      e.target.classList.toggle('active')
+      artData.erase = !artData.erase 
+    })
   })
 
-  artboard.addEventListener('click', drawSquare)
+  artboard.addEventListener('click', colorCell)
   mouse.down(artboard, 'add', ()=> artData.draw = true)
   mouse.up(artboard, 'add', ()=> artData.draw = false)
-  mouse.move(artboard, 'add', e => continuousDraw(e, drawSquare))
+  mouse.move(artboard, 'add', e => continuousDraw(e, colorCell))
   mouse.leave(artboard, 'add', ()=> {
     artData.draw = false
     artData.cursor = null
