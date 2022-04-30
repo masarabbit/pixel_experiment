@@ -5,7 +5,14 @@ import { continuousDraw, drawSquare, paintCanvas, flipImage } from './actions/dr
 import { resize } from './actions/grid.js'
 import { updateColor, hex, rgbToHex } from './actions/colours.js'
 
+// TODO fill bucket
+// TODO copy
+// TODO trace
+// TODO erase
+// TODO undo
+// TODO download
 // TODO represent transparent as t?
+
 function init() {
 
   const resetCodes = () =>{
@@ -24,9 +31,9 @@ function init() {
       } else if (key === 'colors') {
         artData.colors = e.target.value.split(',')
       } else {
+        // column, row and cellD
         artData[key] = +e.target.value
         resize()
-        console.log('other')
       }
     })
   })
@@ -60,11 +67,6 @@ function init() {
           ? artData.colors.push('transparent')
           : artData.colors.push(hex(rgbToHex(c[0], c[1], c[2])))
       }
-      //* populate grid and make it reactive
-      // updateGrid()
-      // updateCodesDisplay(input.colorss[0], artData.colorss[0])
-      // paintCanvasTwo()
-      // generateFromColorCode()
       paintCanvas()
     }
     imageTarget.src = blobURL

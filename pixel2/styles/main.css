@@ -45,7 +45,7 @@ nav {
 .wrapper {
   position: absolute;
   width: 100%;
-  height: calc(100% - 45px);
+  /* height: calc(100% - 45px); */
   top: 45px;
   display: flex;
   padding-top: 40px;

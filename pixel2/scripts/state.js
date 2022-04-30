@@ -13,6 +13,7 @@ const artData = {
   uploadedFile: null,
   calcWidth: 0,
   calcHeight: 0,
+  gridColor: 'lightgrey'
 }
 
 export {

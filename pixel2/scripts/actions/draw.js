@@ -15,8 +15,10 @@ const drawPos = (e, cellD) => {
 const drawGrid = () => {
   const { column, row, cellD, gridWidth } = artData
   const { width, height } = artboard.getBoundingClientRect()
+  // const width = column * cellD
+  // const height = row * cellD
 
-  oCtx.strokeStyle = 'lightgrey'
+  oCtx.strokeStyle = artData.gridColor
   oCtx.beginPath()
   const pos = (n, type) => n === type ? n * cellD - gridWidth : n * cellD + gridWidth
   for (let x = 0; x <= column; x += 1) {
