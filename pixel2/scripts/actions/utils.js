@@ -1,4 +1,4 @@
-import { drawData } from '../drawData.js'
+import { artData } from '../state.js'
 
 const styleTarget = ({ target, w, h, x, y }) =>{
   if (w) target.style.width = `${w}px`
@@ -7,8 +7,8 @@ const styleTarget = ({ target, w, h, x, y }) =>{
   if (y) target.style.top = `${y}px`
 }
 
-const calcX = cell => cell % drawData.column
-const calcY = cell => Math.floor(cell / drawData.column)
+const calcX = cell => cell % artData.column
+const calcY = cell => Math.floor(cell / artData.column)
 
 const resizeCanvas = ({ canvas, w, h }) =>{
   canvas.setAttribute('width', w)

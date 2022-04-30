@@ -1,14 +1,12 @@
-import { artboard, elements, input }  from './elements.js'
-import { styleTarget, mouse, nearestN } from './actions/utils.js'
-import { drawData } from './drawData.js'
-import { continuousDraw, drawSquare } from './actions/draw.js'
+import { artboard, elements, input, aCtx }  from './elements.js'
+import { styleTarget, mouse, nearestN, resizeCanvas } from './actions/utils.js'
+import { artData } from './state.js'
+import { continuousDraw, drawSquare, paintCanvas } from './actions/draw.js'
 import { resize } from './actions/grid.js'
-import { updateColor } from './actions/colours.js'
+import { updateColor, hex, rgbToHex } from './actions/colours.js'
 
 
-// TODO add colour input
-// add populate palette
-
+// TODO represent transparent as t?
 function init() {
   
 
@@ -18,27 +16,70 @@ function init() {
   // }
 
   const resetCodes = () =>{
-    drawData.codes[0] = new Array(drawData.row * drawData.column).fill('transparent')
-    input.codes[0].value = drawData.codes[0]
+    artData.codes[0] = new Array(artData.row * artData.column).fill('transparent')
+    input.codes[0].value = artData.codes[0]
   }
 
   Object.keys(input).forEach(key =>{
     input[key].length 
     ? input[key].forEach(k =>{
       k.addEventListener('change', e =>{
-        drawData[k] = +e.target.value
+        artData[k] = +e.target.value
         resize()
       })
     })
     : input[key].addEventListener('change', e =>{  
       if (['color', 'hex'].includes(key)) {
         updateColor(input[key].value)
+      } else if (key === 'upload') {
+        artData.uploadedFile = input.upload.files[0]
+        document.querySelector('.file_name').innerHTML = artData.uploadedFile.name
+        document.querySelector('.pixelise').classList.remove('display_none')
       } else {
-        drawData[key] = +e.target.value
+        artData[key] = +e.target.value
         resize()
       }
     })
   })
+
+
+  // TODO move this to draw?
+  const output = () =>{
+    const { cellD, row, column, uploadedFile } = artData 
+    if (!uploadedFile) return
+    const blobURL = window.URL.createObjectURL(uploadedFile)
+    const imageTarget = new Image()
+    
+    imageTarget.onload = () => {
+      const { naturalWidth: w, naturalHeight: h } = imageTarget
+      artData.calcHeight = (column * cellD) * (h / w)
+      artData.calcWidth = artData.calcHeight * (w / h)
+      const { calcWidth, calcHeight } = artData 
+      resizeCanvas({
+        canvas: artboard, 
+        w: calcWidth, h: calcHeight - (calcHeight % cellD)
+      })   
+      aCtx.drawImage(imageTarget, 0, 0, calcWidth, calcHeight)
+      artData.codes[0].length = 0
+      const offset = Math.floor(cellD / 2)
+      for (let i = 0; i < row * column; i++) {
+        const x = i % column * cellD
+        const y = Math.floor(i / column) * cellD
+        const c = aCtx.getImageData(x + offset, y + offset, 1, 1).data //!offset
+        // this thing included here to prevent rendering black instead of transparent
+        c[3] === 0
+          ? artData.codes[0].push('transparent')
+          : artData.codes[0].push(hex(rgbToHex(c[0], c[1], c[2])))
+      }
+      //* populate grid and make it reactive
+      // updateGrid()
+      // updateCodesDisplay(input.codes[0], artData.codes[0])
+      // paintCanvasTwo()
+      // generateFromColorCode()
+      paintCanvas()
+    }
+    imageTarget.src = blobURL
+  }
 
 
   elements.buttons.forEach(b =>{
@@ -47,24 +88,25 @@ function init() {
       resize()
       resetCodes()
     })
+    addClickEvent('pixelise', output)
   })
 
   artboard.addEventListener('click', drawSquare)
-  mouse.down(artboard, 'add', ()=> drawData.draw = true)
-  mouse.up(artboard, 'add', ()=> drawData.draw = false)
+  mouse.down(artboard, 'add', ()=> artData.draw = true)
+  mouse.up(artboard, 'add', ()=> artData.draw = false)
   mouse.move(artboard, 'add', e => continuousDraw(e, drawSquare))
   mouse.leave(artboard, 'add', ()=> {
-    drawData.draw = false
-    drawData.cursor = null
+    artData.draw = false
+    artData.cursor = null
   })
-  mouse.enter(artboard, 'add', ()=> drawData.cursor = 'artboard')
+  mouse.enter(artboard, 'add', ()=> artData.cursor = 'artboard')
 
 
   //TODO needs adjusting - highight square
   window.addEventListener('mousemove', e =>{
-    const { cellD } = drawData
+    const { cellD } = artData
     
-    const pos = drawData.cursor === 'artboard' 
+    const pos = artData.cursor === 'artboard' 
       // ? { x: nearestN(e.pageX, cellD) - (cellD / 2 - 0.5), y: nearestN(e.pageY, cellD) - (cellD / 2 + 1)} 
       ? { x: nearestN(e.pageX, cellD - 0.5), y: nearestN(e.pageY, cellD - 0.5)} 
       // ? drawPos(e, cellD)

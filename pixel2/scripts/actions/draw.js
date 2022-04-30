@@ -1,5 +1,5 @@
 import { input, artboard, overlay, oCtx, aCtx }  from '../elements.js'
-import { drawData } from '../drawData.js'
+import { artData } from '../state.js'
 import { nearestN, resizeCanvas, calcX, calcY } from './utils.js'
 import { populatePalette } from './colours.js'
 
@@ -14,7 +14,7 @@ const drawPos = (e, cellD) => {
 
 const drawGrid = () => {
   const { width, height } = overlay.getBoundingClientRect()  
-  const { column, row, cellD, gridWidth } = drawData
+  const { column, row, cellD, gridWidth } = artData
 
   oCtx.strokeStyle = 'lightgrey'
   oCtx.beginPath()
@@ -31,11 +31,11 @@ const drawGrid = () => {
 }
 
 const continuousDraw = (e, action) => {
-  if (drawData.draw) action(e) 
+  if (artData.draw) action(e) 
 }
 
 const drawSquare = e => {
-  const { cellD, column, hex } = drawData
+  const { cellD, column, hex } = artData
   const { x, y } = drawPos(e, cellD)
   aCtx.fillStyle = hex
   aCtx.fillRect(x - cellD, y - cellD, cellD, cellD)
@@ -43,14 +43,14 @@ const drawSquare = e => {
   
   // TODO may split this out
   const index = ((y / cellD - 1) * column) + x / cellD - 1
-  drawData.codes[0][index] = hex
-  input.codes[0].value = drawData.codes[0]
+  artData.codes[0][index] = hex
+  input.codes[0].value = artData.codes[0]
   
-  populatePalette(drawData.codes[0])
+  populatePalette(artData.codes[0])
 }
 
 const paintCanvas = () =>{
-  const { row, column, cellD } = drawData 
+  const { row, column, cellD } = artData 
   const arr = new Array(row * column).fill('') // TODO this could be a new function?
   
   resizeCanvas({
@@ -60,7 +60,7 @@ const paintCanvas = () =>{
   arr.forEach((_ele, i)=>{
     const x = calcX(i) * cellD
     const y = calcY(i) * cellD
-    aCtx.fillStyle = drawData.codes[0][i] === '' ? 'transparent' : drawData.codes[0][i]
+    aCtx.fillStyle = artData.codes[0][i] === '' ? 'transparent' : artData.codes[0][i]
     aCtx.fillRect(x, y, cellD, cellD)
   })
 }

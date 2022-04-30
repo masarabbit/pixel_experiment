@@ -1,10 +1,10 @@
 import { overlay, artboard, elements }  from '../elements.js'
 import { styleTarget, resizeCanvas } from '../actions/utils.js'
-import { drawData } from '../drawData.js'
+import { artData } from '../state.js'
 import { drawGrid, paintCanvas } from '../actions/draw.js'
 
 const resize = () =>{
-  const { column, row, cellD } = drawData
+  const { column, row, cellD } = artData
   const boards = [overlay, artboard]
   boards.forEach(b =>{
     resizeCanvas({

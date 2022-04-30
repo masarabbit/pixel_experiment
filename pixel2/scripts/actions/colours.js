@@ -1,4 +1,4 @@
-import { drawData } from '../drawData.js'
+import { artData } from '../state.js'
 import { input, elements } from '../elements.js'
 import { nearestN, sortByFreqRemoveBlankAndDuplicates } from './utils.js'
 
@@ -22,13 +22,14 @@ const updateColor = color =>{
   input.colorLabel.style.backgroundColor = color
   input.hex.value = color
   input.color.value = color
-  drawData.hex = color
+  artData.hex = color
 }
+
 
 
 //* populateDetailedPalette
 // const factor = 51
-const factor = 1
+// const factor = 1
 // const factor = 255
 
 

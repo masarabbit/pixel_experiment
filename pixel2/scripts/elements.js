@@ -18,7 +18,8 @@ const input = {
   codes: document.querySelectorAll('.code'),
   color: document.querySelector('#color'),
   colorLabel: document.querySelector('.color_label'),
-  hex: document.querySelector('.hex')
+  hex: document.querySelector('.hex'),
+  upload: document.querySelector('#upload'),
 }
 
 export {
