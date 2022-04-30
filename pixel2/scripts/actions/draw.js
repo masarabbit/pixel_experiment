@@ -1,4 +1,4 @@
-import { input, artboard, overlay, oCtx, aCtx }  from '../elements.js'
+import { input, artboard, oCtx, aCtx }  from '../elements.js'
 import { artData } from '../state.js'
 import { nearestN, resizeCanvas, calcX, calcY } from './utils.js'
 import { populatePalette } from './colours.js'
@@ -13,8 +13,8 @@ const drawPos = (e, cellD) => {
 }
 
 const drawGrid = () => {
-  const { width, height } = overlay.getBoundingClientRect()  
   const { column, row, cellD, gridWidth } = artData
+  const { width, height } = artboard.getBoundingClientRect()
 
   oCtx.strokeStyle = 'lightgrey'
   oCtx.beginPath()

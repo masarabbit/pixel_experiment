@@ -48,7 +48,8 @@ nav {
   height: calc(100% - 45px);
   top: 45px;
   display: flex;
-  justify-content: center;
+  padding-top: 40px;
+  /* justify-content: center; */
   align-items: center;
   flex-direction: column;
 }
@@ -161,6 +162,10 @@ button.icon:hover {
 .input {
   width: 80px;
   padding: 9.5px 10px;
+}
+
+.input.no {
+  width: 50px;
 }
 
 .cursor {

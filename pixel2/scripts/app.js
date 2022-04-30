@@ -120,6 +120,20 @@ function init() {
       h: cellD,
     })
   })
+
+  const query = window.location.hash
+  if (query){
+    const queryArray = query.split('#')
+    input.column.value = queryArray[1] || 10
+    input.row.value = queryArray[2] || 10
+    input.cellD.value = queryArray[3] || 20
+
+    Object.assign(artData, {
+      column: +input.column.value, row: +input.row.value, cellD: +input.cellD.value
+    })
+    // createGrid(0, 'cell')
+    // createCopyGrids('copy_cell')
+  }
   
   resetCodes()
   resize()
