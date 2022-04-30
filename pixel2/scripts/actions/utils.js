@@ -1,10 +1,11 @@
 import { artData } from '../state.js'
 
 const styleTarget = ({ target, w, h, x, y }) =>{
-  if (w) target.style.width = `${w}px`
-  if (h) target.style.height = `${h}px`
-  if (x) target.style.left = `${x}px`
-  if (y) target.style.top = `${y}px`
+  const t = target.style
+  if (w) t.width = `${w}px`
+  if (h) t.height = `${h}px`
+  if (x) t.left = `${x}px`
+  if (y) t.top = `${y}px`
 }
 
 const calcX = cell => cell % artData.column
@@ -12,7 +13,7 @@ const calcY = cell => Math.floor(cell / artData.column)
 
 const resizeCanvas = ({ canvas, w, h }) =>{
   canvas.setAttribute('width', w)
-  canvas.setAttribute('height', h)
+  canvas.setAttribute('height', h || w)
 }
 
 const addEvents = (target, action, event, array) =>{

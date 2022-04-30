@@ -1,14 +1,13 @@
-import { artboard, elements, input, aCtx }  from './elements.js'
+import { artboard, elements, input, aCtx, overlay }  from './elements.js'
 import { styleTarget, mouse, nearestN, resizeCanvas, copyText } from './actions/utils.js'
 import { artData } from './state.js'
 import { continuousDraw, colorCell, paintCanvas, flipImage } from './actions/draw.js'
 import { resize } from './actions/grid.js'
 import { updateColor, hex, rgbToHex } from './actions/colours.js'
+import { createSelectBox } from './actions/select.js'
 
-// TODO fill bucket
 // TODO copy
 // TODO trace
-// TODO erase
 // TODO undo
 // TODO download
 // TODO hide / display grid (overlay)
@@ -104,6 +103,13 @@ function init() {
       e.target.classList.toggle('active')
       artData.erase = !artData.erase 
     })
+    addClickEvent('select', ()=>{
+      overlay.classList.toggle('select')
+      if (elements.selectBox) {
+        elements.canvasWrapper.removeChild(elements.selectBox)
+        elements.selectBox = null
+      }
+    })
   })
 
   artboard.addEventListener('click', colorCell)
@@ -116,13 +122,15 @@ function init() {
   })
   mouse.enter(artboard, 'add', ()=> artData.cursor = 'artboard')
 
+  overlay.addEventListener('click', e => createSelectBox(e))
+
 
   //TODO needs adjusting - highight square
   window.addEventListener('mousemove', e =>{
-    const { cellD } = artData
+    const { cellD, gridWidth } = artData
     
     const pos = artData.cursor === 'artboard' 
-      ? { x: nearestN(e.pageX, cellD) - (cellD / 2), y: nearestN(e.pageY, cellD) - (cellD / 2)} 
+      ? { x: nearestN(e.pageX, cellD) - cellD, y: nearestN(e.pageY, cellD) - cellD} 
       // ? { x: nearestN(e.pageX, cellD - 0.5), y: nearestN(e.pageY, cellD - 0.5)} 
       // ? drawPos(e, cellD)
       : { x: e.pageX, y: e.pageY }
@@ -131,8 +139,8 @@ function init() {
       target: elements.cursor,
       x: pos.x, 
       y: pos.y,
-      w: cellD,
-      h: cellD,
+      w: cellD - gridWidth,
+      h: cellD - gridWidth,
     })
   })
 

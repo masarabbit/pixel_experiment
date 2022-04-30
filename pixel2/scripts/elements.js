@@ -10,6 +10,7 @@ const elements = {
   canvasWrapper: document.querySelector('.canvas_wrapper'),
   palette: document.querySelector('.palette'),
   flip: document.querySelectorAll('.flip'),
+  selectBox: null,
 }
 
 const input = {
