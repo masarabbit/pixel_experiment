@@ -37,6 +37,12 @@ const sortByFreqRemoveBlankAndDuplicates = arr =>{
   return [...new Set(orderedByFrequency.map(ele => ele[0]))]
 }
 
+const copyText = box =>{
+  box.select()
+  box.setSelectionRange(0, 99999) // For mobile devices 
+  document.execCommand('copy')
+}
+
 export {
   styleTarget,
   resizeCanvas,
@@ -44,5 +50,6 @@ export {
   nearestN,
   calcX,
   calcY,
-  sortByFreqRemoveBlankAndDuplicates
+  sortByFreqRemoveBlankAndDuplicates,
+  copyText,
 }

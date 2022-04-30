@@ -3,7 +3,8 @@ import { input }  from './elements.js'
 const artData = {
   draw: false,
   cursor: null,
-  codes: [[], []],
+  code: [],
+  svg: [],
   column: +input.column.value,
   row: +input.row.value,
   cellD: +input.cellD.value,

@@ -43,10 +43,10 @@ const drawSquare = e => {
   
   // TODO may split this out
   const index = ((y / cellD - 1) * column) + x / cellD - 1
-  artData.codes[0][index] = hex
-  input.codes[0].value = artData.codes[0]
+  artData.colors[index] = hex
+  input.colors.value = artData.colors
   
-  populatePalette(artData.codes[0])
+  populatePalette(artData.colors)
 }
 
 const paintCanvas = () =>{
@@ -60,7 +60,8 @@ const paintCanvas = () =>{
   arr.forEach((_ele, i)=>{
     const x = calcX(i) * cellD
     const y = calcY(i) * cellD
-    aCtx.fillStyle = artData.codes[0][i] === '' ? 'transparent' : artData.codes[0][i]
+    // aCtx.fillStyle = artData.colors[i] === '' ? 'transparent' : artData.colors[i]
+    aCtx.fillStyle = artData.colors[i] || 'transparent'
     aCtx.fillRect(x, y, cellD, cellD)
   })
 }

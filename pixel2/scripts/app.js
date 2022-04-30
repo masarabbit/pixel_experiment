@@ -1,43 +1,40 @@
 import { artboard, elements, input, aCtx }  from './elements.js'
-import { styleTarget, mouse, nearestN, resizeCanvas } from './actions/utils.js'
+import { styleTarget, mouse, nearestN, resizeCanvas, copyText } from './actions/utils.js'
 import { artData } from './state.js'
 import { continuousDraw, drawSquare, paintCanvas } from './actions/draw.js'
 import { resize } from './actions/grid.js'
 import { updateColor, hex, rgbToHex } from './actions/colours.js'
 
-
 // TODO represent transparent as t?
 function init() {
-  
-
-  // const updateCodesDisplay = (box, arr) =>{
-  //   box.value = `${arr.map(ele => ele).join(',')}`
-  //   populatePalette(0, arr)
-  // }
 
   const resetCodes = () =>{
-    artData.codes[0] = new Array(artData.row * artData.column).fill('transparent')
-    input.codes[0].value = artData.codes[0]
+    artData.colors = new Array(artData.row * artData.column).fill('transparent')
+    input.colors.value = artData.colors
   }
 
   Object.keys(input).forEach(key =>{
-    input[key].length 
-    ? input[key].forEach(k =>{
-      k.addEventListener('change', e =>{
-        artData[k] = +e.target.value
-        resize()
-      })
-    })
-    : input[key].addEventListener('change', e =>{  
+    // input[key].length 
+    // ? input[key].forEach(k =>{
+    //   k.addEventListener('change', e =>{
+    //     console.log(e.target.value)
+    //     artData[k] = e.target.value.split(',')
+    //     console.log(artData)
+    //     resize()
+    //   })
+    // })
+    input[key].addEventListener('change', e =>{  
       if (['color', 'hex'].includes(key)) {
         updateColor(input[key].value)
       } else if (key === 'upload') {
         artData.uploadedFile = input.upload.files[0]
         document.querySelector('.file_name').innerHTML = artData.uploadedFile.name
         document.querySelector('.pixelise').classList.remove('display_none')
-      } else {
-        artData[key] = +e.target.value
+      } else if (key === 'colors') {
+        artData[key] = e.target.value.split(',')
         resize()
+      } else {
+        console.log('other')
       }
     })
   })
@@ -60,7 +57,7 @@ function init() {
         w: calcWidth, h: calcHeight - (calcHeight % cellD)
       })   
       aCtx.drawImage(imageTarget, 0, 0, calcWidth, calcHeight)
-      artData.codes[0].length = 0
+      artData.colors.length = 0
       const offset = Math.floor(cellD / 2)
       for (let i = 0; i < row * column; i++) {
         const x = i % column * cellD
@@ -68,12 +65,12 @@ function init() {
         const c = aCtx.getImageData(x + offset, y + offset, 1, 1).data //!offset
         // this thing included here to prevent rendering black instead of transparent
         c[3] === 0
-          ? artData.codes[0].push('transparent')
-          : artData.codes[0].push(hex(rgbToHex(c[0], c[1], c[2])))
+          ? artData.colors.push('transparent')
+          : artData.colors.push(hex(rgbToHex(c[0], c[1], c[2])))
       }
       //* populate grid and make it reactive
       // updateGrid()
-      // updateCodesDisplay(input.codes[0], artData.codes[0])
+      // updateCodesDisplay(input.colorss[0], artData.colorss[0])
       // paintCanvasTwo()
       // generateFromColorCode()
       paintCanvas()
@@ -89,6 +86,8 @@ function init() {
       resetCodes()
     })
     addClickEvent('pixelise', output)
+    addClickEvent('copy', () => copyText(input.colors))
+    addClickEvent('generate', paintCanvas)
   })
 
   artboard.addEventListener('click', drawSquare)
@@ -107,8 +106,8 @@ function init() {
     const { cellD } = artData
     
     const pos = artData.cursor === 'artboard' 
-      // ? { x: nearestN(e.pageX, cellD) - (cellD / 2 - 0.5), y: nearestN(e.pageY, cellD) - (cellD / 2 + 1)} 
-      ? { x: nearestN(e.pageX, cellD - 0.5), y: nearestN(e.pageY, cellD - 0.5)} 
+      ? { x: nearestN(e.pageX, cellD) - (cellD / 2), y: nearestN(e.pageY, cellD) - (cellD / 2)} 
+      // ? { x: nearestN(e.pageX, cellD - 0.5), y: nearestN(e.pageY, cellD - 0.5)} 
       // ? drawPos(e, cellD)
       : { x: e.pageX, y: e.pageY }
 
@@ -131,8 +130,6 @@ function init() {
     Object.assign(artData, {
       column: +input.column.value, row: +input.row.value, cellD: +input.cellD.value
     })
-    // createGrid(0, 'cell')
-    // createCopyGrids('copy_cell')
   }
   
   resetCodes()
