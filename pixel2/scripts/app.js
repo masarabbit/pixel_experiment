@@ -1,7 +1,7 @@
 import { artboard, elements, input, aCtx, overlay }  from './elements.js'
 import { styleTarget, mouse, nearestN, resizeCanvas, copyText } from './actions/utils.js'
 import { artData } from './state.js'
-import { continuousDraw, colorCell, paintCanvas, flipImage } from './actions/draw.js'
+import { continuousDraw, colorCell, paintCanvas, flipImage, drawPos } from './actions/draw.js'
 import { resize } from './actions/grid.js'
 import { updateColor, hex, rgbToHex } from './actions/colours.js'
 import { createSelectBox } from './actions/select.js'
@@ -125,19 +125,19 @@ function init() {
   overlay.addEventListener('click', e => createSelectBox(e))
 
 
-  //TODO needs adjusting - highight square
   window.addEventListener('mousemove', e =>{
     const { cellD, gridWidth } = artData
-    
+    const { left, top } = artboard.getBoundingClientRect()
     const pos = artData.cursor === 'artboard' 
-      ? { x: nearestN(e.pageX, cellD) - cellD, y: nearestN(e.pageY, cellD) - cellD} 
-      // ? { x: nearestN(e.pageX, cellD - 0.5), y: nearestN(e.pageY, cellD - 0.5)} 
-      // ? drawPos(e, cellD)
+      ? { 
+          x: drawPos(e, cellD).x - cellD + left, 
+          y: drawPos(e, cellD).y - cellD + top 
+        }
       : { x: e.pageX, y: e.pageY }
-
+    
     styleTarget({
       target: elements.cursor,
-      x: pos.x, 
+      x: pos.x,
       y: pos.y,
       w: cellD - gridWidth,
       h: cellD - gridWidth,
@@ -160,7 +160,10 @@ function init() {
   resize()
   
   window.addEventListener('mousemove', e =>{
-    input.svg.value = `${e.pageX} / ${e.pageY}`
+    const { cellD, column } = artData
+    const { x, y } = drawPos(e, cellD)
+    const index = ((y / cellD - 1) * column) + x / cellD - 1
+    input.svg.value = `index:${index} / x:${(x - cellD) / cellD + 1} / y:${(y - cellD) / cellD + 1}`
   })
 }
 

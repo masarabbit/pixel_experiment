@@ -29,7 +29,7 @@ const mouse = {
   leave: (t, e, a) => addEvents(t, a, e, ['mouseleave', 'touchmove'])
 }
 
-const nearestN = (n, denom) => n === 0 ? 0 : (n - 1) + Math.abs(((n - 1) % denom) - denom)
+const nearestN = (x, n) => x === 0 ? 0 : (x - 1) + Math.abs(((x - 1) % n) - n)
 
 const blankRemoved = arr => arr.filter(dot => dot)
 

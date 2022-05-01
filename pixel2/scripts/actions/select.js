@@ -1,78 +1,162 @@
 import { artData } from '../state.js'
-import { elements, overlay } from '../elements.js'
+import { artboard, elements, overlay } from '../elements.js'
 import { resizeCanvas, styleTarget, mouse, nearestN } from './utils.js'
 import { drawPos } from './draw.js'
 
 const client = (e, type) => e.type[0] === 'm' ? e[`client${type}`] : e.touches[0][`client${type}`]
 const roundedClient = (e, type) => nearestN(client(e, type), artData.cellD)
 
-const makeResizable = (target, spriteData) =>{
-  console.log('make resizable')
+
+const resizeBox = (handle, box, pos) =>{
+  // console.log('resize')
+  const { width, height } = box.getBoundingClientRect()
+  const { cellD, defPos, gridWidth } = artData
+
+  // TODO defPos / calculation is different depending on handle
+  
+  const { offsetLeft:aLeft, offsetTop:aTop } = handle
+  // console.log(handle.dataset.i)
+  const { i } = handle.dataset
+
+  // top: [1, 2].includes(+i) ? '0px' : null,
+  // left: [1, 3].includes(+i) ? '0px' : null,
+  // bottom: [3, 4].includes(+i) ? '0px' : null,
+  // right: [2, 4].includes(+i) ? '0px' : null,
+  // const corner = { 
+  //   a: 
+  //   b:
+  //   c:
+  //   d:
+  // }
+  // a -- b
+  // |    |
+  // c -- d
+  
+  if (+i === 4) {
+    styleTarget({
+      target: box,
+      w: aLeft < -1 ? nearestN(aLeft * -1, cellD) : width - pos.a,
+      h: aTop < -1 ? nearestN(aTop * -1, cellD) : height - pos.b,
+      x: aLeft < -1 ? defPos.x + aLeft + (gridWidth * 2): defPos.x,
+      y: aTop < -1 ? defPos.y + aTop + (gridWidth * 2): defPos.y
+    })
+  }
+
+  if (+i === 2) {
+    styleTarget({
+      target: box,
+      w: aLeft < -1 ? nearestN(aLeft * -1, cellD) : width - pos.a,
+      h: aTop < -1 ? nearestN(artData.selectBoxSize.h + (aTop * -1), cellD) : height - pos.b, 
+      x: aLeft < -1 ? defPos.x + aLeft + (gridWidth * 2): defPos.x,
+      y: aTop < -1 ? defPos.y + aTop: defPos.y //TODO needs adjustment
+    })
+  }
+
+
+}
+
+const drag = (target, pos, x, y) =>{
+  pos.a = pos.c - x
+  pos.b = pos.d - y
+
+  styleTarget({
+    target, 
+    x: target.offsetLeft - pos.a,
+    y: target.offsetTop - pos.b,
+  })
+}
+
+
+
+const addTouchAction = target =>{
   const pos = { a: 0, b: 0, c: 0, d: 0 }
-  // const isArtboard = target === artboard
-  // const { gridWidth } = artData
+  const handles = Array.from(target.childNodes).filter((_, i) => i !== 0)
+  let activeHandle
   
   const onGrab = e =>{
-    // if (drawData.resize || drawData.resize_artboard ) {
-    //   if (!isArtboard) drawData.handleActive = true
-    //   console.log('test', drawData)
-      pos.c = roundedClient(e, 'X')
-      pos.d = roundedClient(e, 'Y')  
-      mouse.up(document, 'add', onLetGo)
-      mouse.move(document, 'add', onDrag)
-    // }
+    pos.c = roundedClient(e, 'X')
+    pos.d = roundedClient(e, 'Y')  
+    mouse.up(document, 'add', onLetGo)
+    mouse.move(document, 'add', onDrag)
   }
   const onDrag = e =>{
-    console.log('onDrag')
-    const x = roundedClient(e, 'X')
-    const y = roundedClient(e, 'Y')
-    pos.a = x - pos.c
-    pos.b = y - pos.d
-    pos.c = x
-    pos.d = y
-    // if (isArtboard && drawData.resize_artboard) {
-      const { width, height } = target.getBoundingClientRect()
-      // input.column.value = width + pos.a
-      // input.row.value = height + pos.b
-      styleTarget({
-        target,
-        w: width + pos.a,
-        h: height + pos.b
-      })
+    if (activeHandle) {
+      const x = roundedClient(e, 'X')
+      const y = roundedClient(e, 'Y')
+      drag(activeHandle, pos, x, y)
+      resizeBox(activeHandle, target, pos) // refactor
+      pos.c = x
+      pos.d = y
+    }
   }
-  const onLetGo = e => {
+  const onLetGo = () => {
     mouse.up(document, 'remove', onLetGo)
     mouse.move(document,'remove', onDrag)
-    //TODO need to somehow get negative distance from the default coord
-    // drawData.handleActive = false
+    artData.defPos = {
+      x: target.offsetLeft,
+      y: target.offsetTop,
+    }
 
-    // const index = ((y / cellD - 1) * column) + x / cellD - 1
+    const { width, height } = target.getBoundingClientRect()
+    artData.selectBoxSize = {
+      w: width,
+      h: height,
+    }
+    
+    // TODO reset handle pos
+    const { i } = +activeHandle.dataset
+    Object.assign(activeHandle.style, {
+      top: [1, 2].includes(+i) ? '0px' : null,
+      left: [1, 3].includes(+i) ? '0px' : null,
+      bottom: [3, 4].includes(+i) ? '0px' : null,
+      right: [2, 4].includes(+i) ? '0px' : null,
+    })
   }
-  mouse.down(target,'add', onGrab)
+  
+  handles.forEach(handle => {
+    mouse.down(handle, 'add', ()=> activeHandle = handle)
+    mouse.down(handle,'add', onGrab)
+  })
 }
 
 
 
 const createSelectBox = e =>{
   if (!elements.selectBox) {
-    const { cellD, gridWidth } = artData
+    const { cellD, gridWidth, column } = artData
     const selectBox = document.createElement('div')
     selectBox.classList.add('select_box')
     const boxD = cellD - gridWidth
     selectBox.innerHTML = `<canvas></canvas>${new Array(4).fill('').map((_, i)=> {
-      return `<div class="handle_${i + 1}" style="width: ${boxD}px; height: ${boxD}px;"></div>`
+      return `<div class="handle_${i + 1}" data-i="${i + 1}" style="width: ${boxD}px; height: ${boxD}px;"></div>`
     }).join('')}`
     elements.canvasWrapper.append(selectBox)
-    console.log(selectBox.childNodes)
+    // console.log(selectBox.childNodes)
     resizeCanvas({
       canvas: selectBox.childNodes[0],
       w: boxD
     })
     const { x, y } = drawPos(e, cellD)
+    
+    // TODO might not need this
+    // x -- x2
+    // |    |
+    // y -- y2
+    // const index = ((y / cellD - 1) * column) + x / cellD - 1
+    // input.svg.value = `index:${index} / x:${(x - cellD) / cellD + 1} / y:${(y - cellD) / cellD + 1}`
+
     artData.defPos = {
       x: x - cellD,
-      y: y - cellD
+      x2: x,
+      y: y - cellD,
+      y2: y,
     }
+    // artData.defPos = {
+    //   x: (x - cellD) / cellD + 1,
+    //   // x2: x,
+    //   y: (y - cellD) / cellD + 1,
+    //   // y2: y,
+    // }
     // console.log(x, y)
     styleTarget({
       target: selectBox,
@@ -81,10 +165,16 @@ const createSelectBox = e =>{
       y: artData.defPos.y
     })
 
+    artData.selectBoxSize = {
+      w: cellD,
+      h: cellD,
+    }
+
     elements.selectBox = selectBox
-    // selectBox.addEventListener()
-    makeResizable(selectBox)
-    // makeResizable(overlay)
+    // overlay.classList.add('freeze')
+    // artboard.classList.add('freeze')
+    
+    addTouchAction(selectBox)
   }
 }
 
