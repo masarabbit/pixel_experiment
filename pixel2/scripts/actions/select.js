@@ -8,7 +8,7 @@ const roundedClient = (e, type) => nearestN(client(e, type), artData.cellD)
 
 
 const resizeBox = (e, box) =>{
-  const { cellD, gridWidth } = artData
+  const { cellD, column, row, gridWidth } = artData
   const { defPos, xy } = copyData
 
   const { x, y } = drawPos(e, cellD)
@@ -18,17 +18,17 @@ const resizeBox = (e, box) =>{
     y: (y - cellD) / cellD + 1,
   }
 
-  const xIncreased = newXy.x > xy.x
-  const yIncreased = newXy.y > xy.y 
+  const xIncreased = newXy.x >= xy.x
+  const yIncreased = newXy.y >= xy.y 
   const xDiff = Math.abs(newXy.x, xy.x) * cellD
   const yDiff = Math.abs(newXy.y, xy.y) * cellD
-
-  // TODO how to limit selectBox size within artboard (currently it can be much larger)
+  const adjustedXdiff = xDiff >= column * cellD ? column * cellD : xDiff
+  const adjustedYdiff = yDiff >= row * cellD ? row * cellD : yDiff
 
   styleTarget({
     target: box,
-    w: xIncreased ? xDiff - defPos.x + gridWidth : defPos.x - xDiff + (2 * gridWidth),
-    h: yIncreased ? yDiff - defPos.y + gridWidth : defPos.y - yDiff + (2 * gridWidth),
+    w: xIncreased ? adjustedXdiff - defPos.x : defPos.x - xDiff + (2 * gridWidth),
+    h: yIncreased ? adjustedYdiff - defPos.y : defPos.y - yDiff + (2 * gridWidth),
     x: xIncreased ? defPos.x : xDiff - gridWidth,
     y: yIncreased ? defPos.y : yDiff - gridWidth,
   })
