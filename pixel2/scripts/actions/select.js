@@ -18,17 +18,19 @@ const resizeBox = (e, box) =>{
     y: (y - cellD) / cellD + 1,
   }
 
-  const xIncreased = newXy.x >= xy.x
-  const yIncreased = newXy.y >= xy.y 
+  const xIncreased = newXy.x > xy.x
+  const yIncreased = newXy.y > xy.y 
   const xDiff = Math.abs(newXy.x, xy.x) * cellD
   const yDiff = Math.abs(newXy.y, xy.y) * cellD
+
+  // TODO how to limit selectBox size within artboard (currently it can be much larger)
 
   styleTarget({
     target: box,
     w: xIncreased ? xDiff - defPos.x + gridWidth : defPos.x - xDiff + (2 * gridWidth),
     h: yIncreased ? yDiff - defPos.y + gridWidth : defPos.y - yDiff + (2 * gridWidth),
-    x: xIncreased ? defPos.x : defPos.x - (defPos.x - xDiff) - gridWidth,
-    y: yIncreased ? defPos.y : defPos.y - (defPos.y - yDiff) - gridWidth,
+    x: xIncreased ? defPos.x : xDiff - gridWidth,
+    y: yIncreased ? defPos.y : yDiff - gridWidth,
   })
 
 
@@ -111,7 +113,7 @@ const createSelectBox = e =>{
       x: (x - cellD) / cellD + 1,
       y: (y - cellD) / cellD + 1,
     }
-    
+
     styleTarget({
       target: selectBox,
       w: cellD,
