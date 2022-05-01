@@ -158,7 +158,10 @@ function init() {
   
   resetCodes()
   resize()
-
+  
+  window.addEventListener('mousemove', e =>{
+    input.svg.value = `${e.pageX} / ${e.pageY}`
+  })
 }
 
 window.addEventListener('DOMContentLoaded', init)

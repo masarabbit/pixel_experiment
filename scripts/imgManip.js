@@ -412,7 +412,7 @@ function init() {
           </div>
         </div>
       `
-    }).join('')
+    }).join()
   
     document.querySelectorAll('.palette_cell_inner').forEach( cell =>{
       const frameNo = cell.dataset.frame_no

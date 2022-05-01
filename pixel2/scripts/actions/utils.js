@@ -3,6 +3,7 @@ import { artData } from '../state.js'
 const styleTarget = ({ target, w, h, x, y }) =>{
   const t = target.style
   if (w) t.width = `${w}px`
+  if (w && !h) t.height = `${w}px`
   if (h) t.height = `${h}px`
   if (x) t.left = `${x}px`
   if (y) t.top = `${y}px`

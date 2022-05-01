@@ -265,8 +265,38 @@ textarea {
 
 /** copy grid **/
 
-canvas.select_box {
+.select_box {
   position: absolute;
   border: 1px solid hotpink;
   z-index: 2;
+}
+
+/* .select_box > canvas {
+  border: 1px solid hotpink;
+} */
+
+.select_box > div {
+  position: absolute;
+  background-color: rgba(255, 174, 0, 0.295);
+}
+
+.handle_1, .handle_2 {
+  top: 0px;
+}
+
+.handle_3, .handle_4 {
+  bottom: 0px;
+}
+
+.handle_2, .handle_4 {
+  right: 0px;
+}
+
+.handle_1, .handle_3 {
+  left: 0px;
+}
+
+.handle_4 {
+  background-color: rgb(57, 209, 247);
+  z-index: 1;
 }
