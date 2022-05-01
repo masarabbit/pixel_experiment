@@ -1,12 +1,11 @@
 import { artboard, elements, input, aCtx, overlay }  from './elements.js'
-import { styleTarget, mouse, nearestN, resizeCanvas, copyText } from './actions/utils.js'
+import { styleTarget, mouse, resizeCanvas, copyText } from './actions/utils.js'
 import { artData } from './state.js'
-import { continuousDraw, colorCell, paintCanvas, flipImage, drawPos } from './actions/draw.js'
+import { continuousDraw, colorCell, paintCanvas, flipImage, drawPos, copyColors } from './actions/draw.js'
 import { resize } from './actions/grid.js'
-import { updateColor, hex, rgbToHex } from './actions/colours.js'
-import { createSelectBox } from './actions/select.js'
+import { updateColor } from './actions/colors.js'
+import { createSelectBox, copySelection, paste } from './actions/select.js'
 
-// TODO copy
 // TODO trace
 // TODO undo
 // TODO download
@@ -58,16 +57,11 @@ function init() {
       })   
       aCtx.drawImage(imageTarget, 0, 0, calcWidth, calcHeight)
       artData.colors.length = 0
-      const offset = Math.floor(cellD / 2)
-      for (let i = 0; i < row * column; i++) {
-        const x = i % column * cellD
-        const y = Math.floor(i / column) * cellD
-        const c = aCtx.getImageData(x + offset, y + offset, 1, 1).data //offset
-        // this thing included here to prevent rendering black instead of transparent
-        c[3] === 0
-          ? artData.colors.push('transparent')
-          : artData.colors.push(hex(rgbToHex(c[0], c[1], c[2])))
-      }
+      copyColors({
+        w: column, h: row, 
+        ctx: aCtx, 
+        data: artData.colors
+      })
       // revert canvas size before painting
       resizeCanvas({
         canvas: artboard, 
@@ -110,6 +104,9 @@ function init() {
         elements.selectBox = null
       }
     })
+    addClickEvent('copy_selection', copySelection)
+    addClickEvent('cut_selection', ()=> copySelection(true))
+    addClickEvent('paste_selection', paste)
   })
 
   artboard.addEventListener('click', colorCell)
@@ -137,8 +134,8 @@ function init() {
     
     styleTarget({
       target: elements.cursor,
-      x: pos.x,
-      y: pos.y,
+      x: pos.x + (2 * gridWidth),
+      y: pos.y + (2 * gridWidth),
       w: cellD - gridWidth,
       h: cellD - gridWidth,
     })
@@ -163,8 +160,9 @@ function init() {
     const { cellD, column } = artData
     const { x, y } = drawPos(e, cellD)
     const index = ((y / cellD - 1) * column) + x / cellD - 1
-    input.svg.value = `index:${index} / x:${(x - cellD) / cellD + 1} / y:${(y - cellD) / cellD + 1}`
+    input.svg.value = `index:${index} / x:${(x - cellD) / cellD + 1} / y:${(y - cellD) / cellD + 1} / ${x} | ${y} `
   })
+
 }
 
 window.addEventListener('DOMContentLoaded', init)

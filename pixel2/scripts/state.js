@@ -30,6 +30,15 @@ const copyData = {
     x: 0,
     y: 0,
   },
+  size: {
+    w: 0,
+    h: 0,
+  },
+  ctx: null,
+  move: false,
+  crop: false,
+  colors: [],
+  index: [],
 }
 
 export {
