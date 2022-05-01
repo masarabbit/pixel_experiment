@@ -19,24 +19,20 @@ const artData = {
   gridWidth: 0.5,
   gridColor: 'lightgrey',
   uploadedFile: null,
-
-  // copy
-  // selectCopy: false,
-  // copyState: false,
-  // moveState: false,
-  // copyBoxCreated: false,
-  // copyBox: null,
-  // copied: false,
-  // isCut: false,
-  // prevX: 0,
-  // prevY: 0,
-  prev: {
-    x: null,
-    y: null,
-  },
-  defPos: {}
 }  
 
+const copyData = {
+  defPos: { 
+    x: 0,
+    y: 0,
+  },
+  xy: { 
+    x: 0,
+    y: 0,
+  },
+}
+
 export {
-  artData
+  artData,
+  copyData
 }

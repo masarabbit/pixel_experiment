@@ -274,14 +274,10 @@ textarea {
   position: absolute;
   border: 1px solid hotpink;
   z-index: 2;
-  pointer-events: none;
 }
 
-/* .select_box > canvas {
-  border: 1px solid hotpink;
-} */
 
-.select_box > div {
+/* .select_box > div {
   position: absolute;
   background-color: rgba(255, 174, 0, 0.295);
   pointer-events: auto;
@@ -310,4 +306,4 @@ textarea {
 .handle_4 {
   background-color: rgb(57, 209, 247);
   z-index: 1;
-}
+} */
