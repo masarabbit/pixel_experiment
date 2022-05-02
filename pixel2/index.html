@@ -26,7 +26,7 @@
       <input class="cell_size no input" placeholder="cell size" value="20" />
     </div>
 
-    <label for="color" class="color_label"></label>
+    <label for="color" class="color_label alt" data-alt="select color"></label>
     <input id="color" class="input" type="color">
 
     <div class="input_wrap">
@@ -36,8 +36,9 @@
 
     <input id="upload" type="file" single/>
     <label for="upload" data-alt="upload image file" class="upload icon alt" style="--svg: url('/icon/upload.svg');"></label>
-    <div class="file_name"></div>
+    <div class="upload_file_name"></div>
     <button class="btn pixelise icon display_none alt" data-alt="pixelise" style="--svg: url('/icon/pixelise.svg');"></button>
+    <button class="btn download icon download_file alt" data-alt="download pixel art" style="--svg: url('/icon/download.svg');"></button>
 
     <button class="btn fill icon alt" data-alt="fill bucket" style="--svg: url('/icon/bucket.svg');"></button>
     <button class="btn clear icon eraser alt" data-alt="eraser" style="--svg: url('/icon/eraser.svg');"></button>
@@ -50,12 +51,17 @@
     <button class="btn resize">resize</button>
   </nav>
   <nav class="two">
+    <div class="input_wrap">
+      <label>file name</label>
+      <input class="file_name input" placeholder="art" />
+    </div>
     <button class="btn copy_selection alt" data-alt="copy">copy</button>
     <button class="btn cut_selection alt" data-alt="cut">cut</button>
     <button class="btn paste_selection alt" data-alt="paste">paste</button>
 
     <button class="btn crop_selection alt" data-alt="crop">crop</button>
     <button class="btn delete_selection alt" data-alt="delete selection">delete</button>
+    <button class="btn trace_svg alt" data-alt="trace">trace</button>
   </nav>
 
   <div class="wrapper">
@@ -69,12 +75,12 @@
     <textarea class="colors" spellcheck="false"></textarea>
     <div class="mini_wrap">
       <button class="btn generate icon alt" data-alt="generate from code" style="--svg: url('/icon/generate.svg');"></button>
-      <button class="btn copy icon alt" data-alt="copy code" style="--svg: url('/icon/copy.svg');"></button>
+      <button class="btn copy icon alt" data-alt="copy code" data-code="colors" style="--svg: url('/icon/copy.svg');"></button>
     </div>
 
     <textarea class="svg" spellcheck="false"></textarea>
     <div class="mini_wrap">
-      <button class="btn copy icon alt" data-alt="copy code" style="--svg: url('/icon/copy.svg');"></button>
+      <button class="btn copy icon alt" data-alt="copy code" data-code="svg" style="--svg: url('/icon/copy.svg');"></button>
     </div>
 
   </div>

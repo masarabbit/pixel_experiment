@@ -19,6 +19,7 @@ const artData = {
   gridWidth: 0.5,
   gridColor: 'lightgrey',
   uploadedFile: null,
+  grid: true,
 }  
 
 const copyData = {

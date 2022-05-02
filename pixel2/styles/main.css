@@ -209,9 +209,39 @@ button.icon:hover {
   /* height: 20px;
   width: 20px; */
   /* border: red 1px solid; */
-  background-color: #00e8d14b;
-  z-index: 10;
   pointer-events: none;
+  z-index: 9999;
+}
+
+.cursor.highlight {
+  background-color: #00e8d14b;
+}
+
+/* .cursor {
+  height: 32px;
+  width: 32px;
+  position: absolute;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  
+  background-repeat: no-repeat, repeat !important;
+  background-size: cover !important; 
+  z-index: 9999;
+} */
+
+.cursor div {
+  position: absolute;
+  bottom: -40px;
+  color: black;
+  font-size: 12px;
+  display:inline-block;
+  padding: 5px;
+  background-color: white;
+  animation: enlarge_display forwards 0.1s;
+}
+
+.cursor div:empty {
+  padding: 0;
 }
 
 textarea {

@@ -1,7 +1,8 @@
 import { artData, copyData } from '../state.js'
-import { elements, aCtx, input } from '../elements.js'
-import { resizeCanvas, styleTarget, mouse, nearestN } from './utils.js'
+import { elements, aCtx, input, overlay } from '../elements.js'
+import { resizeCanvas, styleTarget, mouse, nearestN, update } from './utils.js'
 import { drawPos, copyColors, paintCanvas } from './draw.js'
+import { resize } from './grid.js'
 
 const client = (e, type) => e.type[0] === 'm' ? e[`client${type}`] : e.touches[0][`client${type}`]
 const roundedClient = (e, type) => nearestN(client(e, type), artData.cellD)
@@ -39,7 +40,7 @@ const resizeBox = (e, box) =>{
 const drag = (target, pos, x, y) =>{
   pos.a = pos.c - x
   pos.b = pos.d - y
-
+  console.log('target', target)
   styleTarget({
     target, 
     x: target.offsetLeft - pos.a,
@@ -132,14 +133,15 @@ const createSelectBox = e =>{
 }
 
 
-const copySelection = cut =>{
+// TODO change to selectAction
+const copySelection = ({ crop, cut }) => {
   if (elements.selectBox) {
     copyData.ctx = elements.selectBox.getContext('2d')
     const { size: { w, h }, defPos: { x, y }, ctx } = copyData
     ctx.putImageData(aCtx.getImageData(x, y, w, h), 0, 0)
+    const { column, row, cellD } = artData
     if (cut) {
       aCtx.clearRect(x, y, w, h) 
-      const { column, row } = artData
       copyColors({
         w: column, h: row,
         ctx: aCtx, 
@@ -154,11 +156,31 @@ const copySelection = cut =>{
       ctx, 
       data: copyData.colors
     })
+    if (crop) {
+      aCtx.clearRect(0, 0, column * cellD, row * cellD)
+      copyColors({
+        w: column, h: row,
+        ctx: aCtx, 
+        data: artData.colors
+      })
+      update('column', w / cellD)
+      update('row', h / cellD)
+      artData.colors = copyData.colors
+      resize()
+      paintCanvas()
+      styleTarget({
+        target: elements.selectBox, 
+        x: 0, y: 0,
+      })
+      copyData.defPos = { x: 0, y: 0 }
+      select()
+    }
   }
 }
-// TODO break new Array(width * (h / cellD)).fill('') this out to function?
 
-const paste = () =>{
+
+
+const paste = () => {
   if (copyData.colors.length){
     const { cellD, column } = artData
     const { size: { w, h }, defPos: { x, y }} = copyData
@@ -177,9 +199,18 @@ const paste = () =>{
   }
 }
 
+const select = () => {
+  overlay.classList.toggle('select')
+  if (elements.selectBox) {
+    elements.canvasWrapper.removeChild(elements.selectBox)
+    elements.selectBox = null
+  }
+}
+
 
 export {
   createSelectBox,
   copySelection,
-  paste
+  paste,
+  select
 }

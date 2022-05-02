@@ -99,6 +99,13 @@ const copyColors = ({ w, h, ctx, data }) =>{
   }
 }
 
+const downloadImage = () =>{
+  const link = document.createElement('a')
+  link.download = `${input.fileName.value || 'art'}_${new Date().getTime()}.png`
+  link.href = artboard.toDataURL()
+  link.click()
+}
+
 
 export {
   drawPos,
@@ -108,6 +115,7 @@ export {
   flipImage,
   updateColorsAndPaint,
   copyColors,
-  paintFromColors
+  paintFromColors,
+  downloadImage
 }
 

@@ -1,12 +1,20 @@
 import { artData } from '../state.js'
+import { input } from '../elements.js'
+
+const isNum = x => x * 0 === 0
 
 const styleTarget = ({ target, w, h, x, y }) =>{
   const t = target.style
-  if (w) t.width = `${w}px`
-  if (w && !h) t.height = `${w}px`
-  if (h) t.height = `${h}px`
-  if (x) t.left = `${x}px`
-  if (y) t.top = `${y}px`
+  if (isNum(w)) t.width = `${w}px`
+  if (isNum(w) && !isNum(h)) t.height = `${w}px`
+  if (isNum(h)) t.height = `${h}px`
+  if (isNum(x)) t.left = `${x}px`
+  if (isNum(y)) t.top = `${y}px`
+}
+
+const update = (key, value) => {
+  input[key].value = value
+  artData[key] = value
 }
 
 const calcX = cell => cell % artData.column
@@ -17,16 +25,16 @@ const resizeCanvas = ({ canvas, w, h }) =>{
   canvas.setAttribute('height', h || w)
 }
 
-const addEvents = (target, action, event, array) =>{
+const addEvents = (target, event, action, array) =>{
   array.forEach(a => event === 'remove' ? target.removeEventListener(a, action) : target.addEventListener(a, action))
 }
 
 const mouse = {
-  up: (t, e, a) => addEvents(t, a, e, ['mouseup', 'touchend']),
-  move: (t, e, a) => addEvents(t, a, e, ['mousemove', 'touchmove']),
-  down: (t, e, a) => addEvents(t, a, e, ['mousedown', 'touchstart']),
-  enter: (t, e, a) => addEvents(t, a, e, ['mouseenter', 'touchstart']),
-  leave: (t, e, a) => addEvents(t, a, e, ['mouseleave', 'touchmove'])
+  up: (t, e, a) => addEvents(t, e, a, ['mouseup', 'touchend']),
+  move: (t, e, a) => addEvents(t, e, a, ['mousemove', 'touchmove']),
+  down: (t, e, a) => addEvents(t, e, a, ['mousedown', 'touchstart']),
+  enter: (t, e, a) => addEvents(t, e, a, ['mouseenter', 'touchstart']),
+  leave: (t, e, a) => addEvents(t, e, a, ['mouseleave', 'touchmove'])
 }
 
 const nearestN = (x, n) => x === 0 ? 0 : (x - 1) + Math.abs(((x - 1) % n) - n)
@@ -41,7 +49,7 @@ const sortByFreqRemoveBlankAndDuplicates = arr =>{
 
 const copyText = box =>{
   box.select()
-  box.setSelectionRange(0, 99999) // For mobile devices 
+  box.setSelectionRange(0, 999999) // For mobile devices 
   document.execCommand('copy')
 }
 
@@ -54,4 +62,5 @@ export {
   calcY,
   sortByFreqRemoveBlankAndDuplicates,
   copyText,
+  update
 }

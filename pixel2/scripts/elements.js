@@ -11,6 +11,7 @@ const elements = {
   palette: document.querySelector('.palette'),
   flip: document.querySelectorAll('.flip'),
   selectBox: null,
+  alts: document.querySelectorAll('.alt')
 }
 
 const input = {
@@ -22,6 +23,7 @@ const input = {
   color: document.querySelector('#color'),
   colorLabel: document.querySelector('.color_label'),
   hex: document.querySelector('.hex'),
+  fileName: document.querySelector('.file_name'),
   upload: document.querySelector('#upload'),
 }
 

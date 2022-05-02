@@ -1,17 +1,15 @@
 import { artboard, elements, input, aCtx, overlay }  from './elements.js'
 import { styleTarget, mouse, resizeCanvas, copyText } from './actions/utils.js'
 import { artData } from './state.js'
-import { continuousDraw, colorCell, paintCanvas, flipImage, drawPos, copyColors } from './actions/draw.js'
+import { continuousDraw, colorCell, paintCanvas, flipImage, drawPos, copyColors, downloadImage } from './actions/draw.js'
 import { resize, grid } from './actions/grid.js'
 import { updateColor } from './actions/colors.js'
-import { createSelectBox, copySelection, paste } from './actions/select.js'
+import { createSelectBox, copySelection, paste, select } from './actions/select.js'
+import traceSvg from '../scripts/actions/traceSvg.js'
 
-// TODO add crop
-// TODO trace
 // TODO undo
-// TODO download
-// TODO add alt + cursor
 // TODO represent transparent as t?
+// TODO break new Array(width * (h / cellD)).fill('') this out to function?
 
 
 function init() {
@@ -27,14 +25,17 @@ function init() {
         updateColor(input[key].value)
       } else if (key === 'upload') {
         artData.uploadedFile = input.upload.files[0]
-        document.querySelector('.file_name').innerHTML = artData.uploadedFile.name
+        document.querySelector('.upload_file_name').innerHTML = artData.uploadedFile.name
         document.querySelector('.pixelise').classList.remove('display_none')
       } else if (key === 'colors') {
         artData.colors = e.target.value.split(',')
       } else {
-        // column, row and cellD
-        artData[key] = +e.target.value
-        resize()
+        if ( artData[key]) {
+          // column, row and cellD
+          artData[key] = +e.target.value
+          resize()
+          paintCanvas()
+        }
       }
     })
   })
@@ -68,6 +69,12 @@ function init() {
         w: column * cellD, h: row * cellD
       })
       paintCanvas()
+      copyColors({
+        w: column, h: row, 
+        ctx: aCtx, 
+        data: artData.colors
+      })
+      input.colors.value = artData.colors
     }
     imageTarget.src = blobURL
   }
@@ -86,10 +93,11 @@ function init() {
     const addClickEvent = (className, event) => b.classList.contains(className) && b.addEventListener('click', event)
     addClickEvent('resize', ()=>{
       resize()
+      paintCanvas()
       resetCodes()
     })
     addClickEvent('pixelise', output)
-    addClickEvent('copy', () => copyText(input.colors))
+    addClickEvent('copy', e => copyText(input[e.target.dataset.code]))
     addClickEvent('generate', paintCanvas)
     addClickEvent('flip', e => flipImage(e.target.dataset.dir))
     addClickEvent('fill', e => triggerFill(e))
@@ -97,20 +105,21 @@ function init() {
       e.target.classList.toggle('active')
       artData.erase = !artData.erase 
     })
-    addClickEvent('select', ()=>{
-      overlay.classList.toggle('select')
-      if (elements.selectBox) {
-        elements.canvasWrapper.removeChild(elements.selectBox)
-        elements.selectBox = null
-      }
-    })
+    addClickEvent('select', select)
     addClickEvent('copy_selection', copySelection)
-    addClickEvent('cut_selection', ()=> copySelection(true))
+    addClickEvent('cut_selection', ()=> copySelection({ cut: true }))
     addClickEvent('paste_selection', paste)
     addClickEvent('grid_display', ()=> {
-      grid[overlay.classList.contains('hide') ? 'draw' : 'clear']()
+      grid[!artData.grid ? 'draw' : 'clear']()
       overlay.classList.toggle('hide')
+      artData.grid = !artData.grid
     })
+    addClickEvent('crop_selection', ()=> copySelection({ crop: true }))
+    addClickEvent('download', ()=>{
+      paintCanvas()
+      downloadImage()
+    })
+    addClickEvent('trace_svg', traceSvg)
   })
 
   artboard.addEventListener('click', colorCell)
@@ -129,13 +138,14 @@ function init() {
   window.addEventListener('mousemove', e =>{
     const { cellD, gridWidth } = artData
     const { left, top } = artboard.getBoundingClientRect()
-    const pos = artData.cursor === 'artboard' 
+    const isArtboard = artData.cursor === 'artboard' 
+    const pos = isArtboard
       ? { 
           x: drawPos(e, cellD).x - cellD + left, 
           y: drawPos(e, cellD).y - cellD + top 
         }
       : { x: e.pageX, y: e.pageY }
-    
+    elements.cursor.classList[isArtboard ? 'add' : 'remove']('highlight')
     styleTarget({
       target: elements.cursor,
       x: pos.x + (2 * gridWidth),
@@ -159,14 +169,22 @@ function init() {
   
   resetCodes()
   resize()
+  paintCanvas()
   
-  window.addEventListener('mousemove', e =>{
-    const { cellD, column } = artData
-    const { x, y } = drawPos(e, cellD)
-    const index = ((y / cellD - 1) * column) + x / cellD - 1
-    input.svg.value = `index:${index} / x:${(x - cellD) / cellD + 1} / y:${(y - cellD) / cellD + 1} / ${x} | ${y} `
+  // window.addEventListener('mousemove', e =>{
+  //   const { cellD, column } = artData
+  //   const { x, y } = drawPos(e, cellD)
+  //   const index = ((y / cellD - 1) * column) + x / cellD - 1
+  //   input.svg.value = `index:${index} / x:${(x - cellD) / cellD + 1} / y:${(y - cellD) / cellD + 1} / ${x} | ${y} `
+  // })
+  elements.alts.forEach(button=>{
+    mouse.enter(button, 'add', e => {
+      elements.cursor.childNodes[0].innerHTML = e.target.dataset.alt
+    })
+    mouse.leave(button, 'add', () => {
+      elements.cursor.childNodes[0].innerHTML = ''
+    })
   })
-
 }
 
 window.addEventListener('DOMContentLoaded', init)
