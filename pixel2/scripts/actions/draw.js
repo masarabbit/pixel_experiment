@@ -39,7 +39,7 @@ const colorCell = e => {
   input.colors.value = artData.colors
 
   populatePalette(artData.colors)
-  updateCode()
+  recordState()
 }
 
 const paintFromColors = ({ arr, ctx, colors }) => {
@@ -54,7 +54,7 @@ const paintFromColors = ({ arr, ctx, colors }) => {
 
 const paintCanvas = () => {
   const { row, column, cellD } = artData 
-  const arr = new Array(row * column).fill('') // TODO this could be a new function?
+  const arr = Array(row * column).fill('') // TODO this could be a new function?
   
   aCtx.clearRect(0, 0, column * cellD, row * cellD)
   paintFromColors({
@@ -62,6 +62,7 @@ const paintCanvas = () => {
     ctx: aCtx,
     colors: artData.colors
   })
+  recordState()
 }
 
 const updateColorsAndPaint = () => {
@@ -70,7 +71,7 @@ const updateColorsAndPaint = () => {
 }
 
 const arrayGroupedForFlipping = () => {
-  const arr = new Array(+input.row.value).fill('')
+  const arr = Array(+input.row.value).fill('')
   const mappedArr = arr.map(()=>[])
   input.colors.value.split(',').forEach((d, i)=>{
     mappedArr[Math.floor(i / input.column.value)].push(d)
@@ -107,7 +108,7 @@ const downloadImage = () =>{
   link.click()
 }
 
-const updateCode = () =>{
+const recordState = () =>{
   const { row, column, cellD } = input 
   const lastPrev = artData.prev.length && artData.prev[artData.prev.length - 1]
 
@@ -140,6 +141,6 @@ export {
   copyColors,
   paintFromColors,
   downloadImage,
-  updateCode,
+  recordState,
 }
 

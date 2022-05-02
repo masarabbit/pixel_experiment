@@ -113,8 +113,8 @@ const traceSvg = () => {
       // when only one square is being traced, area to be traced doesn't get overwritten, so needed to reset it to [], and check below if it has been updated
       //TODO may not need this workaround when the areaToTrace/fill bucket logic is changed
       processedCodes = areaToTrace.length 
-        ? processedCodes.map((code,i)=> areaToTrace.indexOf(i) === -1 ? code : '')
-        : processedCodes.map((code,i)=> i === first ? '' : code )
+        ? processedCodes.map((code, i)=> areaToTrace.indexOf(i) === -1 ? code : '')
+        : processedCodes.map((code, i)=> i === first ? '' : code )
     }
   }
 
@@ -125,7 +125,8 @@ const traceSvg = () => {
 
   // put in to compress
   // codesBox[1].value = pathData.join(' ').replaceAll('<path d="M','D').replaceAll('<path fill="#ffffff" d="M','F').replaceAll('/>','/').replaceAll('-1','N').replaceAll('-2','T').replaceAll(' v ','v').replaceAll(' h ','h').replaceAll('<path fill="#000000" d="M','D')
-
+  
+  // TODO perhaps remove redundant space at this point
   input.svg.value = pathData.join(' ').replaceAll('ffffff','fff').replaceAll('000000','000')
 }
 

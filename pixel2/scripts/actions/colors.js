@@ -33,16 +33,16 @@ const updateColor = color =>{
 // const factor = 255
 
 
-const nearestNArr = (arr, denom) => arr.map(n => nearestN(n, denom))
+// const nearestNArr = (arr, denom) => arr.map(n => nearestN(n, denom))
 
-const hexToRgbArr = hex =>{
-  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
-  return [parseInt(result[1], 16), parseInt(result[2], 16), parseInt(result[3], 16)]
-}
+// const hexToRgbArr = hex =>{
+//   const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
+//   return [parseInt(result[1], 16), parseInt(result[2], 16), parseInt(result[3], 16)]
+// }
 
-const rgbFormat = rgbArr => rgbArr.map(a => `rgb(${a})`)
+// const rgbFormat = rgbArr => rgbArr.map(a => `rgb(${a})`)
 
-const arrayTotal = arr => arr.reduce((acc, x)=> acc + x , 0)
+// const arrayTotal = arr => arr.reduce((acc, x)=> acc + x , 0)
 
 
 const populatePalette = arr =>{

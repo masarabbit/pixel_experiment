@@ -40,7 +40,6 @@ const resizeBox = (e, box) =>{
 const drag = (target, pos, x, y) =>{
   pos.a = pos.c - x
   pos.b = pos.d - y
-  console.log('target', target)
   styleTarget({
     target, 
     x: target.offsetLeft - pos.a,
@@ -186,7 +185,7 @@ const paste = () => {
     const { size: { w, h }, defPos: { x, y }} = copyData
     const index = (((y + cellD) / cellD - 1) * column) + (x + cellD) / cellD - 1
     const width = w / cellD
-    copyData.index = new Array(width * (h / cellD)).fill('').map((_, i) => {
+    copyData.index = Array(width * (h / cellD)).fill('').map((_, i) => {
       return index + i + Math.floor(i / width) * (column - width)
     })  
     copyData.index.forEach((index, i) => {

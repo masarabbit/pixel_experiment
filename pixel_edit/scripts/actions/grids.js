@@ -27,7 +27,7 @@ const updateCodesDisplay = (box, arr) =>{
 
 const createGridCells = (index, cellStyle) =>{
   const { cellD, row, column } = artData 
-  const arr = new Array(row * column).fill('')
+  const arr = Array(row * column).fill('')
   setTargetSize({
     target: grids[index],
     w: column * cellD, h: row * cellD
@@ -52,7 +52,7 @@ const createGridCells = (index, cellStyle) =>{
 const createGrid = (index, cellStyle) =>{
   const { row, column } = artData 
   createGridCells(index, cellStyle)
-  artData.codes[0] = new Array(row * column).fill('transparent')
+  artData.codes[0] = Array(row * column).fill('transparent')
   input.codes[0].value = artData.codes[0]
 
   updateCode()
@@ -94,7 +94,7 @@ const generateFromColorCode = () =>{
   createCopyGrids('copy_cell')
 
   if (!input.codes[0].value) {
-    artData.codes[0] = new Array(row * column).fill('transparent')
+    artData.codes[0] = Array(row * column).fill('transparent')
     input.codes[0].value = artData.codes[0]
   }
   // remove \n
@@ -156,5 +156,5 @@ export {
   createGridCells,
   createGrid,
   generateFromColorCode,
-  triggerCreateGrid
+  triggerCreateGrid,
 }
