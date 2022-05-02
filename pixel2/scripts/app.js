@@ -2,16 +2,17 @@ import { artboard, elements, input, aCtx, overlay }  from './elements.js'
 import { styleTarget, mouse, resizeCanvas, copyText } from './actions/utils.js'
 import { artData } from './state.js'
 import { continuousDraw, colorCell, paintCanvas, flipImage, drawPos, copyColors } from './actions/draw.js'
-import { resize } from './actions/grid.js'
+import { resize, grid } from './actions/grid.js'
 import { updateColor } from './actions/colors.js'
 import { createSelectBox, copySelection, paste } from './actions/select.js'
 
+// TODO add crop
 // TODO trace
 // TODO undo
 // TODO download
-// TODO hide / display grid (overlay)
 // TODO add alt + cursor
 // TODO represent transparent as t?
+
 
 function init() {
 
@@ -56,7 +57,6 @@ function init() {
         w: calcWidth, h: calcHeight - (calcHeight % cellD)
       })   
       aCtx.drawImage(imageTarget, 0, 0, calcWidth, calcHeight)
-      // artData.colors.length = 0
       copyColors({
         w: column, h: row, 
         ctx: aCtx, 
@@ -107,6 +107,10 @@ function init() {
     addClickEvent('copy_selection', copySelection)
     addClickEvent('cut_selection', ()=> copySelection(true))
     addClickEvent('paste_selection', paste)
+    addClickEvent('grid_display', ()=> {
+      grid[overlay.classList.contains('hide') ? 'draw' : 'clear']()
+      overlay.classList.toggle('hide')
+    })
   })
 
   artboard.addEventListener('click', colorCell)

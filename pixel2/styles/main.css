@@ -77,9 +77,26 @@ canvas {
   pointer-events: none;
   z-index: 1;
   transition: 0.5s;
+  /* animation: display forwards 0.5s; */
+}
+
+/* @keyframes fade {
+  0% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+@keyframes display {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+} */
+
+.overlay.hide {
+  /* animation: fade forwards 0.5s; */
+  opacity: 0;
 }
 
 .overlay.select {
+  /* animation: display forwards 0.5s; */
   opacity: 1;
   background-color: rgba(2, 255, 234, 0.288);
   pointer-events: auto;
@@ -280,35 +297,3 @@ textarea {
   z-index: 2;
   background-color: rgba(255, 105, 180, 0.432);
 }
-
-
-/* .select_box > div {
-  position: absolute;
-  background-color: rgba(255, 174, 0, 0.295);
-  pointer-events: auto;
-}
-
-.select_box .handle_4 {
-  background-color: rgba(255, 0, 0, 0.178);
-}
-
-.handle_1, .handle_2 {
-  top: 0px;
-}
-
-.handle_3, .handle_4 {
-  bottom: 0px;
-}
-
-.handle_2, .handle_4 {
-  right: 0px;
-}
-
-.handle_1, .handle_3 {
-  left: 0px;
-}
-
-.handle_4 {
-  background-color: rgb(57, 209, 247);
-  z-index: 1;
-} */
