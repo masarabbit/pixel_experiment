@@ -1,7 +1,7 @@
 import { artData, copyData } from '../state.js'
-import { elements, aCtx } from '../elements.js'
+import { elements, aCtx, input } from '../elements.js'
 import { resizeCanvas, styleTarget, mouse, nearestN } from './utils.js'
-import { drawPos, copyColors, paintFromColors } from './draw.js'
+import { drawPos, copyColors, paintCanvas } from './draw.js'
 
 const client = (e, type) => e.type[0] === 'm' ? e[`client${type}`] : e.touches[0][`client${type}`]
 const roundedClient = (e, type) => nearestN(client(e, type), artData.cellD)
@@ -131,57 +131,52 @@ const createSelectBox = e =>{
   }
 }
 
-// const returnSelectedIndex = () =>{
-//   const { cellD, column } = artData
-//   const { x, y } = drawPos(e, cellD)
-//   const index = ((y / cellD - 1) * column) + x / cellD - 1
-// }
 
 const copySelection = cut =>{
   if (elements.selectBox) {
     copyData.ctx = elements.selectBox.getContext('2d')
     const { size: { w, h }, defPos: { x, y }, ctx } = copyData
     ctx.putImageData(aCtx.getImageData(x, y, w, h), 0, 0)
-    if (cut) aCtx.clearRect(x, y, w, h) 
+    if (cut) {
+      aCtx.clearRect(x, y, w, h) 
+      const { column, row } = artData
+      copyColors({
+        w: column, h: row,
+        ctx: aCtx, 
+        data: artData.colors
+      })
+      input.colors = artData.colors
+    }  
     copyData.move = true
-    // copyData.colors = ctx.getImageData(0, 0, w, h)
-    copyData.colors.length = 0
     copyColors({
       w: w / artData.cellD,
       h: h / artData.cellD,
       ctx, 
       data: copyData.colors
     })
-    // copyData.index = 
-    const { cellD, column } = artData
-    const index = (((y + cellD) / cellD - 1) * column) + (x + cellD) / cellD - 1
-    const width = w / cellD
-    let rowCount = 0
-    const test = []
-    const arr = new Array(width * (h / cellD)).fill('').map((n, i) => {
-      if (i && i % width === 0) rowCount++
-      test.push(i - width) // TODO testing if this could be done without rowCount
-      return index + i + (rowCount * (column - width))
-    })  
-    console.log(arr)
-    console.log(test)
-
   }
 }
+// TODO break new Array(width * (h / cellD)).fill('') this out to function?
 
 const paste = () =>{
   if (copyData.colors.length){
-    console.log('paste', copyData.colors)
-    const { defPos: { x, y} } = copyData
-    console.log(x, y)
-    // aCtx.putImageData(copyData.colors, x, y)
-    // paintFromColors({
-    //   arr: copyData.colors,
-    //   ctx: aCtx,
-    //   colors: artData.colors
-    // })
+    const { cellD, column } = artData
+    const { size: { w, h }, defPos: { x, y }} = copyData
+    const index = (((y + cellD) / cellD - 1) * column) + (x + cellD) / cellD - 1
+    const width = w / cellD
+    copyData.index = new Array(width * (h / cellD)).fill('').map((_, i) => {
+      return index + i + Math.floor(i / width) * (column - width)
+    })  
+    copyData.index.forEach((index, i) => {
+      if (copyData.colors[i] !== 'transparent') artData.colors[index] = copyData.colors[i] 
+    })
+    input.colors = artData.colors
+    paintCanvas()  
+
+    // TODO add some sort of effect to show that it's pasted? (difficult to see right now)
   }
 }
+
 
 export {
   createSelectBox,

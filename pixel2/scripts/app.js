@@ -56,7 +56,7 @@ function init() {
         w: calcWidth, h: calcHeight - (calcHeight % cellD)
       })   
       aCtx.drawImage(imageTarget, 0, 0, calcWidth, calcHeight)
-      artData.colors.length = 0
+      // artData.colors.length = 0
       copyColors({
         w: column, h: row, 
         ctx: aCtx, 

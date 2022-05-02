@@ -74,12 +74,6 @@ const paintCanvas = () => {
   const arr = new Array(row * column).fill('') // TODO this could be a new function?
   
   aCtx.clearRect(0, 0, column * cellD, row * cellD)
-  // arr.forEach((_ele, i)=>{
-  //   const x = calcX(i) * cellD
-  //   const y = calcY(i) * cellD
-  //   aCtx.fillStyle = artData.colors[i] || 'transparent'
-  //   aCtx.fillRect(x, y, cellD, cellD)
-  // })
   paintFromColors({
     arr,
     ctx: aCtx,
@@ -109,6 +103,7 @@ const flipImage = orientation => {
 }
 
 const copyColors = ({ w, h, ctx, data }) =>{
+  data.length = 0
   const { cellD } = artData
   const offset = Math.floor(cellD / 2)
   for (let i = 0; i < w * h; i++) {
