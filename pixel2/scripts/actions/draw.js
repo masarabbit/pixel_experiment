@@ -39,6 +39,7 @@ const colorCell = e => {
   input.colors.value = artData.colors
 
   populatePalette(artData.colors)
+  updateCode()
 }
 
 const paintFromColors = ({ arr, ctx, colors }) => {
@@ -106,6 +107,28 @@ const downloadImage = () =>{
   link.click()
 }
 
+const updateCode = () =>{
+  const { row, column, cellD } = input 
+  const lastPrev = artData.prev.length && artData.prev[artData.prev.length - 1]
+
+  if (lastPrev &&
+      lastPrev.colors === input.colors.value &&
+      lastPrev.row === +row.value &&
+      lastPrev.column === +column.value
+  ) return
+
+  artData.prev.push({
+    colors: input.colors.value,
+    row: +row.value,
+    column: +column.value,
+    cellD: +cellD.value,
+  })
+  // keep artData.prev under 5 steps
+  if (artData.prev.length > 5) artData.prev = artData.prev.filter((d, i) =>{
+    if(i !== 0) return d
+  })
+}
+
 
 export {
   drawPos,
@@ -116,6 +139,7 @@ export {
   updateColorsAndPaint,
   copyColors,
   paintFromColors,
-  downloadImage
+  downloadImage,
+  updateCode,
 }
 

@@ -9,6 +9,7 @@ const artData = {
   code: [],
   svg: [],
   hex: '#000000',
+  prev: [],
 
   // grid
   column: +input.column.value,

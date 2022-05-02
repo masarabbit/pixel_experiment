@@ -14,7 +14,7 @@ const styleTarget = ({ target, w, h, x, y }) =>{
 
 const update = (key, value) => {
   input[key].value = value
-  artData[key] = value
+  artData[key] = key === 'colors' ? value.split(',') : value
 }
 
 const calcX = cell => cell % artData.column

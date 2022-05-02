@@ -1,13 +1,16 @@
 import { artboard, elements, input, aCtx, overlay }  from './elements.js'
-import { styleTarget, mouse, resizeCanvas, copyText } from './actions/utils.js'
+import { styleTarget, mouse, resizeCanvas, copyText, update } from './actions/utils.js'
 import { artData } from './state.js'
-import { continuousDraw, colorCell, paintCanvas, flipImage, drawPos, copyColors, downloadImage } from './actions/draw.js'
+import { continuousDraw, colorCell, paintCanvas, flipImage, drawPos, copyColors, downloadImage, updateCode } from './actions/draw.js'
 import { resize, grid } from './actions/grid.js'
 import { updateColor } from './actions/colors.js'
 import { createSelectBox, copySelection, paste, select } from './actions/select.js'
 import traceSvg from '../scripts/actions/traceSvg.js'
 
-// TODO undo
+
+// TODO undo - logic added, updateCode needs to be added.
+// TODO edit codes when column or row is edited
+// TODO add cursor icon edit
 // TODO represent transparent as t?
 // TODO break new Array(width * (h / cellD)).fill('') this out to function?
 
@@ -89,9 +92,42 @@ function init() {
     //     : 'pen_cursor'
   }
 
+  
+  const undo = () =>{
+    console.log('undo')
+    // input[key].value = value
+    // artData[key] = value
+
+    // console.log('prev check', prev[prev.length - 1])
+    if (!artData.prev[artData.prev.length - 1]) return
+    const { colors: newData, row: newRow, column: newColumn,  cellD: newCellD } = artData.prev[artData.prev.length - 1]
+    // console.log('newData', newData)
+    update('column', newColumn)
+    update('row', newRow)
+    update('colors', newData)
+    update('cellD', newCellD)
+    resize()
+    // input.colors.value = newData
+    // input.row.value = newRow
+    // input.column.value = newColumn
+    // input.cellD.value = newCellD
+    // artData.colors = newData
+
+    // Object.assign(artData, { 
+    //   column: newColumn, row: newRow, cellD: newCellD 
+    // })
+    paintCanvas()
+    // generateFromColorCode()
+
+    artData.prev = artData.prev.filter((_data, i)=>{
+      return i !== artData.prev.length - 1
+    })
+    if (!artData.prev.length) updateCode()
+  }
+
   elements.buttons.forEach(b =>{
     const addClickEvent = (className, event) => b.classList.contains(className) && b.addEventListener('click', event)
-    addClickEvent('resize', ()=>{
+    addClickEvent('create_grid', ()=>{
       resize()
       paintCanvas()
       resetCodes()
@@ -120,6 +156,7 @@ function init() {
       downloadImage()
     })
     addClickEvent('trace_svg', traceSvg)
+    addClickEvent('undo', undo)
   })
 
   artboard.addEventListener('click', colorCell)
@@ -170,6 +207,7 @@ function init() {
   resetCodes()
   resize()
   paintCanvas()
+  updateCode()
   
   // window.addEventListener('mousemove', e =>{
   //   const { cellD, column } = artData
