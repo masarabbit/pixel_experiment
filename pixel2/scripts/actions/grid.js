@@ -46,7 +46,7 @@ const resize = () =>{
   // paintCanvas()
 }
 
-const checkAreaToFill = ({ codeRef, i, valueToCheck, areaToFill }) =>{
+const checkAreaToFill = ({ colors, i, valueToCheck, areaToFill }) =>{
   const fillStack = []
   const { column } = artData 
   fillStack.push(i) // first cell to fill
@@ -54,7 +54,7 @@ const checkAreaToFill = ({ codeRef, i, valueToCheck, areaToFill }) =>{
   while (fillStack.length > 0){
     const cellToCheck = fillStack.pop() // removes from area to check
     
-    if (codeRef[cellToCheck] !== valueToCheck) continue // is the cell value already valueToCheck?
+    if (colors[cellToCheck] !== valueToCheck) continue // is the cell value already valueToCheck?
     if (areaToFill.some(d => d === cellToCheck)) continue // is it in areaToFill already?
     areaToFill.push(cellToCheck) // if passed above check, include in areaToFill
   
@@ -71,7 +71,7 @@ const fillBucket = index =>{
   const valueToSwap = artData.colors[index]
 
   checkAreaToFill({
-    codeRef: artData.colors, 
+    colors: artData.colors, 
     i: +index, 
     valueToCheck: valueToSwap, 
     areaToFill: areaToFillBucket,

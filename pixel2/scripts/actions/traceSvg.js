@@ -87,66 +87,57 @@ const traceSvg = () => {
   }
 
   const trace = index =>{
-    let traceIndex = index
-    
     while (!stop){
-      indexPattern.forEach(i => recordTraceData(i, traceIndex))
+      indexPattern.forEach(i => recordTraceData(i, index))
 
       checkedIndex.length = 0
       dirIndex = dirIndex === 0 ? 3 : dirIndex - 1
       letter = letter === 'h' ? 'v' : 'h'
-      traceIndex = traceIndex += direction[dirIndex] // moves to next cell to trace
+      index = index += direction[dirIndex] // moves to next cell to trace
     }
   }
 
-  const convertToSvg = processedCodes =>{  
+  const convertToSvg = colors =>{  
 
     //* changed this to while loop to avoid exceeding maximum call limit
-    while (processedCodes.some(code => code !== '')) {
-      //first index
-      const currentColor = processedCodes.find(cell => cell !== '')
-      const first = processedCodes.indexOf(currentColor) 
+    while (colors.some(code => code !== '')) {
+      const currentColor = colors.find(cell => cell !== '')
+      const first = colors.indexOf(currentColor) //first index
 
       //* isolating area to trace (area with same color, but connected)
       areaToTrace.length = 0
 
       checkAreaToFill({
-        codeRef: processedCodes, 
+        colors, 
         i: first, 
         valueToCheck: currentColor, 
         areaToFill: areaToTrace,
       })
 
-      arr = processedCodes.map((code, i) => areaToTrace.some(a => a === i) ? code : '')
+      arr = colors.map((code, i) => areaToTrace.some(a => a === i) ? code : '')
       Object.assign(pos, { x: calcX(first), y: calcY(first) })
+      Object.assign(initial, { x: pos.x, y: pos.y })
       d = [`M ${pos.x} ${pos.y}`]   
-      initial.x = pos.x
-      initial.y = pos.y
       letter = 'h'
       dirIndex = 0
       checkedIndex.length = 0
       stop = false
-      trace(first)
-      //* recording traced area
+      trace(first) // recording traced area
 
       pathData.push(`<path fill="${currentColor}" d="${d.join(' ')}"/>`)
 
       //* removing traced area
       // when only one square is being traced, area to be traced doesn't get overwritten, so needed to reset it to [], and check below if it has been updated
       //TODO may not need this workaround when the areaToTrace/fill bucket logic is changed
-      processedCodes = areaToTrace.length 
-        ? processedCodes.map((code, i)=> areaToTrace.indexOf(i) === -1 ? code : '')
-        : processedCodes.map((code, i)=> i === first ? '' : code )
+      colors = areaToTrace.length 
+        ? colors.map((code, i)=> areaToTrace.indexOf(i) === -1 ? code : '')
+        : colors.map((code, i)=> i === first ? '' : code )
     }
   }
 
-  const processedCodes = input.colors.value.split(',').map(code =>{
-    return code === 'transparent' ? '' : code
-  })
-  convertToSvg(processedCodes)
+  const colors = input.colors.value.split(',').map(code => isEmpty(code) ? '' : code)
+  convertToSvg(colors)
 
-  // put in to compress
-  // codesBox[1].value = pathData.join(' ').replaceAll('<path d="M','D').replaceAll('<path fill="#ffffff" d="M','F').replaceAll('/>','/').replaceAll('-1','N').replaceAll('-2','T').replaceAll(' v ','v').replaceAll(' h ','h').replaceAll('<path fill="#000000" d="M','D')
   
   // TODO perhaps remove redundant space at this point
   input.svg.value = pathData.join(' ').replaceAll('ffffff','fff').replaceAll('000000','000')
