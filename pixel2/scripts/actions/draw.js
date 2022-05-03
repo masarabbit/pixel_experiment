@@ -38,7 +38,7 @@ const colorCell = e => {
     : artData.colors[index] = value
   input.colors.value = artData.colors
 
-  populatePalette(artData.colors)
+  // populatePalette(artData.colors) // TODO this slows down the drawing a lot when grid is large
   recordState()
 }
 

@@ -2,6 +2,7 @@
 import { checkAreaToFill } from '../actions/grid.js'
 import { artData } from '../state.js'
 import { input } from '../elements.js'
+import { calcX, calcY } from '../actions/utils.js'
 
 // const check = [
 //   {
@@ -28,12 +29,14 @@ import { input } from '../elements.js'
 
 // const initial = { x: 0, y: 0 }
 
+const isEmpty = value => value === 'transparent'
+
 const traceSvg = () => {
   const pathData = []
   const areaToTrace = []
   const { column } = artData 
   const direction = [ 1, +column, -1, -column ] // move right, down, left, up
-  const checkDirection = [ -column, +1, +column, -1 ] // check up, left, down, left of current cell
+  const checkDirection = [ -column, 1, +column, -1 ] // check up, left, down, left of current cell
 
   // switches distance to move depending on which way the line is going.
   // corresponds to right, down, left, up
@@ -41,28 +44,26 @@ const traceSvg = () => {
   const indexPattern = [0, 1, 2, 3, 0, 1, 2, 3]
 
   //? values which needs reset for each trace
+  const checkedIndex = []
+  const pos = { x:0, y:0,}
+  const initial = { x:0, y:0 }
   let arr
-  let first
-  let x
-  let y
   let d
   let letter
   let dirIndex
-  const checkedIndex = []
-  let initialX
-  let initialY
   let stop
+  // const stop = (initial, pos) => initial.x === pos.x && initial.y === pos.y //! stops too early
 
   const recordTraceData = (dirIndexToCheck, index) =>{
     //TODO since transparent is converted to '', perhaps no longer need to check for it.
     if (stop) return 
     if (dirIndex === dirIndexToCheck && 
-      (arr[index + checkDirection[dirIndex]] === 'transparent' || // cell in the  check direction is not filled
+      (isEmpty(arr[index + checkDirection[dirIndex]]) || // cell in the  check direction is not filled
       !arr[index + checkDirection[dirIndex]] || // cell in the check direction is the edge
 
       // below added to ensure trace don't continue on from right edge to left edge
-      ((dirIndex === 1) && arr[index + 1] !== 'transparent' && index % column === column - 1) || 
-      ((dirIndex === 3) && arr[index - 1] !== 'transparent' && index % column === 0)
+      ((dirIndex === 1) && !isEmpty(arr[index + 1]) && index % column === column - 1) || 
+      ((dirIndex === 3) && !isEmpty(arr[index - 1]) && index % column === 0)
       )){
 
       // prevents same direction being checked twice.
@@ -77,9 +78,9 @@ const traceSvg = () => {
         d.push(`${letter} ${distanceToMove}`)
       }
       
-      if (letter === 'h') initialX += distanceToMove
-      if (letter === 'v') initialY += distanceToMove
-      if (initialX === x && initialY === y) stop = true
+      if (letter === 'h') initial.x += distanceToMove
+      if (letter === 'v') initial.y += distanceToMove
+      if (initial.x === pos.x && initial.y === pos.y) stop = true
       dirIndex = dirIndex === 3 ? 0 : dirIndex + 1
       letter = letter === 'h' ? 'v' : 'h'
     }
@@ -104,7 +105,7 @@ const traceSvg = () => {
     while (processedCodes.some(code => code !== '')) {
       //first index
       const currentColor = processedCodes.find(cell => cell !== '')
-      first = processedCodes.indexOf(currentColor) 
+      const first = processedCodes.indexOf(currentColor) 
 
       //* isolating area to trace (area with same color, but connected)
       areaToTrace.length = 0
@@ -115,13 +116,12 @@ const traceSvg = () => {
         valueToCheck: currentColor, 
         areaToFill: areaToTrace,
       })
-      arr = processedCodes.map((code, i) => areaToTrace.some(a => a === i) ? code : '')
 
-      x = first % column
-      y = Math.floor(first / column)
-      d = [`M ${x} ${y}`]   
-      initialX = x
-      initialY = y
+      arr = processedCodes.map((code, i) => areaToTrace.some(a => a === i) ? code : '')
+      Object.assign(pos, { x: calcX(first), y: calcY(first) })
+      d = [`M ${pos.x} ${pos.y}`]   
+      initial.x = pos.x
+      initial.y = pos.y
       letter = 'h'
       dirIndex = 0
       checkedIndex.length = 0

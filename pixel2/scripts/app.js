@@ -34,7 +34,7 @@ function init() {
       } else {
         if ( artData[key]) {
           // column, row and cellD
-          updateColors?.[key]()
+          updateColors[key] && updateColors[key]()
           artData[key] = +e.target.value
           resize()
           paintCanvas()

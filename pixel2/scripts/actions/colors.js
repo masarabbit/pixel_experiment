@@ -44,7 +44,7 @@ const updateColor = color =>{
 
 // const arrayTotal = arr => arr.reduce((acc, x)=> acc + x , 0)
 
-
+// TODO this operation is heavy, so maybe do it differently
 const populatePalette = arr =>{
   const filteredData = sortByFreqRemoveBlankAndDuplicates(arr)
   elements.palette.innerHTML = filteredData.map(d =>{
