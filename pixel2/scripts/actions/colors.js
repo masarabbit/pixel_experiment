@@ -44,10 +44,12 @@ const updateColor = color =>{
 
 // const arrayTotal = arr => arr.reduce((acc, x)=> acc + x , 0)
 
-// TODO this operation is heavy, so maybe do it differently
+const populateCompletePalette = arr =>{
+  populatePalette(sortByFreqRemoveBlankAndDuplicates(arr))
+}
+
 const populatePalette = arr =>{
-  const filteredData = sortByFreqRemoveBlankAndDuplicates(arr)
-  elements.palette.innerHTML = filteredData.map(d =>{
+  elements.palette.innerHTML = arr.map(d =>{
     const background = `background-color:${d}`
     return `
         <div class="palette_cell">
@@ -58,7 +60,7 @@ const populatePalette = arr =>{
 
   document.querySelectorAll('.palette_color').forEach((cell, i)=>{
     cell.addEventListener('click',()=>{
-      updateColor(filteredData[i])
+      updateColor(arr[i])
     })
   })
 }
@@ -105,5 +107,6 @@ export {
   hexToRgb,
   updateColor,
   // populateDetailedPalette,
-  populatePalette
+  populatePalette,
+  populateCompletePalette
 }

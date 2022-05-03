@@ -6,10 +6,11 @@ const artData = {
   fill: false,
   erase: false,
   cursor: null,
-  code: [],
+  colors: [],
   svg: [],
   hex: '#000000',
   prev: [],
+  palette: [],
 
   // grid
   column: +input.column.value,

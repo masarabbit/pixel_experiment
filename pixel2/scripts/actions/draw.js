@@ -37,6 +37,11 @@ const colorCell = e => {
     ? fillBucket(index)
     : artData.colors[index] = value
   input.colors.value = artData.colors
+  
+  if (!artData.palette.includes(value)) {
+    artData.palette.push(value)
+    populatePalette(artData.palette)
+  }
 
   // populatePalette(artData.colors) // TODO this slows down the drawing a lot when grid is large
   recordState()
@@ -62,6 +67,7 @@ const paintCanvas = () => {
     ctx: aCtx,
     colors: artData.colors
   })
+  // populatePalette(artData.colors)
   recordState()
 }
 
