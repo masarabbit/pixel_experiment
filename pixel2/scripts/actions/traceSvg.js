@@ -3,12 +3,35 @@ import { checkAreaToFill } from '../actions/grid.js'
 import { artData } from '../state.js'
 import { input } from '../elements.js'
 
+// const check = [
+//   {
+//     moveDir: 1,
+//     checkDir: -column,
+//     dirFactor: 1
+//   },
+//   {
+//     moveDir: +column,
+//     checkDir: 1,
+//     dirFactor: 1
+//   },
+//   {
+//     moveDir: -1,
+//     checkDir: +column,
+//     dirFactor: -1
+//   },
+//   {
+//     moveDir: -column,
+//     checkDir: -1,
+//     dirFactor: -1
+//   },
+// ]
+
+// const initial = { x: 0, y: 0 }
 
 const traceSvg = () => {
   const pathData = []
   const areaToTrace = []
   const { column } = artData 
-  const w = 1
   const direction = [ 1, +column, -1, -column ] // move right, down, left, up
   const checkDirection = [ -column, +1, +column, -1 ] // check up, left, down, left of current cell
 
@@ -46,8 +69,7 @@ const traceSvg = () => {
       if (checkedIndex.some(d => d === dirIndexToCheck)) return
       checkedIndex.push(dirIndexToCheck)
 
-      const distance = 1
-      const distanceToMove = distance * directionFactor[dirIndex]
+      const distanceToMove = directionFactor[dirIndex]
       if (d[d.length - 1].split(' ')[0] === letter){
         //* this increases distance to move if previous letter was the same (ie combines 'h1 h1' to 'h2')
         d[d.length - 1] = `${letter} ${+d[d.length - 1].split(' ')[1] + distanceToMove}`
@@ -57,7 +79,7 @@ const traceSvg = () => {
       
       if (letter === 'h') initialX += distanceToMove
       if (letter === 'v') initialY += distanceToMove
-      if (initialX === x * w && initialY === y * w) stop = true
+      if (initialX === x && initialY === y) stop = true
       dirIndex = dirIndex === 3 ? 0 : dirIndex + 1
       letter = letter === 'h' ? 'v' : 'h'
     }
@@ -79,7 +101,7 @@ const traceSvg = () => {
   const convertToSvg = processedCodes =>{  
 
     //* changed this to while loop to avoid exceeding maximum call limit
-    while (processedCodes.filter(code => code !== '').length) {
+    while (processedCodes.some(code => code !== '')) {
       //first index
       const currentColor = processedCodes.find(cell => cell !== '')
       first = processedCodes.indexOf(currentColor) 
@@ -97,9 +119,9 @@ const traceSvg = () => {
 
       x = first % column
       y = Math.floor(first / column)
-      d = [`M ${x * w} ${y * w}`]   
-      initialX = x * w
-      initialY = y * w
+      d = [`M ${x} ${y}`]   
+      initialX = x
+      initialY = y
       letter = 'h'
       dirIndex = 0
       checkedIndex.length = 0
