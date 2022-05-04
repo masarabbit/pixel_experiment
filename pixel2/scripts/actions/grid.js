@@ -46,7 +46,8 @@ const resize = () =>{
   // paintCanvas()
 }
 
-const checkAreaToFill = ({ colors, i, valueToCheck, areaToFill }) =>{
+const fillArea = ({ colors, i, valueToCheck }) =>{
+  const areaToFill = []
   const fillStack = []
   const { column } = artData 
   fillStack.push(i) // first cell to fill
@@ -63,19 +64,17 @@ const checkAreaToFill = ({ colors, i, valueToCheck, areaToFill }) =>{
     fillStack.push(cellToCheck + column) // check up
     fillStack.push(cellToCheck - column) // check down
   }
+  return areaToFill
 }
 
 const fillBucket = index =>{
   const fillValue = artData.erase ? 'transparent' : input.color.value  //! '' instead of transparent
-  const areaToFillBucket = []
   const valueToSwap = artData.colors[index]
-
-  checkAreaToFill({
-    colors: artData.colors, 
-    i: +index, 
-    valueToCheck: valueToSwap, 
-    areaToFill: areaToFillBucket,
-  })
+  const areaToFillBucket = fillArea({
+      colors: artData.colors, 
+      i: +index, 
+      valueToCheck: valueToSwap, 
+    })
   input.colors.value = input.colors.value.split(',').map((c, i)=>{
     if (!areaToFillBucket.includes(i)) return c
     return c === valueToSwap ? fillValue : c
@@ -126,6 +125,6 @@ export {
   resize,
   fillBucket,
   grid,
-  checkAreaToFill,
+  fillArea,
   updateColors
 }
