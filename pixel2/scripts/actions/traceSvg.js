@@ -4,8 +4,6 @@ import { artData } from '../state.js'
 import { input } from '../elements.js'
 import { calcX, calcY } from '../actions/utils.js'
 
-const isEmpty = value => value === 'transparent'
-
 const traceSvg = () => {
   const pathData = []
   const { column } = artData 
@@ -13,7 +11,7 @@ const traceSvg = () => {
   const checkDirection = [ -column, 1, column, -1 ] // check up, left, down, left of current cell
   const directionFactor = [ 1, 1, -1, -1 ]  // switches distance to move depending on which way the line is going.
   const indexPattern = [0, 1, 2, 3, 0, 1, 2, 3]
-  const letters = ['h', 'v', 'h', 'v']
+  const letters = 'hvhv'
   //? values which needs reset for each trace
   const checkedIndex = []
   const pos = { x:0, y:0, h:0, v:0 }
@@ -71,7 +69,6 @@ const traceSvg = () => {
       Object.assign(pos, { x: calcX(first), h: calcX(first), y: calcY(first), v: calcY(first) })
       const path = [`M ${pos.x} ${pos.y}`]   
       cI = 0
-      checkedIndex.length = 0
       proceed = true
       trace(first, path) // recording traced area
 
@@ -129,6 +126,9 @@ export default traceSvg
 
 
   //? since transparent is converted to '', removed isEmpty check
+
+  // const isEmpty = value => value === 'transparent'
+
   // const checkSurroundingCells = (arr, index, cI) => {
   //   return isEmpty(arr[index + checkDirection[cI]]) || // cell in the  check direction is not filled
   //   !arr[index + checkDirection[cI]] || // cell in the check direction is the edge
