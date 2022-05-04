@@ -16,6 +16,7 @@ const artData = {
   column: +input.column.value,
   row: +input.row.value,
   cellD: +input.cellD.value,
+  angle: +input.angle.value,
   calcWidth: 0,
   calcHeight: 0,
   gridWidth: 0.5,

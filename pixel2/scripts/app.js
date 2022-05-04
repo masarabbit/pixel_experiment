@@ -32,7 +32,7 @@ function init() {
       } else if (key === 'colors') {
         artData.colors = e.target.value.split(',')
       } else {
-        if ( artData[key]) {
+        if (artData[key] !== null) {
           // column, row and cellD
           updateColors[key] && updateColors[key]()
           artData[key] = +e.target.value

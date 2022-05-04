@@ -15,6 +15,7 @@ const input = {
   column: document.querySelector('.column'),
   row: document.querySelector('.row'),
   cellD: document.querySelector('.cell_size'),
+  angle: document.querySelector('.angle'),
   colors: document.querySelector('.colors'),
   svg: document.querySelector('.svg'),
 }

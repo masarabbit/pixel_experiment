@@ -26,16 +26,18 @@ function init() {
       } else if (key === 'colors') {
         artData.colors = e.target.value.split(',')
       } else {
-        if ( artData[key]) {
+        if (artData[key] !== null) {
           // column, row and cellD
           updateColors[key] && updateColors[key]()
           artData[key] = +e.target.value
           resize()
           paintCanvas()
+          
         }
       }
     })
   })
+
 
 
   // // TODO move this to draw?
@@ -75,15 +77,20 @@ function init() {
   //   }
   //   imageTarget.src = blobURL
   // }
+
+  const rotate = () =>{
+    console.log('trigger')
+  }
   
 
   elements.buttons.forEach(b =>{
     const addClickEvent = (className, event) => b.classList.contains(className) && b.addEventListener('click', event)
-    addClickEvent('create_grid', ()=>{
-      resize()
-      paintCanvas()
-      resetCodes()
-    })
+    // addClickEvent('create_grid', ()=>{
+    //   resize()
+    //   paintCanvas()
+    //   resetCodes()
+    // })
+    addClickEvent('rotate', rotate)
   })
   
   mouse.leave(artboard, 'add', ()=> {
