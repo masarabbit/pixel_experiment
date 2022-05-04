@@ -191,7 +191,7 @@ const paste = () => {
     copyData.index.forEach((index, i) => {
       if (copyData.colors[i] !== 'transparent') artData.colors[index] = copyData.colors[i] 
     })
-    input.colors = artData.colors
+    input.colors.value = artData.colors
     paintCanvas()  
 
     // TODO add some sort of effect to show that it's pasted? (difficult to see right now)
