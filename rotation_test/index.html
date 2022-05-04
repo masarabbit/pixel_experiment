@@ -1,0 +1,55 @@
+<!doctype html>
+<html>
+
+<head>
+  <link rel="stylesheet" type="text/css" href="./styles/main.css" />
+  <script type="module" src ="./scripts/app.js" charset="utf-8"></script>
+
+  <title>rotation_test</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+
+<body>
+  <nav>
+    rotation
+    <div class="input_wrap">
+      <label>column</label>
+      <input class="column no input" placeholder="column" value="16" />
+    </div>
+    <div class="input_wrap">
+      <label>row</label>
+      <input class="row no input" placeholder="row" value="16" />
+    </div>
+    <div class="input_wrap">
+      <label>cell size</label>
+      <input class="cell_size no input" placeholder="cell size" value="20" />
+    </div>
+  </nav>
+
+
+  <div class="wrapper">
+    <div class="canvas_wrapper">
+      <canvas class="overlay"></canvas>
+      <canvas class="artboard"></canvas>
+    </div>
+
+    <textarea class="colors" spellcheck="false"></textarea>
+    <div class="mini_wrap">
+      <button class="btn generate icon alt" data-alt="generate from code" style="--svg: url('/icon/generate.svg');"></button>
+      <button class="btn copy icon alt" data-alt="copy code" data-code="colors" style="--svg: url('/icon/copy.svg');"></button>
+    </div>
+
+    <textarea class="svg" spellcheck="false"></textarea>
+    <div class="mini_wrap">
+      <button class="btn copy icon alt" data-alt="copy code" data-code="svg" style="--svg: url('/icon/copy.svg');"></button>
+    </div>
+
+  </div>
+
+
+  <div class="cursor" data-text="test"><div></div></div>
+  <div class="indicator"></div>
+</body>
+
+</html>

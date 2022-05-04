@@ -78,6 +78,7 @@ function init() {
         data: artData.colors
       })
       input.colors.value = artData.colors
+      console.log(artData.colors)
     }
     imageTarget.src = blobURL
   }
