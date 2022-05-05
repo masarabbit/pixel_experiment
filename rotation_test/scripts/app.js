@@ -1,10 +1,13 @@
 import { artboard, elements, input, aCtx, overlay }  from './elements.js'
-import { styleTarget, mouse, resizeCanvas, copyText, update } from './actions/utils.js'
+import { styleTarget, mouse, resizeCanvas, copyText, update, calcX, calcY } from './actions/utils.js'
 import { artData } from './state.js'
-import { paintCanvas, drawPos } from './actions/draw.js'
+import { paintCanvas, drawPos, paintFromColors } from './actions/draw.js'
 import { resize, grid, updateColors } from './actions/grid.js'
 import { updateColor } from './actions/colors.js'
 
+
+// 　x' = x cosθ - y sinθ
+// 　y’ = x sinθ + y cosθ
 
 // TODO maybe add transparent margin to image so it's easier to test rotation
 
@@ -38,59 +41,59 @@ function init() {
     })
   })
 
-
-
-  // // TODO move this to draw?
-  // const output = () =>{
-  //   const { cellD, row, column, uploadedFile } = artData 
-  //   if (!uploadedFile) return
-  //   const blobURL = window.URL.createObjectURL(uploadedFile)
-  //   const imageTarget = new Image()
-    
-  //   imageTarget.onload = () => {
-  //     const { naturalWidth: w, naturalHeight: h } = imageTarget
-  //     artData.calcHeight = (column * cellD) * (h / w)
-  //     artData.calcWidth = artData.calcHeight * (w / h)
-  //     const { calcWidth, calcHeight } = artData 
-  //     resizeCanvas({
-  //       canvas: artboard, 
-  //       w: calcWidth, h: calcHeight - (calcHeight % cellD)
-  //     })   
-  //     aCtx.drawImage(imageTarget, 0, 0, calcWidth, calcHeight)
-  //     copyColors({
-  //       w: column, h: row, 
-  //       ctx: aCtx, 
-  //       data: artData.colors
-  //     })
-  //     // revert canvas size before painting
-  //     resizeCanvas({
-  //       canvas: artboard, 
-  //       w: column * cellD, h: row * cellD
-  //     })
-  //     paintCanvas()
-  //     copyColors({
-  //       w: column, h: row, 
-  //       ctx: aCtx, 
-  //       data: artData.colors
-  //     })
-  //     input.colors.value = artData.colors
-  //   }
-  //   imageTarget.src = blobURL
-  // }
-
+  const degToRad = deg => deg / (180 / Math.PI)
+  
   const rotate = () =>{
     console.log('trigger')
+    artData.rotatedColors.length = 0
+    const { cellD, colors, angle, column, row } = artData
+    const a = degToRad(angle)
+  
+
+    const origin = {
+      x: column / 2,
+      y: row / 2
+    }
+
+    const indexs = []
+    
+    colors.forEach((_ele, i)=>{
+      const x = calcX(i)
+      const y = calcY(i)
+
+      // 　x' = (cosθ * (x - x0) - (sinθ * (y - y0)
+      // 　y’ = sinθ * (x - x0) + (cosθ * y - y0)
+      // (x0, y0) = origin
+
+      const newX = Math.round((Math.cos(a) * (x - origin.x)) - (Math.sin(a) * (y - origin.y)))
+      const newY = Math.round((Math.sin(a) * (x - origin.x)) + (Math.cos(a) * (y - origin.y)))
+  
+      // subtract index of center
+      const offset = (column * (column / 2)) - (row / 2 + 1) //eg. 495 in the case of (16, 16)
+      const index = (newY * column) + newX + offset
+  
+      // console.log(index, newX, newY)
+      artData.rotatedColors[index] = colors[i]
+    })
+    aCtx.clearRect(0, 0, column * cellD, row * cellD)
+    paintFromColors({
+      ctx: aCtx,
+      colors: artData.rotatedColors
+    })
+    input.svg.value = indexs
   }
   
 
   elements.buttons.forEach(b =>{
     const addClickEvent = (className, event) => b.classList.contains(className) && b.addEventListener('click', event)
-    // addClickEvent('create_grid', ()=>{
-    //   resize()
-    //   paintCanvas()
-    //   resetCodes()
-    // })
-    addClickEvent('rotate', rotate)
+    addClickEvent('rotate', ()=> {
+      setInterval(()=>{
+        update('angle', artData.angle + 1)
+        if (artData.angle > 359) update('angle', 0)
+        rotate()
+      }, 50)
+      // rotate()
+    })
   })
   
   mouse.leave(artboard, 'add', ()=> {
@@ -118,6 +121,13 @@ function init() {
       h: cellD - gridWidth,
     })
   })
+
+  // window.addEventListener('mousemove', e =>{
+  //   const { cellD, column } = artData
+  //   const { x, y } = drawPos(e, cellD)
+  //   const index = ((y / cellD - 1) * column) + x / cellD - 1
+  //   input.svg.value = `index:${index} / x:${(x - cellD) / cellD + 1} / y:${(y - cellD) / cellD + 1} | ${x} | ${y}`
+  // })
 
   const query = window.location.hash
   if (query){

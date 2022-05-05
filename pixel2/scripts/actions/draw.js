@@ -47,9 +47,9 @@ const colorCell = e => {
   recordState()
 }
 
-const paintFromColors = ({ arr, ctx, colors }) => {
+const paintFromColors = ({ ctx, colors }) => {
   const { cellD } = artData
-  arr.forEach((_ele, i)=>{
+  colors.forEach((_ele, i)=>{
     const x = calcX(i) * cellD
     const y = calcY(i) * cellD
     ctx.fillStyle = colors[i] || 'transparent'
@@ -59,11 +59,10 @@ const paintFromColors = ({ arr, ctx, colors }) => {
 
 const paintCanvas = () => {
   const { row, column, cellD } = artData 
-  const arr = Array(row * column).fill('') // TODO this could be a new function?
+  // const arr = Array(row * column).fill('')
   
   aCtx.clearRect(0, 0, column * cellD, row * cellD)
   paintFromColors({
-    arr,
     ctx: aCtx,
     colors: artData.colors
   })

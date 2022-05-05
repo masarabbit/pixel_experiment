@@ -12,9 +12,9 @@ const drawPos = (e, cellD) => {
   }
 }
 
-const paintFromColors = ({ arr, ctx, colors }) => {
+const paintFromColors = ({ ctx, colors }) => {
   const { cellD } = artData
-  arr.forEach((_ele, i)=>{
+  colors.forEach((_ele, i)=>{
     const x = calcX(i) * cellD
     const y = calcY(i) * cellD
     ctx.fillStyle = colors[i] || 'transparent'
@@ -28,7 +28,6 @@ const paintCanvas = () => {
   
   aCtx.clearRect(0, 0, column * cellD, row * cellD)
   paintFromColors({
-    arr,
     ctx: aCtx,
     colors: artData.colors
   })

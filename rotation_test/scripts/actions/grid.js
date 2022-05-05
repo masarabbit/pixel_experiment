@@ -42,7 +42,7 @@ const resize = () =>{
     w: column * cellD,
     h: row * cellD
   })
-  if (artData.grid) grid.draw()
+  // if (artData.grid) grid.draw()
   // paintCanvas()
 }
 
