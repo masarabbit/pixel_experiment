@@ -1,5 +1,5 @@
 import { artboard, elements, input, aCtx, overlay }  from './elements.js'
-import { styleTarget, mouse, resizeCanvas, copyText, update, calcX, calcY } from './actions/utils.js'
+import { styleTarget, mouse, nearestN, calcX, calcY, update } from './actions/utils.js'
 import { artData } from './state.js'
 import { paintCanvas, drawPos, paintFromColors } from './actions/draw.js'
 import { resize, grid, updateColors } from './actions/grid.js'
@@ -88,6 +88,9 @@ function init() {
       colors: artData.rotatedColors
     })
   }
+
+
+
   
 
   // TODO edge carries over
@@ -98,7 +101,7 @@ function init() {
     const origin = {
       x: Math.round(column / 2),
       y: Math.round(row / 2),
-      offset: (column * Math.round(column / 2)) - (Math.round(row / 2) + 1)
+      offset: Math.round((column * (column / 2)) - ((row / 2) + 1))
     }
     // TODO change center of rotation
     // const origin = {
@@ -106,21 +109,31 @@ function init() {
     //   y: 20,
     //   offset: (column * 20) - (20 + 1),
     // }
+    // how much to offset
+    // 90   1 (1 + 0)
+    // 180  0 (0 + 0)
+    // 270  8 (0 + 8)
+    // 0, 360  9 (1 + 8)
+    const adjust = [column + 1, 1, 0, column, column + 1]
+    const test = []
     const indexes = colors.map((_ele, i) => {
       const x = calcX(i)
       const y = calcY(i)
       const newX = Math.round((Math.cos(a) * (x - origin.x)) - (Math.sin(a) * (y - origin.y)))
       const newY = Math.round((Math.sin(a) * (x - origin.x)) + (Math.cos(a) * (y - origin.y)))
-      const index = (newY * column) + newX + origin.offset
+      const index = (newY * column) + newX + origin.offset + adjust[Math.round(angle / 90)]
+      test.push(`${i} | r:${index} | x:${newX} | y:${newY} | ${(newY * column) + newX } | ${origin.offset} \n`)
       return index
     }) 
+  
     artData.rotatedColors = indexes.map(i => colors[i])
     aCtx.clearRect(0, 0, column * cellD, row * cellD)
     paintFromColors({
       ctx: aCtx,
       colors: artData.rotatedColors
     })
-    input.svg.value = `${origin.x} | ${origin.y} | ${origin.offset}`
+    // input.svg.value = `${origin.x} | ${origin.y} | ${origin.offset}`
+    input.svg.value = test
   }
   
 
@@ -196,3 +209,41 @@ function init() {
 }
 
 window.addEventListener('DOMContentLoaded', init)
+
+
+
+// tried to get area inside square with this but didn't work:
+// https://stackoverflow.com/questions/2752725/finding-whether-a-point-lies-inside-a-rectangle-or-not
+
+// function pointInRectangle(m, r) {
+//   var AB = vector(r.A, r.B);
+//   var AM = vector(r.A, m);
+//   var BC = vector(r.B, r.C);
+//   var BM = vector(r.B, m);
+//   var dotABAM = dot(AB, AM);
+//   var dotABAB = dot(AB, AB);
+//   var dotBCBM = dot(BC, BM);
+//   var dotBCBC = dot(BC, BC);
+//   return 0 <= dotABAM && dotABAM <= dotABAB && 0 <= dotBCBM && dotBCBM <= dotBCBC;
+// }
+
+// function vector(p1, p2) {
+//   return {
+//           x: (p2.x - p1.x),
+//           y: (p2.y - p1.y)
+//   };
+// }
+
+// function dot(u, v) {
+//   return u.x * v.x + u.y * v.y; 
+// }
+
+// if (!pointInRectangle(
+// {x: calcX(i), y: calcY(i)},
+// {
+//   A: {x: calcX(indexes[0]), y: calcY(indexes[0]) },
+//   B: {x: calcX(indexes[column - 1]), y: calcY(indexes[0])},
+//   C: {x: calcX(indexes[0]), y: calcY(indexes[column - 1])},
+//   D: {x: calcX(indexes[column - 1]), y: calcY(indexes[column - 1])},
+// }
+// )) return 'transparent'
