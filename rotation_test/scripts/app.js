@@ -6,9 +6,6 @@ import { resize, grid, updateColors } from './actions/grid.js'
 import { updateColor } from './actions/colors.js'
 
 
-// 　x' = x cosθ - y sinθ
-// 　y’ = x sinθ + y cosθ
-
 // TODO maybe add transparent margin to image so it's easier to test rotation
 
 function init() {
@@ -41,58 +38,101 @@ function init() {
     })
   })
 
+  const mode = arr => {
+    return arr.sort((a,b) =>
+          arr.filter(v => v===a).length
+        - arr.filter(v => v===b).length
+    ).pop()
+  }  
+  const surroundingCells = (arr, i) =>{
+    const { column } = artData
+    // const param = [1, column + 1, column - 1,  -1, column, -column, -column + 1, -column -1]
+    const param = [1, -1, -column, column]
+    return param.map(p => arr[i + p]).filter(v => v)
+  }
+
   const degToRad = deg => deg / (180 / Math.PI)
   
-  const rotate = () =>{
-    console.log('trigger')
+  //* this versions renders by rotating each cell, and filling any missing cells based on the most common color used in the surrounding cell
+  const oldRotate = () =>{
     artData.rotatedColors.length = 0
     const { cellD, colors, angle, column, row } = artData
     const a = degToRad(angle)
   
-
     const origin = {
-      x: column / 2,
-      y: row / 2
+      x: Math.floor(column / 2),
+      y: Math.ceil(row / 2),
+      offset: (column * Math.floor(column / 2)) - (Math.ceil(row / 2) + 1)
     }
 
-    const indexs = []
+    const initialRender = []
     
     colors.forEach((_ele, i)=>{
       const x = calcX(i)
       const y = calcY(i)
-
       // 　x' = (cosθ * (x - x0) - (sinθ * (y - y0)
       // 　y’ = sinθ * (x - x0) + (cosθ * y - y0)
       // (x0, y0) = origin
-
       const newX = Math.round((Math.cos(a) * (x - origin.x)) - (Math.sin(a) * (y - origin.y)))
       const newY = Math.round((Math.sin(a) * (x - origin.x)) + (Math.cos(a) * (y - origin.y)))
-  
-      // subtract index of center
-      const offset = (column * (column / 2)) - (row / 2 + 1) //eg. 495 in the case of (16, 16)
-      const index = (newY * column) + newX + offset
-  
-      // console.log(index, newX, newY)
-      artData.rotatedColors[index] = colors[i]
+      // offset index of center
+      const index = (newY * column) + newX + origin.offset //eg. 495 in the case of (16, 16)
+      initialRender[index] = colors[i]
+    }) 
+    colors.forEach((_, i) => {
+      artData.rotatedColors[i] = initialRender[i] || mode(surroundingCells(initialRender, i))  
     })
     aCtx.clearRect(0, 0, column * cellD, row * cellD)
     paintFromColors({
       ctx: aCtx,
       colors: artData.rotatedColors
     })
-    input.svg.value = indexs
+  }
+  
+
+  // TODO edge carries over
+  const rotate = () =>{
+    artData.rotatedColors.length = 0
+    const { cellD, colors, angle, column, row } = artData
+    const a = -degToRad(angle)
+    const origin = {
+      x: Math.round(column / 2),
+      y: Math.round(row / 2),
+      offset: (column * Math.round(column / 2)) - (Math.round(row / 2) + 1)
+    }
+    // TODO change center of rotation
+    // const origin = {
+    //   x: 20,
+    //   y: 20,
+    //   offset: (column * 20) - (20 + 1),
+    // }
+    const indexes = colors.map((_ele, i) => {
+      const x = calcX(i)
+      const y = calcY(i)
+      const newX = Math.round((Math.cos(a) * (x - origin.x)) - (Math.sin(a) * (y - origin.y)))
+      const newY = Math.round((Math.sin(a) * (x - origin.x)) + (Math.cos(a) * (y - origin.y)))
+      const index = (newY * column) + newX + origin.offset
+      return index
+    }) 
+    artData.rotatedColors = indexes.map(i => colors[i])
+    aCtx.clearRect(0, 0, column * cellD, row * cellD)
+    paintFromColors({
+      ctx: aCtx,
+      colors: artData.rotatedColors
+    })
+    input.svg.value = `${origin.x} | ${origin.y} | ${origin.offset}`
   }
   
 
   elements.buttons.forEach(b =>{
     const addClickEvent = (className, event) => b.classList.contains(className) && b.addEventListener('click', event)
     addClickEvent('rotate', ()=> {
-      setInterval(()=>{
-        update('angle', artData.angle + 1)
-        if (artData.angle > 359) update('angle', 0)
-        rotate()
-      }, 50)
-      // rotate()
+      // setInterval(()=>{
+      //   update('angle', artData.angle + 1)
+      //   if (artData.angle > 359) update('angle', 0)
+      //   rotate()
+      // }, 10)
+      rotate()
     })
   })
   
