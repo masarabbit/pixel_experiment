@@ -63,6 +63,7 @@ const populatePalette = arr =>{
       updateColor(arr[i])
     })
   })
+  artData.palette = arr
 }
 
 // const populateDetailedPalette = (index, arr) =>{

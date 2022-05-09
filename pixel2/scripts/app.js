@@ -3,7 +3,7 @@ import { styleTarget, mouse, resizeCanvas, copyText, update } from './actions/ut
 import { artData } from './state.js'
 import { continuousDraw, colorCell, paintCanvas, flipImage, drawPos, copyColors, downloadImage, recordState } from './actions/draw.js'
 import { resize, grid, updateColors } from './actions/grid.js'
-import { updateColor } from './actions/colors.js'
+import { updateColor, populateCompletePalette } from './actions/colors.js'
 import { createSelectBox, copySelection, paste, select } from './actions/select.js'
 import traceSvg from '../scripts/actions/traceSvg.js'
 
@@ -78,6 +78,7 @@ function init() {
         data: artData.colors
       })
       input.colors.value = artData.colors
+      populateCompletePalette(artData.colors)
       console.log(artData.colors)
     }
     imageTarget.src = blobURL
