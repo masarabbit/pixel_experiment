@@ -13,6 +13,9 @@ import traceSvg from '../scripts/actions/traceSvg.js'
 // TODO represent transparent as t?
 // TODO break new Array(width * (h / cellD)).fill('') this out to function?
 
+// TODO when moving select box outside the edge, image needs to be cropped properly
+// TODO when select box is inverted, selection is not copied / pasted properly
+
 
 function init() {
 
