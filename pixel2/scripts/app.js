@@ -128,7 +128,7 @@ function init() {
       e.target.classList.toggle('active')
       artData.erase = !artData.erase 
     })
-    addClickEvent('select', select)
+    addClickEvent('select_state', select)
     addClickEvent('copy_selection', copySelection)
     addClickEvent('cut_selection', ()=> copySelection({ cut: true }))
     addClickEvent('paste_selection', paste)
