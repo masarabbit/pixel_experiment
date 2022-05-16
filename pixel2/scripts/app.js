@@ -15,6 +15,7 @@ import traceSvg from '../scripts/actions/traceSvg.js'
 
 // TODO when moving select box outside the edge, image needs to be cropped properly
 // TODO when select box is inverted, selection is not copied / pasted properly
+// TODO add delete button?
 
 
 function init() {
