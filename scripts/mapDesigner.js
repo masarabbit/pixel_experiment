@@ -1,3 +1,5 @@
+// TODO to remove from this repo
+
 import mapData from './data/mapData.js'
 import svgData from './data/svgData.js'
 import { svgWrapper, singleSvgWrapper } from './data/svg.js'
@@ -7,6 +9,7 @@ function init() {
   
   //TODO change style to display grid number using pseudo elements
   //TODO add highlights for event points etc
+  //TODO play around with img resolution
 
   let cellSize = 20
   let row = 20
