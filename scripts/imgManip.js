@@ -48,7 +48,6 @@ function init() {
     },
   ]
 
-  
 
   const nearestN = (n, denom) =>{
     return n === 0 ? 0 : (n - 1) + Math.abs(((n - 1) % denom) - denom)
@@ -76,7 +75,6 @@ function init() {
   const info = document.querySelector('.info')
   const btnMenus = document.querySelectorAll('.btn_menu')
   const rad = degToRad(360)
-  // let count = 0
   const count = {
     sprite: 0,
     frame: 0
@@ -97,7 +95,6 @@ function init() {
     flip_v: false,
     delete: false,
   } 
-
   const infoText = {
     handleActive: 'handle active',
     rotate: 'rotate',
@@ -172,16 +169,16 @@ function init() {
   }
 
 
-  const addEvents = (target, action, event, array) =>{
+  const addEvents = (target, event, action, array) =>{
     array.forEach(a => {
       event === 'remove' ? target.removeEventListener(a, action) : target.addEventListener(a, action)
     })
   }
-  const mouseUp = (t, a, e) => addEvents(t, a, e, ['mouseup', 'touchend'])
-  const mouseMove = (t, a, e) => addEvents(t, a, e, ['mousemove', 'touchmove'])
-  const mouseDown = (t, a, e) => addEvents(t, a, e, ['mousedown', 'touchstart'])
-  const mouseEnter = (t, a, e) => addEvents(t, a, e, ['mouseenter', 'touchstart'])
-  const mouseLeave = (t, a, e) => addEvents(t, a, e, ['mouseleave', 'touchmove'])
+  const mouseUp = (t, e, a) => addEvents(t, e, a, ['mouseup', 'touchend'])
+  const mouseMove = (t, e, a) => addEvents(t, e, a, ['mousemove', 'touchmove'])
+  const mouseDown = (t, e, a) => addEvents(t, e, a, ['mousedown', 'touchstart'])
+  const mouseEnter = (t, e, a) => addEvents(t, e, a, ['mouseenter', 'touchstart'])
+  const mouseLeave = (t, e, a) => addEvents(t, e, a, ['mouseleave', 'touchmove'])
 
 
   const makeDraggable = (target, targetSpriteData) => {
@@ -190,8 +187,8 @@ function init() {
     const onGrab = e => {
       pos.c = e.type === 'mousedown' ? e.clientX : e.touches[0].clientX
       pos.d = e.type === 'mousedown' ? e.clientY : e.touches[0].clientY
-      mouseUp(document, onLetGo, 'add')
-      mouseMove(document, onDrag, 'add')
+      mouseUp(document, 'add', onLetGo)
+      mouseMove(document, 'add', onDrag)
     }
     const onDrag = e => {
       const x = e.type === 'mousemove' ? e.clientX : e.touches[0].clientX
@@ -212,10 +209,10 @@ function init() {
       }
     }
     const onLetGo = () => {
-      mouseUp(document, onLetGo, 'remove')
-      mouseMove(document, onDrag, 'remove')
+      mouseUp(document, 'remove', onLetGo)
+      mouseMove(document, 'remove', onDrag)
     }
-    mouseDown(target, onGrab, 'add')
+    mouseDown(target, 'add', onGrab)
   }
 
   
@@ -231,8 +228,8 @@ function init() {
         console.log('test', drawData)
         pos.c = e.type[0] === 'm' ? e.clientX : e.touches[0].clientX
         pos.d = e.type[0] === 'm' ? e.clientY : e.touches[0].clientY   
-        mouseUp(document, onLetGo, 'add')
-        mouseMove(document, onDrag, 'add')
+        mouseUp(document, 'add', onLetGo)
+        mouseMove(document, 'add', onDrag)
       }
     }
     const onDrag = e =>{
@@ -260,13 +257,13 @@ function init() {
       }
     }
     const onLetGo = () => {
-      mouseUp(document, onLetGo, 'remove')
-      mouseMove(document, onDrag, 'remove')
+      mouseUp(document, 'remove', onLetGo)
+      mouseMove(document, 'remove', onDrag)
       drawData.handleActive = false
     }
     isArtboard 
-      ? mouseDown(artboard, onGrab, 'add')
-      : mouseDown(handle, onGrab, 'add')
+      ? mouseDown(artboard, 'add', onGrab)
+      : mouseDown(handle, 'add', onGrab)
   }
 
   makeResizable(artboard)
@@ -306,8 +303,8 @@ function init() {
       if (!drawData.rotate) return
       spriteData.angle = getAngle(e)
       drawData.handleActive = true
-      mouseUp(document, onLetGo, 'add')
-      mouseMove(document, onDrag, 'add')
+      mouseUp(document, 'add', onLetGo)
+      mouseMove(document, 'add', onDrag)
     }
     const getAngle = (e, end) =>{
       const { left, top, width, height } = handle.getBoundingClientRect()
@@ -342,8 +339,8 @@ function init() {
       handle.style.transform = `rotate(${newAngle - offsetAngle}deg)`
     }
     const onLetGo = e => {
-      mouseUp(document, onLetGo, 'remove')
-      mouseMove(document, onDrag, 'remove')
+      mouseUp(document, 'remove', onLetGo)
+      mouseMove(document, 'remove', onDrag)
       spriteData.angle = getAngle(e, true)
       spriteData.offsetAngle = spriteData.angle
       const { flip_h, flip_v, angle } = spriteData
@@ -356,7 +353,7 @@ function init() {
       // spriteData.degree = Math.round(spriteData.angle * (180 / Math.PI))
       drawData.handleActive = false
     }
-    mouseDown(handle, onGrab, 'add')
+    mouseDown(handle, 'add', onGrab)
   }
   
   const createSprite = ({index, x, y}) =>{
@@ -551,7 +548,6 @@ function init() {
   }
 
 
-  
   const compileGif = () =>{
     const encoder = new GIFEncoder()
     encoder.setRepeat(0) //auto-loop
@@ -579,12 +575,12 @@ function init() {
 
   
   const downloadGif = () =>{
-    if (!gif.src) return
-
-    const link = document.createElement('a')
-    link.download = `${imgName || 'gif'}_${new Date().getTime()}.gif`
-    link.href = gif.src
-    link.click()
+    if (gif.src) {
+      const link = document.createElement('a')
+      link.download = `${imgName || 'gif'}_${new Date().getTime()}.gif`
+      link.href = gif.src
+      link.click()
+    }
   }
   
   const stampPos = e =>{
@@ -593,7 +589,6 @@ function init() {
       x: e.pageX - w / 2,
       y: e.pageY - h / 2
     }
-    
   }
 
   const isTouchDevice = () => {
@@ -628,7 +623,6 @@ function init() {
       })
     }
   }
-
 
 
   const createStamp = i =>{
@@ -707,8 +701,8 @@ function init() {
     //   info.innerHTML = Object.keys(drawData).map(m => drawData[m] ? infoText[m] : '').join('')
     // })
 
-    mouseEnter(b, ()=> info.innerHTML = infoText[b.dataset.info] || b.dataset.alt || '' , 'add')
-    mouseLeave(b, ()=> info.innerHTML = '' , 'add')
+    mouseEnter(b, 'add', ()=> info.innerHTML = infoText[b.dataset.info] || b.dataset.alt || '')
+    mouseLeave(b, 'add', ()=> info.innerHTML = '')
   })
 
   input.selected.addEventListener('click', displayPalette)
@@ -751,9 +745,8 @@ function init() {
   //   info.innerHTML = 'test'
   // })
   
-
-  mouseEnter(artboard, activateStamp, 'add')
-  mouseLeave(artboard, deactivateStamp, 'add')
+  mouseEnter(artboard, 'add', activateStamp)
+  mouseLeave(artboard, 'add', deactivateStamp)
   artboard.addEventListener('mousemove', positionStamp)
   artboard.addEventListener('click', stampAction)
 
@@ -764,26 +757,6 @@ function init() {
   })
 
   // const handleCursor = e => setTargetPos(cursor, e.pageX, e.pageY)
-
-  // window.addEventListener('mousemove', handleCursor)
-
-  // alts.forEach(button => {
-  //   mouseEnter(button,
-  //     e => {
-  //       if (!isTouchDevice()) cursor.childNodes[0].innerHTML = e.target.dataset.alt
-  //     },
-  //     'add'
-  //     )
-  //   mouseLeave(button,
-  //     () => cursor.childNodes[0].innerHTML = '' ,
-  //     'add'
-  //     )
-  // })
-  
-  // document.addEventListener('scroll', ()=>{
-  //   indicatorTwo.innerHTML = `x: ${window.scrollX} / y: ${window.scrollY}`
-  // })
-
 
 }
 
