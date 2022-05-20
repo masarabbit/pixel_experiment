@@ -365,7 +365,7 @@ function init() {
     canvasOutput.innerHTML = ''
     sequence.length = 0
     codeData.length = 0
-    new Array(uploadFiles.length).fill('').forEach((_file,i)=>{
+    new Array(uploadFiles.length).fill('').forEach((_file, i)=>{
       const thumbImage = document.createElement('img')
       createThumbs(i, i, thumbImage)
       // thumbImage.src = uploadFiles[i].toDataURL()
