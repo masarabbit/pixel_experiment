@@ -146,7 +146,7 @@ const copySelection = ({ crop, cut }) => {
         ctx: aCtx, 
         data: artData.colors
       })
-      input.colors.value= artData.colors
+      input.colors.value = artData.colors
     }  
     copyData.move = true
     copyColors({
