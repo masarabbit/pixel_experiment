@@ -4,16 +4,17 @@ function init() {
   let row = 20
   let column = 20
 
-  // const decode = arr =>{
-  //   return arr.split('').map(c=>{
-  //     if (c === 'D') return '<path d="M'
-  //     if (c === 'F') return '<path fill="#fff" d="M'
-  //     if (c === '/') return '/>'
-  //     if (c === 'N') return '-1' 
-  //     if (c === 'T') return '-2'
-  //     return c
-  //   }).join('')
-  // }
+  const decode = arr =>{
+    return arr.split('').map(c=>{
+      if (c === 'D') return '<path d="M'
+      if (c === 'F') return '<path fill="#fff" d="M'
+      if (c === '/') return '/>'
+      if (c === 'N') return '-1' 
+      if (c === 'T') return '-2'
+      return c
+    }).join('')
+  }
+
 
   const decodeRef = {
     a: ' h 1',
@@ -46,12 +47,14 @@ function init() {
     '/': '/>',
   }
 
-  const decode = arr =>{
-    return arr.split('').map(c=>{
-      if (!decodeRef[c]) return c
-      return decodeRef[c]
-    }).join('')
-  }
+  // const decode = arr =>{
+  //   return arr.split('').map(c=>{
+  //     if (!decodeRef[c]) return c
+  //     return decodeRef[c]
+  //   }).join('')
+  // }
+
+
 
   const svgWrapper = content =>{
     return `<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"

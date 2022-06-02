@@ -197,12 +197,12 @@ function init() {
   paintCanvas()
   recordState()
   
-  window.addEventListener('mousemove', e =>{
-    const { cellD, column } = artData
-    const { x, y } = drawPos(e, cellD)
-    const index = ((y / cellD - 1) * column) + x / cellD - 1
-    input.svg.value = `index:${index} / x:${(x - cellD) / cellD + 1} / y:${(y - cellD) / cellD + 1} / ${x} | ${y} `
-  })
+  // window.addEventListener('mousemove', e =>{
+  //   const { cellD, column } = artData
+  //   const { x, y } = drawPos(e, cellD)
+  //   const index = ((y / cellD - 1) * column) + x / cellD - 1
+  //   input.svg.value = `index:${index} / x:${(x - cellD) / cellD + 1} / y:${(y - cellD) / cellD + 1} / ${x} | ${y} `
+  // })
   elements.alts.forEach(button=>{
     mouse.enter(button, 'add', e => {
       elements.cursor.childNodes[0].innerHTML = e.target.dataset.alt
