@@ -42,27 +42,27 @@ function init() {
   let frameMode = 'upload'
 
     
-  hexInput.addEventListener('change',()=>{
+  hexInput.addEventListener('change',() => {
     backgroundColor = hexInput.value
     colorLabel.style.backgroundColor = backgroundColor
     createSign(svgWrapper(signSvg, invertHex(backgroundColor), signDim.w, signDim.h), hideBox)
   })
 
-  colorInput.addEventListener('change',()=>{
+  colorInput.addEventListener('change',() => {
     backgroundColor = colorInput.value
     hexInput.value = backgroundColor
     colorLabel.style.backgroundColor = backgroundColor
     createSign(svgWrapper(signSvg, invertHex(backgroundColor), signDim.w, signDim.h), hideBox)
   })
 
-  const downloadImage = (canvas, name, date) =>{
+  const downloadImage = (canvas, name, date) => {
     const link = document.createElement('a')
     link.download = `${name}_${date ? new Date().getTime() : ''}.png`
     link.href = canvas.toDataURL()
     link.click()
   }
 
-  const setUpCanvas = (canvas, w, h) =>{
+  const setUpCanvas = (canvas, w, h) => {
     canvas.setAttribute('width', w)
     canvas.setAttribute('height', h)
   }
@@ -70,7 +70,7 @@ function init() {
   createSign(svgWrapper(signSvg, invertHex('#ffffff'), signDim.w, signDim.h), hideBox)
   
 
-  const combineImages = () =>{
+  const combineImages = () => {
     const dividedImages = document.querySelectorAll('.divided_img')
     // console.log('dividedImages', dividedImages)
     if (!uploadFiles && !dividedImages.length) return
@@ -89,7 +89,7 @@ function init() {
       const h2 = w2 * (w / h)
       setUpCanvas(canvas[1], w * wOffset, h)
       
-      sequence.filter(s=>s !== ' ').forEach((index,i)=>{
+      sequence.filter(s => s !== ' ').forEach((index,i) => {
         const url = dividedImages[thumbData[index].frameId - 1].toDataURL()
         const eachImage = new Image()   
         eachImage.onload = () => { 
@@ -103,8 +103,8 @@ function init() {
     // console.log('u',uploadedFiles)
   }
 
-  const extractCodes = (w, h, ctx) =>{
-    return new Array(Math.round(w) * Math.round(h)).fill('').map((_code, i)=>{
+  const extractCodes = (w, h, ctx) => {
+    return new Array(Math.round(w) * Math.round(h)).fill('').map((_code, i) => {
       const x = i % w
       const y = Math.floor(i / h)
       const c = ctx.getImageData(x, y, 1, 1).data
@@ -117,7 +117,7 @@ function init() {
   }
 
 
-  const createThumbs = (frameIndex, thumbIndex, thumbImage) =>{
+  const createThumbs = (frameIndex, thumbIndex, thumbImage) => {
     thumbImage.classList.add('thumb_image')
     const slot = document.createElement('div')
     const frameId = frameIndex + 1
@@ -139,17 +139,21 @@ function init() {
     output.append(slot)
   }
 
-  const resizeAndPaintCanvas = (canvas, w, h, scale, codes, ctx) =>{
-    setUpCanvas(canvas, w * scale, h * scale)
-    codes.forEach((code, i)=>{
+  const resizeAndPaintCanvas = (canvas, w, h, scale, codes, ctx) => {
+    // ? adding something here to add border
+    // TODO maybe add something to make it toggle-able
+    setUpCanvas(canvas, (w * scale) * 3, (h * scale) * 3)
+    ctx.fillStyle = backgroundColor
+    ctx.fillRect(0, 0, (w * scale) * 3, (h * scale) * 3)
+    codes.forEach((code, i) => {
       const x = (i % w) * scale
       const y = (Math.floor(i / h)) * scale
       ctx.fillStyle = code
-      ctx.fillRect(x, y, scale, scale)
+      ctx.fillRect(x + (w * scale), y + (h * scale), scale, scale)
     })
   }
 
-  const createCopyCanvasAndDisplayThumbs = (canvas, thumbImage, imgNo, imageIndex, divide) =>{
+  const createCopyCanvasAndDisplayThumbs = (canvas, thumbImage, imgNo, imageIndex, divide) => {
     canvas.classList.add('divided_img')
     const scale = +scaleInput.value
     const img = new Image()
@@ -162,12 +166,12 @@ function init() {
         w = uploadSize
         h = uploadSize
       }
-      const newImgWidth = w / imgNo
+      const newImgWidth = imgNo > 0 ? w / imgNo : w
 
       // record canvas' raw width and height to enable scaling
       if (imageIndex === 0) canvasData = { w: newImgWidth, h }
 
-      setUpCanvas(canvas, newImgWidth, h)
+      setUpCanvas(canvas, newImgWidth, h) 
       const ctx = canvas.getContext('2d')
       const offset = divide ? imageIndex * -newImgWidth : 0
       ctx.drawImage(img, offset, 0, w, h)
@@ -181,38 +185,38 @@ function init() {
     img.src = window.URL.createObjectURL(uploadFiles[ divide ? 0 : imageIndex])  
   }
   
-  const makeThumbsDraggable = () =>{
+  const makeThumbsDraggable = () => {
     frames = document.querySelectorAll('.thumb_container')
     slots = document.querySelectorAll('.slot')
-    sequence = new Array(slots.length).fill('').map((_s, i)=> i)
+    sequence = new Array(slots.length).fill('').map((_s, i) => i)
     frames.forEach(frame => addFramePositionActions(frame))
     recordSlotPos()
     updateSequence()
   }
 
-  const downloadDividedImgs = () =>{
+  const downloadDividedImgs = () => {
     if (!output.childNodes.length) return
-    document.querySelectorAll('.divided_img').forEach((c, i)=>{
-      setTimeout(()=>{
+    document.querySelectorAll('.divided_img').forEach((c, i) => {
+      setTimeout(() => {
         downloadImage(c, `${imgNameInput.value}-${i + 1}`)
       }, i * 200)
     })
   }
 
-  const createGif = () =>{
+  const createGif = () => {
     const dividedImages = document.querySelectorAll('.divided_img')
     if (dividedImages.length) {
       const transitionInput = document.querySelectorAll('.transition')
 
-      sequence.filter(s=>s !== ' ').forEach( index =>{
+      sequence.filter(s => s !== ' ').forEach(index => {
         printSign(dividedImages[thumbData[index].frameId - 1])
       })
 
       const encoder = new GIFEncoder()
       encoder.setRepeat(0) //auto-loop
       encoder.start()
-      sequence.filter(s=>s !== ' ').forEach((index,i) =>{
-        encoder.setDelay(transitionInput[i]?.value)
+      sequence.filter(s => s !== ' ').forEach(index => {
+        encoder.setDelay(transitionInput[thumbData[index].frameId - 1]?.value)
         encoder.addFrame(dividedImages[thumbData[index].frameId - 1].getContext('2d'))
       })
       encoder.finish()
@@ -225,7 +229,7 @@ function init() {
     } 
   }  
 
-  const downloadGif = () =>{
+  const downloadGif = () => {
     // console.log(gif.src)
     if (!gif.src) return
 
@@ -235,13 +239,13 @@ function init() {
     link.click()
   }
 
-  const setTargetPos = (target, x, y) =>{
+  const setTargetPos = (target, x, y) => {
     target.style.left = `${x}px`
     target.style.top = `${y}px`
   }
 
-  const updateSequence = () =>{
-    sequenceOutput.value = sequence.map(s=> (s === ' ' || (!s && s !== 0)) ? ' ' : thumbData[s].frameId).join(' ')
+  const updateSequence = () => {
+    sequenceOutput.value = sequence.map(s => (s === ' ' || (!s && s !== 0)) ? ' ' : thumbData[s].frameId).join(' ')
   }
 
   const tidySequence = id => sequence = sequence.map(s => s === id ? ' ' : s )
@@ -276,11 +280,11 @@ function init() {
       document.removeEventListener('mouseup', onLetGo)
       let matchSlot
 
-      frames.forEach(frame=>{
+      frames.forEach(frame => {
         frame.style.backgroundColor = 'transparent'
       }) 
 
-      slotInfo.forEach((info,i)=>{      
+      slotInfo.forEach((info,i) => {      
         const frameInsideSlot = frames[currentSequence[i]]  
         const newX = pos.a + 50
         const newY = pos.b + 55
@@ -296,7 +300,7 @@ function init() {
           matchSlot = true   
 
           if (frameInsideSlot) {
-            frames.forEach(frame=>{
+            frames.forEach(frame => {
               const framePos = currentSequence.indexOf(+frame.dataset.thumb_id)    
               frame.style.transition = '0.3s'
               frame.style.backgroundColor = 'rgba(0, 0, 0, 0.2)'
@@ -326,8 +330,8 @@ function init() {
       updateSequence()
       thumbOutput.value = sequence.join(' ')
       setTargetPos(frame, pos.a, pos.b)
-      setTimeout(()=> frames.forEach(frame => frame.style.transition = '0s'), 0)
-      setTimeout(()=> thumbData[thumbId].draggable = true, 300)
+      setTimeout(() => frames.forEach(frame => frame.style.transition = '0s'), 0)
+      setTimeout(() => thumbData[thumbId].draggable = true, 300)
     }
 
     frame.addEventListener('mousedown', onGrab)
@@ -335,8 +339,8 @@ function init() {
 
   const recordSlotPos = () =>{
     slots = document.querySelectorAll('.slot')
-    setTimeout(()=>{
-      slots.forEach((slot,i)=>{
+    setTimeout(() => {
+      slots.forEach((slot,i) => {
         const { x, y } = slot.getBoundingClientRect()
         slot.dataset.i = i
         slotInfo[i] = { x, y }
@@ -344,10 +348,10 @@ function init() {
     },100)
   }
 
-  const repositionFrames = () =>{
+  const repositionFrames = () => {
     if (!sequence || !sequence.length || !slots) return
     recordSlotPos()
-    sequence.forEach((frame,i)=>{
+    sequence.forEach((frame,i) => {
       if (frame !== ' ' && slotInfo[i]){
         const { x, y } = slotInfo[i] 
         setTargetPos(frames[+frame], x, y)
@@ -355,7 +359,7 @@ function init() {
     })
   }
 
-  const uploadImage = () =>{
+  const uploadImage = () => {
     uploadFiles = upload.files
     frameMode = 'upload'
     imageCount.innerHTML = `image x ${uploadFiles.length}`
@@ -365,7 +369,7 @@ function init() {
     canvasOutput.innerHTML = ''
     sequence.length = 0
     codeData.length = 0
-    new Array(uploadFiles.length).fill('').forEach((_file, i)=>{
+    new Array(uploadFiles.length).fill('').forEach((_file, i) => {
       const thumbImage = document.createElement('img')
       createThumbs(i, i, thumbImage)
       // thumbImage.src = uploadFiles[i].toDataURL()
@@ -381,8 +385,8 @@ function init() {
 
   upload.addEventListener('change', uploadImage )
 
-  const addAddAction = (button, upload) =>{
-    button.addEventListener('click', (e)=>{
+  const addAddAction = (button, upload) => {
+    button.addEventListener('click', e => {
       const frameIndex = +e.target.dataset.frame_id - 1
       const thumbIndex = slots.length
       const thumbImage = document.createElement('img')
@@ -407,8 +411,8 @@ function init() {
     })
   }
 
-  const addDeleteAction = button =>{
-    button.addEventListener('click', (e)=>{
+  const addDeleteAction = button => {
+    button.addEventListener('click', e => {
       const thumbIndex = +e.target.dataset.thumb_id
 
       frames[thumbIndex].classList.add('deleted_frame')
@@ -417,12 +421,12 @@ function init() {
     })
   }
 
-  const addDuplicateAction = upload =>{
+  const addDuplicateAction = upload => {
     document.querySelectorAll('.duplicate').forEach(button => addAddAction(button, upload))
     document.querySelectorAll('.delete').forEach(button => addDeleteAction(button))
   }
 
-  const divide = () =>{
+  const divide = () => {
     if (!uploadFiles || uploadFiles.length > 1) return
     frameMode = 'divide'
     output.innerHTML = ''
@@ -430,7 +434,7 @@ function init() {
     sequence.length = 0
     const imgNo = +imgNoInput.value
     codeData.length = 0
-    new Array(imgNo).fill('').forEach((_file,imageIndex)=>{
+    new Array(imgNo).fill('').forEach((_file,imageIndex) => {
       const thumbImage = document.createElement('img')
       createThumbs(imageIndex, imageIndex, thumbImage)
       
@@ -444,7 +448,7 @@ function init() {
     makeThumbsDraggable()
   }
   
-  const buttonTrigger = (button, classId, action) =>{
+  const buttonTrigger = (button, classId, action) => {
     if (button.classList.contains(classId)) button.addEventListener('click', action)
   }
 
@@ -455,7 +459,7 @@ function init() {
       // const { w, h } = canvasData
       const scale = +scaleInput.value
 
-      dividedImages.forEach((canvas, index)=>{
+      dividedImages.forEach((canvas, index) => {
         const { offsetWidth: w, offsetHeight: h } = canvas
         const ctx = canvas.getContext('2d')
         resizeAndPaintCanvas(canvas, w, h, scale, codeData[index], ctx)
@@ -465,8 +469,8 @@ function init() {
     // console.log(canvasData)
   }
   
-  buttons.forEach(button=>{
-    buttonTrigger(button, 'download_file', ()=>downloadImage(canvas[0], imgNameInput.value))
+  buttons.forEach(button => {
+    buttonTrigger(button, 'download_file', () => downloadImage(canvas[0], imgNameInput.value))
     buttonTrigger(button, 'combine', combineImages)
     buttonTrigger(button, 'divide', divide)
     buttonTrigger(button, 'download_imgs', downloadDividedImgs)
@@ -475,22 +479,22 @@ function init() {
     buttonTrigger(button, 'update_canvas', updateCanvas)
   })
 
-  window.addEventListener('resize',()=>{
+  window.addEventListener('resize',() => {
     repositionFrames()
   })   
   
   // icon alt
-  const handleCursor = e =>{
+  const handleCursor = e => {
     cursor.style.top = `${e.pageY}px`
     cursor.style.left = `${e.pageX}px`
   }
   window.addEventListener('mousemove', handleCursor)
 
-  alts.forEach(button=>{
-    button.addEventListener('mouseover',(e)=>{
+  alts.forEach(button => {
+    button.addEventListener('mouseover', e => {
       cursor.childNodes[0].innerHTML = e.target.dataset.alt
     })
-    button.addEventListener('mouseleave',()=>{
+    button.addEventListener('mouseleave', () => {
       cursor.childNodes[0].innerHTML = ''
     })
   })
