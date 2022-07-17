@@ -10,8 +10,9 @@ function init() {
     canvas.setAttribute('height', h)
   }
 
-  const width = 600
-  const column = 5
+  // const width = 600
+  const width = 16
+  const column = 9
 
   const renderOtherImages = (uploadFiles, width, height) =>{
     for (let i = 1; i < uploadFiles.length; i++ ){
