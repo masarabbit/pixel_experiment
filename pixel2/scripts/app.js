@@ -178,7 +178,7 @@ function init() {
     styleTarget({
       target: elements.cursor,
       x: pos.x + (2 * gridWidth),
-      y: pos.y + (2 * gridWidth),
+      y: pos.y + (2 * gridWidth) + window.scrollY,
       w: cellD - gridWidth,
       h: cellD - gridWidth,
     })

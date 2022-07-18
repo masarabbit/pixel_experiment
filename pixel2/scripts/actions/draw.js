@@ -10,7 +10,7 @@ const drawPos = (e, cellD) => {
   const { top, left } = artboard.getBoundingClientRect()
   return {
     x: nearestN(e.pageX - left, cellD),
-    y: nearestN(e.pageY - top, cellD)
+    y: nearestN(e.pageY - top - window.scrollY, cellD)
   }
 }
 

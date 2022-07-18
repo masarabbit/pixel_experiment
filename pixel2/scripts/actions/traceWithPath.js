@@ -3,6 +3,7 @@ import { fillArea } from '../actions/grid.js'
 import { artData } from '../state.js'
 import { input } from '../elements.js'
 import { calcX, calcY } from '../actions/utils.js'
+import { drawPathWithCoords } from './drawPath.js'
 
 // TODO this one doesn't work (yet)
 
@@ -17,6 +18,8 @@ const traceWithPath = () => {
   //? values which needs reset for each trace
   const checkedIndex = []
   const pos = { x:0, y:0, h:0, v:0 }
+  const stroke = 'blue'
+  const strokeWidth = 0.1
   let arr
   let cI
   let proceed
@@ -36,7 +39,7 @@ const traceWithPath = () => {
       checkedIndex.push(cItoCheck)
 
       pos[letters[cI]] += distanceToMove
-      path.push(`M ${pos.h} ${pos.v}`)
+      path.push([pos.h, pos.v])
       if (pos.h === pos.x && pos.v === pos.y) proceed = false
       cI = cI === 3 ? 0 : cI + 1
     }
@@ -65,12 +68,12 @@ const traceWithPath = () => {
       })
       arr = colors.map((c, i) => areaToTrace.some(a => a === i) ? c : '')
       Object.assign(pos, { x: calcX(first), h: calcX(first), y: calcY(first), v: calcY(first) })
-      const path = [`M ${pos.x} ${pos.y}`]   
+      const path = [[pos.x, pos.y]]   
       cI = 0
       proceed = true
       trace(first, path) // recording traced area
-
-      pathData.push(`<path fill="${currentColor}" d="${path.join(' ')}"/>`)
+      console.log(path)
+      pathData.push(`<path fill="none" d="${drawPathWithCoords(path)}" stroke="${stroke}" stroke-width="${strokeWidth}"/>`)
 
       //* removing traced area
       // when only one square is being traced, area to be traced doesn't get overwritten, so needed to reset it to [], 
