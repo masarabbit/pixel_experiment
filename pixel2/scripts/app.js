@@ -149,6 +149,9 @@ function init() {
     addClickEvent('undo', undo)
     addClickEvent('circles', paintWithCircles)
     addClickEvent('trace_path', traceWithPath)
+    addClickEvent('data_url', ()=> {
+      input.svg.value = artboard.toDataURL()
+    })
   })
 
   artboard.addEventListener('click', colorCell)
