@@ -2,8 +2,8 @@ import { artData } from '../state.js'
 import { input, elements } from '../elements.js'
 import { nearestN, sortByFreqRemoveBlankAndDuplicates } from './utils.js'
 
-// const n = 255
 const n = 1
+// const n = 85
 const rgbToHex = (r, g, b) => {
   if (r > 255 || g > 255 || b > 255)
     throw 'Invalid color component'  

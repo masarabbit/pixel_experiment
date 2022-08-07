@@ -3,6 +3,7 @@ const overlay = document.querySelector('.overlay')
 const artboard = document.querySelector('.artboard')
 const aCtx = artboard.getContext('2d')
 const oCtx = overlay.getContext('2d')
+const body = document.querySelector('body')
 
 const elements = {
   cursor: document.querySelector('.cursor'),
@@ -34,4 +35,5 @@ export {
   oCtx,
   elements,
   input,
+  body
 }

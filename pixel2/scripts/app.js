@@ -6,6 +6,8 @@ import { resize, grid, updateColors } from './actions/grid.js'
 import { updateColor, populateCompletePalette } from './actions/colors.js'
 import { createSelectBox, copySelection, paste, select } from './actions/select.js'
 import traceSvg from '../scripts/actions/traceSvg.js'
+import traceWithPath from '../scripts/actions/traceWithPath.js'
+import paintWithCircles from '../scripts/actions/paintWithCircles.js'
 
 
 // TODO undo - logic added, recordState needs to be added.
@@ -145,6 +147,11 @@ function init() {
     })
     addClickEvent('trace_svg', traceSvg)
     addClickEvent('undo', undo)
+    addClickEvent('circles', paintWithCircles)
+    addClickEvent('trace_path', traceWithPath)
+    addClickEvent('data_url', ()=> {
+      input.svg.value = artboard.toDataURL()
+    })
   })
 
   artboard.addEventListener('click', colorCell)
@@ -174,7 +181,7 @@ function init() {
     styleTarget({
       target: elements.cursor,
       x: pos.x + (2 * gridWidth),
-      y: pos.y + (2 * gridWidth),
+      y: pos.y + (2 * gridWidth) + window.scrollY,
       w: cellD - gridWidth,
       h: cellD - gridWidth,
     })
