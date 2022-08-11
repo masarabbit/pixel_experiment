@@ -139,17 +139,27 @@ function init() {
     output.append(slot)
   }
 
-  const resizeAndPaintCanvas = (canvas, w, h, scale, codes, ctx) => {
-    // ? adding something here to add border
-    // TODO maybe add something to make it toggle-able
-    setUpCanvas(canvas, (w * scale) * 3, (h * scale) * 3)
-    ctx.fillStyle = backgroundColor
-    ctx.fillRect(0, 0, (w * scale) * 3, (h * scale) * 3)
-    codes.forEach((code, i) => {
+  // const resizeAndPaintCanvas = (canvas, w, h, scale, codes, ctx) => {
+  //   // ? adding something here to add border
+  //   // TODO maybe add something to make it toggle-able
+  //   setUpCanvas(canvas, (w * scale) * 3, (h * scale) * 3)
+  //   ctx.fillStyle = backgroundColor
+  //   ctx.fillRect(0, 0, (w * scale) * 3, (h * scale) * 3)
+  //   codes.forEach((code, i) => {
+  //     const x = (i % w) * scale
+  //     const y = (Math.floor(i / h)) * scale
+  //     ctx.fillStyle = code
+  //     ctx.fillRect(x + (w * scale), y + (h * scale), scale, scale)
+  //   })
+  // }
+
+  const resizeAndPaintCanvas = (canvas, w, h, scale, codes, ctx) =>{
+    setUpCanvas(canvas, w * scale, h * scale)
+    codes.forEach((code, i)=>{
       const x = (i % w) * scale
       const y = (Math.floor(i / h)) * scale
       ctx.fillStyle = code
-      ctx.fillRect(x + (w * scale), y + (h * scale), scale, scale)
+      ctx.fillRect(x, y, scale, scale)
     })
   }
 

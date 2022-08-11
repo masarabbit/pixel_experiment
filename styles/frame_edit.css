@@ -251,13 +251,13 @@ button.icon:hover {
 
 #color { display: none; }
 
-/* .hide_box {
+.hide_box {
   height: 0;
   overflow: hidden;
-} */
-/* .divided_img {
+}
+.divided_img {
   visibility: hidden;
-} */
+}
 
 .slot {
   width: 70px;
