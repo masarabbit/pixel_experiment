@@ -68,7 +68,8 @@ nav.two {
   background-color: white;
 }
 
-canvas {
+canvas,
+.onion_bg {
   position: absolute;
   top: 0px;
   left: 0px;
@@ -111,7 +112,8 @@ canvas {
 
 
 .artboard {
-  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAHklEQVQYV2NkgILF/9/+BzEZMQRgMrGMwmBJRnQBAA1GDyEZnkKiAAAAAElFTkSuQmCC) repeat 0 0;
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAHklEQVQYV2NkgILF/9/+BzEZMQRgMrGMwmBJRnQBAA1GDyEZnkKiAAAAAElFTkSuQmCC);
+  background-repeat: repeat 0 0;
 }
 
 [type="file"] {
@@ -412,4 +414,14 @@ textarea {
   width: 5px;
   height: 5px;
   background-color: hotpink;
+}
+
+.onion_bg {
+  /* opacity: 0.5; */
+  pointer-events: none;
+}
+
+.onion_bg > img {
+  width: 100%;
+  height: 100%;
 }

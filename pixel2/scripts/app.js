@@ -88,6 +88,7 @@ function init() {
       console.log(artData.colors)
     }
     imageTarget.src = blobURL
+    artData.blobURL = blobURL
   }
   
   const triggerFill = e =>{
@@ -151,6 +152,14 @@ function init() {
     addClickEvent('trace_path', traceWithPath)
     addClickEvent('data_url', ()=> {
       input.svg.value = artboard.toDataURL()
+    })
+    addClickEvent('onion', ()=> {
+      if (artData.blobURL) {
+        const bg = new Image()
+        elements.onionBg.innerHTML = ''
+        bg.src = artData.blobURL
+        elements.onionBg.appendChild(bg)
+      }
     })
   })
 

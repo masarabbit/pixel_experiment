@@ -12,7 +12,8 @@ const elements = {
   palette: document.querySelector('.palette'),
   flip: document.querySelectorAll('.flip'),
   selectBox: null,
-  alts: document.querySelectorAll('.alt')
+  alts: document.querySelectorAll('.alt'),
+  onionBg: document.querySelector('.onion_bg'),
 }
 
 const input = {
