@@ -100,11 +100,9 @@ const updateColors = {
   },
   column: () => {
     const { row, column } = artData 
-    console.log(row, column)
     artData.colors = updateColors.currentColors().length > 1 
       ? updateColors.currentColors() : Array(row * column).fill('transparent')
     const newColumn = +input.column.value
-    console.log(newColumn)
     const updatedCodes = Array(row).fill('').map((_, i) =>{
       return artData.colors.slice(
         i === 0 ? 0 : i * column, 
@@ -113,7 +111,6 @@ const updateColors = {
     })
     input.colors.value = updatedCodes.map(codes =>{
       const diff = Math.abs(newColumn - column)
-      // console.log(Math.abs(newColumn - column))
       return newColumn > column
         ? [...codes, ...Array(diff).fill('transparent')]
         : codes.slice(0, codes.length - diff)
@@ -121,7 +118,6 @@ const updateColors = {
 
     artData.column = newColumn
     artData.colors = updateColors.currentColors()
-    console.log(artData.colors)
   }
 }
 
