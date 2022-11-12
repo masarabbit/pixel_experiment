@@ -14,8 +14,10 @@ function init() {
   // const width = 16
   // const column = 6
 
-  const width = 36
-  const column = 3
+  // const width = 36
+  // const column = 3
+  const width = 320
+  const column = 4
 
   const renderOtherImages = (uploadFiles, width, height) =>{
     for (let i = 1; i < uploadFiles.length; i++ ){
