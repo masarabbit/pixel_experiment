@@ -2,6 +2,7 @@
 name: Test template
 about: this is a test template
 title: 'TEST'
+label: 'spec out'
 
 ---
 
