@@ -23,8 +23,10 @@ const input = {
   colors: document.querySelector('.colors'),
   svg: document.querySelector('.svg'),
   color: document.querySelector('#color'),
-  colorLabel: document.querySelector('.color_label'),
+  color2: document.querySelector('#color2'),
+  colorLabel: document.querySelectorAll('.color_label'),
   hex: document.querySelector('.hex'),
+  hex2: document.querySelector('.hex2'),
   fileName: document.querySelector('.file_name'),
   upload: document.querySelector('#upload'),
 }

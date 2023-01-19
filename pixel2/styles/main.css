@@ -289,7 +289,14 @@ textarea {
 
 .color_label:hover { transform: scale(1.3); }
 
-#color { display: none; }
+.color_label:nth-of-type(2) {
+  background-color: white;
+}
+
+#color,
+#color2 { display: none; }
+
+
 
 
 /** palette **/

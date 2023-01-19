@@ -9,6 +9,7 @@ const artData = {
   colors: [],
   svg: [],
   hex: '#000000',
+  hex2: '#ffffff',
   prev: [],
   palette: [],
 

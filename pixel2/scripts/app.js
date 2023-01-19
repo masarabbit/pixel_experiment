@@ -1,7 +1,7 @@
 import { artboard, elements, input, aCtx, overlay }  from './elements.js'
 import { styleTarget, mouse, resizeCanvas, copyText, update } from './actions/utils.js'
 import { artData } from './state.js'
-import { continuousDraw, colorCell, paintCanvas, flipImage, drawPos, copyColors, downloadImage, recordState } from './actions/draw.js'
+import { continuousDraw, colorCell, paintCanvas, flipImage, drawPos, copyColors, downloadImage, recordState, updateColorsAndPaint } from './actions/draw.js'
 import { resize, grid, updateColors } from './actions/grid.js'
 import { updateColor, populateCompletePalette } from './actions/colors.js'
 import { createSelectBox, copySelection, paste, select } from './actions/select.js'
@@ -28,25 +28,29 @@ function init() {
   }
 
   Object.keys(input).forEach(key =>{
-    input[key].addEventListener('change', e =>{  
-      if (['color', 'hex'].includes(key)) {
-        updateColor(input[key].value)
-      } else if (key === 'upload') {
-        artData.uploadedFile = input.upload.files[0]
-        document.querySelector('.upload_file_name').innerHTML = artData.uploadedFile.name
-        document.querySelector('.pixelise').classList.remove('display_none')
-      } else if (key === 'colors') {
-        artData.colors = e.target.value.split(',')
-      } else {
-        if (artData[key] !== null) {
-          // column, row and cellD
-          updateColors[key] && updateColors[key]()
-          artData[key] = +e.target.value
-          resize()
-          paintCanvas()
+    if (!input[key][0]) {
+      input[key].addEventListener('change', e =>{  
+        if (['color', 'hex'].includes(key)) {
+          updateColor(input[key].value)
+        } else if (['color2', 'hex2'].includes(key)) {
+          updateColor(input[key].value, 2)
+        } else if (key === 'upload') {
+          artData.uploadedFile = input.upload.files[0]
+          document.querySelector('.upload_file_name').innerHTML = artData.uploadedFile.name
+          document.querySelector('.pixelise').classList.remove('display_none')
+        } else if (key === 'colors') {
+          artData.colors = e.target.value.split(',')
+        } else {
+          if (artData[key] !== null) {
+            // column, row and cellD
+            updateColors[key] && updateColors[key]()
+            artData[key] = +e.target.value
+            resize()
+            paintCanvas()
+          }
         }
-      }
-    })
+      })
+    }
   })
 
 
@@ -160,6 +164,11 @@ function init() {
         bg.src = artData.blobURL
         elements.onionBg.appendChild(bg)
       }
+    })
+    addClickEvent('swap_color', ()=> {
+      console.log('test', artData.hex2, artData.colors)
+      input.colors.value = artData.colors.map(c => c === artData.hex ? artData.hex2 : c)
+      updateColorsAndPaint()
     })
   })
 
