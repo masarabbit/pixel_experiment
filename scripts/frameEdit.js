@@ -12,6 +12,7 @@ function init() {
   const imgNameInput = document.querySelector('.img_name')
   const imgNoInput = document.querySelector('.img_no')
   const scaleInput = document.querySelector('.scale')
+  const factorInput = document.querySelector('.factor')
   const gif = document.querySelector('.gif')
   const hideBox = document.querySelector('.hide_box')
   
@@ -24,6 +25,7 @@ function init() {
   const colorInput = document.querySelector('#color')
   const colorLabel = document.querySelector('.color_label')
   const hexInput = document.querySelector('.hex')
+  const signHexInput = document.querySelector('.sign_hex')
   const uploadSizeInput = document.querySelector('.upload_size')
   const transitionInput = document.querySelector('.transition_input')
   let uploadFiles
@@ -41,18 +43,25 @@ function init() {
   const thumbData = []
   let frameMode = 'upload'
 
-    
-  hexInput.addEventListener('change',() => {
+  const updateSignColor = () => {
+    createSign(svgWrapper(signSvg, signHexInput.value || invertHex(backgroundColor), signDim.w, signDim.h), hideBox)
+  }
+
+  const updateBackgroundColor = () => {
     backgroundColor = hexInput.value
     colorLabel.style.backgroundColor = backgroundColor
-    createSign(svgWrapper(signSvg, invertHex(backgroundColor), signDim.w, signDim.h), hideBox)
-  })
+    createSign(svgWrapper(signSvg, signHexInput.value || invertHex(backgroundColor), signDim.w, signDim.h), hideBox)
+  }
+
+  signHexInput.addEventListener('change', updateSignColor)
+    
+  hexInput.addEventListener('change', updateBackgroundColor)
 
   colorInput.addEventListener('change',() => {
     backgroundColor = colorInput.value
     hexInput.value = backgroundColor
     colorLabel.style.backgroundColor = backgroundColor
-    createSign(svgWrapper(signSvg, invertHex(backgroundColor), signDim.w, signDim.h), hideBox)
+    createSign(svgWrapper(signSvg, signHexInput.value || invertHex(backgroundColor), signDim.w, signDim.h), hideBox)
   })
 
   const downloadImage = (canvas, name, date) => {
@@ -139,29 +148,31 @@ function init() {
     output.append(slot)
   }
 
-  // const resizeAndPaintCanvas = (canvas, w, h, scale, codes, ctx) => {
-  //   // ? adding something here to add border
-  //   // TODO maybe add something to make it toggle-able
-  //   setUpCanvas(canvas, (w * scale) * 3, (h * scale) * 3)
-  //   ctx.fillStyle = backgroundColor
-  //   ctx.fillRect(0, 0, (w * scale) * 3, (h * scale) * 3)
-  //   codes.forEach((code, i) => {
-  //     const x = (i % w) * scale
-  //     const y = (Math.floor(i / h)) * scale
-  //     ctx.fillStyle = code
-  //     ctx.fillRect(x + (w * scale), y + (h * scale), scale, scale)
-  //   })
-  // }
-
-  const resizeAndPaintCanvas = (canvas, w, h, scale, codes, ctx) =>{
-    setUpCanvas(canvas, w * scale, h * scale)
-    codes.forEach((code, i)=>{
+  const resizeAndPaintCanvas = (canvas, w, h, scale, codes, ctx) => {
+    // ? adding something here to add border
+    // TODO maybe add something to make it toggle-able
+    const factor = +factorInput.value
+    setUpCanvas(canvas, (w * scale) * factor, (h * scale) * factor)
+    ctx.fillStyle = backgroundColor
+    ctx.fillRect(0, 0, (w * scale) * factor, (h * scale) * factor)
+    codes.forEach((code, i) => {
       const x = (i % w) * scale
       const y = (Math.floor(i / h)) * scale
       ctx.fillStyle = code
-      ctx.fillRect(x, y, scale, scale)
+      // ctx.fillRect(x + (w * scale), y + (h * scale), scale, scale)
+      ctx.fillRect(x + ((0.5 * (factor - 1)) * w * scale), y + ((0.5 * (factor - 1)) * h * scale), scale, scale)
     })
   }
+
+  // const resizeAndPaintCanvas = (canvas, w, h, scale, codes, ctx) =>{
+  //   setUpCanvas(canvas, w * scale, h * scale)
+  //   codes.forEach((code, i)=>{
+  //     const x = (i % w) * scale
+  //     const y = (Math.floor(i / h)) * scale
+  //     ctx.fillStyle = code
+  //     ctx.fillRect(x, y, scale, scale)
+  //   })
+  // }
 
   const createCopyCanvasAndDisplayThumbs = (canvas, thumbImage, imgNo, imageIndex, divide) => {
     canvas.classList.add('divided_img')
@@ -508,6 +519,23 @@ function init() {
       cursor.childNodes[0].innerHTML = ''
     })
   })
+
+  const query = window.location.hash
+  if (query){
+    const queryArray = query.split('#')
+
+    imgNoInput.value = queryArray[1] || 0
+    scaleInput.value = queryArray[2] || 1
+    factorInput.value = queryArray[3] || 1
+    transitionInput.value = queryArray[4] || 100
+    hexInput.value = queryArray[5] ? `#${queryArray[5]}`: '#000000'
+    signHexInput.value = queryArray[6] ? `#${queryArray[6]}`: null
+
+    if (queryArray[5]) updateBackgroundColor()
+    if (queryArray[6]) updateSignColor()
+  }
+
+  // sample: /frame_edit.html#1#10#3#200#f8b42a#573d05
 
   // const indicator = document.querySelector('.indicator')
   // copyGrid.addEventListener('click',()=>{

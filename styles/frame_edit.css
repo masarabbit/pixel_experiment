@@ -326,7 +326,8 @@ button.icon:hover {
   width: 60px;
 }
 
-.hex {
+.hex,
+.sign_hex {
   width: 75px;
 }
 
