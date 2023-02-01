@@ -73,6 +73,7 @@ const traceSvg = () => {
       trace(first, path) // recording traced area
 
       pathData.push(`<path fill="${currentColor}" d="${path.join(' ')}"/>`)
+      // TODO if there's anything transparent, it needs to be nested inside the path before it, so perhaps store something in pathData first, and go through it in reverse
 
       //* removing traced area
       // when only one square is being traced, area to be traced doesn't get overwritten, so needed to reset it to [], 
@@ -85,54 +86,11 @@ const traceSvg = () => {
   }
   // TODO at this point, can flag transparent so it can be replaced with something
   // need something like evenodd to enable having transparent inside
-  const colors = input.colors.value.split(',').map(c => c === 'transparent' ? '' : c)
+  const colors = input.colors.value.split(',').map(c => c === 'transparent' ? '*' : c)
   convertToSvg(colors)
 
   // TODO perhaps remove redundant space at this point
-  input.svg.value = pathData.join(' ').replaceAll('ffffff','fff').replaceAll('000000','000')
+  input.svg.value = pathData.join(' ').replaceAll('ffffff','fff').replaceAll('000000','000').replaceAll('*','transparent')
 }
 
 export default traceSvg
-
-
-// possible refactor
-
-// const check = [
-//   {
-//     moveDir: 1,
-//     checkDir: -column,
-//     dirFactor: 1,
-//     letter: 'h',
-//   },
-//   {
-//     moveDir: column,
-//     checkDir: 1,
-//     dirFactor: 1,
-//     letter: 'x',
-//   },
-//   {
-//     moveDir: -1,
-//     checkDir: column,
-//     dirFactor: -1,
-//     letter: 'h',
-//   },
-//   {
-//     moveDir: -column,
-//     checkDir: -1,
-//     dirFactor: -1,
-//     letter: 'x',
-//   },
-// ]
-
-
-  //? since transparent is converted to '', removed isEmpty check
-
-  // const isEmpty = value => value === 'transparent'
-
-  // const checkSurroundingCells = (arr, index, cI) => {
-  //   return isEmpty(arr[index + checkDirection[cI]]) || // cell in the  check direction is not filled
-  //   !arr[index + checkDirection[cI]] || // cell in the check direction is the edge
-  //   // below added to ensure trace don't continue on from right edge to left edge
-  //   (cI === 1 && !isEmpty(arr[index + 1]) && index % column === column - 1) || 
-  //   (cI === 3 && !isEmpty(arr[index - 1]) && index % column === 0)
-  // }
