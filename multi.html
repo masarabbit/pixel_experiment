@@ -11,8 +11,27 @@
     <input id="upload" type="file" multiple/>
     <label for="upload" class="upload icon alt"></label>
     <button class="download icon download_file alt"></button>
+    <div class="input_wrap">
+      <label>file name</label>
+      <input class="file_name input" data-type="file_name" />
+    </div>
+    <div class="input_wrap">
+      <label>column</label>
+      <input class="column no input" data-type="column" placeholder="column" value="16" />
+    </div>
+    <div class="input_wrap">
+      <label>row</label>
+      <input class="row no input" data-type="row" placeholder="row" value="16" />
+    </div>
+    <div class="input_wrap">
+      <label>width</label>
+      <input class="width no input" data-type="width" placeholder="width" value="16" />
+    </div>
+    <button class="split icon alt">split</button>
+    <button class="download_split icon alt">download split</button>
   </nav>
 
   <canvas></canvas>
+  <div class="canvas_output"></div>
 </body>
 </html>

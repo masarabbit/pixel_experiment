@@ -67,6 +67,7 @@ button.icon {
   cursor: pointer;
   filter: invert(100%);
   border: 0;
+  margin-right: 10px;
 }
 
 input {
@@ -74,6 +75,27 @@ input {
   color: black;
   border: 0;
   height: 20px;
+}
+
+.input.no {
+  width: 50px;
+}
+
+.input_wrap {
+  display: flex;
+  flex-direction: column;
+  margin: 0 5px;
+}
+
+.input_wrap label {
+  border: 0;
+  font-size: 10px;
+  height: 11px;
+  padding: 0;
+  margin: -1px 0 1px 0;
+  text-align: left;
+  display: flex;
+  align-items: center;
 }
 
 
@@ -86,3 +108,16 @@ button:hover {
 
 .upload { background: url(/icon/upload.svg); }
 .download_file { background: url(/icon/download.svg); }
+
+
+/* .canvas_output {
+  border: 1px solid red;
+  width: 800px;
+  height: 800px;
+  display: flex;
+} */
+
+.canvas_output > canvas {
+  margin: 5px;
+  background-color: transparent;
+}
