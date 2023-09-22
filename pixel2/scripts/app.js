@@ -89,7 +89,6 @@ function init() {
       })
       input.colors.value = artData.colors
       populateCompletePalette(artData.colors)
-      console.log(artData.colors)
     }
     imageTarget.src = blobURL
     artData.blobURL = blobURL
@@ -166,9 +165,43 @@ function init() {
       }
     })
     addClickEvent('swap_color', ()=> {
-      console.log('test', artData.hex2, artData.colors)
       input.colors.value = artData.colors.map(c => c === artData.hex ? artData.hex2 : c)
       updateColorsAndPaint()
+    })
+    addClickEvent('output_from_data_url', ()=> {
+      // TODO could update this to reuse logic from output
+      if (input.svg.value?.[0] === 'd') {
+        const img = new Image()
+        img.onload = () => {
+          const { cellD, column, row } = artData 
+          const { naturalWidth: w, naturalHeight: h } = img
+          artData.calcHeight = (column * cellD) * (h / w)
+          artData.calcWidth = artData.calcHeight * (w / h)
+          const { calcWidth, calcHeight } = artData 
+          resizeCanvas({
+            canvas: artboard, 
+            w: calcWidth, h: calcHeight - (calcHeight % cellD)
+          })   
+          aCtx.drawImage(img, 0, 0, calcWidth, calcHeight)
+          copyColors({
+            w: column, h: row, 
+            ctx: aCtx, 
+            data: artData.colors
+          })
+          // revert canvas size before painting
+          resizeCanvas({
+            canvas: artboard, 
+            w: column * cellD, h: row * cellD
+          })
+          paintCanvas()
+          copyColors({
+            w: column, h: row, 
+            ctx: aCtx, 
+            data: artData.colors
+          })
+        }
+        img.src = input.svg.value
+      }
     })
   })
 
