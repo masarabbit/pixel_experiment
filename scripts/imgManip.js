@@ -178,7 +178,7 @@ function init() {
   const mouseMove = (t, e, a) => addEvents(t, e, a, ['mousemove', 'touchmove'])
   const mouseDown = (t, e, a) => addEvents(t, e, a, ['mousedown', 'touchstart'])
   const mouseEnter = (t, e, a) => addEvents(t, e, a, ['mouseenter', 'touchstart'])
-  const mouseLeave = (t, e, a) => addEvents(t, e, a, ['mouseleave', 'touchmove'])
+  const mouseLeave = (t, e, a) => addEvents(t, e, a, ['mouseleave'])
 
 
   const makeDraggable = (target, targetSpriteData) => {
