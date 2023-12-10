@@ -314,7 +314,7 @@ textarea {
   position: relative;
   height: 30px;
   width: 30px;
-  margin: 0 5px 0 0;
+  margin: 3px;
 }
 
 .palette_cell:hover {
