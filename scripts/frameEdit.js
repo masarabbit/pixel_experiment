@@ -115,7 +115,7 @@ function init() {
   const extractCodes = (w, h, ctx) => {
     return new Array(Math.round(w) * Math.round(h)).fill('').map((_code, i) => {
       const x = i % w
-      const y = Math.floor(i / h)
+      const y = Math.floor(i / w)
       const c = ctx.getImageData(x, y, 1, 1).data
 
       // this thing included here to prevent rendering black instead of transparent
@@ -149,6 +149,7 @@ function init() {
   }
 
   const resizeAndPaintCanvas = (canvas, w, h, scale, codes, ctx) => {
+    
     // ? adding something here to add border
     // TODO maybe add something to make it toggle-able
     const factor = +factorInput.value
@@ -157,7 +158,8 @@ function init() {
     ctx.fillRect(0, 0, (w * scale) * factor, (h * scale) * factor)
     codes.forEach((code, i) => {
       const x = (i % w) * scale
-      const y = (Math.floor(i / h)) * scale
+      const y = (Math.floor(i / w)) * scale
+      // console.log('test',i,  x, y)
       ctx.fillStyle = code
       // ctx.fillRect(x + (w * scale), y + (h * scale), scale, scale)
       ctx.fillRect(x + ((0.5 * (factor - 1)) * w * scale), y + ((0.5 * (factor - 1)) * h * scale), scale, scale)
@@ -229,9 +231,9 @@ function init() {
     if (dividedImages.length) {
       const transitionInput = document.querySelectorAll('.transition')
 
-      sequence.filter(s => s !== ' ').forEach(index => {
-        printSign(dividedImages[thumbData[index].frameId - 1])
-      })
+      // sequence.filter(s => s !== ' ').forEach(index => {
+      //   printSign(dividedImages[thumbData[index].frameId - 1])
+      // })
 
       const encoder = new GIFEncoder()
       encoder.setRepeat(0) //auto-loop
