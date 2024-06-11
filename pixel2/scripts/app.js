@@ -92,6 +92,7 @@ function init() {
     }
     imageTarget.src = blobURL
     artData.blobURL = blobURL
+    recordState()
   }
   
   const triggerFill = e =>{
