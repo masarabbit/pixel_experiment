@@ -5,14 +5,14 @@ function init() {
   const isNum = x => typeof x === 'number'
   const px = n => `${n}px`
 
-  // const n = 1
-  // const rgbToHex = (r, g, b) => {
-  //   if (r > 255 || g > 255 || b > 255)
-  //     throw 'Invalid color component'  
-  //   return ((nearestN(r, n) << 16) | (nearestN(g, n) << 8) | nearestN(b, n)).toString(16)
-  // }
+  const n = 1
+  const rgbToHex = (r, g, b) => {
+    if (r > 255 || g > 255 || b > 255)
+      throw 'Invalid color component'  
+    return ((nearestN(r, n) << 16) | (nearestN(g, n) << 8) | nearestN(b, n)).toString(16)
+  }
   
-  // const hex = rgb => '#' + ('000000' + rgb).slice(-6)
+  const hex = rgb => '#' + ('000000' + rgb).slice(-6)
 
   const convertCameCase = string => {
     return string.split('').map(letter => {
@@ -35,15 +35,16 @@ function init() {
   const elements = {
     wrapper: document.querySelector('.wrapper'),
     canvasWrapper: document.querySelector('.canvas-wrapper'),
-    nav: document.querySelector('nav')
+    nav: document.querySelectorAll('nav')
   }
 
   const settings = {
-    column: 40,
-    row: 30,
-    cellSize: 10,
+    column: 16,
+    row: 16,
+    cellSize: 20,
     hex: '#000000',
     hex2: null,
+    fileName: '',
     colors: [],
     get d() { return this.cellSize },
     // get color() { return this.hex },
@@ -55,7 +56,14 @@ function init() {
       // get a() {
       //   return this.test
       // },
+    },
+    calcX(cell) {
+      return cell % this.column
+    },
+    calcY(cell) {
+      return Math.floor(cell / this.column)
     }
+
   }
 
   class Input {
@@ -65,18 +73,22 @@ function init() {
       Object.assign(this, {
         el: Object.assign(document.createElement('div'), {
           className: isColorInput ? '' : 'input-wrap',
-          innerHTML: `<label class="${isColorInput ? 'color-label' : ''}" for="${props.inputName}">${ isColorInput ? '' : label}</label>`
+          innerHTML: `
+            <label class="${isColorInput ? 'color-label' : ''}" for="${props.inputName}">
+              ${isColorInput ? '' : label}
+            </label>
+            <input 
+              id="${props.inputName}" 
+              class="${props?.className || ''} ${props.inputName} input" 
+              type="${isColorInput ? 'color' : 'text'}" 
+              placeholder="${label}"
+            >
+          `
         }),
         ...props,
       })
       props.container.appendChild(this.el)
-      this.input = Object.assign(document.createElement('input'), {
-        className: `${this?.className || ''} ${this.inputName} input`,
-        id: this.inputName,
-        type: isColorInput ? 'color' : 'text',
-        placeholder: label
-      })
-      this.el.appendChild(this.input)
+      this.input = this.el.querySelector('input')
       this.input.addEventListener('change', e => {
         settings[this.key] = e.target.value
         if (isColorInput || this.inputName.includes('hex')) this.updateColor()
@@ -100,7 +112,6 @@ function init() {
     }
   }
 
-
   class Button {
     constructor(props) {
       Object.assign(this, {
@@ -112,6 +123,37 @@ function init() {
       })
       props.container.appendChild(this.el)
       this.el.addEventListener('click', this.action)
+    }
+  }
+
+  class TextArea {
+    constructor(props) {
+      Object.assign(this, {
+        input: Object.assign(document.createElement('textarea'), {
+          className: props.className,
+          spellcheck: false,
+        }),
+        ...props
+      })
+      this.container.append(this.input)
+      this.input.addEventListener('change', this.action)
+      const buttonWrapper = Object.assign(document.createElement('div'), {
+        className: 'mini-wrap',
+      })
+      this.container.append(buttonWrapper)
+      this.buttons.forEach(b => {
+        new Button({
+          ...b,
+          container: buttonWrapper,
+          action: ()=> b.action(this)
+        })
+      })
+      settings.inputs[this.className] = this
+    }
+    copyText() {
+      this.input.select()
+      this.input.setSelectionRange(0, 999999) // For mobile devices 
+      document.execCommand('copy')
     }
   }
 
@@ -134,6 +176,12 @@ function init() {
       return {
         x: this.x,
         y: this.y,
+      }
+    }
+    get size() {
+      return {
+        w: this.w,
+        h: this.h,
       }
     }
     setStyles() {
@@ -161,23 +209,25 @@ function init() {
         ...props,
       })
       if (props?.container) this.addToPage()
-      this.ctx = this.el.getContext('2d')
+      this.ctx = this.el.getContext('2d', {willReadFrequently: true} )
       // this.ctx.imageSmoothingEnabled = false
       this.resizeCanvas()
     }
-    resizeCanvas(w, h) {
+    resizeCanvas({ w, h }={}) {
+      // console.log('test', w, h)
       if (w) this.w = w
       if (h) this.h = h
-      this.setStyles()
+      // this.setStyles()
       this.el.setAttribute('width', this.w)
       this.el.setAttribute('height', this.h || this.w)
     }
     drawGrid() {
-      const { gridColor, gridWidth, ctx, d } = this
-      const { column, row } = settings
+      const { gridColor, gridWidth, ctx } = this
+      const { column, row, d } = settings
       ctx.strokeStyle = gridColor
       ctx.beginPath()
       const pos = (n, max) => n * d + (n === max ? -gridWidth : gridWidth)
+
       for (let x = 0; x <= column; x++) {
         ctx.moveTo(pos(x, column), gridWidth)
         ctx.lineTo(pos(x, column), this.h - gridWidth)
@@ -202,6 +252,7 @@ function init() {
         draw: false,
         ...props,
       })
+      this.setStyles()
       const { w, h, d } = this
       ;['drawboard', 'overlay'].forEach(className => {
         this[className] = new Canvas({
@@ -255,14 +306,70 @@ function init() {
       if (this.draw) this.colorCell(e) 
     }
     updateSize() {
-      console.log('test', this)
       this.w = settings.column * settings.d,
       this.h = settings.row * settings.d,
       this.d = settings.d
       this.setStyles()
-      this.drawboard.resizeCanvas(this.w, this.h)
-      this.overlay.resizeCanvas(this.w, this.h)
+      this.drawboard.resizeCanvas(this.size)
+      this.overlay.resizeCanvas(this.size)
       this.overlay.drawGrid()
+    }
+    copyColors() {
+      settings.colors.length = 0
+      const { column: w, row: h, d } = settings
+      const offset = Math.floor(d / 2)
+      for (let i = 0; i < w * h; i++) {
+        const x = i % w * d
+        const y = Math.floor(i / w) * d
+        const c = this.drawboard.ctx.getImageData(x + offset, y + offset, 1, 1).data //offset
+        // this thing included here to prevent rendering black instead of transparent
+        c[3] === 0
+          ? settings.colors.push('transparent')
+          : settings.colors.push(hex(rgbToHex(c[0], c[1], c[2])))
+      }
+    }
+    paintFromColors() {
+      const { d } = settings
+      settings.colors.forEach((c, i)=>{
+        this.drawboard.ctx.fillStyle = c || 'transparent'
+        this.drawboard.ctx.fillRect(settings.calcX(i) * d, settings.calcY(i) * d, d, d)
+      })
+    }
+    paintCanvas() {
+      const { column, row, d } = settings
+      this.drawboard.ctx.clearRect(0, 0, column * d, row * d)
+      this.paintFromColors()
+      // populatePalette(artData.colors)
+      // recordState()
+    }
+    output() {
+      const { column, row, d } = settings
+      if (!this.uploadedFile) return
+      const blobURL = window.URL.createObjectURL(this.uploadedFile)
+      const imageTarget = new Image()
+      
+      imageTarget.onload = () => {
+        const { naturalWidth: w, naturalHeight: h } = imageTarget
+        const calcHeight = (column * d) * (h / w)
+        const calcWidth = calcHeight * (w / h)
+
+        this.drawboard.resizeCanvas({ w: calcWidth, h: calcHeight - (calcHeight % d) })   
+        this.drawboard.ctx.drawImage(imageTarget, 0, 0, calcWidth, calcHeight)
+        this.copyColors()
+        // revert canvas size before painting
+        this.drawboard.resizeCanvas({
+          // canvas: artboard, 
+          w: column * d, h: row * d
+        })
+        this.paintCanvas()
+        // this.copyColors() // why repeat?
+        console.log(settings.inputs)
+        settings.inputs.colors.input.value = settings.colors
+        // populateCompletePalette(artData.colors)
+      }
+      imageTarget.src = blobURL
+      this.blobURL = blobURL
+      // recordState()
     }
   }
 
@@ -272,16 +379,65 @@ function init() {
     d: settings.d
   })
 
-  ;['column', 'row', 'color', 'hex', 'color2', 'hex2', 'cellSize'].forEach(inputName => {
+  ;['column', 'row', 'color', 'hex', 'color2', 'hex2', 'cellSize', 'fileName'].forEach(inputName => {
     const isNum = ['column', 'row', 'cellSize'].includes(inputName)
     settings.inputs[inputName] = new Input({
       inputName,
-      container: elements.nav,
+      container: elements.nav[0],
       className: isNum ? 'no' : '',
       update: isNum
         ? ()=> artboard.updateSize()
         : null
     })
+  })
+
+  class Upload{
+    constructor(props) {
+      Object.assign(this, {
+        el: Object.assign(document.createElement('div'), {
+          className: 'upload-wrapper',
+          innerHTML: `
+            <input id="upload" type="file" single/>
+            <label for="upload" data-alt="upload image file" class="upload icon alt"></label>
+            <div></div>
+          `
+        }),
+        ...props
+      })
+      this.container.appendChild(this.el)
+      ;['input', 'label', 'display'].forEach(key => this[key] = this.el.querySelector(`${key === 'display' ? 'div' : key}`))
+
+      this.pixeliseBtn = new Button({
+        container: this.container,
+        className: 'pixelise icon d-none',
+        action: ()=> {
+          artboard.output()
+          console.log('pixelise')
+        }
+      })
+      this.el.addEventListener('change', () => {
+        artboard.uploadedFile = this.input.files[0]
+        this.display.innerHTML = artboard.uploadedFile.name
+        this.pixeliseBtn.el.classList.remove('d-none')
+      }) 
+    }
+  }
+  
+  new Upload({ container: elements.nav[1] })
+
+  new TextArea({
+    container: elements.wrapper,
+    className: 'colors',
+    action: e => {
+      settings.colors = e.target.value
+    },
+    buttons: [
+      {
+        className: 'icon copy',
+        action: textArea => textArea.copyText()
+      }
+    ]
+
   })
 
 
