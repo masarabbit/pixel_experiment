@@ -24,11 +24,7 @@ class Input {
     })
     props.container.appendChild(this.el)
     this.input = this.el.querySelector('input')
-    this.input.addEventListener('change', e => {
-      settings[this.key] = e.target.value
-      if (isColorInput || this.inputName.includes('hex')) this.updateColor()
-      if (this.update) this.update() 
-    })
+    this.addChangeListener()
     if (this.default) settings[this.inputName] = this.default
     if (isColorInput) {
       this.label = this.el.querySelector('label')
@@ -44,6 +40,61 @@ class Input {
     const label = this.label || settings.inputs[this.inputName.replace('hex', 'color')].label
     label.style.backgroundColor = settings[this.key]
     if (settings?.inputs[this.key]) settings.inputs[this.key].input.value = settings[this.key]
+  }
+  addChangeListener() {
+    this.input.addEventListener('change', e => {
+      settings[this.key] = e.target.value
+      if (['color', 'color2', 'hex', 'hex2'].includes(this.inputName)) this.updateColor()
+      if (this.update) this.update() 
+    })
+  
+  }
+}
+
+// TODO currently a bit buggy
+class SizeInput extends Input {
+  addChangeListener() {
+    this.input.addEventListener('change', e => {
+      this[this.inputName] && this[this.inputName]()
+      settings[this.key] = e.target.value
+      if (this.update) this.update() 
+    })
+  }
+  get currentColors() {
+    return settings.inputs.colors.value
+  }
+  row = () => {
+    const { row, column } = settings
+    settings.colors = this.currentColors.length > 1 
+      ? this.currentColors : Array(row * column).fill('transparent')
+    const newRow = +this.input.value
+    const diff = Math.abs(newRow - row) 
+
+    settings.inputs.colors.value = newRow > row
+      ?  [...settings.colors, ...Array(diff * column).fill('transparent')]
+      :  settings.colors.slice(0, settings.colors.length - (diff * column))
+
+    settings.colors = this.currentColors
+  }
+  column = () => {
+    const { row, column } = settings
+    settings.colors = this.currentColors.length > 1 
+      ? this.currentColors : Array(row * column).fill('transparent')
+    const newColumn = +this.input.value
+    const updatedCodes = Array(row).fill('').map((_, i) =>{
+      return settings.colors.slice(
+        i === 0 ? 0 : i * column, 
+        i === 0 ? column : (i + 1) * column
+      )
+    })
+    settings.inputs.colors.value = updatedCodes.map(codes =>{
+      const diff = Math.abs(newColumn - column)
+      return newColumn > column
+        ? [...codes, ...Array(diff).fill('transparent')]
+        : codes.slice(0, codes.length - diff)
+    }).join(',')
+
+    settings.colors = this.currentColors
   }
 }
 
@@ -70,6 +121,12 @@ class TextArea {
       })
     })
     settings.inputs[this.className] = this
+  }
+  get value() {
+    return this.input.value.split(',')
+  }
+  set value(val) {
+    this.input.value = val
   }
   copyText() {
     this.input.select()
@@ -117,13 +174,14 @@ class Button {
       ...props,
     })
     props.container.appendChild(this.el)
-    this.el.addEventListener('click', this.action)
+    this.el.addEventListener('click', ()=> this.action(this))
   }
 }
 
 
 export {
   Input,
+  SizeInput,
   TextArea,
   Button,
   Upload

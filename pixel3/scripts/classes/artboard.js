@@ -76,6 +76,7 @@ class Artboard extends PageObject {
       // artData.cursor = null
     })
     // mouse.enter(artboard, 'add', ()=> artData.cursor = 'artboard')
+    this.refresh()
   }
   drawPos = e => {
     const { top, left } = this.drawboard.el.getBoundingClientRect()
@@ -95,9 +96,9 @@ class Artboard extends PageObject {
       : settings.hex  // transparent replaced with ''
     const index = ((y / d - 1) * column) + x / d - 1
     settings.fill
-      ? fillBucket(index)
+      ? this.fillBucket(index)
       : settings.colors[index] = value
-    // input.colors.value = artData.colors
+    settings.inputs.colors.value = settings.colors
 
     // if (!artData.palette.includes(value)) {
     //   artData.palette.push(value)
@@ -108,7 +109,7 @@ class Artboard extends PageObject {
   continuousDraw = e => {
     if (this.draw) this.colorCell(e)
   }
-  updateSize() {
+  resize() {
     this.w = settings.column * settings.d,
     this.h = settings.row * settings.d,
     this.d = settings.d
@@ -145,6 +146,10 @@ class Artboard extends PageObject {
     // populatePalette(artData.colors)
     // recordState()
   }
+  updateColorsAndPaint() {
+    settings.colors = settings.inputs.colors.value
+    this.paintCanvas()
+  }
   output() {
     const { column, row, d } = settings
     if (!this.uploadedFile) return
@@ -160,13 +165,10 @@ class Artboard extends PageObject {
       this.drawboard.ctx.drawImage(imageTarget, 0, 0, calcWidth, calcHeight)
       this.copyColors()
       // revert canvas size before painting
-      this.drawboard.resizeCanvas({
-        // canvas: artboard, 
-        w: column * d, h: row * d
-      })
+      this.drawboard.resizeCanvas({ w: column * d, h: row * d })
       this.paintCanvas()
       // this.copyColors() // why repeat?
-      settings.inputs.colors.input.value = settings.colors
+      settings.inputs.colors.value = settings.colors
       // populateCompletePalette(artData.colors)
     }
     imageTarget.src = blobURL
@@ -178,6 +180,41 @@ class Artboard extends PageObject {
     link.download = `${settings.inputs.fileName.value || 'art'}_${new Date().getTime()}.png`
     link.href = this.drawboard.el.toDataURL()
     link.click()
+  }
+  fillArea = ({ i, valueToCheck }) =>{
+    const fillArea = []
+    const fillStack = []
+    const { column: w } = settings
+    fillStack.push(i) // first cell to fill
+    
+    while (fillStack.length > 0){
+      const checkCell = fillStack.pop() // removes from area to check
+      if (settings.colors[checkCell] !== valueToCheck) continue // cell value already valueToCheck?
+      if (fillArea.some(d => d === checkCell)) continue // in fillArea already?
+      fillArea.push(checkCell) // if passed above check, include in fillArea
+      if (checkCell % w !== 0) fillStack.push(checkCell - 1) // check left
+      if (checkCell % w !== w - 1) fillStack.push(checkCell + 1) // check right
+      fillStack.push(checkCell + w) // check up
+      fillStack.push(checkCell - w) // check down
+    }
+    return fillArea
+  }
+  fillBucket = index => {
+    const fillValue = settings.erase ? 'transparent' : settings.hex  //! '' instead of transparent
+    const valueToSwap = settings.colors[index]
+    const fillAreaBucket = this.fillArea({
+        i: +index, 
+        valueToCheck: valueToSwap, 
+      })
+    settings.inputs.colors.value = settings.inputs.colors.value.map((c, i)=>{
+      if (!fillAreaBucket.includes(i)) return c
+      return c === valueToSwap ? fillValue : c
+    }).join(',')
+    this.updateColorsAndPaint()
+  }
+  refresh() {
+    settings.colors = Array(settings.row * settings.column).fill('transparent')
+    settings.inputs.colors.value = settings.colors
   }
 }
 

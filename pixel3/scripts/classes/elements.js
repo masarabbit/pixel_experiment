@@ -8,6 +8,7 @@ const elements = {
 }
 
 const settings = {
+  test: 0,
   column: 16,
   row: 16,
   cellSize: 20,
