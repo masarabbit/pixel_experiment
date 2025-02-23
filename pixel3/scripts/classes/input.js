@@ -36,6 +36,9 @@ class Input {
   get key() {
     return this.inputName.replace('color', 'hex')
   }
+  get value() {
+    return +this.input.value
+  }
   updateColor() {
     const label = this.label || settings.inputs[this.inputName.replace('hex', 'color')].label
     label.style.backgroundColor = settings[this.key]
@@ -55,7 +58,7 @@ class Input {
 class SizeInput extends Input {
   addChangeListener() {
     this.input.addEventListener('change', e => {
-      this[this.inputName] && this[this.inputName]()
+      this.resizeColors()
       settings[this.key] = e.target.value
       if (this.update) this.update() 
     })
@@ -63,38 +66,23 @@ class SizeInput extends Input {
   get currentColors() {
     return settings.inputs.colors.value
   }
-  row = () => {
-    const { row, column } = settings
-    settings.colors = this.currentColors.length > 1 
-      ? this.currentColors : Array(row * column).fill('transparent')
-    const newRow = +this.input.value
-    const diff = Math.abs(newRow - row) 
-
-    settings.inputs.colors.value = newRow > row
-      ?  [...settings.colors, ...Array(diff * column).fill('transparent')]
-      :  settings.colors.slice(0, settings.colors.length - (diff * column))
-
-    settings.colors = this.currentColors
-  }
-  column = () => {
-    const { row, column } = settings
-    settings.colors = this.currentColors.length > 1 
-      ? this.currentColors : Array(row * column).fill('transparent')
-    const newColumn = +this.input.value
-    const updatedCodes = Array(row).fill('').map((_, i) =>{
-      return settings.colors.slice(
-        i === 0 ? 0 : i * column, 
-        i === 0 ? column : (i + 1) * column
-      )
-    })
-    settings.inputs.colors.value = updatedCodes.map(codes =>{
-      const diff = Math.abs(newColumn - column)
-      return newColumn > column
-        ? [...codes, ...Array(diff).fill('transparent')]
-        : codes.slice(0, codes.length - diff)
-    }).join(',')
-
-    settings.colors = this.currentColors
+  resizeColors = () => {
+    const { column } = settings
+    const newArr = settings.colors.reduce((acc, _, i) => {
+      if (i % column === 0) acc.push(settings.colors.slice(i, i + column))
+      return acc
+    }, [])
+    
+    newArr.length = settings.inputs.row.value
+    // newArr.fill(new Array(newArr.length).fill('transparent'), row)
+    
+    settings.inputs.colors.value = newArr.map(arr => {
+      const arrCopy = arr
+      arrCopy.length = settings.inputs.column.value
+      arrCopy.fill('transparent', column)
+      return arrCopy
+    }).flat(1)
+    settings.colors =  settings.inputs.colors.value
   }
 }
 
