@@ -1,8 +1,9 @@
-import { px } from '../utils.js'
-
+import { px, nearestN, roundedClient, mouse } from '../utils.js'
+import { settings } from '../elements.js'
 class PageObject {
   constructor(props) {
     Object.assign(this, {
+      grabPos: { a: { x: 0, y: 0 }, b: { x: 0, y: 0 } },
       ...props,
     })
   }
@@ -39,6 +40,40 @@ class PageObject {
   }
   remove() {
     this.el.remove()
+  }
+  makeDraggable() {
+    mouse.down(this.el, 'add', this.onGrab)
+  }
+  drag = (e, x, y) => {
+    if (e.type[0] === 'm') e.preventDefault()
+    this.grabPos.a.x = this.grabPos.b.x - x
+    this.grabPos.a.y = this.grabPos.b.y - y
+    this.x -= this.grabPos.a.x
+    this.y -= this.grabPos.a.y
+    console.log('drag')
+    this.setStyles()
+  }
+  onGrab = e => {
+    this.grabPos.b.x = nearestN(roundedClient(e, 'X'), settings.d)
+    this.grabPos.b.y = nearestN(roundedClient(e, 'Y'), settings.d)
+    mouse.up(document, 'add', this.onLetGo)
+    mouse.move(document, 'add', this.onDrag)
+  }
+  onDrag = e => {
+    const x = nearestN(roundedClient(e, 'X'), settings.d)
+    const y = nearestN(roundedClient(e, 'Y'), settings.d)
+    this.canMove
+      ? this.drag(e, x, y)
+      : this.dragAction(e)
+    this.grabPos.b.x = x
+    this.grabPos.b.y = y
+  }
+  dragAction(e) {
+    console.log('drag')
+  }
+  onLetGo = () => {
+    mouse.up(document, 'remove', this.onLetGo)
+    mouse.move(document, 'remove', this.onDrag)
   }
 }
 

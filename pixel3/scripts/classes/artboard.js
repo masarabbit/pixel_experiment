@@ -67,41 +67,13 @@ class SelectBox extends Canvas {
     super({
       ...props,
       className: 'select-box',
-      grabPos: { a: { x: 0, y: 0 }, b: { x: 0, y: 0 } },
       defPos: { x: props.x, y: props.y },
       canMove: false,
       copyData: [],
     })
-    mouse.down(this.el, 'add', this.onGrab)
+    this.makeDraggable()
   }
-  drag = (e, x, y) => {
-    if (e.type[0] === 'm') e.preventDefault()
-    this.grabPos.a.x = this.grabPos.b.x - x
-    this.grabPos.a.y = this.grabPos.b.y - y
-    this.x -= this.grabPos.a.x
-    this.y -= this.grabPos.a.y
-    this.setStyles()
-  }
-  onGrab = e => {
-    this.grabPos.b.x = nearestN(roundedClient(e, 'X'), settings.d)
-    this.grabPos.b.y = nearestN(roundedClient(e, 'Y'), settings.d)
-    mouse.up(document, 'add', this.onLetGo)
-    mouse.move(document, 'add', this.onDrag)
-  }
-  onDrag = e => {
-    const x = nearestN(roundedClient(e, 'X'), settings.d)
-    const y = nearestN(roundedClient(e, 'Y'), settings.d)
-    this.canMove
-      ? this.drag(e, x, y)
-      : this.resizeBox(e)
-    this.grabPos.b.x = x
-    this.grabPos.b.y = y
-  }
-  onLetGo = () => {
-    mouse.up(document, 'remove', this.onLetGo)
-    mouse.move(document, 'remove', this.onDrag)
-  }
-  resizeBox = e =>{
+  dragAction = e =>{
     const { defPos } = this
     const { x, y } = elements.artboard.drawPos(e)
     this.x = x > defPos.x ? defPos.x : x
@@ -165,13 +137,13 @@ class Artboard extends PageObject {
     this.overlay.el.addEventListener('click', e => this.createSelectBox(e))
 
     this.drawboard.el.addEventListener('click', this.colorCell)
-    mouse.down(this.drawboard.el, 'add', () => this.draw = true)
-    mouse.up(this.drawboard.el, 'add', () => this.draw = false)
-    mouse.move(this.drawboard.el, 'add', e => this.continuousDraw(e))
-    mouse.leave(this.drawboard.el, 'add', () => {
-      this.draw = false
-      // artData.cursor = null
-    })
+    // mouse.down(this.drawboard.el, 'add', () => this.draw = true)
+    // mouse.up(this.drawboard.el, 'add', () => this.draw = false)
+    // mouse.move(this.drawboard.el, 'add', e => this.continuousDraw(e))
+    // mouse.leave(this.drawboard.el, 'add', () => {
+    //   this.draw = false
+    //   // artData.cursor = null
+    // })
     // mouse.enter(artboard, 'add', ()=> artData.cursor = 'artboard')
     this.refresh()
   }

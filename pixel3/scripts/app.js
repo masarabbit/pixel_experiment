@@ -165,6 +165,7 @@ function init() {
       btnText: 'show setting',
       action: ()=> {
         console.log(settings)
+        console.log(elements)
       }
     },
   ].forEach(b => {
@@ -182,6 +183,9 @@ function init() {
 
   elements.artboard.paintCanvas()
 
+  elements.artboard.makeDraggable()
+  elements.artboard.canMove = true
+  elements.artboard.el.style.position = 'absolute'
 }
 
 window.addEventListener('DOMContentLoaded', init)
