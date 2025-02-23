@@ -141,19 +141,6 @@ class SelectBox extends Canvas {
       settings.inputs.colors.value = settings.colors
     }
     copyTarget.src = this.el.toDataURL()
-
-
-    // TODO old logic for handling paste
-    // const width = w / d
-    // const index = ((y / d) * column) + (x / d);
-    // const copyIndex = Array(width * (h / d)).fill('').map((_, i) => {
-    //   return index + i + Math.floor(i / width) * (column - width)
-    // })  
-    // copyIndex.forEach((index, i) => {
-    //   if (this.copyData[i] !== 'transparent') settings.colors[index] = this.copyData[i] 
-    // })
-    // settings.inputs.colors.value = settings.colors
-    // elements.artboard.paintCanvas()
   }
 }
 
