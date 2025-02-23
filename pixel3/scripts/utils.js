@@ -29,6 +29,8 @@ const mouse = {
   leave(t, e, a) { this.addEvents(t, e, a, ['mouseleave', 'touchmove']) }
 }
 
+const roundedClient = (e, type) => Math.round(e.type[0] === 'm' ? e[`client${type}`] : e.touches[0][`client${type}`])
+
 export {
   nearestN,
   isNum,
@@ -36,5 +38,6 @@ export {
   rgbToHex,
   hex,
   convertCameCase,
-  mouse
+  mouse,
+  roundedClient
 }

@@ -61,8 +61,26 @@ canvas {
   background-color: transparent;
   pointer-events: none;
   z-index: 1;
-  transition: opacity 0.5s;
+  transition: background-color 0.3s;
 }
+
+.select {
+  background-color: rgba(2, 255, 234, 0.288);
+  pointer-events: auto;
+}
+
+.select-box {
+  position: absolute;
+  border: 1px solid hotpink;
+  z-index: 2;
+  background-color: rgba(255, 105, 180, 0.432);
+  pointer-events: all;
+}
+
+.freeze {
+  pointer-events: none;
+}
+
 
 .drawboard {
   background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAHklEQVQYV2NkgILF/9/+BzEZMQRgMrGMwmBJRnQBAA1GDyEZnkKiAAAAAElFTkSuQmCC);

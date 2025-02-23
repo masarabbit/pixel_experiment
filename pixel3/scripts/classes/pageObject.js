@@ -37,6 +37,9 @@ class PageObject {
     // this.setStyles()
     this.container.appendChild(this.el)
   }
+  remove() {
+    this.el.remove()
+  }
 }
 
 export default PageObject

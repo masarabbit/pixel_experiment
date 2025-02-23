@@ -1,5 +1,5 @@
 import { convertCameCase } from '../utils.js'
-import { settings, elements } from './elements.js'
+import { settings, elements } from '../elements.js'
 
 class Input {
   constructor(props) {
@@ -37,12 +37,17 @@ class Input {
     return this.inputName.replace('color', 'hex')
   }
   get value() {
-    return +this.input.value
+    return this.isNum ? +this.input.value : this.input.value
+  }
+  set value(val) {
+    const v = this.isNum ? +val : val
+    this.input.value = v
+    settings[this.inputName] = v
   }
   updateColor() {
     const label = this.label || settings.inputs[this.inputName.replace('hex', 'color')].label
     label.style.backgroundColor = settings[this.key]
-    if (settings?.inputs[this.key]) settings.inputs[this.key].input.value = settings[this.key]
+    if (settings?.inputs[this.key]) settings.inputs[this.key].value = settings[this.key]
   }
   addChangeListener() {
     this.input.addEventListener('change', e => {
@@ -50,36 +55,25 @@ class Input {
       if (['color', 'color2', 'hex', 'hex2'].includes(this.inputName)) this.updateColor()
       if (this.update) this.update() 
     })
-  
   }
 }
 
-// TODO currently a bit buggy
 class SizeInput extends Input {
   addChangeListener() {
     this.input.addEventListener('change', e => {
       this.resizeColors()
-      settings[this.key] = e.target.value
+      settings[this.key] = +e.target.value
       if (this.update) this.update() 
     })
   }
-  get currentColors() {
-    return settings.inputs.colors.value
-  }
   resizeColors = () => {
-    const { column } = settings
-    const newArr = settings.colors.reduce((acc, _, i) => {
-      if (i % column === 0) acc.push(settings.colors.slice(i, i + column))
-      return acc
-    }, [])
-    
+    const newArr = settings.splitColors
     newArr.length = settings.inputs.row.value
-    // newArr.fill(new Array(newArr.length).fill('transparent'), row)
-    
+    // newArr.fill(new Array(newArr.length).fill('transparent'), row) 
     settings.inputs.colors.value = newArr.map(arr => {
       const arrCopy = arr
       arrCopy.length = settings.inputs.column.value
-      arrCopy.fill('transparent', column)
+      arrCopy.fill('transparent', settings.column)
       return arrCopy
     }).flat(1)
     settings.colors =  settings.inputs.colors.value
@@ -93,6 +87,7 @@ class TextArea {
         className: props.className,
         spellcheck: false,
       }),
+      inputName: props.inputName || props.className,
       ...props
     })
     this.container.append(this.input)
@@ -115,6 +110,7 @@ class TextArea {
   }
   set value(val) {
     this.input.value = val
+    settings[this.inputName] = Array.isArray(val) ? val : val.split(',')
   }
   copyText() {
     this.input.select()

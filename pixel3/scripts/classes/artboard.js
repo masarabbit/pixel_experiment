@@ -1,6 +1,6 @@
-import { nearestN, rgbToHex, hex, mouse } from '../utils.js'
+import { nearestN, rgbToHex, hex, mouse, roundedClient } from '../utils.js'
 import PageObject from './pageObject.js'
-import { elements, settings } from './elements.js'
+import { elements, settings } from '../elements.js'
 
 class Canvas extends PageObject {
   constructor(props) {
@@ -9,7 +9,6 @@ class Canvas extends PageObject {
         className: props.className,
       }),
       gridColor: 'lightgrey',
-      gridWidth: 0.5,
       ...props,
     })
     if (props?.container) this.addToPage()
@@ -18,16 +17,15 @@ class Canvas extends PageObject {
     this.resizeCanvas()
   }
   resizeCanvas({ w, h } = {}) {
-    // console.log('test', w, h)
     if (w) this.w = w
     if (h) this.h = h
-    // this.setStyles()
+    this.setStyles()
     this.el.setAttribute('width', this.w)
     this.el.setAttribute('height', this.h || this.w)
   }
   drawGrid() {
-    const { gridColor, gridWidth, ctx } = this
-    const { column, row, d } = settings
+    const { gridColor, ctx } = this
+    const { column, row, d, gridWidth } = settings
     ctx.strokeStyle = gridColor
     ctx.beginPath()
     const pos = (n, max) => n * d + (n === max ? -gridWidth : gridWidth)
@@ -45,13 +43,113 @@ class Canvas extends PageObject {
   clearGrid() {
     this.ctx.clearRect(0, 0, this.w, this.h)
   }
+  extractColors(data) {
+    const dataToUpdate = data || settings.colors
+    dataToUpdate.length = 0
+    const { d } = settings
+    const w = this.w / d 
+    const h = this.h / d
+    const offset = Math.floor(d / 2)
+    for (let i = 0; i < w * h; i++) {
+      const x = i % w * d
+      const y = Math.floor(i / w) * d
+      const c = this.ctx.getImageData(x + offset, y + offset, 1, 1).data //offset
+      // this thing included here to prevent rendering black instead of transparent
+      c[3] === 0
+        ? dataToUpdate.push('transparent')
+        : dataToUpdate.push(hex(rgbToHex(c[0], c[1], c[2])))
+    }
+  }
+}
+
+class SelectBox extends Canvas {
+  constructor(props) {
+    super({
+      ...props,
+      className: 'select-box',
+      grabPos: { a: 0, b: 0, c: 0, d: 0 },
+      defPos: { x: props.x, y: props.y },
+      canMove: false,
+      copyData: [],
+    })
+    this.el.addEventListener('click', ()=> {
+      console.log('check')
+    })
+    mouse.down(this.el, 'add', this.onGrab)
+  }
+  drag = (e, x, y) => {
+    if (e.type[0] === 'm') e.preventDefault()
+    this.grabPos.a = this.grabPos.c - x
+    this.grabPos.b = this.grabPos.d - y
+    const newX = this.el.offsetLeft - this.grabPos.a
+    const newY = this.el.offsetTop - this.grabPos.b
+
+    // TODO update
+  }
+  onGrab = e => {
+    this.grabPos.c = roundedClient(e, 'X')
+    this.grabPos.d = roundedClient(e, 'Y')
+    mouse.up(document, 'add', this.onLetGo)
+    mouse.move(document, 'add', this.onDrag)
+  }
+  onDrag = e => {
+    const x = roundedClient(e, 'X')
+    const y = roundedClient(e, 'Y')
+
+    this.canMove
+      ? this.drag(e, x, y)
+      : this.resizeBox(e)
+    this.grabPos.c = x
+    this.grabPos.d = y
+  }
+  onLetGo = () => {
+    mouse.up(document, 'remove', this.onLetGo)
+    mouse.move(document, 'remove', this.onDrag)
+    // if (!this.move) {
+  
+    //   const { x, y } = elements.artboard.drawPos(e)
+    // }
+  }
+  resizeBox = e =>{
+    const { defPos } = this
+    const { x, y } = elements.artboard.drawPos(e)
+    // const { gridWidth } = settings
+    this.x = x > defPos.x ? defPos.x : x
+    this.y = y > defPos.y ? defPos.y : y
+    this.resizeCanvas({ 
+      w: Math.abs(defPos.x - x),
+      h: Math.abs(defPos.y - y),
+    })
+    
+  }
+  copySelection() {
+    const { ctx, x, y, w, h } = this
+    ctx.putImageData(elements.artboard.drawboard.ctx.getImageData(x, y, w, h), 0, 0)
+    this.extractColors(this.copyData)
+    this.canMove = true
+  }
+  cutSelection() {
+    this.copySelection()
+    const { x, y, w, h } = this
+    elements.artboard.drawboard.ctx.clearRect(x, y, w, h) 
+    elements.artboard.drawboard.extractColors()
+    settings.inputs.colors.value = settings.colors
+  }
+  cropSelection() {
+    this.copySelection()
+    const { d } = settings
+    const { w, h } = this
+    settings.inputs.column.value = w / d
+    settings.inputs.row.value = h / d
+    settings.inputs.colors.value = this.copyData
+    ;['resize', 'paintCanvas', 'toggleSelectState'].forEach(action => elements.artboard[action]())
+  }
 }
 
 class Artboard extends PageObject {
   constructor(props) {
     super({
       el: elements.canvasWrapper,
-      d: 10,
       draw: false,
       ...props,
     })
@@ -59,13 +157,13 @@ class Artboard extends PageObject {
     const { w, h, d } = this
       ;['drawboard', 'overlay'].forEach(className => {
         this[className] = new Canvas({
-          artboard: this,
           container: this.el,
           className,
           w, h, d
         })
       })
     this.overlay.drawGrid()
+    this.overlay.el.addEventListener('click', e => this.createSelectBox(e))
 
     this.drawboard.el.addEventListener('click', this.colorCell)
     mouse.down(this.drawboard.el, 'add', () => this.draw = true)
@@ -77,6 +175,25 @@ class Artboard extends PageObject {
     })
     // mouse.enter(artboard, 'add', ()=> artData.cursor = 'artboard')
     this.refresh()
+  }
+  createSelectBox(e) {
+    if (this.selectBox) this.selectBox.el.remove()
+    const { d } = settings
+    const { x, y } = this.drawPos(e)
+    this.selectBox = new SelectBox({
+      container: this.el,
+      w: d, d,
+      x: x - d, y: y - d
+    })
+    this.overlay.el.classList.add('freeze')
+  }
+  toggleSelectState() {
+    if (this.selectBox) {
+      this.overlay.el.classList.remove('freeze')
+      this.selectBox.el.remove()
+    }
+    this.overlay.el.classList.toggle('select')
+    this.el.classList.toggle('freeze')
   }
   drawPos = e => {
     const { top, left } = this.drawboard.el.getBoundingClientRect()
@@ -118,20 +235,6 @@ class Artboard extends PageObject {
     this.overlay.resizeCanvas(this.size)
     this.overlay.drawGrid()
   }
-  copyColors() {
-    settings.colors.length = 0
-    const { column: w, row: h, d } = settings
-    const offset = Math.floor(d / 2)
-    for (let i = 0; i < w * h; i++) {
-      const x = i % w * d
-      const y = Math.floor(i / w) * d
-      const c = this.drawboard.ctx.getImageData(x + offset, y + offset, 1, 1).data //offset
-      // this thing included here to prevent rendering black instead of transparent
-      c[3] === 0
-        ? settings.colors.push('transparent')
-        : settings.colors.push(hex(rgbToHex(c[0], c[1], c[2])))
-    }
-  }
   paintFromColors() {
     const { d } = settings
     settings.colors.forEach((c, i) => {
@@ -146,10 +249,6 @@ class Artboard extends PageObject {
     // populatePalette(artData.colors)
     // recordState()
   }
-  updateColorsAndPaint() {
-    settings.colors = settings.inputs.colors.value
-    this.paintCanvas()
-  }
   output() {
     const { column, row, d } = settings
     if (!this.uploadedFile) return
@@ -161,13 +260,14 @@ class Artboard extends PageObject {
       const calcHeight = (column * d) * (h / w)
       const calcWidth = calcHeight * (w / h)
 
+      // draw image with original dimension
       this.drawboard.resizeCanvas({ w: calcWidth, h: calcHeight - (calcHeight % d) })
       this.drawboard.ctx.drawImage(imageTarget, 0, 0, calcWidth, calcHeight)
-      this.copyColors()
+      this.drawboard.extractColors()
       // revert canvas size before painting
       this.drawboard.resizeCanvas({ w: column * d, h: row * d })
       this.paintCanvas()
-      // this.copyColors() // why repeat?
+      this.drawboard.extractColors()
       settings.inputs.colors.value = settings.colors
       // populateCompletePalette(artData.colors)
     }
@@ -210,11 +310,18 @@ class Artboard extends PageObject {
       if (!fillAreaBucket.includes(i)) return c
       return c === valueToSwap ? fillValue : c
     }).join(',')
-    this.updateColorsAndPaint()
+    this.paintCanvas()
   }
   refresh() {
-    settings.colors = Array(settings.row * settings.column).fill('transparent')
-    settings.inputs.colors.value = settings.colors
+    settings.inputs.colors.value = Array(settings.row * settings.column).fill('transparent')
+  }
+  flipHorizontal() {
+    settings.inputs.colors.value = settings.splitColors.map(a => a.reverse()).join(',')
+    this.paintCanvas()
+  }
+  flipVertical() {
+    settings.inputs.colors.value = settings.splitColors.reverse().join(',')
+    this.paintCanvas()
   }
 }
 
