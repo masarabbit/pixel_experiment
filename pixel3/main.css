@@ -315,3 +315,19 @@ textarea {
 .trace-svg {
   background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAGNJREFUOE9jZKAQMFKon2HwGPAf6hWYi0B8ZNch81HUghShS6KLgcyGqcFQi00xsgZYGGMzACyH7GRkPl5boS4Cq0ePBULeIegFfIGH7jWwWnxewBYWMDG4dwdPQiI7Swy8FwA2GiARMFIOrQAAAABJRU5ErkJggg==);
 }
+
+.output-from-data-url {
+  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAHlJREFUOE+tU0kSwCAI0/8/2g6MYSKgh4KXWsWYBecojlk8PwRgbRAGkzX8Y1/KeE3nAHh9pc4DWv3tIJSFG4mxEmhjkOnLaLMc3W9LwWv1yTCbw1T2INAj9zOAYOIfgKMPPEDaODtfa64WCbj5FaVvZ/OkJcbSg/wAiHM+D8DGQKAAAAAASUVORK5CYII=);
+}
+
+/* cursor */
+
+.cursor {
+  position: absolute;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+.cursor.highlight {
+  background-color: #00e8d14b;
+}

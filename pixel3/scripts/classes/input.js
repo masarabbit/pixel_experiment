@@ -84,7 +84,7 @@ class TextArea {
   constructor(props) {
     Object.assign(this, {
       input: Object.assign(document.createElement('textarea'), {
-        className: props.className,
+        className: props.className || '',
         spellcheck: false,
       }),
       inputName: props.inputName || props.className,
@@ -103,7 +103,7 @@ class TextArea {
         action: () => b.action(this)
       })
     })
-    settings.inputs[this.className] = this
+    settings.inputs[this.inputName] = this
   }
   get value() {
     return this.input.value.split(',')
@@ -126,7 +126,7 @@ class Upload {
         className: 'upload-wrapper',
         innerHTML: `
           <input id="upload" type="file" single/>
-          <label for="upload" data-alt="upload image file" class="upload icon alt"></label>
+          <label for="upload" class="upload icon"></label>
           <div></div>
         `
       }),
@@ -138,7 +138,7 @@ class Upload {
     this.pixeliseBtn = new Button({
       container: this.container,
       className: 'pixelise icon d-none',
-      action: () => elements.artboard.output()
+      action: () => elements.artboard.outputFromImage()
     })
     this.el.addEventListener('change', () => {
       elements.artboard.uploadedFile = this.input.files[0]

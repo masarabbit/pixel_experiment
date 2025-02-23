@@ -3,6 +3,9 @@ import { Input, SizeInput, TextArea, Upload, Button } from './classes/input.js'
 import { Artboard } from './classes/artboard.js'
 import { settings, elements } from './elements.js'
 
+// TODO add cursor for highlighting hover area (and possibly showing alt)
+// TODO add simple undo feature
+
 function init() {
 
   new TextArea({
@@ -10,7 +13,7 @@ function init() {
     className: 'colors',
     action: e => {
       settings.colors = e.target.value.split(',')
-      elements.artboard.output()
+      elements.artboard.paintCanvas()
     },
     buttons: [
       {
@@ -27,13 +30,29 @@ function init() {
     ]
   })
 
+  new TextArea({
+    container: elements.wrapper,
+    inputName: 'dataUrl',
+    action: e => {
+      if (!elements.artboard) return
+      elements.artboard.dataUrl = e.target.value
+      // elements.artboard.output()
+    },
+    buttons: [
+      {
+        className: 'icon copy',
+        action: textArea => textArea.copyText()
+      },
+    ]
+  })
+
   elements.artboard = new Artboard({
     w: settings.column * settings.d,
     h: settings.row * settings.d,
     d: settings.d
   })
 
-    ;['column', 'row', 'color', 'hex', 'color2', 'hex2', 'cellSize', 'fileName'].forEach(inputName => {
+    ;['column', 'row', 'cellSize', 'color', 'hex', 'color2', 'hex2', 'fileName'].forEach(inputName => {
       const isNum = ['column', 'row', 'cellSize'].includes(inputName)
       const inputClass = ['column', 'row'].includes(inputName) ? SizeInput : Input
       settings.inputs[inputName] = new inputClass({
@@ -48,8 +67,14 @@ function init() {
     })
 
   new Upload({ container: elements.nav[1] })
+  new Button({ 
+    container: elements.nav[0],
+    className: 'undo icon',
+    action: ()=> {
+      console.log('undo')
+    } 
+  })
   
-
 
   ;[
     { 
@@ -120,6 +145,20 @@ function init() {
       className: 'new-grid',
       action: ()=> {
         ;['resize', 'refresh', 'paintCanvas'].forEach(action => elements.artboard[action]())
+      }
+    },
+    { 
+      btnText: 'url',
+      action: ()=> {
+        settings.inputs.dataUrl.value = elements.artboard.drawboard.el.toDataURL()
+      }
+    },
+    { 
+      className: 'output-from-data-url',
+      action: ()=> {
+        if (elements.artboard?.dataUrl?.[0] === 'd') {
+          elements.artboard.output()
+        }
       }
     },
     { 

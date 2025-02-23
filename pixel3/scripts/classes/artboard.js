@@ -134,13 +134,13 @@ class SelectBox extends Canvas {
     ;['resize', 'paintCanvas', 'toggleSelectState'].forEach(action => elements.artboard[action]())
   }
   paste() {
-    const copyTarget = new Image()
-    copyTarget.onload = () => {
-      elements.artboard.drawboard.ctx.drawImage(copyTarget, this.x, this.y)
+    const img = new Image()
+    img.onload = () => {
+      elements.artboard.drawboard.ctx.drawImage(img, this.x, this.y)
       elements.artboard.drawboard.extractColors()
       settings.inputs.colors.value = settings.colors
     }
-    copyTarget.src = this.el.toDataURL()
+    img.src = this.el.toDataURL()
   }
 }
 
@@ -149,6 +149,7 @@ class Artboard extends PageObject {
     super({
       el: elements.canvasWrapper,
       draw: false,
+      dataUrl: null,
       ...props,
     })
     this.setStyles()
@@ -247,20 +248,22 @@ class Artboard extends PageObject {
     // populatePalette(artData.colors)
     // recordState()
   }
+  outputFromImage = () => {
+    if (!this.uploadedFile) return
+    this.dataUrl = window.URL.createObjectURL(this.uploadedFile)
+    this.output()
+  }
   output() {
     const { column, row, d } = settings
-    if (!this.uploadedFile) return
-    const blobURL = window.URL.createObjectURL(this.uploadedFile)
-    const imageTarget = new Image()
-
-    imageTarget.onload = () => {
-      const { naturalWidth: w, naturalHeight: h } = imageTarget
+    const img = new Image()
+    img.onload = () => {
+      const { naturalWidth: w, naturalHeight: h } = img
       const calcHeight = (column * d) * (h / w)
       const calcWidth = calcHeight * (w / h)
 
       // draw image with original dimension
-      this.drawboard.resizeCanvas({ w: calcWidth, h: calcHeight - (calcHeight % d) })
-      this.drawboard.ctx.drawImage(imageTarget, 0, 0, calcWidth, calcHeight)
+      this.drawboard.resizeCanvas({ w: calcWidth, h: calcHeight })
+      this.drawboard.ctx.drawImage(img, 0, 0, calcWidth, calcHeight)
       this.drawboard.extractColors()
       // revert canvas size before painting
       this.drawboard.resizeCanvas({ w: column * d, h: row * d })
@@ -269,8 +272,7 @@ class Artboard extends PageObject {
       settings.inputs.colors.value = settings.colors
       // populateCompletePalette(artData.colors)
     }
-    imageTarget.src = blobURL
-    this.blobURL = blobURL
+    img.src = this.dataUrl
     // recordState()
   }
   downloadImage() {

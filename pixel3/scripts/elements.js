@@ -17,6 +17,7 @@ const settings = {
   shouldShowGrid: true,
   gridWidth: 0.5,
   colors: [],
+  dataUrl: null,
   inputs: {},
   calcX(cell) {
     return cell % this.column
@@ -26,10 +27,6 @@ const settings = {
   },
   get d() { return this.cellSize },
   set d(val) { this.cellSize = val },
-  // get color() { return this.hex },
-  // get color2() { return this.hex2 },
-  // set color(val) { this.hex = val },
-  // set color2(val) { this.hex2 = val },
   get splitColors() {
     return this.colors.reduce((acc, _, i) => {
       if (i % this.column === 0) acc.push(this.colors.slice(i, i + this.column))

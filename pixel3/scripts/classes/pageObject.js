@@ -6,13 +6,13 @@ class PageObject {
       ...props,
     })
   }
-  syncSize() {
-    const { width, height } = this.el
-      .querySelector('div')
-      .getBoundingClientRect()
-    this.w = width
-    this.h = height
-  }
+  // syncSize() {
+  //   const { width, height } = this.el
+  //     .querySelector('div')
+  //     .getBoundingClientRect()
+  //   this.w = width
+  //   this.h = height
+  // }
   get pos() {
     return {
       x: this.x,
