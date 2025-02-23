@@ -1,4 +1,4 @@
-import { nearestN, rgbToHex, hex, mouse, roundedClient } from '../utils.js'
+import { nearestN, rgbToHex, hex, mouse, roundedClient, px } from '../utils.js'
 import PageObject from './pageObject.js'
 import { elements, settings } from '../elements.js'
 
@@ -67,82 +67,93 @@ class SelectBox extends Canvas {
     super({
       ...props,
       className: 'select-box',
-      grabPos: { a: 0, b: 0, c: 0, d: 0 },
+      grabPos: { a: { x: 0, y: 0 }, b: { x: 0, y: 0 } },
       defPos: { x: props.x, y: props.y },
       canMove: false,
       copyData: [],
-    })
-    this.el.addEventListener('click', ()=> {
-      console.log('check')
     })
     mouse.down(this.el, 'add', this.onGrab)
   }
   drag = (e, x, y) => {
     if (e.type[0] === 'm') e.preventDefault()
-    this.grabPos.a = this.grabPos.c - x
-    this.grabPos.b = this.grabPos.d - y
-    const newX = this.el.offsetLeft - this.grabPos.a
-    const newY = this.el.offsetTop - this.grabPos.b
-
-    // TODO update
+    this.grabPos.a.x = this.grabPos.b.x - x
+    this.grabPos.a.y = this.grabPos.b.y - y
+    this.x -= this.grabPos.a.x
+    this.y -= this.grabPos.a.y
+    this.setStyles()
   }
   onGrab = e => {
-    this.grabPos.c = roundedClient(e, 'X')
-    this.grabPos.d = roundedClient(e, 'Y')
+    this.grabPos.b.x = nearestN(roundedClient(e, 'X'), settings.d)
+    this.grabPos.b.y = nearestN(roundedClient(e, 'Y'), settings.d)
     mouse.up(document, 'add', this.onLetGo)
     mouse.move(document, 'add', this.onDrag)
   }
   onDrag = e => {
-    const x = roundedClient(e, 'X')
-    const y = roundedClient(e, 'Y')
-
+    const x = nearestN(roundedClient(e, 'X'), settings.d)
+    const y = nearestN(roundedClient(e, 'Y'), settings.d)
     this.canMove
       ? this.drag(e, x, y)
       : this.resizeBox(e)
-    this.grabPos.c = x
-    this.grabPos.d = y
+    this.grabPos.b.x = x
+    this.grabPos.b.y = y
   }
   onLetGo = () => {
     mouse.up(document, 'remove', this.onLetGo)
     mouse.move(document, 'remove', this.onDrag)
-    // if (!this.move) {
-  
-    //   const { x, y } = elements.artboard.drawPos(e)
-    // }
   }
   resizeBox = e =>{
     const { defPos } = this
     const { x, y } = elements.artboard.drawPos(e)
-    // const { gridWidth } = settings
     this.x = x > defPos.x ? defPos.x : x
     this.y = y > defPos.y ? defPos.y : y
     this.resizeCanvas({ 
       w: Math.abs(defPos.x - x),
       h: Math.abs(defPos.y - y),
     })
-    
   }
-  copySelection() {
+  copy() {
     const { ctx, x, y, w, h } = this
     ctx.putImageData(elements.artboard.drawboard.ctx.getImageData(x, y, w, h), 0, 0)
     this.extractColors(this.copyData)
     this.canMove = true
   }
-  cutSelection() {
-    this.copySelection()
+  cut() {
+    this.copy()
     const { x, y, w, h } = this
     elements.artboard.drawboard.ctx.clearRect(x, y, w, h) 
     elements.artboard.drawboard.extractColors()
     settings.inputs.colors.value = settings.colors
   }
-  cropSelection() {
-    this.copySelection()
+  crop() {
+    this.copy()
     const { d } = settings
     const { w, h } = this
     settings.inputs.column.value = w / d
     settings.inputs.row.value = h / d
     settings.inputs.colors.value = this.copyData
     ;['resize', 'paintCanvas', 'toggleSelectState'].forEach(action => elements.artboard[action]())
+  }
+  paste() {
+    const copyTarget = new Image()
+    copyTarget.onload = () => {
+      elements.artboard.drawboard.ctx.drawImage(copyTarget, this.x, this.y)
+      elements.artboard.drawboard.extractColors()
+      settings.inputs.colors.value = settings.colors
+    }
+    copyTarget.src = this.el.toDataURL()
+
+
+    // TODO old logic for handling paste
+    // const width = w / d
+    // const index = ((y / d) * column) + (x / d);
+    // const copyIndex = Array(width * (h / d)).fill('').map((_, i) => {
+    //   return index + i + Math.floor(i / width) * (column - width)
+    // })  
+    // copyIndex.forEach((index, i) => {
+    //   if (this.copyData[i] !== 'transparent') settings.colors[index] = this.copyData[i] 
+    // })
+    // settings.inputs.colors.value = settings.colors
+    // elements.artboard.paintCanvas()
   }
 }
 

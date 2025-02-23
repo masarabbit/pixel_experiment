@@ -94,19 +94,26 @@ function init() {
     { 
       className: 'copy-selection',
       action: ()=> {
-        if (elements.artboard.selectBox) elements.artboard.selectBox.copySelection()
+        if (elements.artboard.selectBox) elements.artboard.selectBox.copy()
+      }
+    },
+    { 
+      className: 'paste-selection',
+      action: ()=> {
+        const { selectBox } = elements.artboard
+        if (selectBox && selectBox.copyData.length) selectBox.paste()
       }
     },
     { 
       className: 'cut-selection',
       action: ()=> {
-        if (elements.artboard.selectBox) elements.artboard.selectBox.cutSelection()
+        if (elements.artboard.selectBox) elements.artboard.selectBox.cut()
       }
     },
     { 
       className: 'crop-selection',
       action: ()=> {
-        if (elements.artboard.selectBox) elements.artboard.selectBox.cropSelection()
+        if (elements.artboard.selectBox) elements.artboard.selectBox.crop()
       }
     },
     { 
