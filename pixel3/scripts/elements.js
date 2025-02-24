@@ -19,6 +19,7 @@ const settings = {
   colors: [],
   dataUrl: null,
   inputs: {},
+  prev: [],
   calcX(cell) {
     return cell % this.column
   },
@@ -32,6 +33,24 @@ const settings = {
       if (i % this.column === 0) acc.push(this.colors.slice(i, i + this.column))
       return acc
     }, [])
+  },
+  get lastPrev() {
+    return this.prev.length && this.prev[this.prev.length - 1]
+  },
+  recordState() {
+    const { row, column, d, colors, lastPrev } = this
+  
+    if (lastPrev &&
+        lastPrev.colors === colors &&
+        lastPrev.row === row &&
+        lastPrev.column === column
+    ) return
+  
+    this.prev.push({ colors, column, row, d })
+    // keep artData.prev under 5 steps
+    if (this.prev.length > 5) this.prev = this.prev.filter((d, i) =>{
+      if(i) return d
+    })
   }
 }
 

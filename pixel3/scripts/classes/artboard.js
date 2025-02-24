@@ -2,6 +2,34 @@ import { nearestN, rgbToHex, hex, mouse, roundedClient, px } from '../utils.js'
 import PageObject from './pageObject.js'
 import { elements, settings } from '../elements.js'
 
+
+const localStorageName = 'save-data'
+
+const saveDataToLocalStorage = () => {
+  const { colors, d, column, row } = settings
+  localStorage.setItem(localStorageName, JSON.stringify({ colors, d, column, row }))
+}
+
+const getTodosFromLocalStorage = () => {
+  const data = localStorage.getItem(localStorageName)
+  // if (!isJsonString(data)) return []
+  return JSON.parse(data)
+}
+
+// const undo = () =>{
+//   if (artData.prev[artData.prev.length - 1]) {
+//     const { colors, row, column,  cellD } = artData.prev[artData.prev.length - 1]
+//     update('column', column)
+//     update('row', row)
+//     update('colors', colors)
+//     update('cellD', cellD)
+//     resize()
+//     paintCanvas()
+//     artData.prev = artData.prev.filter((_data, i)=> i !== artData.prev.length - 1)
+//     if (!artData.prev.length) recordState()
+//   }
+// }
+
 class Canvas extends PageObject {
   constructor(props) {
     super({
