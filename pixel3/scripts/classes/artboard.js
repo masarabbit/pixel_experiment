@@ -60,6 +60,15 @@ class Canvas extends PageObject {
         : dataToUpdate.push(hex(rgbToHex(c[0], c[1], c[2])))
     }
   }
+  get column() {
+    return this.w / settings.d
+  }
+  calcX(cell) {
+    return cell % this.column
+  }
+  calcY(cell) {
+    return Math.floor(cell / this.column)
+  }
 }
 
 class SelectBox extends Canvas {
@@ -126,10 +135,8 @@ class SelectBox extends Canvas {
   }
   crop() {
     this.copy()
-    const { d } = settings
-    const { w, h } = this
-    settings.inputs.column.value = w / d
-    settings.inputs.row.value = h / d
+    settings.inputs.column.value = this.column
+    settings.inputs.row.value = this.h / settings.d
     settings.inputs.colors.value = this.copyData
     ;['resize', 'paintCanvas', 'toggleSelectState'].forEach(action => elements.artboard[action]())
   }
@@ -141,6 +148,34 @@ class SelectBox extends Canvas {
       settings.inputs.colors.value = settings.colors
     }
     img.src = this.el.toDataURL()
+  }
+  get splitColors() {
+    return this.copyData.reduce((acc, _, i) => {
+      if (i % this.column === 0) acc.push(this.copyData.slice(i, i + this.column))
+      return acc
+    }, [])
+  }
+  paintFromColors() {
+    const { d } = settings
+    this.copyData.forEach((c, i) => {
+      this.ctx.fillStyle = c || 'transparent'
+      this.ctx.fillRect(this.calcX(i) * d, this.calcY(i) * d, d, d)
+    })
+  }
+  paintCanvas() {
+    const { column, row, d } = settings
+    this.ctx.clearRect(0, 0, column * d, row * d)
+    this.paintFromColors()
+    // populatePalette(artData.colors)
+    // recordState()
+  }
+  flipHorizontal() {
+    this.copyData = this.splitColors.map(a => a.reverse()).flat(1)
+    this.paintCanvas()
+  }
+  flipVertical() {
+    this.copyData = this.splitColors.reverse().flat(1)
+    this.paintCanvas()
   }
 }
 
@@ -316,11 +351,11 @@ class Artboard extends PageObject {
     settings.inputs.colors.value = Array(settings.row * settings.column).fill('transparent')
   }
   flipHorizontal() {
-    settings.inputs.colors.value = settings.splitColors.map(a => a.reverse()).join(',')
+    settings.inputs.colors.value = settings.splitColors.map(a => a.reverse()).flat(1)
     this.paintCanvas()
   }
   flipVertical() {
-    settings.inputs.colors.value = settings.splitColors.reverse().join(',')
+    settings.inputs.colors.value = settings.splitColors.reverse().flat(1)
     this.paintCanvas()
   }
 }

@@ -142,13 +142,25 @@ function init() {
       }
     },
     { 
+      btnText: 'flip select h',
+      action: ()=> {
+        if (elements.artboard.selectBox.copyData.length) elements.artboard.selectBox.flipHorizontal()
+      }
+    },
+    { 
+      btnText: 'flip select v',
+      action: ()=> {
+        if (elements.artboard.selectBox.copyData.length) elements.artboard.selectBox.flipVertical()
+      }
+    },
+    { 
       className: 'new-grid',
       action: ()=> {
         ;['resize', 'refresh', 'paintCanvas'].forEach(action => elements.artboard[action]())
       }
     },
     { 
-      btnText: 'url',
+      className: 'output-data-url-from-image',
       action: ()=> {
         settings.inputs.dataUrl.value = elements.artboard.drawboard.el.toDataURL()
       }
