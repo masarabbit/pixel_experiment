@@ -20,6 +20,7 @@ const settings = {
   dataUrl: null,
   inputs: {},
   prev: [],
+  saveDataName: 'save-data',
   calcX(cell) {
     return cell % this.column
   },
@@ -39,19 +40,35 @@ const settings = {
   },
   recordState() {
     const { row, column, d, colors, lastPrev } = this
-  
+
+    // TODO consider if localStorage could be used in someway
+    // const prevData = localStorage.getItem(saveDataName)
+    // if (prevData) lastPrev = JSON.parse(prevData)
+
     if (lastPrev &&
-        lastPrev.colors === colors &&
+        lastPrev.colors === colors.join(',') &&
         lastPrev.row === row &&
         lastPrev.column === column
-    ) return
-  
-    this.prev.push({ colors, column, row, d })
+    ) return  
+    this.prev.push({ colors: colors.join(','), column, row, cellSize: d })
+
+    // localStorage.setItem(saveDataName, JSON.stringify(this.prev))
+
     // keep artData.prev under 5 steps
     if (this.prev.length > 5) this.prev = this.prev.filter((d, i) =>{
       if(i) return d
     })
-  }
+  },
+  undo() {
+    this.prev.pop()
+    if (this.lastPrev) {
+      ;['colors', 'row', 'column', 'cellSize'].forEach(key => {
+        this.inputs[key].value = this.lastPrev[key]
+      })
+      elements.artboard.resize()
+      elements.artboard.paintCanvas()
+    }
+}
 }
 
 export {

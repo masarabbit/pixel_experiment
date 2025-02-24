@@ -2,6 +2,7 @@
 import { Input, SizeInput, TextArea, Upload, Button } from './classes/input.js'
 import { Artboard } from './classes/artboard.js'
 import { settings, elements } from './elements.js'
+import { mouse } from './utils.js'
 
 // TODO add cursor for highlighting hover area (and possibly showing alt)
 // TODO add simple undo feature
@@ -70,9 +71,7 @@ function init() {
   new Button({ 
     container: elements.nav[0],
     className: 'undo icon',
-    action: ()=> {
-      console.log('undo')
-    } 
+    action: ()=> settings.undo() 
   })
   
 
@@ -190,9 +189,12 @@ function init() {
 
   settings.colors = `#0fc771,#0fc771,#0fc771,#0fc771,#0fc771,#0fc771,#0fc771,#0fc771,#0fc771,#0fc771,#0fc771,#0fc771,#0fc771,#0fc771,#0fc771,#0fc771,#0fc771,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,#0fc771,#0fc771,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,#0fc771,#0fc771,transparent,transparent,#c70f0f,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,#c7590f,transparent,#0fc771,#0fc771,transparent,transparent,#c70f0f,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,#c7590f,transparent,#0fc771,#0fc771,transparent,transparent,#c70f0f,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,#c7590f,transparent,#0fc771,#0fc771,transparent,transparent,#c70f0f,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,#c7590f,transparent,#0fc771,#0fc771,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,#0fc771,#0fc771,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,#0fc771,#0fc771,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,#0fc771,#0fc771,transparent,#0f15c7,#0f15c7,#0f15c7,#0f15c7,#0f15c7,#0f15c7,#0f15c7,#0f15c7,#0f15c7,#0f15c7,#0f15c7,#0f15c7,transparent,#0fc771,#0fc771,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,#0fc771,#0fc771,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,#0fc771,#0fc771,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,#0fc771,#0fc771,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,#0fc771,#0fc771,#0fc771,#0fc771,#0fc771,#0fc771,#0fc771,#0fc771,#0fc771,#0fc771,#0fc771,#0fc771,#0fc771,#0fc771,#0fc771,#0fc771,#0fc771`.split(',')
 
+
   settings.inputs.colors.value = settings.colors
 
   elements.artboard.paintCanvas()
+
+  mouse.up(document, 'add', ()=> settings.recordState())
 
 }
 

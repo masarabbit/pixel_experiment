@@ -31,6 +31,7 @@ const mouse = {
 
 const roundedClient = (e, type) => Math.round(e.type[0] === 'm' ? e[`client${type}`] : e.touches[0][`client${type}`])
 
+
 export {
   nearestN,
   isNum,

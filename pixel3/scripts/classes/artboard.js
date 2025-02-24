@@ -283,7 +283,8 @@ class Artboard extends PageObject {
     //   artData.palette.push(value)
     //   populatePalette(artData.palette)
     // }
-    // recordState()
+    // console.log('draw')
+    // settings.recordState()
   }
   continuousDraw = e => {
     if (this.draw) this.colorCell(e)
