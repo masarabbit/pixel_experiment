@@ -3,33 +3,6 @@ import PageObject from './pageObject.js'
 import { elements, settings } from '../elements.js'
 
 
-const localStorageName = 'save-data'
-
-const saveDataToLocalStorage = () => {
-  const { colors, d, column, row } = settings
-  localStorage.setItem(localStorageName, JSON.stringify({ colors, d, column, row }))
-}
-
-const getTodosFromLocalStorage = () => {
-  const data = localStorage.getItem(localStorageName)
-  // if (!isJsonString(data)) return []
-  return JSON.parse(data)
-}
-
-// const undo = () =>{
-//   if (artData.prev[artData.prev.length - 1]) {
-//     const { colors, row, column,  cellD } = artData.prev[artData.prev.length - 1]
-//     update('column', column)
-//     update('row', row)
-//     update('colors', colors)
-//     update('cellD', cellD)
-//     resize()
-//     paintCanvas()
-//     artData.prev = artData.prev.filter((_data, i)=> i !== artData.prev.length - 1)
-//     if (!artData.prev.length) recordState()
-//   }
-// }
-
 class Canvas extends PageObject {
   constructor(props) {
     super({
@@ -195,7 +168,6 @@ class SelectBox extends Canvas {
     this.ctx.clearRect(0, 0, column * d, row * d)
     this.paintFromColors()
     // populatePalette(artData.colors)
-    // recordState()
   }
   flipHorizontal() {
     this.copyData = this.splitColors.map(a => a.reverse()).flat(1)
@@ -310,7 +282,6 @@ class Artboard extends PageObject {
     this.drawboard.ctx.clearRect(0, 0, column * d, row * d)
     this.paintFromColors()
     // populatePalette(artData.colors)
-    // recordState()
   }
   outputFromImage = () => {
     if (!this.uploadedFile) return
@@ -337,7 +308,6 @@ class Artboard extends PageObject {
       // populateCompletePalette(artData.colors)
     }
     img.src = this.dataUrl
-    // recordState()
   }
   downloadImage() {
     const link = document.createElement('a')

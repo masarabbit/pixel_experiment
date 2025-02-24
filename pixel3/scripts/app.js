@@ -5,7 +5,7 @@ import { settings, elements } from './elements.js'
 import { mouse } from './utils.js'
 
 // TODO add cursor for highlighting hover area (and possibly showing alt)
-// TODO add simple undo feature
+// TODO add draggable navWindow
 
 function init() {
 
@@ -193,6 +193,8 @@ function init() {
   settings.inputs.colors.value = settings.colors
 
   elements.artboard.paintCanvas()
+
+  settings.recordState()
 
   mouse.up(document, 'add', ()=> settings.recordState())
 
