@@ -1,4 +1,4 @@
-import { nearestN, rgbToHex, hex, mouse, roundedClient, px } from '../utils.js'
+import { nearestN, rgbToHex, hex, mouse, roundedClient } from '../utils.js'
 import PageObject from './pageObject.js'
 import { elements, settings } from '../elements.js'
 
@@ -9,7 +9,6 @@ class Canvas extends PageObject {
       el: Object.assign(document.createElement('canvas'), {
         className: props.className,
       }),
-      gridColor: 'lightgrey',
       ...props,
     })
     if (props?.container) this.addToPage()
@@ -25,9 +24,9 @@ class Canvas extends PageObject {
     this.el.setAttribute('height', this.h || this.w)
   }
   drawGrid() {
-    const { gridColor, ctx } = this
+    const { ctx } = this
     const { column, row, d, gridWidth } = settings
-    ctx.strokeStyle = gridColor
+    ctx.strokeStyle = elements.artboard.gridColor
     ctx.beginPath()
     const pos = (n, max) => n * d + (n === max ? -gridWidth : gridWidth)
 
@@ -77,39 +76,11 @@ class SelectBox extends Canvas {
     super({
       ...props,
       className: 'select-box',
-      grabPos: { a: { x: 0, y: 0 }, b: { x: 0, y: 0 } },
       defPos: { x: props.x, y: props.y },
       canMove: false,
       copyData: [],
     })
-    mouse.down(this.el, 'add', this.onGrab)
-  }
-  drag = (e, x, y) => {
-    if (e.type[0] === 'm') e.preventDefault()
-    this.grabPos.a.x = this.grabPos.b.x - x
-    this.grabPos.a.y = this.grabPos.b.y - y
-    this.x -= this.grabPos.a.x
-    this.y -= this.grabPos.a.y
-    this.setStyles()
-  }
-  onGrab = e => {
-    this.grabPos.b.x = nearestN(roundedClient(e, 'X'), settings.d)
-    this.grabPos.b.y = nearestN(roundedClient(e, 'Y'), settings.d)
-    mouse.up(document, 'add', this.onLetGo)
-    mouse.move(document, 'add', this.onDrag)
-  }
-  onDrag = e => {
-    const x = nearestN(roundedClient(e, 'X'), settings.d)
-    const y = nearestN(roundedClient(e, 'Y'), settings.d)
-    this.canMove
-      ? this.drag(e, x, y)
-      : this.resizeBox(e)
-    this.grabPos.b.x = x
-    this.grabPos.b.y = y
-  }
-  onLetGo = () => {
-    mouse.up(document, 'remove', this.onLetGo)
-    mouse.move(document, 'remove', this.onDrag)
+    this.addDragEvent()
   }
   resizeBox = e =>{
     const { defPos } = this
@@ -182,11 +153,15 @@ class SelectBox extends Canvas {
 class Artboard extends PageObject {
   constructor(props) {
     super({
-      el: elements.canvasWrapper,
+      el: Object.assign(document.createElement('div'), 
+      { className: 'canvas-wrapper' }),
       draw: false,
       dataUrl: null,
+      gridColor: '#fbcda2',
       ...props,
     })
+    elements.artboard = this
+    this.container.appendChild(this.el)
     this.setStyles()
     const { w, h, d } = this
       ;['drawboard', 'overlay'].forEach(className => {

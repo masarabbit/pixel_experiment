@@ -7,14 +7,14 @@ class Input {
     const isColorInput = props.inputName.includes('color')
     Object.assign(this, {
       el: Object.assign(document.createElement('div'), {
-        className: isColorInput ? '' : 'input-wrap',
+        className: isColorInput ? 'color-input-wrap' : 'input-wrap',
         innerHTML: `
           <label class="${isColorInput ? 'color-label' : ''}" for="${props.inputName}">
             ${isColorInput ? '' : label}
           </label>
           <input 
             id="${props.inputName}" 
-            class="${props?.className || ''} ${props.inputName} input" 
+            class="${props?.className || ''} ${props.inputName}" 
             type="${isColorInput ? 'color' : 'text'}" 
             placeholder="${label}"
           >
@@ -83,19 +83,19 @@ class SizeInput extends Input {
 class TextArea {
   constructor(props) {
     Object.assign(this, {
-      input: Object.assign(document.createElement('textarea'), {
-        className: props.className || '',
-        spellcheck: false,
+      el: Object.assign(document.createElement('div'), {
+        innerHTML: `<textarea className="${props.className || ''}" spellcheck="false" />`
       }),
       inputName: props.inputName || props.className,
       ...props
     })
-    this.container.append(this.input)
+    this.container.append(this.el)
+    this.input = this.el.querySelector('textarea')
     this.input.addEventListener('change', this.action)
     const buttonWrapper = Object.assign(document.createElement('div'), {
       className: 'mini-wrap',
     })
-    this.container.append(buttonWrapper)
+    this.el.append(buttonWrapper)
     this.buttons.forEach(b => {
       new Button({
         ...b,
