@@ -13,7 +13,7 @@ function init() {
   elements.windows = {
     colors: new NavWindow({
       name: 'colors',
-      container: elements.wrapper,
+      container: elements.body,
       isOpen: true,
       x: 10, y: 400,
       content: nav => {
@@ -42,7 +42,7 @@ function init() {
     }),
     dataUrl: new NavWindow({
       name: 'dataUrl',
-      container: elements.wrapper,
+      container: elements.body,
       isOpen: true,
       x: 200, y: 400,
       content: nav => {
@@ -64,7 +64,7 @@ function init() {
     }),
     artboard: new NavWindow({
       name: 'artboard',
-      container: elements.wrapper,
+      container: elements.body,
       isOpen: true,
       x: 10, y: 10,
       content: nav => {
@@ -78,7 +78,7 @@ function init() {
     }),
     main: new NavWindow({
       name: 'main',
-      container: elements.wrapper,
+      container: elements.body,
       isOpen: true,
       x: 400, y: 0,
       content: nav => {
@@ -99,7 +99,7 @@ function init() {
     }),
     fileName: new NavWindow({
       name: 'fileName',
-      container: elements.wrapper,
+      container: elements.body,
       x: 500, y: 0,
       isOpen: false,
       content: nav => {
@@ -140,7 +140,7 @@ function init() {
     }),
     select: new NavWindow({
       name: 'select',
-      container: elements.wrapper,
+      container: elements.body,
       x: 100, y: 200,
       column: true,
       content: nav => {
@@ -204,7 +204,7 @@ function init() {
     }),
     draw: new NavWindow({
       name: 'draw',
-      container: elements.wrapper,
+      container: elements.body,
       x: 100, y: 200,
       column: true,
       isOpen: true,

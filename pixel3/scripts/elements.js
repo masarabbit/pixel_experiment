@@ -1,9 +1,7 @@
 
 
 const elements = {
-  wrapper: document.querySelector('body'),
-  // canvasWrapper: document.querySelector('.canvas-wrapper'),
-  // nav: document.querySelectorAll('nav'),
+  body: document.querySelector('body'),
   artboard: null,
   windows: {},
   saveDataName: 'window-pos',
