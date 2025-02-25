@@ -350,7 +350,7 @@ textarea {
 
 .nav-window {
   position: absolute;
-  --handle-h: 20px;
+  --handle-h: 16px;
   z-index: 1;
   display: flex;
   flex-direction: column;
@@ -374,7 +374,7 @@ textarea {
   font-size: 8px;
   text-transform: uppercase;
   margin: 0;
-  pointer-events: none;
+  user-select: none;
 }
 
 .content-wrapper {

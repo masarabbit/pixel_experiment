@@ -6,7 +6,7 @@ import { settings, elements } from './elements.js'
 import { mouse } from './utils.js'
 
 // TODO add cursor for highlighting hover area (and possibly showing alt)
-// TODO add draggable navWindow
+// TODO output svg
 
 function init() {
 
