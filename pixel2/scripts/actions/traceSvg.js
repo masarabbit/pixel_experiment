@@ -87,10 +87,12 @@ const traceSvg = () => {
   // TODO at this point, can flag transparent so it can be replaced with something
   // need something like evenodd to enable having transparent inside
   const colors = input.colors.value.split(',').map(c => c === 'transparent' ? '' : c)
+  console.log(colors)
   convertToSvg(colors)
 
   // TODO perhaps remove redundant space at this point
   input.svg.value = pathData.join(' ').replaceAll('ffffff','fff').replaceAll('000000','000').replaceAll('*','transparent')
+  console.log('test', pathData)
 }
 
 export default traceSvg

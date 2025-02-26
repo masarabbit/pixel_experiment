@@ -2,6 +2,7 @@
 import { Input, SizeInput, TextArea, Upload, Button } from './classes/input.js'
 import { NavWindow } from './classes/nav.js'
 import { Artboard } from './classes/artboard.js'
+import TraceSvg from './classes/traceSvg.js'
 import { settings, elements } from './elements.js'
 import { mouse } from './utils.js'
 
@@ -41,7 +42,7 @@ function init() {
       }
     }),
     dataUrl: new NavWindow({
-      name: 'dataUrl',
+      name: 'dataUrl / svg',
       container: elements.body,
       isOpen: true,
       x: 200, y: 400,
@@ -54,6 +55,14 @@ function init() {
             elements.artboard.dataUrl = e.target.value
           },
           buttons: [
+            { 
+              className: 'icon output-from-data-url',
+              action: ()=> {
+                if (elements.artboard?.dataUrl?.[0] === 'd') {
+                  elements.artboard.output()
+                }
+              }
+            },
             {
               className: 'icon copy',
               action: textArea => textArea.copyText()
@@ -122,11 +131,9 @@ function init() {
             }
           },
           { 
-            className: 'output-from-data-url',
+            className: 'trace-svg',
             action: ()=> {
-              if (elements.artboard?.dataUrl?.[0] === 'd') {
-                elements.artboard.output()
-              }
+              new TraceSvg()
             }
           },
         ].forEach(b => {
@@ -269,8 +276,23 @@ function init() {
 
   elements.readData()
 
+  // new NavWindow({
+  //   name: 'artboard',
+  //   container: elements.body,
+  //   isOpen: true,
+  //   x: 100, y: 100,
+  //   content: nav => {
+  //     new Artboard({
+  //       container: nav.contentWrapper,
+  //       w: settings.column * settings.d,
+  //       h: settings.row * settings.d,
+  //       d: settings.d
+  //     })
+  //   }
+  // }),
 
-  settings.colors = `#0fc771,#0fc771,#0fc771,#0fc771,#0fc771,#0fc771,#0fc771,#0fc771,#0fc771,#0fc771,#0fc771,#0fc771,#0fc771,#0fc771,#0fc771,#0fc771,#0fc771,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,#0fc771,#0fc771,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,#0fc771,#0fc771,transparent,transparent,#c70f0f,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,#c7590f,transparent,#0fc771,#0fc771,transparent,transparent,#c70f0f,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,#c7590f,transparent,#0fc771,#0fc771,transparent,transparent,#c70f0f,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,#c7590f,transparent,#0fc771,#0fc771,transparent,transparent,#c70f0f,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,#c7590f,transparent,#0fc771,#0fc771,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,#0fc771,#0fc771,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,#0fc771,#0fc771,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,#0fc771,#0fc771,transparent,#0f15c7,#0f15c7,#0f15c7,#0f15c7,#0f15c7,#0f15c7,#0f15c7,#0f15c7,#0f15c7,#0f15c7,#0f15c7,#0f15c7,transparent,#0fc771,#0fc771,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,#0fc771,#0fc771,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,#0fc771,#0fc771,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,#0fc771,#0fc771,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,#0fc771,#0fc771,#0fc771,#0fc771,#0fc771,#0fc771,#0fc771,#0fc771,#0fc771,#0fc771,#0fc771,#0fc771,#0fc771,#0fc771,#0fc771,#0fc771,#0fc771`.split(',')
+
+  settings.colors = `#ea1010,#ea1010,#ea1010,#ea1010,#ea1010,#ea1010,#ea1010,#ea1010,#ea1010,#ea1010,transparent,transparent,transparent,transparent,transparent,transparent,transparent,#ea1010,#ea1010,transparent,#ea1010,#ea1010,#ea1010,#ea1010,#ea1010,,#ea1010,#ea1010,,#ea1010,,,,#ea1010,,#ea1010,#ea1010,,#ea1010,,#ea1010,,#ea1010,,#ea1010,#ea1010,,#ea1010,,,,#ea1010,,#ea1010,#ea1010,,#ea1010,#ea1010,#ea1010,#ea1010,#ea1010,,#ea1010,#ea1010,,,,,,,,#ea1010,#ea1010,#ea1010,#ea1010,#ea1010,#ea1010,#ea1010,#ea1010,#ea1010,#ea1010`.split(',')
 
 
   settings.inputs.colors.value = settings.colors

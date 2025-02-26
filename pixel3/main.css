@@ -3,9 +3,9 @@
 }
 
 :root {
-  --highlight: #00e8d1;
-  --main: rgb(120, 221, 247);
-  --main: #ff5900;
+  --highlight: #78ddf7;
+  --main: #78ddf7;
+  /* --main: #ff5900; */
   --page-width: 700px;
 }
 
@@ -87,8 +87,8 @@ canvas {
 .drawboard {
   /* light blue */
   background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAHklEQVQYV2NkgILF/9/+BzEZMQRgMrGMwmBJRnQBAA1GDyEZnkKiAAAAAElFTkSuQmCC);
-  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAAXNSR0IArs4c6QAAABhJREFUGFdjZGBgYLh+7dp/RhChqaXFCABAUAeFJMlxrwAAAABJRU5ErkJggg==);
-  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAAXNSR0IArs4c6QAAABhJREFUGFdjZGBgYDh08OB/RhBhZ2/PCAA8YAdG6zjIcwAAAABJRU5ErkJggg==);
+  /* background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAAXNSR0IArs4c6QAAABhJREFUGFdjZGBgYLh+7dp/RhChqaXFCABAUAeFJMlxrwAAAABJRU5ErkJggg==);
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAAXNSR0IArs4c6QAAABhJREFUGFdjZGBgYDh08OB/RhBhZ2/PCAA8YAdG6zjIcwAAAABJRU5ErkJggg==); */
   background-size: 4px;
   background-repeat: repeat;
   background-color: #fff;
@@ -323,7 +323,7 @@ textarea {
 }
 
 .trace-svg {
-  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAGNJREFUOE9jZKAQMFKon2HwGPAf6hWYi0B8ZNch81HUghShS6KLgcyGqcFQi00xsgZYGGMzACyH7GRkPl5boS4Cq0ePBULeIegFfIGH7jWwWnxewBYWMDG4dwdPQiI7Swy8FwA2GiARMFIOrQAAAABJRU5ErkJggg==);
+  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAIBJREFUOE+1k1EOgDAIQ+X+h8ZA7FI7mRjVLxPKW1erubtvLx4DwMweYXDuBIhBBePZfwDcQ6NRV6WDbhAToLuouhEiD1YhtgAhqu7cBjBk1bWyB7wUbkZoR+FOIbIAJ18BVJdarvLdEgDIJ5vJP5NaRXXZvr4ngIn6OatGflakHU8gpdF4cJ/OAAAAAElFTkSuQmCC);
 }
 
 .output-from-data-url {

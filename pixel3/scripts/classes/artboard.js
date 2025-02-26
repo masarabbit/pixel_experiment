@@ -157,7 +157,8 @@ class Artboard extends PageObject {
       { className: 'canvas-wrapper' }),
       draw: false,
       dataUrl: null,
-      gridColor: '#fbcda2',
+      // gridColor: '#fbcda2',
+      gridColor: '#78ddf7',
       ...props,
     })
     elements.artboard = this
@@ -290,7 +291,7 @@ class Artboard extends PageObject {
     link.href = this.drawboard.el.toDataURL()
     link.click()
   }
-  fillArea = ({ i, valueToCheck }) =>{
+  fillArea = ({ i, valueToCheck, colors }) =>{
     const fillArea = []
     const fillStack = []
     const { column: w } = settings
@@ -298,7 +299,7 @@ class Artboard extends PageObject {
     
     while (fillStack.length > 0){
       const checkCell = fillStack.pop() // removes from area to check
-      if (settings.colors[checkCell] !== valueToCheck) continue // cell value already valueToCheck?
+      if (colors[checkCell] !== valueToCheck) continue // cell value already valueToCheck?
       if (fillArea.some(d => d === checkCell)) continue // in fillArea already?
       fillArea.push(checkCell) // if passed above check, include in fillArea
       if (checkCell % w !== 0) fillStack.push(checkCell - 1) // check left
@@ -314,6 +315,7 @@ class Artboard extends PageObject {
     const fillAreaBucket = this.fillArea({
         i: +index, 
         valueToCheck: valueToSwap, 
+        colors: settings.colors
       })
     settings.inputs.colors.value = settings.inputs.colors.value.map((c, i)=>{
       if (!fillAreaBucket.includes(i)) return c
