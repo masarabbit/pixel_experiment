@@ -162,8 +162,11 @@ class Artboard extends PageObject {
       ...props,
     })
     elements.artboard = this
-    elements.artboards.push(this)
+    elements.artboardWindows.forEach(w => {
+      w.window.classList.remove('current')
+    })
     this.container.appendChild(this.el)
+
     this.setStyles()
     const { w, h, d } = this
       ;['drawboard', 'overlay'].forEach(className => {
@@ -189,7 +192,7 @@ class Artboard extends PageObject {
     this.refresh()
   }
   remove() {
-    this.elements.artboards = this.elements.artboards.filter(b => b !== this)
+    this.elements.artboardWindows = this.elements.artboardWindows.filter(b => b !== this)
     this.el.remove()
   }
   createSelectBox(e) {
@@ -198,7 +201,6 @@ class Artboard extends PageObject {
     const { x, y } = this.drawPos(e)
     this.selectBox = new SelectBox({
       container: this.el,
-      // container: elements.body,
       w: d, d,
       x: x - d, y: y - d
     })
@@ -358,6 +360,9 @@ class Artboard extends PageObject {
       elements.artboard.toggleSelectState()
     }
     elements.artboard = this
+    elements.artboardWindows.forEach(w => {
+      w.window.classList[w.artboard === this ? 'add' : 'remove']('current')
+    })
   }
 }
 

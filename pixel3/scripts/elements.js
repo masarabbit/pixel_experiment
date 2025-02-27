@@ -3,7 +3,7 @@
 const elements = {
   body: document.querySelector('body'),
   artboard: null,
-  artboards: [],
+  artboardWindows: [],
   windows: {},
   saveDataName: 'window-pos',
   saveData() {

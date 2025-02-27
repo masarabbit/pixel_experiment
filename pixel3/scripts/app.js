@@ -15,6 +15,7 @@ function init() {
     return new NavWindow({
       name: 'artboard',
       container: elements.body,
+      className: 'current',
       isOpen: true,
       x: 10, y: 10,
       content: nav => {
@@ -24,6 +25,7 @@ function init() {
           h: settings.row * settings.d,
           d: settings.d
         })
+        elements.artboardWindows.push(nav)
       },
       selectAction: nav => nav.artboard.switchArtboard()
     })

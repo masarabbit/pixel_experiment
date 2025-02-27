@@ -370,6 +370,14 @@ textarea {
   color: #000;
 }
 
+.nav-window.current {
+  box-shadow: 0 0 0 2px #f7d778;
+}
+
+.current .handle {
+  background-color: #f7d778;
+}
+
 .handle p {
   font-size: 8px;
   text-transform: uppercase;
