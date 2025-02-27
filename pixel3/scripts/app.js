@@ -11,7 +11,11 @@ import { mouse } from './utils.js'
 // TODO bugs relating to undo, since it only considers one artboard
 // TODO enable deleting artboards
 // TODO add more options for combining canvases
+// TODO fix bugs present in the SVG convert (doesn't quite work when there are tranparent holes)
 
+
+// TODO palettes / presets, color dropper
+// TODO output 1px dataUrl
 
 
 function init() {
