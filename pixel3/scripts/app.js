@@ -1,7 +1,7 @@
 
 import { Input, SizeInput, TextArea, Upload, Button } from './classes/input.js'
 import { NavWindow } from './classes/nav.js'
-import { Artboard } from './classes/artboard.js'
+import { Artboard, SelectBox } from './classes/artboard.js'
 import TraceSvg from './classes/traceSvg.js'
 import { settings, elements } from './elements.js'
 import { mouse } from './utils.js'
@@ -10,6 +10,24 @@ import { mouse } from './utils.js'
 // TODO output svg
 
 function init() {
+
+  const createNewArtboard = () => {
+    return new NavWindow({
+      name: 'artboard',
+      container: elements.body,
+      isOpen: true,
+      x: 10, y: 10,
+      content: nav => {
+        nav.artboard = new Artboard({
+          container: nav.contentWrapper,
+          w: settings.column * settings.d,
+          h: settings.row * settings.d,
+          d: settings.d
+        })
+      },
+      selectAction: nav => nav.artboard.switchArtboard()
+    })
+  }
 
   elements.windows = {
     colors: new NavWindow({
@@ -71,20 +89,7 @@ function init() {
         })
       }
     }),
-    artboard: new NavWindow({
-      name: 'artboard',
-      container: elements.body,
-      isOpen: true,
-      x: 10, y: 10,
-      content: nav => {
-        new Artboard({
-          container: nav.contentWrapper,
-          w: settings.column * settings.d,
-          h: settings.row * settings.d,
-          d: settings.d
-        })
-      }
-    }),
+    artboard: createNewArtboard(),
     main: new NavWindow({
       name: 'main',
       container: elements.body,
@@ -255,11 +260,39 @@ function init() {
             action: ()=> {
               ;['resize', 'refresh', 'paintCanvas'].forEach(action => elements.artboard[action]())
             }
+          }
+        ].forEach(b => {
+          new Button({
+            ...b,
+            container: nav.contentWrapper,
+            className: `${b.className} icon`
+          })
+        }) 
+      
+      }
+    }),
+    test: new NavWindow({
+      name: 'draw',
+      container: elements.body,
+      x: 100, y: 200,
+      column: true,
+      isOpen: true,
+      content: nav => {
+        ;[
+          { 
+            btnText: 'new board',
+            action: createNewArtboard
+          },
+          { 
+            btnText: 'show elements',
+            action: ()=> {
+              console.log('elements', elements)
+            }
           },
           { 
             btnText: 'show setting',
             action: ()=> {
-              console.log(settings)
+              console.log('settings', settings)
             }
           },
         ].forEach(b => {
@@ -292,7 +325,7 @@ function init() {
   // }),
 
 
-  settings.colors = `#ea1010,#ea1010,#ea1010,#ea1010,#ea1010,#ea1010,#ea1010,#ea1010,#ea1010,#ea1010,transparent,transparent,transparent,transparent,transparent,transparent,transparent,#ea1010,#ea1010,transparent,#ea1010,#ea1010,#ea1010,#ea1010,#ea1010,,#ea1010,#ea1010,,#ea1010,,,,#ea1010,,#ea1010,#ea1010,,#ea1010,,#ea1010,,#ea1010,,#ea1010,#ea1010,,#ea1010,,,,#ea1010,,#ea1010,#ea1010,,#ea1010,#ea1010,#ea1010,#ea1010,#ea1010,,#ea1010,#ea1010,,,,,,,,#ea1010,#ea1010,#ea1010,#ea1010,#ea1010,#ea1010,#ea1010,#ea1010,#ea1010,#ea1010`.split(',')
+  settings.colors = `#000000,#000000,#000000,#000000,#000000,#000000,#000000,#000000,#000000,#000000,#000000,#000000,#000000,#000000,#000000,#000000,#000000,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,#000000,#000000,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,#000000,#000000,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,#000000,#000000,transparent,transparent,transparent,#187c71,transparent,transparent,transparent,transparent,transparent,transparent,transparent,#187c71,transparent,transparent,#000000,#000000,transparent,transparent,transparent,#187c71,transparent,transparent,transparent,transparent,transparent,transparent,transparent,#187c71,transparent,transparent,#000000,#000000,transparent,transparent,transparent,#187c71,transparent,transparent,transparent,transparent,transparent,transparent,transparent,#187c71,transparent,transparent,#000000,#000000,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,#000000,#000000,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,#000000,#000000,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,#000000,#000000,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,#000000,#000000,transparent,transparent,transparent,#59187c,#59187c,#59187c,#59187c,#59187c,#59187c,#59187c,#59187c,#59187c,transparent,transparent,#000000,#000000,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,#000000,#000000,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,#000000,#000000,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,#000000,#000000,#000000,#000000,#000000,#000000,#000000,#000000,#000000,#000000,#000000,#000000,#000000,#000000,#000000,#000000,#000000`.split(',')
 
 
   settings.inputs.colors.value = settings.colors

@@ -8,7 +8,16 @@ class NavWindow extends PageObject {
       window: Object.assign(document.createElement('div'), {
         className: `nav-window ${props.className || ''}`,
         innerHTML: `
-          <div class="handle">${`<p>${convertCameCase(props.name)}</p>` || '<span></span>'}<button class="arrow"></button></div>
+          <div class="handle">
+            ${`<p>${convertCameCase(props.name)}</p>` || '<span></span>'}
+            <div>
+              ${props.selectAction
+                ? '<button class="select-btn"></button>'
+                : ''
+              }
+              <button class="arrow"></button>
+            </div>
+          </div>
           <div class="content-wrapper ${props.column ? 'column' : '' }"></div>
         `
       }),
@@ -18,9 +27,10 @@ class NavWindow extends PageObject {
     this.container.appendChild(this.window)
     this.el = this.window.querySelector('.handle')
     this.contentWrapper = this.window.querySelector('.content-wrapper')
-    this.window.querySelector('button').addEventListener('click', this.toggleState)
+    this.window.querySelector('.arrow').addEventListener('click', this.toggleState)
 
     if (this.content) this.content(this)
+    if (this.selectAction) this.window.querySelector('.select-btn').addEventListener('click', ()=> this.selectAction(this))
 
     this.setStyles()
     this.addDragEvent()

@@ -391,17 +391,24 @@ textarea {
   flex-direction: column;
 }
 
-.arrow {
-  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAYAAAADCAYAAACwAX77AAAAAXNSR0IArs4c6QAAAB1JREFUGFdjZGBg+M+ABTBCxdAlGWESIHmYJFgMAH6CAwMUmXQTAAAAAElFTkSuQmCC);
+.handle button {
   width: 12px;
   height: 6px;
-  background-size: 12px 6px;
-  image-rendering: pixelated;
-  background-repeat: no-repeat;
   padding: 0;
 }
 
-.arrow:hover {
+.arrow {
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAYAAAADCAYAAACwAX77AAAAAXNSR0IArs4c6QAAAB1JREFUGFdjZGBg+M+ABTBCxdAlGWESIHmYJFgMAH6CAwMUmXQTAAAAAElFTkSuQmCC);
+  background-size: 12px 6px;
+  image-rendering: pixelated;
+  background-repeat: no-repeat;
+}
+
+.select-btn {
+  background-color: #000;
+}
+
+.handle button:hover {
   background-color: transparent;
 }
 

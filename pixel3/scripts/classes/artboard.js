@@ -26,7 +26,7 @@ class Canvas extends PageObject {
   drawGrid() {
     const { ctx } = this
     const { column, row, d, gridWidth } = settings
-    ctx.strokeStyle = elements.artboard.gridColor
+    ctx.strokeStyle = this.artboard.gridColor
     ctx.beginPath()
     const pos = (n, max) => n * d + (n === max ? -gridWidth : gridWidth)
 
@@ -74,11 +74,11 @@ class Canvas extends PageObject {
 class SelectBox extends Canvas {
   constructor(props) {
     super({
-      ...props,
       className: 'select-box',
       defPos: { x: props.x, y: props.y },
       canMove: false,
       copyData: [],
+      ...props,
     })
     this.addDragEvent()
   }
@@ -162,11 +162,13 @@ class Artboard extends PageObject {
       ...props,
     })
     elements.artboard = this
+    elements.artboards.push(this)
     this.container.appendChild(this.el)
     this.setStyles()
     const { w, h, d } = this
       ;['drawboard', 'overlay'].forEach(className => {
         this[className] = new Canvas({
+          artboard: this,
           container: this.el,
           className,
           w, h, d
@@ -186,12 +188,17 @@ class Artboard extends PageObject {
     // mouse.enter(artboard, 'add', ()=> artData.cursor = 'artboard')
     this.refresh()
   }
+  remove() {
+    this.elements.artboards = this.elements.artboards.filter(b => b !== this)
+    this.el.remove()
+  }
   createSelectBox(e) {
     if (this.selectBox) this.selectBox.el.remove()
     const { d } = settings
     const { x, y } = this.drawPos(e)
     this.selectBox = new SelectBox({
       container: this.el,
+      // container: elements.body,
       w: d, d,
       x: x - d, y: y - d
     })
@@ -201,12 +208,16 @@ class Artboard extends PageObject {
     if (this.selectBox) {
       this.overlay.el.classList.remove('freeze')
       this.selectBox.el.remove()
+      this.selectBox = null
+      this.overlay.el.classList.remove('select')
+      this.el.classList.remove('freeze')
+    } else {
+      this.overlay.el.classList.add('select')
+      this.el.classList.add('freeze')
     }
-    this.overlay.el.classList.toggle('select')
-    this.el.classList.toggle('freeze')
   }
   drawPos = e => {
-    const { top, left } = this.drawboard.el.getBoundingClientRect()
+    const { top, left } = elements.artboard.el.getBoundingClientRect()
     return {
       x: nearestN(e.pageX - left - window.scrollX, settings.d),
       y: nearestN(e.pageY - top - window.scrollY, settings.d)
@@ -334,8 +345,23 @@ class Artboard extends PageObject {
     settings.inputs.colors.value = settings.splitColors.reverse().flat(1)
     this.paintCanvas()
   }
+  switchArtboard = () => {
+    if (elements.artboard !== this && elements.artboard.selectBox) {
+      this.toggleSelectState()
+      const { selectBox: { w, h, x, y, copyData }} = elements.artboard
+      this.selectBox = new SelectBox({
+        container: this.el,
+        w, h, x, y, copyData,
+        canMove: true
+      })
+      this.selectBox.paintFromColors()
+      elements.artboard.toggleSelectState()
+    }
+    elements.artboard = this
+  }
 }
 
 export {
-  Artboard
+  Artboard,
+  SelectBox
 }

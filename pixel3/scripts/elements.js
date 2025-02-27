@@ -3,6 +3,7 @@
 const elements = {
   body: document.querySelector('body'),
   artboard: null,
+  artboards: [],
   windows: {},
   saveDataName: 'window-pos',
   saveData() {
@@ -68,18 +69,12 @@ const settings = {
   recordState() {
     const { row, column, d, colors, lastPrev } = this
 
-    // TODO consider if localStorage could be used in someway
-    // const prevData = localStorage.getItem(saveDataName)
-    // if (prevData) lastPrev = JSON.parse(prevData)
-
     if (lastPrev &&
         lastPrev.colors === colors.join(',') &&
         lastPrev.row === row &&
         lastPrev.column === column
     ) return  
     this.prev.push({ colors: colors.join(','), column, row, cellSize: d })
-
-    // localStorage.setItem(saveDataName, JSON.stringify(this.prev))
 
     // keep artData.prev under 5 steps
     if (this.prev.length > 5) this.prev = this.prev.filter((d, i) =>{
