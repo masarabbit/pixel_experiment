@@ -7,30 +7,14 @@ import { settings, elements } from './elements.js'
 import { mouse } from './utils.js'
 
 // TODO add cursor for highlighting hover area (and possibly showing alt)
-// TODO output svg
+// TODO some bugs relating to having multiple artboards (maybe need to have separate places to store colors and data url, since these can get mixed up)
+// TODO bugs relating to undo, since it only considers one artboard
+// TODO enable deleting artboards
+// TODO add more options for combining canvases
+
+
 
 function init() {
-
-  const createNewArtboard = () => {
-    return new NavWindow({
-      name: 'artboard' + (elements.artboardWindows.length + 1),
-      container: elements.body,
-      className: 'current',
-      isOpen: true,
-      x: 10, y: 10,
-      // zOffset: 999,
-      content: nav => {
-        nav.artboard = new Artboard({
-          container: nav.contentWrapper,
-          w: settings.column * settings.d,
-          h: settings.row * settings.d,
-          d: settings.d
-        })
-        elements.artboardWindows.push(nav)
-      },
-      selectAction: nav => nav.artboard.switchArtboard()
-    })
-  }
 
   elements.windows = {
     colors: new NavWindow({
@@ -92,7 +76,7 @@ function init() {
         })
       }
     }),
-    artboard: createNewArtboard(),
+    artboard: settings.createNewArtboard(),
     main: new NavWindow({
       name: 'main',
       container: elements.body,
@@ -125,187 +109,160 @@ function init() {
           container: nav.contentWrapper,
         })
         new Upload({ container: nav.contentWrapper })
-        ;[
-          {
-            className: 'download-file',
-            action: ()=> {
-              ;['paintCanvas', 'downloadImage'].forEach(action => elements.artboard[action]())
+        nav.addButtons([
+            {
+              className: 'download-file',
+              action: ()=> {
+                ;['paintCanvas', 'downloadImage'].forEach(action => elements.artboard[action]())
+              },
+            },  
+            { 
+              className: 'output-data-url-from-image',
+              action: ()=> {
+                elements.artboard.dataUrl = elements.artboard.drawboard.el.toDataURL()
+                settings.inputs.dataUrl.value = elements.artboard.dataUrl
+              }
             },
-          },  
-          { 
-            className: 'output-data-url-from-image',
-            action: ()=> {
-              settings.inputs.dataUrl.value = elements.artboard.drawboard.el.toDataURL()
-            }
-          },
-          { 
-            className: 'trace-svg',
-            action: ()=> {
-              new TraceSvg()
-            }
-          },
-        ].forEach(b => {
-          new Button({
-            ...b,
-            container: nav.contentWrapper,
-            className: `${b.className} icon`
-          })
-        }) 
+            { 
+              className: 'trace-svg',
+              action: ()=> {
+                new TraceSvg()
+              }
+            },
+          ])
       }
     }),
     select: new NavWindow({
       name: 'select',
       container: elements.body,
       x: 100, y: 200,
-      column: true,
-      content: nav => {
-        ;[
-          {
-            className: 'grid-display',
-            action: ()=> {
-              settings.shouldShowGrid = !settings.shouldShowGrid
-              elements.artboard.overlay[settings.shouldShowGrid ? 'drawGrid' : 'clearGrid']()
-            }
-          },
-          { 
-            className: 'select-state',
-            action: ()=> elements.artboard.toggleSelectState()
-          },
-          { 
-            className: 'copy-selection',
-            action: ()=> {
-              if (elements.artboard.selectBox) elements.artboard.selectBox.copy()
-            }
-          },
-          { 
-            className: 'paste-selection',
-            action: ()=> {
-              const { selectBox } = elements.artboard
-              if (selectBox && selectBox.copyData.length) selectBox.paste()
-            }
-          },
-          { 
-            className: 'cut-selection',
-            action: ()=> {
-              if (elements.artboard.selectBox) elements.artboard.selectBox.cut()
-            }
-          },
-          { 
-            className: 'crop-selection',
-            action: ()=> {
-              if (elements.artboard.selectBox) elements.artboard.selectBox.crop()
-            }
-          },
-          { 
-            className: 'flip-h',
-            action: ()=> {
-              if (elements.artboard.selectBox.copyData.length) elements.artboard.selectBox.flipHorizontal()
-            }
-          },
-          { 
-            className: 'flip-v',
-            action: ()=> {
-              if (elements.artboard.selectBox.copyData.length) elements.artboard.selectBox.flipVertical()
-            }
-          },
-        ].forEach(b => {
-          new Button({
-            ...b,
-            container: nav.contentWrapper,
-            className: `${b.className} icon`
-          })
-        }) 
-      }
+      isVertical: true,
+      content: nav => nav.addButtons([
+        {
+          className: 'grid-display',
+          action: ()=> {
+            settings.shouldShowGrid = !settings.shouldShowGrid
+            elements.artboard.overlay[settings.shouldShowGrid ? 'drawGrid' : 'clearGrid']()
+          }
+        },
+        { 
+          className: 'select-state',
+          action: ()=> elements.artboard.toggleSelectState()
+        },
+        { 
+          className: 'copy-selection',
+          action: ()=> {
+            if (elements.artboard.selectBox) elements.artboard.selectBox.copy()
+          }
+        },
+        { 
+          className: 'paste-selection',
+          action: ()=> {
+            const { selectBox } = elements.artboard
+            if (selectBox && selectBox.copyData.length) selectBox.paste()
+          }
+        },
+        { 
+          className: 'cut-selection',
+          action: ()=> {
+            if (elements.artboard.selectBox) elements.artboard.selectBox.cut()
+          }
+        },
+        { 
+          className: 'crop-selection',
+          action: ()=> {
+            if (elements.artboard.selectBox) elements.artboard.selectBox.crop()
+          }
+        },
+        { 
+          className: 'flip-h',
+          action: ()=> {
+            if (elements.artboard.selectBox.copyData.length) elements.artboard.selectBox.flipHorizontal()
+          }
+        },
+        { 
+          className: 'flip-v',
+          action: ()=> {
+            if (elements.artboard.selectBox.copyData.length) elements.artboard.selectBox.flipVertical()
+          }
+        },
+      ])
     }),
     draw: new NavWindow({
       name: 'draw',
       container: elements.body,
       x: 100, y: 200,
-      column: true,
+      isVertical: true,
       isOpen: true,
-      content: nav => {
-        ;[
-          { 
-            className: 'undo',
-            action: ()=> settings.undo() 
-          },
-          { 
-            className: 'fill',
-            action: b => {
-              b.el.classList.toggle('active')
-              settings.fill = !settings.fill
-            } 
-          },
-          {
-            className: 'clear',
-            action: b => {
-              b.el.classList.toggle('active')
-              settings.erase = !settings.erase
-            } 
-          },
-          {
-            className: 'flip-h',
-            action: ()=> elements.artboard.flipHorizontal()
-          },
-          {
-            className: 'flip-v',
-            action: ()=> elements.artboard.flipVertical()
-          },
-          {
-            className: 'grid-display',
-            action: ()=> {
-              settings.shouldShowGrid = !settings.shouldShowGrid
-              elements.artboard.overlay[settings.shouldShowGrid ? 'drawGrid' : 'clearGrid']()
-            }
-          },
-          { 
-            className: 'new-grid',
-            action: ()=> {
-              ;['resize', 'refresh', 'paintCanvas'].forEach(action => elements.artboard[action]())
-            }
+      content: nav => nav.addButtons( [
+        { 
+          className: 'undo',
+          action: ()=> settings.undo() 
+        },
+        { 
+          className: 'fill',
+          action: b => {
+            b.el.classList.toggle('active')
+            settings.fill = !settings.fill
+          } 
+        },
+        {
+          className: 'clear',
+          action: b => {
+            b.el.classList.toggle('active')
+            settings.erase = !settings.erase
+          } 
+        },
+        {
+          className: 'flip-h',
+          action: ()=> elements.artboard.flipHorizontal()
+        },
+        {
+          className: 'flip-v',
+          action: ()=> elements.artboard.flipVertical()
+        },
+        {
+          className: 'grid-display',
+          action: ()=> {
+            settings.shouldShowGrid = !settings.shouldShowGrid
+            elements.artboard.overlay[settings.shouldShowGrid ? 'drawGrid' : 'clearGrid']()
           }
-        ].forEach(b => {
-          new Button({
-            ...b,
-            container: nav.contentWrapper,
-            className: `${b.className} icon`
-          })
-        }) 
-      
-      }
+        },
+        { 
+          className: 'new-grid',
+          action: ()=> {
+            ;['resize', 'refresh', 'paintCanvas'].forEach(action => elements.artboard[action]())
+          }
+        }
+      ])
     }),
     test: new NavWindow({
       name: 'test',
       container: elements.body,
       x: 100, y: 200,
       isOpen: true,
-      content: nav => {
-        ;[
-          { 
-            btnText: 'new board',
-            action: createNewArtboard
-          },
-          { 
-            btnText: 'show elements',
-            action: ()=> {
-              console.log('elements', elements)
-            }
-          },
-          { 
-            btnText: 'show setting',
-            action: ()=> {
-              console.log('settings', settings)
-            }
-          },
-        ].forEach(b => {
-          new Button({
-            ...b,
-            container: nav.contentWrapper,
-            className: `${b.className} icon`
-          })
-        }) 
-      
-      }
+      content: nav => nav.addButtons([
+        { 
+          btnText: 'new board',
+          action: settings.createNewArtboard
+        },
+        { 
+          btnText: 'show elements',
+          action: ()=> {
+            console.log('elements', elements)
+          }
+        },
+        { 
+          btnText: 'show setting',
+          action: ()=> {
+            console.log('settings', settings)
+          }
+        },
+        { 
+          btnText: 'combine',
+          action: ()=> settings.combineArtboards()
+        },
+      ])      
     })
   }
 

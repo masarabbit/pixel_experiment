@@ -5,6 +5,7 @@
 :root {
   --highlight: #78ddf7;
   --main: #78ddf7;
+  --select: #f7d778;
   /* --main: #ff5900; */
   --page-width: 700px;
 }
@@ -188,6 +189,7 @@ button.icon:hover {
   text-align: left;
   display: flex;
   align-items: center;
+  user-select: none;
 }
 
 .input-wrap label:hover {
@@ -371,11 +373,11 @@ textarea {
 }
 
 .nav-window.current {
-  box-shadow: 0 0 0 2px #f7d778;
+  box-shadow: 0 0 0 2px var(--select);
 }
 
 .current .handle {
-  background-color: #f7d778;
+  background-color: var(--select);
 }
 
 .handle p {

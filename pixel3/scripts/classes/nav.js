@@ -1,4 +1,5 @@
 import PageObject from './pageObject.js'
+import { Button } from './input.js'
 import { px, roundedClient, convertCameCase, mouse } from '../utils.js'
 import { elements } from '../elements.js'
 
@@ -18,7 +19,7 @@ class NavWindow extends PageObject {
               <button class="arrow"></button>
             </div>
           </div>
-          <div class="content-wrapper ${props.column ? 'column' : '' }"></div>
+          <div class="content-wrapper ${props.isVertical ? 'column' : '' }"></div>
         `
       }),
       canMove: true,
@@ -61,6 +62,15 @@ class NavWindow extends PageObject {
   setUp() {
     this.window.classList[this.isOpen ? 'remove' : 'add']('close')
     this.setStyles()
+  }
+  addButtons(arr) {
+    arr.forEach(b => {
+      new Button({
+        ...b,
+        container: this.contentWrapper,
+        className: `${b.className} icon`
+      })
+    }) 
   }
 }
 

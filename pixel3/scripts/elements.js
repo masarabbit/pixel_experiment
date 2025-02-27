@@ -1,4 +1,5 @@
-
+import { Artboard } from './classes/artboard.js'
+import { NavWindow } from './classes/nav.js'
 
 const elements = {
   body: document.querySelector('body'),
@@ -45,7 +46,7 @@ const settings = {
   shouldShowGrid: true,
   gridWidth: 0.5,
   colors: [],
-  dataUrl: null,
+  // dataUrl: null,
   inputs: {},
   prev: [],
   saveDataName: 'save-data',
@@ -90,7 +91,43 @@ const settings = {
       elements.artboard.resize()
       elements.artboard.paintCanvas()
     }
-}
+  },
+  createNewArtboard() {
+    return new NavWindow({
+      name: 'artboard' + (elements.artboardWindows.length + 1),
+      container: elements.body,
+      className: 'current',
+      isOpen: true,
+      x: 10, y: 10,
+      // zOffset: 999,
+      content: nav => {
+        nav.artboard = new Artboard({
+          container: nav.contentWrapper,
+          w: settings.column * settings.d,
+          h: settings.row * settings.d,
+          d: settings.d
+        })
+        elements.artboardWindows.push(nav)
+      },
+      selectAction: nav => nav.artboard.switchArtboard()
+    })
+  },
+  combineArtboards() {
+    const offsets = []
+    this.inputs.column.value = elements.artboardWindows.reduce((acc, w) => {
+      offsets.push(acc + w.artboard.column)
+      return acc += w.artboard.column
+    }, 0)
+
+    this.createNewArtboard()
+
+    elements.artboardWindows.forEach((w, i) => {
+      const { column, row, drawboard } = w.artboard
+      elements.artboard.drawboard.ctx.putImageData(drawboard.ctx.getImageData(0, 0, column * this.d, row * this.d), (offsets?.[i - 1] || 0) * this.d, 0)
+    })
+    elements.artboard.drawboard.extractColors()
+    this.inputs.colors.value = this.colors
+  }
 }
 
 export {

@@ -27,6 +27,15 @@ class PageObject {
       h: this.h,
     }
   }
+  get column() {
+    return this.w / settings.d
+  }
+  get row() {
+    return this.h / settings.d
+  }
+  get cellSize() {
+    return this.d
+  }
   setStyles() {
     Object.assign(this.el.style, {
       left: px(this.x || 0),

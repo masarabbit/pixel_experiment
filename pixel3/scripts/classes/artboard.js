@@ -60,9 +60,6 @@ class Canvas extends PageObject {
         : dataToUpdate.push(hex(rgbToHex(c[0], c[1], c[2])))
     }
   }
-  get column() {
-    return this.w / settings.d
-  }
   calcX(cell) {
     return cell % this.column
   }
@@ -296,9 +293,9 @@ class Artboard extends PageObject {
     }
     img.src = this.dataUrl
   }
-  downloadImage() {
+  downloadImage = () => {
     const link = document.createElement('a')
-    link.download = `${settings.inputs.fileName.value || 'art'}_${new Date().getTime()}.png`
+    link.download = `${settings.inputs.filename.value || 'art'}_${new Date().getTime()}.png`
     link.href = this.drawboard.el.toDataURL()
     link.click()
   }
@@ -346,7 +343,8 @@ class Artboard extends PageObject {
     this.paintCanvas()
   }
   switchArtboard = () => {
-    if (elements.artboard !== this && elements.artboard.selectBox) {
+    if (elements.artboard === this) return
+    if (elements.artboard.selectBox) {
       this.toggleSelectState()
       const { selectBox: { w, h, x, y, copyData }} = elements.artboard
       this.selectBox = new SelectBox({
@@ -360,7 +358,11 @@ class Artboard extends PageObject {
     elements.artboard = this
     elements.artboardWindows.forEach(w => {
       w.window.classList[w.artboard === this ? 'add' : 'remove']('current')
-      w.zOffset = w.artboard === this ? 999 : 1
+    })
+    elements.artboard.drawboard.extractColors()
+    settings.inputs.colors.value = settings.colors
+    ;['column', 'row'].forEach(prop => {
+      settings.inputs[prop].value = elements.artboard[prop]
     })
   }
 }
