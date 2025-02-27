@@ -162,9 +162,7 @@ class Artboard extends PageObject {
       ...props,
     })
     elements.artboard = this
-    elements.artboardWindows.forEach(w => {
-      w.window.classList.remove('current')
-    })
+    elements.artboardWindows.forEach(w => w.window.classList.remove('current'))
     this.container.appendChild(this.el)
 
     this.setStyles()
@@ -362,6 +360,7 @@ class Artboard extends PageObject {
     elements.artboard = this
     elements.artboardWindows.forEach(w => {
       w.window.classList[w.artboard === this ? 'add' : 'remove']('current')
+      w.zOffset = w.artboard === this ? 999 : 1
     })
   }
 }

@@ -13,11 +13,12 @@ function init() {
 
   const createNewArtboard = () => {
     return new NavWindow({
-      name: 'artboard',
+      name: 'artboard' + (elements.artboardWindows.length + 1),
       container: elements.body,
       className: 'current',
       isOpen: true,
       x: 10, y: 10,
+      // zOffset: 999,
       content: nav => {
         nav.artboard = new Artboard({
           container: nav.contentWrapper,
@@ -274,10 +275,9 @@ function init() {
       }
     }),
     test: new NavWindow({
-      name: 'draw',
+      name: 'test',
       container: elements.body,
       x: 100, y: 200,
-      column: true,
       isOpen: true,
       content: nav => {
         ;[

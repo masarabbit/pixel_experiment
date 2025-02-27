@@ -22,6 +22,7 @@ class NavWindow extends PageObject {
         `
       }),
       canMove: true,
+      // zOffset: 1,
       ...props
     })
     this.container.appendChild(this.window)
