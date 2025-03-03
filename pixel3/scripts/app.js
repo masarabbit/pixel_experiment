@@ -1,7 +1,6 @@
 
 import { Input, SizeInput, TextArea, Upload, Button } from './classes/input.js'
 import { NavWindow } from './classes/nav.js'
-import { Artboard, SelectBox } from './classes/artboard.js'
 import TraceSvg from './classes/traceSvg.js'
 import { settings, elements } from './elements.js'
 import { mouse } from './utils.js'

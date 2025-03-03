@@ -11,10 +11,10 @@ const elements = {
     const obj = {}
     Object.keys(this.windows).forEach(key => {
       const { x, y, isOpen } = this.windows[key]
-      const { column, row, cellSize } = settings
-      obj[key] = { x, y, isOpen, column, row, cellSize }
+      obj[key] = { x, y, isOpen }
     })
-    localStorage.setItem(this.saveDataName, JSON.stringify(obj))
+    const { column, row, cellSize } = settings
+    localStorage.setItem(this.saveDataName, JSON.stringify({ ...obj, column, row, cellSize }))
   },
   readData() {
     const saveData = localStorage.getItem(this.saveDataName)
@@ -22,16 +22,16 @@ const elements = {
       const data = JSON.parse(saveData)
 
       Object.keys(data).forEach(key => {
-        ;['x', 'y', 'isOpen'].forEach(prop => {
-          this.windows[key][prop] = data[key][prop]
-        })
-        this.windows[key].setUp()
-
-        ;['column', 'row', 'cellSize'].forEach(prop => {
-          settings.inputs[prop].value = data[key][prop]
-        })
-        this.artboard.resize()
+        if (['column', 'row', 'cellSize'].includes(key)) {
+          settings.inputs[key].value = data[key]
+        } else {
+          ;['x', 'y', 'isOpen'].forEach(prop => {
+            this.windows[key][prop] = data[key][prop]
+          })
+          this.windows[key].setUp()
+        }
       })
+      this.artboard.resize()
     }
   }
 }
