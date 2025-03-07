@@ -270,32 +270,7 @@ function init() {
   }
 
   elements.readData()
-
-  // new NavWindow({
-  //   name: 'artboard',
-  //   container: elements.body,
-  //   isOpen: true,
-  //   x: 100, y: 100,
-  //   content: nav => {
-  //     new Artboard({
-  //       container: nav.contentWrapper,
-  //       w: settings.column * settings.d,
-  //       h: settings.row * settings.d,
-  //       d: settings.d
-  //     })
-  //   }
-  // }),
-
-
-  settings.colors = `#000000,#000000,#000000,#000000,#000000,#000000,#000000,#000000,#000000,#000000,#000000,#000000,#000000,#000000,#000000,#000000,#000000,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,#000000,#000000,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,#000000,#000000,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,#000000,#000000,transparent,transparent,transparent,#187c71,transparent,transparent,transparent,transparent,transparent,transparent,transparent,#187c71,transparent,transparent,#000000,#000000,transparent,transparent,transparent,#187c71,transparent,transparent,transparent,transparent,transparent,transparent,transparent,#187c71,transparent,transparent,#000000,#000000,transparent,transparent,transparent,#187c71,transparent,transparent,transparent,transparent,transparent,transparent,transparent,#187c71,transparent,transparent,#000000,#000000,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,#000000,#000000,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,#000000,#000000,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,#000000,#000000,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,#000000,#000000,transparent,transparent,transparent,#59187c,#59187c,#59187c,#59187c,#59187c,#59187c,#59187c,#59187c,#59187c,transparent,transparent,#000000,#000000,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,#000000,#000000,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,#000000,#000000,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,transparent,#000000,#000000,#000000,#000000,#000000,#000000,#000000,#000000,#000000,#000000,#000000,#000000,#000000,#000000,#000000,#000000,#000000`.split(',')
-
-
-  settings.inputs.colors.value = settings.colors
-
-  elements.artboard.paintCanvas()
-
   settings.recordState()
-
   mouse.up(document, 'add', ()=> settings.recordState())
 
 
