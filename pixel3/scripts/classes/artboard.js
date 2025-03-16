@@ -222,25 +222,29 @@ class Artboard extends PageObject {
   }
   colorCell = e => {
     const { x, y } = this.drawPos(e)
-    const { column, d } = settings
-    this.drawboard.ctx.fillStyle = settings.hex
-    this.drawboard.ctx[settings.erase ? 'clearRect' : 'fillRect'](x - d, y - d, d, d)
-
-    const value = settings.erase || settings.hex === 'transparent'
-      ? 'transparent'
-      : settings.hex  // transparent replaced with ''
+    const { column, d, colorPick } = settings
     const index = ((y / d - 1) * column) + x / d - 1
-    settings.fill
-      ? this.fillBucket(index)
-      : settings.colors[index] = value
-    settings.inputs.colors.value = settings.colors
 
-    // if (!artData.palette.includes(value)) {
-    //   artData.palette.push(value)
-    //   populatePalette(artData.palette)
-    // }
-    // console.log('draw')
-    // settings.recordState()
+    if (colorPick) {
+      settings.inputs.color.updateColorInputs(settings.colors[index])
+    } else {
+      this.drawboard.ctx.fillStyle = settings.hex
+      this.drawboard.ctx[settings.erase ? 'clearRect' : 'fillRect'](x - d, y - d, d, d)
+  
+      const value = settings.erase || settings.hex === 'transparent'
+        ? 'transparent'
+        : settings.hex  // transparent replaced with ''
+
+      settings.fill
+        ? this.fillBucket(index)
+        : settings.colors[index] = value
+      settings.inputs.colors.value = settings.colors
+  
+      // if (!artData.palette.includes(value)) {
+      //   artData.palette.push(value)
+      //   populatePalette(artData.palette)
+      // }
+    }
   }
   continuousDraw = e => {
     if (this.draw) this.colorCell(e)
@@ -253,6 +257,9 @@ class Artboard extends PageObject {
     this.drawboard.resizeCanvas(this.size)
     this.overlay.resizeCanvas(this.size)
     this.overlay.drawGrid()
+  }
+  resizeAndPaintCanvas() {
+    ['resize', 'paintCanvas'].forEach(action => this[action]())
   }
   paintFromColors() {
     const { d } = settings

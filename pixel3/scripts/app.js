@@ -13,8 +13,7 @@ import { mouse } from './utils.js'
 // TODO fix bugs present in the SVG convert (doesn't quite work when there are tranparent holes)
 
 
-// TODO palettes / presets, color dropper
-// TODO output 1px dataUrl
+// TODO palettes / presets
 
 
 function init() {
@@ -95,7 +94,7 @@ function init() {
             isNum,
             className: isNum ? 'no' : '',
             update: isNum
-              ? () => ['resize', 'paintCanvas'].forEach(action => elements.artboard[action]())
+              ? () => elements.artboard.resizeAndPaintCanvas()
               : null
           })
         })
@@ -124,6 +123,23 @@ function init() {
               action: ()=> {
                 elements.artboard.dataUrl = elements.artboard.drawboard.el.toDataURL()
                 settings.inputs.dataUrl.value = elements.artboard.dataUrl
+              }
+            },
+            { 
+              className: 'output-data-url-from-one-pixel-image',
+              action: ()=> {
+                // could be refactored to partially reuse this codeblock
+                const currentCellSize = settings.cellSize
+                settings.inputs.cellSize.value = 1
+                elements.artboard.resizeAndPaintCanvas()
+
+                elements.artboard.dataUrl = elements.artboard.drawboard.el.toDataURL()
+                settings.inputs.dataUrl.value = elements.artboard.dataUrl
+
+                setTimeout(()=> {
+                  settings.inputs.cellSize.value = currentCellSize
+                  elements.artboard.resizeAndPaintCanvas()
+                }, 500)
               }
             },
             { 
@@ -235,6 +251,14 @@ function init() {
           className: 'new-grid',
           action: ()=> {
             ;['resize', 'refresh', 'paintCanvas'].forEach(action => elements.artboard[action]())
+          }
+        },
+        { 
+          className: 'color-picker',
+          action: b => {
+            console.log('color pick')
+            b.el.classList.toggle('active')
+            settings.colorPick = !settings.colorPick
           }
         }
       ])

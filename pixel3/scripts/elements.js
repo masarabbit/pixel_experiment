@@ -49,6 +49,9 @@ const settings = {
   // dataUrl: null,
   inputs: {},
   prev: [],
+  erase: false,
+  fill: false,
+  colorPick: false,
   saveDataName: 'save-data',
   calcX(cell) {
     return cell % this.column

@@ -49,6 +49,11 @@ class Input {
     label.style.backgroundColor = settings[this.key]
     if (settings?.inputs[this.key]) settings.inputs[this.key].value = settings[this.key]
   }
+  updateColorInputs(color) {
+    settings.color = color
+    ;['color', 'hex'].forEach(key => settings[key] = color)
+    settings.inputs.color.label.style.backgroundColor = color
+  }
   addChangeListener() {
     this.input.addEventListener('change', e => {
       settings[this.key] = e.target.value
