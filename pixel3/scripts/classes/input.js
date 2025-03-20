@@ -74,7 +74,6 @@ class SizeInput extends Input {
   resizeColors = () => {
     const newArr = settings.splitColors
     newArr.length = settings.inputs.row.value
-    // newArr.fill(new Array(newArr.length).fill('transparent'), row) 
     settings.inputs.colors.value = newArr.map(arr => {
       const arrCopy = arr
       arrCopy.length = settings.inputs.column.value

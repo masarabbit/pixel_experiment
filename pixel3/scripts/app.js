@@ -296,8 +296,6 @@ function init() {
   elements.readData()
   settings.recordState()
   mouse.up(document, 'add', ()=> settings.recordState())
-
-
 }
 
 window.addEventListener('DOMContentLoaded', init)
