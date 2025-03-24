@@ -51,7 +51,7 @@ class Input {
   }
   updateColorInputs(color) {
     settings.color = color
-    ;['color', 'hex'].forEach(key => settings[key] = color)
+    settings.inputs.hex.value = color
     settings.inputs.color.label.style.backgroundColor = color
   }
   addChangeListener() {

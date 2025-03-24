@@ -98,6 +98,17 @@ function init() {
               : null
           })
         })
+        nav.addButtons([
+          { 
+            btnText: 'swapColor',
+            action: ()=> {
+              settings.inputs.colors.value = settings.colors.map(c => {
+                return c === settings.hex ? settings.hex2 : c
+              })
+              elements.artboard.paintCanvas()
+            }
+          },
+        ]) 
       }
     }),
     fileName: new NavWindow({
