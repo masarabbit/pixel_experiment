@@ -68,6 +68,7 @@ button.icon {
   filter: invert(100%);
   border: 0;
   margin-right: 10px;
+  image-rendering: pixelated;
 }
 
 input {
