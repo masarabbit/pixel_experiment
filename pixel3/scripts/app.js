@@ -286,7 +286,6 @@ function init() {
           {
             className: 'color-picker',
             action: b => {
-              console.log('color pick')
               b.el.classList.toggle('active')
               settings.colorPick = !settings.colorPick
             },

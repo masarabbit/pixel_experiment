@@ -72,7 +72,6 @@ const settings = {
     this.cellSize = val
   },
   get splitColors() {
-    console.log(this.column, this.row, this.colors)
     return this.colors.reduce((acc, _, i) => {
       if (i % this.column === 0) acc.push(this.colors.slice(i, i + this.column))
       return acc
