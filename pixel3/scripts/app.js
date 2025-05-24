@@ -185,15 +185,6 @@ function init() {
       content: nav =>
         nav.addButtons([
           {
-            className: 'grid-display',
-            action: () => {
-              settings.shouldShowGrid = !settings.shouldShowGrid
-              elements.artboard.overlay[
-                settings.shouldShowGrid ? 'drawGrid' : 'clearGrid'
-              ]()
-            },
-          },
-          {
             className: 'select-state',
             action: () => elements.artboard.toggleSelectState(),
           },
